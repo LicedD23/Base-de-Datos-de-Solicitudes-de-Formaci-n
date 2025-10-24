@@ -5,56 +5,80 @@
 {% block content %}
 <h2 class="section-title mb-4">Panel de Control</h2>
 
-<!-- Tarjetas -->
-<div class="row g-4 mb-5">
+<!-- Tarjetas de Estadísticas Mejoradas -->
+<div class="stats-container mb-5">
     {% for metric, label, icon, color in metrics %}
-    <div class="col-md-4 col-lg-2">
-        <div class="content-card text-center p-3">
-            <div class="text-{{ color }} fs-1 mb-2">
-                <i class="bi {{ icon }}"></i>
-            </div>
-            <h6 class="fw-semibold">{{ label }}</h6>
-            <h3 class="fw-bold text-{{ color }}">{{ metric }}</h3>
+    <div class="stat-card {% if color == 'primary' %}blue{% elif color == 'warning' %}orange{% elif color == 'danger' %}red{% elif color == 'info' %}cyan{% elif color == 'secondary' %}purple{% endif %}">
+        <div class="stat-card-icon">
+            <i class="bi {{ icon }}"></i>
         </div>
+        <h6 class="stat-card-title">{{ label }}</h6>
+        <h2 class="stat-card-value">{{ metric }}</h2>
     </div>
     {% endfor %}
 </div>
 
-<!-- Tabla -->
-<div class="content-card p-4">
-    <h5 class="fw-semibold text-success mb-3">Últimas Solicitudes</h5>
+<!-- Tabla de Solicitudes -->
+<div class="card">
+    <div class="card-body p-4">
+        <h5 class="fw-semibold mb-4" style="color: var(--sena-green);">
+            <i class="bi bi-clock-history me-2"></i>Últimas Solicitudes
+        </h5>
 
-    <div class="table-responsive">
-        <table class="table align-middle table-hover">
-            <thead>
-                <tr>
-                    <th>Empresa</th>
-                    <th>Programa</th>
-                    <th>Instructor</th>
-                    <th>Fecha Recepción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in ultimas_solicitudes %}
-                <tr>
-                    <td>{{ s.empresa }}</td>
-                    <td>{{ s.programa }}</td>
-                    <td>{{ s.instructor_asignado|default:"No asignado" }}</td>
-                    <td>{{ s.fecha_recepcion|date:"d/m/Y H:i" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted py-3">
-                        No hay solicitudes recientes.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table align-middle table-hover">
+                <thead>
+                    <tr>
+                        <th>Empresa</th>
+                        <th>Programa</th>
+                        <th>Instructor</th>
+                        <th>Fecha Recepción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in ultimas_solicitudes %}
+                    <tr>
+                        <td><strong>{{ s.empresa }}</strong></td>
+                        <td>{{ s.programa }}</td>
+                        <td>
+                            {% if s.instructor_asignado %}
+                                <span class="badge bg-success">{{ s.instructor_asignado }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">No asignado</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                {{ s.fecha_recepcion|date:"d/m/Y H:i" }}
+                            </small>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3 mb-0">No hay solicitudes recientes.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px solid rgba(0, 150, 64, 0.1);">
+            <p class="text-muted mb-0">
+                <small>
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Actualizado: {{ now|date:"d/m/Y H:i" }}
+                </small>
+            </p>
+            {% if ultimas_solicitudes %}
+            <button class="btn btn-sena btn-sm">
+                <i class="bi bi-eye me-1"></i>Ver todas
+            </button>
+            {% endif %}
+        </div>
     </div>
-
-    <p class="text-end text-muted mt-3">
-        <small>Actualizado: {{ now|date:"d/m/Y H:i" }}</small>
-    </p>
 </div>
 {% endblock %}
