@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "instructores",
     "empresas",
     "solicitudes",
+    "core",
 ]
 
 MIDDLEWARE = [

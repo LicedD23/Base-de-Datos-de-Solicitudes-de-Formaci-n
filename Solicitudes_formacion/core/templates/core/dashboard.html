@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Dashboard | SENA{% endblock %}
+
+{% block content %}
+<h2 class="section-title mb-4">Panel de Control</h2>
+
+<!-- Tarjetas -->
+<div class="row g-4 mb-5">
+    {% for metric, label, icon, color in metrics %}
+    <div class="col-md-4 col-lg-2">
+        <div class="content-card text-center p-3">
+            <div class="text-{{ color }} fs-1 mb-2">
+                <i class="bi {{ icon }}"></i>
+            </div>
+            <h6 class="fw-semibold">{{ label }}</h6>
+            <h3 class="fw-bold text-{{ color }}">{{ metric }}</h3>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Tabla -->
+<div class="content-card p-4">
+    <h5 class="fw-semibold text-success mb-3">Últimas Solicitudes</h5>
+
+    <div class="table-responsive">
+        <table class="table align-middle table-hover">
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Programa</th>
+                    <th>Instructor</th>
+                    <th>Fecha Recepción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in ultimas_solicitudes %}
+                <tr>
+                    <td>{{ s.empresa }}</td>
+                    <td>{{ s.programa }}</td>
+                    <td>{{ s.instructor_asignado|default:"No asignado" }}</td>
+                    <td>{{ s.fecha_recepcion|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-3">
+                        No hay solicitudes recientes.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-end text-muted mt-3">
+        <small>Actualizado: {{ now|date:"d/m/Y H:i" }}</small>
+    </p>
+</div>
+{% endblock %}

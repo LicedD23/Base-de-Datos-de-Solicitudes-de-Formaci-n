@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Inicio | Sistema SENA{% endblock %}
+
+{% block content %}
+<section class="text-center py-5">
+    <img src="{% static 'img/sena_logo.png' %}" alt="SENA Logo" style="width:100px;">
+    <h1 class="fw-bold mt-4 text-success">Bienvenido al Sistema de Gestión SENA</h1>
+    <p class="lead text-muted mt-3">
+        Una plataforma moderna para administrar áreas, programas, empresas e instructores.<br>
+        <strong>Transformando la formación con tecnología e innovación.</strong>
+    </p>
+
+    <div class="mt-4">
+        {% if not request.user.is_authenticated %}
+            <a href="{% url 'admin:login' %}" class="btn btn-sena btn-lg px-5 py-2">Iniciar sesión</a>
+        {% else %}
+            <a href="{% url 'core:dashboard' %}" class="btn btn-sena btn-lg px-5 py-2">Ir al Dashboard</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
