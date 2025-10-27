@@ -66,7 +66,7 @@ def crear_area(request):
 
         #verificar si ya existe un  area con ese nombre
         if Area.objects.filter(nombre__iexact=nombre).exists():
-            messages.error(request,f'Ya existe un area con el nombre "{nombre}')
+            messages.error(request,f'Ya existe un area con el nombre "{nombre}"')
             return render(request,'area_formacion/areas/crear_area.html',{
                 'nombre':nombre,
                 'descripcion':descripcion
@@ -97,9 +97,9 @@ def editar_area(request,area_id):
         #Validaciones
         if not nombre:
             messages.error(request,'El nombre es obligatorio')
-            return render(request,'area_formacion/area/editar_area.html',{'area':area})
+            return render(request,'area_formacion/areas/editar_area.html',{'area':area})
         #verificar si ya existe otra area con ese nombre
-        if area.objects.filter(nombre_ixact=nombre).exclude(id=area_id).exists():
+        if area.objects.filter(nombre__iexact=nombre).exclude(id=area_id).exists():
             messages.error(request,f'Ya existe otra area con el  nombre "{nombre}"')
             return render(request,'area_formacion/areas/editar_area.html',{'area':area})
         

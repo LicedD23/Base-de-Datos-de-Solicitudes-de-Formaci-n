@@ -105,7 +105,7 @@ def editar_programa(request,programa_id):
     if request.method=='POST':
         nombre = request.POST.get('nombre')
         area_id = request.POST.get('area')
-        descripcion = request.POST.get('descricion','')
+        descripcion = request.POST.get('descripcion','')
         duracion_horas = request.POST.get('duracion_horas','')
         activo = request.POST.get('activo')=='on' 
         #validaciones 
