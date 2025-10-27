@@ -1,35 +1,53 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
-from .models import Programa, Area
+from .models import Area 
+from programas.models import Programa
 from django.db.models import Count, Q
 
 # Create your views here.
+
+
 def listar_areas(request):
-    """Vista para listar todas las areas"""
-    #Obtener parametros de busqyeda y filtro
-    search = request.GET.get('search','')
-    activo = request.GET.get('activo','')
-    #Consulta base con anotaciones (contar programas por area)
+    """Vista para listar todas las áreas"""
+    search = request.GET.get('search', '')
+    activo = request.GET.get('activo', '')
+
+    # Consulta base con anotaciones
     areas = Area.objects.annotate(
-        total_programas=Count('programa')
-    ) 
-    #Aplicar filtros
+        total_programas=Count('programas')
+    )
+
+    # Aplicar filtros
     if search:
         areas = areas.filter(
-            Q(nombre__icontains=search)|
+            Q(nombre__icontains=search) |
             Q(descripcion__icontains=search)
-            )
-        if activo:
-            areas = areas.filter(activo=activo=='true')
-        #Ordenar por nombre
-        areas = areas.order_by('nombre')
-        
-        context={
-            'areas':areas,
-            'search':search,
-            'activo_filter':activo,
-        }
-        return render(request,'area_formacion/areas/listar_areas.html',context)
+        )
+    if activo:
+        areas = areas.filter(activo=(activo == 'true'))
+
+    # Ordenar por nombre
+    areas = areas.order_by('nombre')
+
+    # Calcular estadísticas
+    total_areas = areas.count()
+    areas_activas = areas.filter(activo=True).count()
+    
+    
+    # O si quieres contar solo los programas de las áreas filtradas:
+    total_programas = Programa.objects.filter(area__in=areas).count()
+
+    context = {
+        'areas': areas,
+        'search': search,
+        'activo_filter': activo,
+        'total_areas': total_areas,
+        'areas_activas': areas_activas,
+        'total_programas': total_programas,
+    }
+    return render(request, 'area_formacion/listar_areas.html', context)
+
+
 def detalle_area(request,area_id):
     """Vista para el  detalle de un  area"""
     area=get_object_or_404(
@@ -51,39 +69,47 @@ def detalle_area(request,area_id):
         'programas_activos':programas_activos,
         'programas_inactivos':programas_inactivos,
     }
-    return render(request,'area_formacion/areas/detalle_area.html',context)
+    return render(request,'area_formacion/detalle_area.html',context)
 
 def crear_area(request):
-    """vista para crear una nueva area"""
+    """Vista para crear una nueva area"""
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion','')
-        activo = request.POST.get('activo')=='on'
-        #Validaciones
+        descripcion = request.POST.get('descripcion', '')
+        activo = request.POST.get('activo') == 'on'
+        
+        # Validaciones
         if not nombre:
-            messages.error(request,'El nombre es obligatorio')
-            return render(request,'area_formacion/areas/crear_area.html')
+            messages.error(request, 'El nombre es obligatorio')
+            return render(request, 'area_formacion/crear_area.html')
 
-        #verificar si ya existe un  area con ese nombre
+        # Verificar si ya existe un area con ese nombre
         if Area.objects.filter(nombre__iexact=nombre).exists():
-            messages.error(request,f'Ya existe un area con el nombre "{nombre}"')
-            return render(request,'area_formacion/areas/crear_area.html',{
-                'nombre':nombre,
-                'descripcion':descripcion
+            messages.error(request, f'Ya existe un área con el nombre "{nombre}"')
+            return render(request, 'area_formacion/crear_area.html', {
+                'nombre': nombre,
+                'descripcion': descripcion
             })
+        
         try:
-        #crear el  area
+            # Crear el area
             area = Area.objects.create(
                 nombre=nombre,
                 descripcion=descripcion,
                 activo=activo
             )
-            messages.success(request,f'Area"{area.nombre}"creada exitosamente')
-            return redirect('detalle_area',area_id=area.id)
+            messages.success(request, f'Área "{area.nombre}" creada exitosamente')
+            # ✅ CAMBIA ESTO - Redirige al listado en lugar del detalle
+            return redirect('area_formacion:listar_areas')
         except Exception as e:
-            messages.error(request,f'Error al crear el  area:{str(e)}')
-        #GET request
-        return render(request,'area_formacion/areas/crear_area.html')
+            messages.error(request, f'Error al crear el área: {str(e)}')
+            return render(request, 'area_formacion/crear_area.html', {
+                'nombre': nombre,
+                'descripcion': descripcion
+            })
+    
+    # GET request
+    return render(request, 'area_formacion/crear_area.html')
 
 def editar_area(request,area_id):
     """vista para editar un  area existente"""
@@ -97,11 +123,11 @@ def editar_area(request,area_id):
         #Validaciones
         if not nombre:
             messages.error(request,'El nombre es obligatorio')
-            return render(request,'area_formacion/areas/editar_area.html',{'area':area})
+            return render(request,'area_formacion/editar_area.html',{'area':area})
         #verificar si ya existe otra area con ese nombre
         if area.objects.filter(nombre__iexact=nombre).exclude(id=area_id).exists():
             messages.error(request,f'Ya existe otra area con el  nombre "{nombre}"')
-            return render(request,'area_formacion/areas/editar_area.html',{'area':area})
+            return render(request,'area_formacion/editar_area.html',{'area':area})
         
         try:
             #actualiza el  area
@@ -135,4 +161,4 @@ def eliminar_area(request,area_id):
         'total_programas':total_programas,
         'programas_activos':programas_activos
     }
-    return render(request,'area_formacion/areas/eliminar_area.html',context)
+    return render(request,'area_formacion/eliminar_area.html',context)
