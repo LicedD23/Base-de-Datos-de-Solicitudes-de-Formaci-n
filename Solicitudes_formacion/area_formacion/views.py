@@ -111,34 +111,35 @@ def crear_area(request):
     # GET request
     return render(request, 'area_formacion/crear_area.html')
 
-def editar_area(request,area_id):
-    """vista para editar un  area existente"""
+def editar_area(request, area_id):
+    """Vista para editar un area existente"""
     area = get_object_or_404(Area, id=area_id)
     
-    if request.method=='POST':
+    if request.method == 'POST':
         nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion','')
-        activo = request.POST.get('activo')=='on'
+        descripcion = request.POST.get('descripcion', '')
+        activo = request.POST.get('activo') == 'on'
         
-        #Validaciones
         if not nombre:
-            messages.error(request,'El nombre es obligatorio')
-            return render(request,'area_formacion/editar_area.html',{'area':area})
-        #verificar si ya existe otra area con ese nombre
-        if area.objects.filter(nombre__iexact=nombre).exclude(id=area_id).exists():
-            messages.error(request,f'Ya existe otra area con el  nombre "{nombre}"')
-            return render(request,'area_formacion/editar_area.html',{'area':area})
+            messages.error(request, 'El nombre es obligatorio')
+            return render(request, 'area_formacion/editar_area.html', {'area': area})
+        
+        if Area.objects.filter(nombre__iexact=nombre).exclude(id=area_id).exists():
+            messages.error(request, f'Ya existe otra área con el nombre "{nombre}"')
+            return render(request, 'area_formacion/editar_area.html', {'area': area})
         
         try:
-            #actualiza el  area
             area.nombre = nombre
-            area.descripcion= descripcion
+            area.descripcion = descripcion
             area.activo = activo
             area.save()
-            messages.success(request,f'Area"{area.nombre}"actualizada exitosamente')
-            return redirect('detalle_area',area_id=area.id)
+            messages.success(request, f'Área "{area.nombre}" actualizada exitosamente')
+            return redirect('area_formacion:detalle_area', area_id=area.id)
         except Exception as e:
-            messages.error(request,f'Error al  actualizar el  area:{str(e)}')
+            messages.error(request, f'Error al actualizar el área: {str(e)}')
+            return render(request, 'area_formacion/editar_area.html', {'area': area})
+    
+    return render(request, 'area_formacion/editar_area.html', {'area': area})
 def eliminar_area(request,area_id):
     """vista para eliminar un  area"""
     area= get_object_or_404(Area,id=area_id)

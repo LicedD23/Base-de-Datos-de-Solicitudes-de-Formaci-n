@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar {{ area.nombre }} - SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .info-banner {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-banner-icon {
+            font-size: 1.5em;
+        }
+
+        .info-banner-content {
+            flex: 1;
+        }
+
+        .info-banner-content strong {
+            display: block;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .info-banner-content p {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2e7d32;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .form-group label.required::after {
+            content: " *";
+            color: #c62828;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group small {
+            display: block;
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: #e8f5e9;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #2e7d32;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            flex: 1;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #bdbdbd;
+        }
+
+        .required-note {
+            background: #e8f5e9;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .metadata-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .metadata-section h3 {
+            color: #2e7d32;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .metadata-item label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metadata-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .warning-box {
+            background: #e8f5e9;
+            border: 2px solid #66bb6a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .warning-box-icon {
+            font-size: 1.5em;
+            color: #2e7d32;
+        }
+
+        .warning-box-content {
+            flex: 1;
+        }
+
+        .warning-box-content strong {
+            display: block;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .warning-box-content ul {
+            margin: 10px 0 0 20px;
+            color: #666;
+        }
+
+        .warning-box-content ul li {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Área</h1>
+            <p>Modifica la información del área de formación: <strong>{{ area.nombre }}</strong></p>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'area_formacion:listar_areas' %}">Áreas de Formación</a>
+            <span>›</span>
+            <a href="{% url 'area_formacion:detalle_area' area.id %}">{{ area.nombre }}</a>
+            <span>›</span>
+            <span>Editar</span>
+        </div>
+
+        <div class="info-banner">
+            <div class="info-banner-icon">ℹ️</div>
+            <div class="info-banner-content">
+                <strong>Editando Área</strong>
+                <p>Los cambios afectarán a todos los programas asociados a esta área. Verifica la información antes de guardar.</p>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% else %}alert-success{% endif %}">
+                    {% if 'error' in message.tags %}
+                        ⚠️
+                    {% else %}
+                        ✓
+                    {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-card">
+            <div class="metadata-section">
+                <h3>📊 Información Actual</h3>
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <label>Fecha de Creación</label>
+                        <div class="value">{{ area.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Programas Asociados</label>
+                        <div class="value">{{ area.programas.count }}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Estado Actual</label>
+                        <div class="value" style="color: {% if area.activo %}#2e7d32{% else %}#c62828{% endif %};">
+                            {% if area.activo %}✓ Activo{% else %}✕ Inactivo{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="required-note">
+                ⚠️ Los campos marcados con asterisco (*) son obligatorios
+            </div>
+
+            <form method="POST" action="{% url 'area_formacion:editar_area' area.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="nombre" class="required">Nombre del Área</label>
+                    <input 
+                        type="text" 
+                        id="nombre" 
+                        name="nombre" 
+                        value="{{ area.nombre }}"
+                        placeholder="Ejemplo: Maquinaria Pesada"
+                        required
+                        maxlength="100"
+                    >
+                    <small>Nombre descriptivo del área de formación (máximo 100 caracteres)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea 
+                        id="descripcion" 
+                        name="descripcion"
+                        placeholder="Describe el área de formación, sus objetivos y el tipo de programas que incluye..."
+                    >{{ area.descripcion }}</textarea>
+                    <small>Información detallada sobre el área (opcional)</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="activo" 
+                            name="activo"
+                            {% if area.activo %}checked{% endif %}
+                        >
+                        <label for="activo">✓ Área activa</label>
+                    </div>
+                    <small>Las áreas activas estarán disponibles para asignar programas</small>
+                </div>
+
+                {% if area.programas.count > 0 %}
+                <div class="warning-box">
+                    <div class="warning-box-icon">⚠️</div>
+                    <div class="warning-box-content">
+                        <strong>Importante</strong>
+                        <p>Esta área tiene <strong>{{ area.programas.count }} programa(s)</strong> asociado(s).</p>
+                        <ul>
+                            <li>Si desactivas el área, los programas seguirán activos pero el área no aparecerá en listados principales.</li>
+                            <li>Cambiar el nombre afectará a todas las referencias del sistema.</li>
+                            <li>Para desactivar también los programas, usa la opción "Eliminar Área".</li>
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn btn-secondary">
+                        ✕ Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'area_formacion:listar_areas' %}" style="color: #2e7d32; text-decoration: none; font-size: 0.9em;">
+                ⬅️ Volver al listado de áreas
+            </a>
+        </div>
+    </div>
+</body>
+</html>
