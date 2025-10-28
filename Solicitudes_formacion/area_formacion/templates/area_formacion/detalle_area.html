@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ area.nombre }} - Detalle Área SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-info p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .status-badge-large {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .status-inactive {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .info-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .description-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: #2e7d32;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .programs-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .program-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #66bb6a;
+            transition: all 0.3s ease;
+        }
+
+        .program-card:hover {
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .program-card.inactive {
+            border-left-color: #e0e0e0;
+            opacity: 0.7;
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .program-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        .program-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .badge-inactive {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .program-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .program-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        .btn-secondary:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #fff3e0;
+            color: #ef6c00;
+            border: 2px solid #ef6c00;
+        }
+
+        .btn-warning:hover {
+            background: #ef6c00;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #c62828;
+        }
+
+        .btn-danger:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        .btn-back {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .header-info h1 {
+                font-size: 1.8em;
+            }
+
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>📚 {{ area.nombre }}</h1>
+                    <p>Información detallada del área de formación</p>
+                </div>
+                <span class="status-badge-large {% if area.activo %}status-active{% else %}status-inactive{% endif %}">
+                    {% if area.activo %}● Activo{% else %}○ Inactivo{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'area_formacion:listar_areas' %}">Áreas de Formación</a>
+            <span>›</span>
+            <span>{{ area.nombre }}</span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    ✓ {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Total de Programas</h3>
+                <div class="number">{{ area.total_programas }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Programas Activos</h3>
+                <div class="number">{{ programas_activos.count }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Programas Inactivos</h3>
+                <div class="number">{{ programas_inactivos.count }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Fecha de Creación</h3>
+                <div class="number" style="font-size: 1.3em;">{{ area.fecha_creacion|date:"d/m/Y" }}</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>📋 Información General</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Nombre del Área</label>
+                    <div class="value">{{ area.nombre }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Estado</label>
+                    <div class="value">{% if area.activo %}Activo{% else %}Inactivo{% endif %}</div>
+                </div>
+                <div class="info-item">
+                    <label>Fecha de Creación</label>
+                    <div class="value">{{ area.fecha_creacion|date:"d \d\e F \d\e Y" }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Total de Programas</label>
+                    <div class="value">{{ area.total_programas }}</div>
+                </div>
+            </div>
+
+            {% if area.descripcion %}
+            <div style="margin-top: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 10px; color: #333;">Descripción</label>
+                <div class="description-box">
+                    {{ area.descripcion }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="programs-section">
+            <div class="section-header">
+                <h2>📚 Programas Asociados</h2>
+                <a href="{% url 'programas:crear_programa' %}?area={{ area.id }}" class="btn btn-primary">
+                    ➕ Agregar Programa
+                </a>
+            </div>
+
+            {% if programas_activos %}
+            <h3 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.2em;">✓ Programas Activos ({{ programas_activos.count }})</h3>
+            <div class="programs-grid">
+                {% for programa in programas_activos %}
+                <div class="program-card">
+                    <div class="program-header">
+                        <div class="program-name">{{ programa.nombre }}</div>
+                        <span class="program-badge badge-active">Activo</span>
+                    </div>
+                    {% if programa.descripcion %}
+                    <p style="color: #666; font-size: 0.9em; margin: 10px 0;">
+                        {{ programa.descripcion|truncatewords:15 }}
+                    </p>
+                    {% endif %}
+                    <div class="program-meta">
+                        {% if programa.duracion_horas %}
+                        <span>⏱️ {{ programa.duracion_horas }}h</span>
+                        {% endif %}
+                        <span>📝 {{ programa.total_solicitudes }} solicitudes</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if programas_inactivos %}
+            <h3 style="color: #999; margin-top: 30px; margin-bottom: 15px; font-size: 1.2em;">○ Programas Inactivos ({{ programas_inactivos.count }})</h3>
+            <div class="programs-grid">
+                {% for programa in programas_inactivos %}
+                <div class="program-card inactive">
+                    <div class="program-header">
+                        <div class="program-name" style="color: #666;">{{ programa.nombre }}</div>
+                        <span class="program-badge badge-inactive">Inactivo</span>
+                    </div>
+                    {% if programa.descripcion %}
+                    <p style="color: #999; font-size: 0.9em; margin: 10px 0;">
+                        {{ programa.descripcion|truncatewords:15 }}
+                    </p>
+                    {% endif %}
+                    <div class="program-meta">
+                        {% if programa.duracion_horas %}
+                        <span>⏱️ {{ programa.duracion_horas }}h</span>
+                        {% endif %}
+                        <span>📝 {{ programa.total_solicitudes }} solicitudes</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if not programas_activos and not programas_inactivos %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <h3>No hay programas registrados</h3>
+                <p>Esta área aún no tiene programas de formación asociados</p>
+                <a href="{% url 'programas:crear_programa' %}?area={{ area.id }}" class="btn btn-primary" style="margin-top: 20px;">
+                    ➕ Crear Primer Programa
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'area_formacion:listar_areas' %}" class="btn btn-back">
+                ⬅️ Volver al Listado
+            </a>
+            <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn btn-warning">
+                ✏️ Editar Área
+            </a>
+            <a href="{% url 'area_formacion:eliminar_area' area.id %}" class="btn btn-danger">
+                🗑️ Eliminar Área
+            </a>
+        </div>
+    </div>
+</body>
+</html>
