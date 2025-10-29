@@ -18,6 +18,46 @@
             padding: 20px;
         }
 
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Botón volver mejorado */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover svg {
+            transform: translateX(-3px);
+        }
+
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
@@ -36,11 +76,6 @@
         .header p {
             font-size: 1.1em;
             opacity: 0.95;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         .controls-section {
@@ -141,17 +176,6 @@
         .btn-secondary:hover {
             background: #2e7d32;
             color: white;
-        }
-
-        .btn-back {
-            background: #f5f5f5;
-            color: #333;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-back:hover {
-            background: #e0e0e0;
-            border-color: #bdbdbd;
         }
 
         .stats-bar {
@@ -374,6 +398,14 @@
 </head>
 <body>
     <div class="container">
+        <!-- Botón volver al dashboard -->
+        <a href="{% url 'core:dashboard' %}" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver al Dashboard
+        </a>
+
         <div class="header">
             <h1>🎓 Áreas de Formación</h1>
             <p>Gestiona las áreas de formación del SENA - Transformando la educación con tecnología</p>
@@ -448,8 +480,7 @@
                 <div class="area-actions">
                     <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                    <a href="{% url 'area_formacion:eliminar_area' area.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de eliminar esta área?')">🗑️ Eliminar</a>
-                    
+                    <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta área?')">🚫 Desactivar</a>
                 </div>
             </div>
             {% endfor %}

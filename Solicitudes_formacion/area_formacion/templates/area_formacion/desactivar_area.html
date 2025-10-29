@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desactivar Área - {{ area.nombre }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Desactivar Área
+            </h1>
+            <p class="text-red-100 mt-2">
+                ¿Estás seguro de que deseas desactivar el área: <strong>{{ area.nombre }}</strong>?
+            </p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav class="bg-white rounded-lg shadow-sm px-4 py-3 mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li>
+                    <a href="{% url 'area_formacion:listar_areas' %}" class="text-gray-500 hover:text-green-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li><span class="text-gray-400">›</span></li>
+                <li>
+                    <a href="{% url 'area_formacion:listar_areas' %}" class="text-gray-500 hover:text-green-600">
+                        Áreas de Formación
+                    </a>
+                </li>
+                <li><span class="text-gray-400">›</span></li>
+                <li>
+                    <a href="{% url 'area_formacion:detalle_area' area.id %}" class="text-gray-500 hover:text-green-600">
+                        {{ area.nombre }}
+                    </a>
+                </li>
+                <li><span class="text-gray-400">›</span></li>
+                <li class="text-red-600 font-medium">Desactivar</li>
+            </ol>
+        </nav>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-6 space-y-4">
+            {% for message in messages %}
+            <div class="{% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %} border-l-4 rounded-lg p-4">
+                <p class="font-medium">{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Alert Box -->
+        <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-red-800">Advertencia de Desactivación</h3>
+                    <p class="text-red-700 mt-2">
+                        Esta acción desactivará el área y todos sus programas asociados. Los datos no se eliminarán, 
+                        pero el área ya no estará disponible para nuevas solicitudes. Puedes reactivarla posteriormente desde la opción de edición.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Card -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-600 px-6 py-4">
+                <h2 class="text-xl font-bold text-green-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Información del Área
+                </h2>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Fecha de Creación -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 uppercase mb-2">
+                            Fecha de Creación
+                        </label>
+                        <p class="text-lg font-semibold text-gray-800">
+                            {{ area.fecha_creacion|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+
+                    <!-- Total Programas -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 uppercase mb-2">
+                            Programas Asociados
+                        </label>
+                        <p class="text-lg font-semibold text-gray-800">
+                            {{ total_programas }}
+                        </p>
+                    </div>
+
+                    <!-- Estado Actual -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 uppercase mb-2">
+                            Estado Actual
+                        </label>
+                        <p class="text-lg font-semibold">
+                            {% if area.activo %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                    <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                {% if area.descripcion %}
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <label class="block text-sm font-medium text-gray-600 uppercase mb-2">
+                        Descripción
+                    </label>
+                    <p class="text-gray-700 leading-relaxed">{{ area.descripcion }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Warning about programs -->
+        {% if programas_activos > 0 %}
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6 mb-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-yellow-800">Programas Activos Encontrados</h3>
+                    <p class="text-yellow-700 mt-2">
+                        Esta área tiene <strong>{{ programas_activos }}</strong> programa(s) activo(s). 
+                        Puedes elegir desactivarlos también o mantenerlos activos.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" class="bg-white rounded-lg shadow-md p-6">
+            {% csrf_token %}
+            
+            {% if programas_activos > 0 %}
+            <div class="mb-6">
+                <label class="flex items-start cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" name="desactivar_programas" id="desactivar_programas" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                    </div>
+                    <div class="ml-3">
+                        <span class="text-sm font-medium text-gray-900">Desactivar también los programas asociados</span>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Si marcas esta opción, los {{ programas_activos }} programa(s) activo(s) también serán desactivados
+                        </p>
+                    </div>
+                </label>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'area_formacion:detalle_area' area.id %}" 
+                    class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center shadow-lg hover:shadow-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                    Desactivar Área
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        /* Custom animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container > div {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</body>
+</html>

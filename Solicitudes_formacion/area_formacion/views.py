@@ -140,26 +140,34 @@ def editar_area(request, area_id):
             return render(request, 'area_formacion/editar_area.html', {'area': area})
     
     return render(request, 'area_formacion/editar_area.html', {'area': area})
-def eliminar_area(request,area_id):
-    """vista para eliminar un  area"""
-    area= get_object_or_404(Area,id=area_id)
-    #contar cuantos programas tienen 
+def desactivar_area(request, area_id):
+    """Vista para desactivar un área y opcionalmente sus programas"""
+    area = get_object_or_404(Area, id=area_id)
+    
+    # Contar cuántos programas tiene
     total_programas = area.programas.count()
     programas_activos = area.programas.filter(activo=True).count()
+    
     if request.method == 'POST':
-        #en lugar d eeliminar solo  se desactivan
-        area.activo =False
+        # Desactivar el área en lugar de eliminar
+        area.activo = False
         area.save()
-        #Tambien desactivar todos los programas de esta area
-        if request.POST.get('desactivar_programas')=='on':
-            area.programas.update(activo=False)
-            messages.success(request,f'Area"{area.nombre}") y sus {total_programas} programas desactivados exitosamente')
+        
+        # También desactivar todos los programas de esta área si se marca la opción
+        if request.POST.get('desactivar_programas') == 'on':
+            programas_desactivados = area.programas.filter(activo=True).update(activo=False)
+            messages.success(
+                request, 
+                f'Área "{area.nombre}" y sus {programas_desactivados} programas activos desactivados exitosamente'
+            )
         else:
-            messages.success(request,f'Area"{area.nombre}"desactivada')
-        return redirect('listar_areas')
-    context={
-        'area':area,
-        'total_programas':total_programas,
-        'programas_activos':programas_activos
+            messages.success(request, f'Área "{area.nombre}" desactivada exitosamente')
+        
+        return redirect('area_formacion:listar_areas')
+    
+    context = {
+        'area': area,
+        'total_programas': total_programas,
+        'programas_activos': programas_activos
     }
-    return render(request,'area_formacion/eliminar_area.html',context)
+    return render(request, 'area_formacion/desactivar_area.html', context)
