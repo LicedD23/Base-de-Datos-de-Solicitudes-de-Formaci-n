@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Programa - {{ programa.nombre }} - SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-card h2 {
+            color: #2e7d32;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group label .required {
+            color: #c62828;
+            margin-left: 3px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .form-group small {
+            display: block;
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #2e7d32;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .info-box p {
+            color: #1565c0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        .current-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #66bb6a;
+        }
+
+        .current-info h3 {
+            color: #2e7d32;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .current-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .current-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .current-info-label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .current-info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Programa</h1>
+            <p>Modifica la información del programa de formación</p>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'programas:listar_programas' %}">Programas</a>
+            <span>›</span>
+            <a href="{% url 'programas:detalle_programa' programa.id %}">{{ programa.nombre }}</a>
+            <span>›</span>
+            <span>Editar</span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {% if 'error' in message.tags %}❌{% else %}✓{% endif %} {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="current-info">
+            <h3>📋 Información Actual</h3>
+            <div class="current-info-grid">
+                <div class="current-info-item">
+                    <span class="current-info-label">Nombre</span>
+                    <span class="current-info-value">{{ programa.nombre }}</span>
+                </div>
+                <div class="current-info-item">
+                    <span class="current-info-label">Área</span>
+                    <span class="current-info-value">{{ programa.area.nombre }}</span>
+                </div>
+                <div class="current-info-item">
+                    <span class="current-info-label">Duración</span>
+                    <span class="current-info-value">
+                        {% if programa.duracion_horas %}{{ programa.duracion_horas }} horas{% else %}No especificado{% endif %}
+                    </span>
+                </div>
+                <div class="current-info-item">
+                    <span class="current-info-label">Estado</span>
+                    <span class="current-info-value">{% if programa.activo %}✓ Activo{% else %}○ Inactivo{% endif %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>📝 Formulario de Edición</h2>
+
+            <div class="info-box">
+                <p>
+                    ℹ️ <strong>Nota:</strong> Los campos marcados con <span style="color: #c62828;">*</span> son obligatorios. 
+                    Asegúrate de completar toda la información requerida antes de guardar los cambios.
+                </p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="nombre">
+                        Nombre del Programa <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="nombre" 
+                        name="nombre" 
+                        value="{{ programa.nombre }}"
+                        required 
+                        placeholder="Ej: Maquinaria - operador de excavadora"
+                        maxlength="200"
+                    >
+                    <small>Máximo 200 caracteres. Sea descriptivo y claro.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="area">
+                        Área de Formación <span class="required">*</span>
+                    </label>
+                    <select id="area" name="area" required>
+                        <option value="">-- Seleccione un área --</option>
+                        {% for area in areas %}
+                        <option value="{{ area.id }}" {% if area.id == programa.area.id %}selected{% endif %}>
+                            {{ area.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small>Seleccione el área de formación a la que pertenece este programa.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">
+                        Descripción del Programa
+                    </label>
+                    <textarea 
+                        id="descripcion" 
+                        name="descripcion" 
+                        placeholder="Describe los objetivos, contenido y alcance del programa de formación..."
+                        maxlength="1000"
+                    >{{ programa.descripcion }}</textarea>
+                    <small>Opcional. Máximo 1000 caracteres. Incluye información relevante sobre el programa.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="duracion_horas">
+                        Duración (en horas)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="duracion_horas" 
+                        name="duracion_horas" 
+                        value="{{ programa.duracion_horas|default:'' }}"
+                        min="1"
+                        max="10000"
+                        placeholder="Ej: 40"
+                    >
+                    <small>Opcional. Ingrese la duración estimada del programa en horas.</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="activo" 
+                            name="activo"
+                            {% if programa.activo %}checked{% endif %}
+                        >
+                        <label for="activo">
+                            ✓ Programa activo (disponible para asignación)
+                        </label>
+                    </div>
+                    <small style="margin-left: 15px; margin-top: 10px;">
+                        Si está inactivo, el programa no aparecerá en los listados de selección.
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                    <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-secondary">
+                        ✖️ Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div style="text-align: center; color: #999; font-size: 0.9em; margin-top: 30px;">
+            <p>💡 Recuerda verificar que la información esté correcta antes de guardar.</p>
+        </div>
+    </div>
+</body>
+</html>

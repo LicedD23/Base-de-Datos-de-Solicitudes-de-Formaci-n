@@ -106,29 +106,32 @@ def crear_programa(request):
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
             
-def editar_programa(request,programa_id):
+def editar_programa(request, programa_id):
     """vista para editar un programa existente"""
-    programa = get_object_or_404(Programa, id=programa_id) 
+    programa = get_object_or_404(Programa, id=programa_id)
     
-    if request.method=='POST':
+    # IMPORTANTE: Inicializar areas ANTES del if
+    areas = Area.objects.filter(activo=True).order_by('nombre')
+    
+    if request.method == 'POST':
         nombre = request.POST.get('nombre')
         area_id = request.POST.get('area')
-        descripcion = request.POST.get('descripcion','')
-        duracion_horas = request.POST.get('duracion_horas','')
-        activo = request.POST.get('activo')=='on' 
-        #validaciones 
+        descripcion = request.POST.get('descripcion', '')
+        duracion_horas = request.POST.get('duracion_horas', '')
+        activo = request.POST.get('activo') == 'on'
+        
+        # validaciones 
         if not nombre or not area_id:
-            messages.error(request,"El nombre y obligatorios")
-            areas = Area.objects.filter(activo=True).order_by('nombre')
-            return render(request, 'programas/editar_programa.html',
-{
-                'programa':programa,
-                'areas':areas
+            messages.error(request, "El nombre y el área son obligatorios")
+            return render(request, 'programas/editar_programa.html', {
+                'programa': programa,
+                'areas': areas
             })
+        
         try:
             area = Area.objects.get(id=area_id)
             
-            #Actualizar el programa
+            # Actualizar el programa
             programa.nombre = nombre
             programa.area = area
             programa.descripcion = descripcion
@@ -136,19 +139,19 @@ def editar_programa(request,programa_id):
             programa.activo = activo
             programa.save()
             
-            messages.success(request,f'Programa"{programa.nombre}"actualizado  exitosamente')
-            return redirect('detalle_programa',programa_id= programa.id)
+            messages.success(request, f'Programa "{programa.nombre}" actualizado exitosamente')
+            return redirect('programas:detalle_programa', programa_id=programa.id)
         
         except Area.DoesNotExist:
-            messages.error(request,'El area seleccionada no  existe')
+            messages.error(request, 'El área seleccionada no existe')
         except Exception as e:
-            messages.error(request,f'Error al actualizar el programa:{str(e)}')
-            #GET request
-            areas = Area.objects.filter(activo= True).order_by('nombre')
-            return render(request,'programas/editar_programa.html',{
-                'programa':programa,
-                'areas':areas
-            })
+            messages.error(request, f'Error al actualizar el programa: {str(e)}')
+    
+    # GET request - retornar el contexto con areas
+    return render(request, 'programas/editar_programa.html', {
+        'programa': programa,
+        'areas': areas
+    })
 def eliminar_programa(request,programa_id):
     """Vista para eliminar (desactivar un programa)"""
     programa = get_object_or_404(Programa, id=programa_id)
