@@ -11,11 +11,12 @@ def listar_programas(request):
     area_id = request.GET.get('area', '')
     activo = request.GET.get('activo', '')
     
-# Consultar base con anotaciones (contar solicitudes solicitadas)
+    # Consultar base con anotaciones (contar solicitudes solicitadas)
     programas = Programa.objects.select_related('area').annotate(
         total_solicitudes=Count('solicitud')   
     )
-    #Aplicar filtros
+    
+    # Aplicar filtros
     if search:
         programas = programas.filter(
             Q(nombre__icontains=search) | 
@@ -25,20 +26,29 @@ def listar_programas(request):
         programas = programas.filter(area_id=area_id)
     if activo:
         programas = programas.filter(activo=activo =='true')
-    #ordenar por area y nombre
-    programas = programas.order_by ('area_nombre','nombre')
     
-    #obtener todas las areas para el  filtro
+    # Ordenar por area y nombre
+    programas = programas.order_by('area__nombre','nombre')
+    
+    # Obtener todas las areas para el filtro
     areas = Area.objects.filter(activo=True).order_by('nombre')
     
-    context ={
+    # Calcular estadísticas
+    total_programas = Programa.objects.count()
+    programas_activos = Programa.objects.filter(activo=True).count()
+    total_areas = areas.count()
+    
+    context = {
         'programas': programas,
         'areas': areas,
         'search': search,
-        'area_filter':area_id,
-        'activo_filter': activo,  
+        'area_filter': area_id,
+        'activo_filter': activo,
+        'total_programas': total_programas,
+        'programas_activos': programas_activos,
+        'total_areas': total_areas,
     }
-    return render(request,'solicitudes/programas/listar_programas.html', context)
+    return render(request, 'programas/listar_programas.html', context)
 def detalle_programa(request,programa_id):
     """Vista para el  detalle de un programa"""
     programa = get_object_or_404(
@@ -53,7 +63,7 @@ def detalle_programa(request,programa_id):
     ).order_by('-fecha_recepcion')[:5]
     
     #obtener instructores que pueden  dar este programa
-    instructores = programa.istructores.filter(activo=True)
+    instructores = programa.instructores.filter(activo=True)
     
     context ={
         'programa': programa,
@@ -64,39 +74,37 @@ def detalle_programa(request,programa_id):
     
 def crear_programa(request):
     """vista para crear un nuevo programa"""
+    areas = Area.objects.filter(activo=True).order_by('nombre')  # Inicializa areas
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         area_id = request.POST.get('area')
-        descripcion = request.POST.get('descripcion','')
-        duracion_horas = request.POST.get('duracion_horas','')
-        activo = request.POST.get('activo')=='on'
+        descripcion = request.POST.get('descripcion', '')
+        duracion_horas = request.POST.get('duracion_horas', '')
+        activo = request.POST.get('activo') == 'on'
         
-        #validaciones
+        # validaciones
         if not nombre or not area_id:
-                    messages.error(request,'El nombre y el  area son obligatorios.')
-                    areas =Area.objects.filter(activo=True).order_by('nombre')
-                    return render(request, 'programas/crear_programa.html',{'areas':areas})
-                
+            messages.error(request, 'El nombre y el área son obligatorios.')
+            return render(request, 'programas/crear_programa.html', {'areas': areas})
+        
         try:
             area = Area.objects.get(id=area_id)
-            
-            #Crear Programa
+            # Crear Programa
             programa = Programa.objects.create(
                 nombre=nombre,
                 area=area,
                 descripcion=descripcion,
-                duracion_horas= int(duracion_horas) if duracion_horas else None,
+                duracion_horas=int(duracion_horas) if duracion_horas else None,
                 activo=activo
             )
-            messages.success(request, f'Programa"{programa.nombre}"creado  exitosamente')
+            messages.success(request, f'Programa "{programa.nombre}" creado exitosamente')
             return redirect('detalle_programa', programa_id=programa.id)
         except Area.DoesNotExist:
-            messages.error(request, 'El  area seleccionada no  existe')
+            messages.error(request, 'El área seleccionada no existe')
         except Exception as e:
-            messages.error(request,f'Error al  crear el programa:{str(e)}')
-            #GET request
-            areas = Area.objects.filter(activo=True).order_by('nombre')
-            return render(request,'programas/crear_programa.html',{'areas':areas})
+            messages.error(request, f'Error al crear el programa: {str(e)}')
+
+    return render(request, 'programas/crear_programa.html', {'areas': areas})
             
 def editar_programa(request,programa_id):
     """vista para editar un programa existente"""
