@@ -517,7 +517,7 @@
                 <div class="programa-actions">
                     <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'programas:editar_programa' programa.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                    <a href="{% url 'programas:eliminar_programa' programa.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar este programa?')">🚫 Desactivar</a>
+                    <a href="{% url 'programas:desactivar_programa' programa.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar este programa?')">🚫 Desactivar</a>
                 </div>
             </div>
             {% endfor %}

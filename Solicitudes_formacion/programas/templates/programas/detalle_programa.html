@@ -663,7 +663,7 @@
             <a href="{% url 'programas:editar_programa' programa.id %}" class="btn btn-warning">
                 ✏️ Editar Programa
             </a>
-            <a href="{% url 'programas:eliminar_programa' programa.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este programa?')">
+            <a href="{% url 'programas:desactivar_programa' programa.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este programa?')">
                 🗑️ Desactivar Programa
             </a>
         </div>

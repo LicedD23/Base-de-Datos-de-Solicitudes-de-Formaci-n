@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desactivar Programa - {{ programa.nombre }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header de advertencia */
+        .header {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(198, 40, 40, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .breadcrumb .current {
+            color: #c62828;
+            font-weight: 600;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        /* Warning boxes */
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(198, 40, 40, 0.1);
+        }
+
+        .warning-box h3 {
+            color: #c62828;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box p {
+            color: #d32f2f;
+            line-height: 1.6;
+        }
+
+        .info-box-yellow {
+            background: #fff3e0;
+            border-left: 4px solid #f57c00;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(245, 124, 0, 0.1);
+        }
+
+        .info-box-yellow h3 {
+            color: #e65100;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box-yellow p {
+            color: #ef6c00;
+            line-height: 1.6;
+        }
+
+        .info-box-blue {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+        }
+
+        .info-box-blue h3 {
+            color: #1565c0;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box-blue ul {
+            color: #1976d2;
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+
+        .info-box-blue li {
+            margin-bottom: 8px;
+        }
+
+        /* Info card */
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid #2e7d32;
+            padding: 20px 30px;
+        }
+
+        .info-card-header h2 {
+            color: #1b5e20;
+            font-size: 1.5em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card-body {
+            padding: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .status-inactive {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .description-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .description-box label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .description-box p {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        /* Form */
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+            border-color: #bdbdbd;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container > * {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚠️ Desactivar Programa</h1>
+            <p>¿Estás seguro de que deseas desactivar el programa: <strong>{{ programa.nombre }}</strong>?</p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'programas:listar_programas' %}">Programas de Formación</a>
+            <span>›</span>
+            <a href="{% url 'programas:detalle_programa' programa.id %}">{{ programa.nombre }}</a>
+            <span>›</span>
+            <span class="current">Desactivar</span>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {% if 'error' in message.tags %}❌{% else %}✓{% endif %} {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Warning Box -->
+        <div class="warning-box">
+            <h3>⚠️ Advertencia de Desactivación</h3>
+            <p>
+                Esta acción desactivará el programa. Los datos no se eliminarán, 
+                pero el programa ya no estará disponible para nuevas solicitudes de formación. 
+                Puedes reactivarlo posteriormente desde la opción de edición.
+            </p>
+        </div>
+
+        <!-- Information Card -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <h2>📋 Información del Programa</h2>
+            </div>
+            
+            <div class="info-card-body">
+                <div class="info-grid">
+                    <!-- Área de Formación -->
+                    <div class="info-item">
+                        <label>Área de Formación</label>
+                        <div class="value">{{ programa.area.nombre }}</div>
+                    </div>
+
+                    <!-- Duración -->
+                    <div class="info-item">
+                        <label>Duración del Programa</label>
+                        <div class="value">
+                            {% if programa.duracion_horas %}
+                                {{ programa.duracion_horas }} horas
+                            {% else %}
+                                No especificado
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Estado Actual -->
+                    <div class="info-item">
+                        <label>Estado Actual</label>
+                        <div class="value">
+                            <span class="status-badge {% if programa.activo %}status-active{% else %}status-inactive{% endif %}">
+                                {% if programa.activo %}● Activo{% else %}○ Inactivo{% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Creación -->
+                    <div class="info-item">
+                        <label>Fecha de Creación</label>
+                        <div class="value">{{ programa.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                    </div>
+
+                    <!-- Total Solicitudes -->
+                    <div class="info-item">
+                        <label>Total de Solicitudes</label>
+                        <div class="value">{{ total_solicitudes|default:"0" }}</div>
+                    </div>
+
+                    <!-- Solicitudes Activas -->
+                    <div class="info-item">
+                        <label>Solicitudes Activas</label>
+                        <div class="value">{{ solicitudes_activas|default:"0" }}</div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                {% if programa.descripcion %}
+                <div class="description-box">
+                    <label>Descripción</label>
+                    <p>{{ programa.descripcion }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Warning about active requests -->
+        {% if solicitudes_activas > 0 %}
+        <div class="info-box-yellow">
+            <h3>⚠️ Solicitudes Activas Encontradas</h3>
+            <p>
+                Este programa tiene <strong>{{ solicitudes_activas }}</strong> solicitud(es) activa(s) (pendientes o aprobadas). 
+                Al desactivar el programa, estas solicitudes no se verán afectadas y podrán continuar su proceso normal.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Impact Information -->
+        <div class="info-box-blue">
+            <h3>ℹ️ ¿Qué sucederá al desactivar?</h3>
+            <ul>
+                <li>El programa no aparecerá en los listados de selección para nuevas solicitudes</li>
+                <li>Los datos históricos y estadísticas se mantendrán intactos</li>
+                <li>Las solicitudes existentes no se verán afectadas</li>
+                <li>Podrás reactivar el programa en cualquier momento desde la opción de edición</li>
+            </ul>
+        </div>
+
+        <!-- Form -->
+        <div class="form-card">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-actions">
+                    <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-cancel">
+                        ⬅️ Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        🗑️ Desactivar Programa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -152,17 +152,33 @@ def editar_programa(request, programa_id):
         'programa': programa,
         'areas': areas
     })
-def eliminar_programa(request,programa_id):
-    """Vista para eliminar (desactivar un programa)"""
+def desactivar_programa(request, programa_id):
+    """Vista para desactivar un programa"""
     programa = get_object_or_404(Programa, id=programa_id)
+    
+    # Contar solicitudes asociadas al programa
+    total_solicitudes = programa.solicitud_set.count()
+    solicitudes_activas = programa.solicitud_set.filter(
+        estado__in=['pendiente', 'aprobada']
+    ).count()
+    
     if request.method == 'POST':
-    #En lugar de eliminar solo  se desactiva
+        # En lugar de eliminar, solo se desactiva
         programa.activo = False
         programa.save()
-        messages.success(request,f'Programa"{programa.nombre}"desactivado')
-        return redirect('listar_programas')
-    return render(request,'programas/eliminar_programa.html',
-    {'programa':programa})
+        
+        messages.success(
+            request, 
+            f'Programa "{programa.nombre}" desactivado exitosamente'
+        )
+        return redirect('programas:listar_programas')
+    
+    context = {
+        'programa': programa,
+        'total_solicitudes': total_solicitudes,
+        'solicitudes_activas': solicitudes_activas,
+    }
+    return render(request, 'programas/desactivar_programa.html', context)
     
         
     
