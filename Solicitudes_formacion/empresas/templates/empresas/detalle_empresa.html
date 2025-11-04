@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ empresa.nombre }} - Detalle Empresa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header principal con nombre de empresa */
+        .empresa-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .empresa-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .empresa-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        /* Sección de botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-edit {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        .btn-edit:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-delete {
+            background: white;
+            color: #c62828;
+            border: 2px solid #c62828;
+        }
+
+        .btn-delete:hover {
+            background: #c62828;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.3);
+        }
+
+        /* Estadísticas principales */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        /* Grid de información */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .info-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-section h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e8f5e9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: #e8f5e9;
+        }
+
+        .info-icon {
+            font-size: 1.5em;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        /* Sección de solicitudes */
+        .solicitudes-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            color: #2e7d32;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nueva-solicitud {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-nueva-solicitud:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #2e7d32;
+            border-bottom-color: #2e7d32;
+        }
+
+        .tab:hover {
+            color: #2e7d32;
+            background: #f5f5f5;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .solicitudes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .solicitudes-table thead {
+            background: #f5f5f5;
+        }
+
+        .solicitudes-table th {
+            padding: 15px;
+            text-align: left;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        .solicitudes-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .solicitudes-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .solicitudes-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .estado-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .estado-recibida {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .estado-respondida {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .estado-atendida {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .estado-finalizada {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .btn-ver-solicitud {
+            padding: 8px 16px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-ver-solicitud:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .empresa-header h1 {
+                font-size: 1.8em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .solicitudes-table {
+                font-size: 0.9em;
+            }
+
+            .solicitudes-table th,
+            .solicitudes-table td {
+                padding: 10px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header de la empresa -->
+        <div class="empresa-header">
+            <h1>🏢 {{ empresa.nombre }}</h1>
+            <p>📍 {{ empresa.municipio }}</p>
+            <p>📅 Registrada desde {{ empresa.fecha_registro|date:"d/m/Y" }}</p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'empresas:listar_empresas' %}">Empresas</a>
+            <span>›</span>
+            <span>{{ empresa.nombre }}</span>
+        </div>
+
+        <!-- Botones de acción (entre breadcrumb y estadísticas) -->
+        <div class="action-buttons">
+            <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn btn-editar">
+                ✏️ Editar Empresa
+            </a>
+            <a href="#" class="btn btn-desactivar" onclick="return confirm('¿Estás seguro de desactivar esta empresa?')">
+                ❌ Desactivar
+            </a>
+        </div>
+
+        <!-- Estadísticas principales -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>👥 Trabajadores</h3>
+                <div class="number">{{ empresa.numero_trabajadores }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>📋 Total Solicitudes</h3>
+                <div class="number">{{ total_solicitudes }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>⏳ Solicitudes Activas</h3>
+                <div class="number">{{ solicitudes_activas|length }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Solicitudes Finalizadas</h3>
+                <div class="number">{{ solicitudes_finalizadas|length }}</div>
+            </div>
+        </div>
+
+        <!-- Grid de información -->
+        <div class="info-grid">
+            <!-- Información de contacto -->
+            <div class="info-section">
+                <h2>📞 Información de Contacto</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">👤</div>
+                    <div class="info-content">
+                        <div class="info-label">Persona de Contacto</div>
+                        <div class="info-value">{{ empresa.contacto }}</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div class="info-content">
+                        <div class="info-label">Correo Electrónico</div>
+                        <div class="info-value">
+                            <a href="mailto:{{ empresa.correo }}" style="color: #2e7d32; text-decoration: none;">
+                                {{ empresa.correo }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📱</div>
+                    <div class="info-content">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">
+                            <a href="tel:{{ empresa.telefono }}" style="color: #2e7d32; text-decoration: none;">
+                                {{ empresa.telefono }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de ubicación -->
+            <div class="info-section">
+                <h2>📍 Ubicación y Detalles</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">🏙️</div>
+                    <div class="info-content">
+                        <div class="info-label">Municipio</div>
+                        <div class="info-value">{{ empresa.municipio }}</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">👥</div>
+                    <div class="info-content">
+                        <div class="info-label">Número de Trabajadores</div>
+                        <div class="info-value">{{ empresa.numero_trabajadores }} empleados</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📅</div>
+                    <div class="info-content">
+                        <div class="info-label">Fecha de Registro</div>
+                        <div class="info-value">{{ empresa.fecha_registro|date:"d \d\e F \d\e Y" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de solicitudes -->
+        <div class="solicitudes-section">
+            <div class="section-header">
+                <h2>📋 Historial de Solicitudes</h2>
+                <a href="#" class="btn-nueva-solicitud">
+                    ➕ Nueva Solicitud
+                </a>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('activas', event)">
+                    ⏳ Activas ({{ solicitudes_activas|length }})
+                </button>
+                <button class="tab" onclick="showTab('finalizadas', event)">
+                    ✅ Finalizadas ({{ solicitudes_finalizadas|length }})
+                </button>
+            </div>
+
+            <!-- Contenido de solicitudes activas -->
+            <div id="activas" class="tab-content active">
+                {% if solicitudes_activas %}
+                <table class="solicitudes-table">
+                    <thead>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Estado</th>
+                            <th>Instructor</th>
+                            <th>Fecha Recepción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for solicitud in solicitudes_activas %}
+                        <tr>
+                            <td>
+                                <strong>{{ solicitud.programa.nombre }}</strong><br>
+                                <small style="color: #666;">{{ solicitud.programa.area.nombre }}</small>
+                            </td>
+                            <td>
+                                <span class="estado-badge estado-{{ solicitud.estado|lower }}">
+                                    {{ solicitud.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if solicitud.instructor_asignado %}
+                                    {{ solicitud.instructor_asignado.nombre }}
+                                {% else %}
+                                    <span style="color: #999;">Sin asignar</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="#" class="btn-ver-solicitud">
+                                    👁️ Ver Detalle
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <p>No hay solicitudes activas para esta empresa</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Contenido de solicitudes finalizadas -->
+            <div id="finalizadas" class="tab-content">
+                {% if solicitudes_finalizadas %}
+                <table class="solicitudes-table">
+                    <thead>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Estado</th>
+                            <th>Instructor</th>
+                            <th>Fecha Recepción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for solicitud in solicitudes_finalizadas %}
+                        <tr>
+                            <td>
+                                <strong>{{ solicitud.programa.nombre }}</strong><br>
+                                <small style="color: #666;">{{ solicitud.programa.area.nombre }}</small>
+                            </td>
+                            <td>
+                                <span class="estado-badge estado-finalizada">
+                                    ✓ {{ solicitud.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if solicitud.instructor_asignado %}
+                                    {{ solicitud.instructor_asignado.nombre }}
+                                {% else %}
+                                    <span style="color: #999;">Sin asignar</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="#" class="btn-ver-solicitud">
+                                    👁️ Ver Detalle
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <p>No hay solicitudes finalizadas para esta empresa</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName, event) {
+            // Ocultar todos los contenidos
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Desactivar todos los tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar el contenido seleccionado
+            document.getElementById(tabName).classList.add('active');
+
+            // Activar el tab correspondiente
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

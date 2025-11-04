@@ -494,7 +494,7 @@
                     </div>
 
                     <div class="empresa-actions">
-                        <a href="#" class="btn-action btn-view">👁️ Ver</a>
+                        <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
                         <a href="#" class="btn-action btn-edit">✏️ Editar</a>
                         <a href="#" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta empresa?')">🚫 Desactivar</a>
                     </div>

@@ -53,31 +53,76 @@ def listar_empresas(request):
     }
     return render(request,'empresas/listar_empresas.html',context)
 
-def detalle_empresa(request,empresa_id):
-    """Vista para el  detalle de una empresa"""
-    empresa= get_object_or_404(
+def detalle_empresa(request, empresa_id):
+    """Vista para el detalle de una empresa"""
+    empresa = get_object_or_404(
         Empresa.objects.annotate(
             total_solicitudes=Count('solicitud')
         ),
         id=empresa_id
-        )
-        #Obtener todas las solicitudes de esta empresa
-    solicitudes=empresa.solicitud_set.select_related(
-        'programa_area',
+    )
+
+    # Obtener todas las solicitudes de esta empresa
+    solicitudes = empresa.solicitud_set.select_related(
+        'programa',
         'instructor_asignado'
     ).order_by('-fecha_recepcion')
-    
-    #Separar por estado
-    solicitudes_activas=solicitudes.exclude(estado='FINALIZADA')
-    solicitudes_finalizadas=solicitudes.filter(estado='FINALIZADA')
-    
-    context={
-        'empresa':empresa,
-        'solicitudes_activas':solicitudes_activas,
-        'solicitudes_finalizadas':solicitudes_finalizadas,
-        'total_solicitudes':solicitudes.count(),
+
+    # Separar por estado
+    solicitudes_activas = solicitudes.exclude(estado='FINALIZADA')
+    solicitudes_finalizadas = solicitudes.filter(estado='FINALIZADA')
+
+    # Imprimir conteos para depuración
+    print("Total de solicitudes:", solicitudes.count())
+    print("Solicitudes activas:", solicitudes_activas.count())
+    print("Solicitudes finalizadas:", solicitudes_finalizadas.count())
+
+    context = {
+        'empresa': empresa,
+        'solicitudes_activas': solicitudes_activas,
+        'solicitudes_finalizadas': solicitudes_finalizadas,
+        'total_solicitudes': solicitudes.count(),
     }
-    return render(request,'empresas_empresa.html',context)
+    return render(request, 'empresas/detalle_empresa.html', context)
+
+def editar_empresa(request, empresa_id):
+    """vista para editar una empresa"""
+    empresa = get_object_or_404(Empresa, id=empresa_id)
+    
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        contacto = request.POST.get('contacto')
+        correo = request.POST.get('correo')
+        telefono = request.POST.get('telefono')
+        municipio = request.POST.get('municipio')
+        direccion = request.POST.get('direccion')
+        numero_trabajadores = request.POST.get('numero_trabajadores')
+        
+        if not nombre:
+            messages.error(request, 'El nombre es obligatorio')
+            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+        
+        if Empresa.objects.filter(nombre__iexact=nombre).exclude(id=empresa_id).exists():
+            messages.error(request, f'Ya existe otra empresa con el nombre "{nombre}"')
+            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+        
+        try:
+            empresa.nombre = nombre
+            empresa.contacto = contacto
+            empresa.correo = correo
+            empresa.telefono = telefono
+            empresa.municipio = municipio
+            empresa.direccion = direccion
+            empresa.numero_trabajadores = numero_trabajadores
+            empresa.save()
+            messages.success(request, f'Empresa "{empresa.nombre}" actualizada exitosamente')
+            return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
+        except Exception as e:
+            messages.error(request, f'Error al actualizar la empresa: {str(e)}')
+            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+    
+    return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+    
             
         
         
