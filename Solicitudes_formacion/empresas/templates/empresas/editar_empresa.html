@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar {{ empresa.nombre }} - SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .info-banner {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-banner-icon {
+            font-size: 1.5em;
+        }
+
+        .info-banner-content {
+            flex: 1;
+        }
+
+        .info-banner-content strong {
+            display: block;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .info-banner-content p {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2e7d32;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label.required::after {
+            content: " *";
+            color: #c62828;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .form-group small {
+            display: block;
+            color: #888;
+            margin-top: 8px;
+            font-size: 0.88em;
+            font-style: italic;
+            padding-left: 5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 5px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            flex: 1;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #bdbdbd;
+        }
+
+        .required-note {
+            background: #e8f5e9;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .metadata-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .metadata-section h3 {
+            color: #2e7d32;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .metadata-item label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metadata-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .warning-box-icon {
+            font-size: 1.5em;
+            color: #ef6c00;
+        }
+
+        .warning-box-content {
+            flex: 1;
+        }
+
+        .warning-box-content strong {
+            display: block;
+            color: #ef6c00;
+            margin-bottom: 5px;
+        }
+
+        .warning-box-content p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Empresa</h1>
+            <p>Modifica la información de la empresa: <strong>{{ empresa.nombre }}</strong></p>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'empresas:listar_empresas' %}">Empresas</a>
+            <span>›</span>
+            <a href="{% url 'empresas:detalle_empresa' empresa.id %}">{{ empresa.nombre }}</a>
+            <span>›</span>
+            <span>Editar</span>
+        </div>
+
+        <div class="info-banner">
+            <div class="info-banner-icon">ℹ️</div>
+            <div class="info-banner-content">
+                <strong>Editando Empresa</strong>
+                <p>Los cambios afectarán a todas las solicitudes asociadas a esta empresa. Verifica la información antes de guardar.</p>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% else %}alert-success{% endif %}">
+                    {% if 'error' in message.tags %}
+                        ⚠️
+                    {% else %}
+                        ✓
+                    {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-card">
+            <div class="metadata-section">
+                <h3>📊 Información Actual</h3>
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <label>Fecha de Registro</label>
+                        <div class="value">{{ empresa.fecha_registro|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Total Solicitudes</label>
+                        <div class="value">{{ empresa.solicitud_set.count }}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Municipio Actual</label>
+                        <div class="value">{{ empresa.municipio }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="required-note">
+                ⚠️ Los campos marcados con asterisco (*) son obligatorios
+            </div>
+
+            <form method="POST" action="{% url 'empresas:editar_empresa' empresa.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="nombre" class="required">Nombre de la Empresa</label>
+                    <input 
+                        type="text" 
+                        id="nombre" 
+                        name="nombre" 
+                        value="{{ empresa.nombre }}"
+                        placeholder="Ejemplo: Constructora ABC S.A.S."
+                        required
+                        maxlength="200"
+                    >
+                    <small>Razón social o nombre comercial de la empresa (máximo 200 caracteres)</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contacto" class="required">Nombre del Contacto</label>
+                        <input 
+                            type="text" 
+                            id="contacto" 
+                            name="contacto" 
+                            value="{{ empresa.contacto }}"
+                            placeholder="Ejemplo: Juan Pérez"
+                            required
+                            maxlength="100"
+                        >
+                        <small>Persona de contacto en la empresa</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono" class="required">Teléfono</label>
+                        <input 
+                            type="tel" 
+                            id="telefono" 
+                            name="telefono" 
+                            value="{{ empresa.telefono }}"
+                            placeholder="Ejemplo: 3001234567"
+                            required
+                            maxlength="20"
+                        >
+                        <small>Número de contacto</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="correo" class="required">Correo Electrónico</label>
+                    <input 
+                        type="email" 
+                        id="correo" 
+                        name="correo" 
+                        value="{{ empresa.correo }}"
+                        placeholder="Ejemplo: contacto@empresa.com"
+                        required
+                    >
+                    <small>Correo electrónico de contacto</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="municipio" class="required">Municipio</label>
+                        <input 
+                            type="text" 
+                            id="municipio" 
+                            name="municipio" 
+                            value="{{ empresa.municipio }}"
+                            placeholder="Ejemplo: Bogotá"
+                            required
+                            maxlength="100"
+                        >
+                        <small>Municipio donde opera la empresa</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numero_trabajadores" class="required">Número de Trabajadores</label>
+                        <input 
+                            type="number" 
+                            id="numero_trabajadores" 
+                            name="numero_trabajadores" 
+                            value="{{ empresa.numero_trabajadores }}"
+                            placeholder="Ejemplo: 50"
+                            required
+                            min="1"
+                        >
+                        <small>Cantidad de empleados</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <textarea 
+                        id="direccion" 
+                        name="direccion"
+                        placeholder="Dirección completa de la empresa..."
+                    >{{ empresa.direccion }}</textarea>
+                    <small>Dirección física de la empresa (opcional)</small>
+                </div>
+
+                {% if empresa.solicitud_set.count > 0 %}
+                <div class="warning-box">
+                    <div class="warning-box-icon">⚠️</div>
+                    <div class="warning-box-content">
+                        <strong>Importante</strong>
+                        <p>Esta empresa tiene <strong>{{ empresa.solicitud_set.count }} solicitud(es)</strong> asociada(s).</p>
+                        <p>Cambiar la información afectará a todas las referencias del sistema en estas solicitudes.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn btn-secondary">
+                        ✕ Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

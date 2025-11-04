@@ -20,37 +20,7 @@
             max-width:1400px;
             margin:0 auto;
         }
-        /*Boton volver mejorado*/
-        .back-button{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding:12px 20px,
-            background:white;
-            color:#2e7d32;
-            border:2px solid #2e7d32;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:600;
-            font-size:0.95em;
-            transition:all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom:20px;
-        }
-        .back-button:hover{
-            background:#2e7d32;
-            color:white;
-            transform:translateX(-3px);
-            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
-        }
-        .back-button svg{
-            width:20px;
-            height:20px;
-            transition:transform 0.3s ease;
-        }
-        .back-button:hover svg{
-            transform:translateX(-3px);
-        }
+        
         .header{
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color:white;
@@ -67,6 +37,32 @@
         .header p{
             font-size:1.1em;
             opacity:0.95;
+        }
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
         }
         .controls-section{
             background:white;
@@ -386,19 +382,17 @@
 </head>
 <body>
     <div class="container">
-        <!--Boton volver al dashboard-->
-        <a href="{% url 'core:dashboard' %}" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver al Dashboard
-        </a>
 
         <div class="header">
             <h1>🏢 Empresas Aliadas</h1>
             <p>Gestiona las empresas asociadas al  SENA - Fortaleciendo alianzas estrategicas</p>
         </div>
-
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'programas:listar_programas' %}">Programas de Formación</a>
+            <span>›</span>
+        </div>
         <div class="controls-section">
             <form method="get">
                 <div class="filters-row">
@@ -495,7 +489,7 @@
 
                     <div class="empresa-actions">
                         <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
-                        <a href="#" class="btn-action btn-edit">✏️ Editar</a>
+                        <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
                         <a href="#" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta empresa?')">🚫 Desactivar</a>
                     </div>
                 </div>

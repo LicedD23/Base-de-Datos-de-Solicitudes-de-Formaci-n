@@ -491,7 +491,20 @@
             <span>›</span>
             <span>{{ programa.nombre }}</span>
         </div>
+        <div class="action-buttons" style="justify-content: center; gap: 20px;">
+            <a href="{% url 'area_formacion:detalle_area' programa.area.id %}" class="btn btn-secondary">
+            📂 Ver Área: {{ programa.area.nombre }}
+            </a>
+            <a href="{% url 'programas:editar_programa' programa.id %}" class="btn btn-warning">
+            ✏️ Editar Programa
+            </a>
+            <a href="{% url 'programas:desactivar_programa' programa.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este programa?')">
+            🗑️ Desactivar Programa
+            </a>
+</div>
 
+        <br>
+        <br>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success">
@@ -651,22 +664,7 @@
                 <p>Este programa aún no tiene solicitudes de capacitación</p>
             </div>
             {% endif %}
-        </div>
-
-        <div class="action-buttons">
-            <a href="{% url 'programas:listar_programas' %}" class="btn btn-back">
-                ⬅️ Volver al Listado
-            </a>
-            <a href="{% url 'area_formacion:detalle_area' programa.area.id %}" class="btn btn-secondary">
-                📂 Ver Área: {{ programa.area.nombre }}
-            </a>
-            <a href="{% url 'programas:editar_programa' programa.id %}" class="btn btn-warning">
-                ✏️ Editar Programa
-            </a>
-            <a href="{% url 'programas:desactivar_programa' programa.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este programa?')">
-                🗑️ Desactivar Programa
-            </a>
-        </div>
+        
     </div>
 </body>
 </html>
