@@ -471,7 +471,7 @@
             <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn btn-editar">
                 ✏️ Editar Empresa
             </a>
-            <a href="#" class="btn btn-desactivar" onclick="return confirm('¿Estás seguro de desactivar esta empresa?')">
+            <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn btn-desactivar">
                 ❌ Desactivar
             </a>
         </div>

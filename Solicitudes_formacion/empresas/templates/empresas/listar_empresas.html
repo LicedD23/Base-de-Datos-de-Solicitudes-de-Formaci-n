@@ -413,6 +413,7 @@
                         <button type="submit" class="btn btn-secondary">Filtrar</button>
                     </div>
                 </div>
+            </form>
 
                 <div class="actions-row">
                     {% if search or municipio_filter or min_trabajadores_filter %}
@@ -420,11 +421,10 @@
                         {% else %}
                             <div></div>
                         {% endif %}
-                        <a href="#" class="btn btn-primary">
+                        <a href="{% url 'empresas:crear_empresa'%}" class="btn btn-primary">
                             ➕ Nueva Empresa
                         </a>
                     </div>
-                </form>
             </div>
 
             <div class="stats-bar">
@@ -490,7 +490,7 @@
                     <div class="empresa-actions">
                         <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
                         <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                        <a href="#" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta empresa?')">🚫 Desactivar</a>
+                        <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete">❌ Desactivar</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -506,7 +506,7 @@
                         Aun no hay  empresas registradas en  el sistema
                     {% endif %}
                 </p>
-                <a href="#" class="btn btn-primary">➕ Crear Primera Empresa</a>
+                <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary">➕ Crear Primera Empresa</a>
             </div>
             {% endif %}
         </div>
