@@ -424,7 +424,15 @@
             <span>›</span>
             <span>{{ area.nombre }}</span>
         </div>
-
+        <div class="action-buttons" style="justify-content: center; gap: 20px;">
+            <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn btn-warning">
+                ✏️ Editar Área
+            </a>
+            <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn btn-danger">
+                🗑️ Eliminar Área
+            </a>
+        </div>
+        <br>
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success">
@@ -551,18 +559,6 @@
                 </a>
             </div>
             {% endif %}
-        </div>
-
-        <div class="action-buttons">
-            <a href="{% url 'area_formacion:listar_areas' %}" class="btn btn-back">
-                ⬅️ Volver al Listado
-            </a>
-            <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn btn-warning">
-                ✏️ Editar Área
-            </a>
-            <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn btn-danger">
-                🗑️ Eliminar Área
-            </a>
         </div>
     </div>
 </body>
