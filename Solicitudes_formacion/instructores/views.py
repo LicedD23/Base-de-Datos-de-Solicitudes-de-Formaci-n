@@ -145,8 +145,8 @@ def crear_instructor(request):
             messages.error(request,f'Error al  crear el instructor: {str(e)}')
             
         #GET request
-        programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-        return render(request, 'instructores/crear_instructor.html',{'programas': programas})
+    programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+    return render(request, 'instructores/crear_instructor.html',{'programas': programas})
     
 def editar_instructor(request, instructor_id):
     """Vista para editar un instructor existente"""
@@ -207,9 +207,9 @@ def editar_instructor(request, instructor_id):
             return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
         except Exception as e:
             messages.error(request, f'Error al actualizar el instructor: {str(e)}')
-            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-            especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
-            return render(request, 'instructores/editar_instructor.html', {
+        programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+        especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
+        return render(request, 'instructores/editar_instructor.html', {
                 'instructor': instructor,
                 'programas': programas,
                 'especialidades_instructor': list(especialidades_instructor),
@@ -230,33 +230,47 @@ def desactivar_instructor(request, instructor_id):
     """Vista para desactivar un instructor"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
     
-    #Contar solicitudes activas asignadas
+    # Contar solicitudes activas asignadas
     solicitudes_activas = instructor.solicitud_set.exclude(estado='FINALIZADA').count()
+    
     if request.method == 'POST':
-        #Verificar si  tiene solicitudes activas
+        # Verificar si tiene solicitudes activas
         if solicitudes_activas > 0:
             reasignar = request.POST.get('reasignar')
             if reasignar == 'on':
-                #Desasignar instructor de solicitudes activas
-                instructor.solicitud_set.exclude(estado='FINALIZADA').update(instructor_asignadp=None)
+                # Desasignar instructor de solicitudes activas
+                instructor.solicitud_set.exclude(estado='FINALIZADA').update(instructor_asignado=None)
                 
                 messages.warning(
                     request,
-                    f'{solicitudes_activas} solicitud(es) activa(s) fueron designadas del instructor'
+                    f'{solicitudes_activas} solicitud(es) activa(s) fueron desasignadas del instructor'
                 )
-                #Desactivar el instructor
-                instructor.activo = False
-                instructor.save()
-                messages.success(request, f'Instructor "{instructor.nombre}"desactivado exitosamente')
-                return redirect('instructores:listar_instructores')
-            
-            context={
-                'instructor':instructor,
-                'solicitudes_activas':solicitudes_activas,
-            }
-            return render(request, 'instructores/desactivar_instructor.html',context)
+            else:
+                # Si no marca la opción, no puede desactivar
+                messages.error(
+                    request,
+                    'Debes confirmar la desasignación de las solicitudes activas para poder desactivar al instructor'
+                )
+                context = {
+                    'instructor': instructor,
+                    'solicitudes_activas': solicitudes_activas,
+                }
+                return render(request, 'instructores/desactivar_instructor.html', context)
         
-                
+        # Desactivar el instructor
+        instructor.activo = False
+        instructor.save()
+        
+        messages.success(request, f'Instructor "{instructor.nombre}" desactivado exitosamente')
+        return redirect('instructores:listar_instructores')
+    
+    # GET request
+    context = {
+        'instructor': instructor,
+        'solicitudes_activas': solicitudes_activas,
+    }
+    return render(request, 'instructores/desactivar_instructor.html', context)
+    
             
     
             
