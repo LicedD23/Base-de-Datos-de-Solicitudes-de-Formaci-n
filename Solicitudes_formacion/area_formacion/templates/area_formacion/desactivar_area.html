@@ -25,12 +25,12 @@
         }
         /* Header de advertencia */
         .header {
-            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            background: linear-gradient(90deg, #1b5e20, #2e7d32);
             color: white;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(198, 40, 40, 0.3);
+            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
         }
         .header h1 {
             font-size: 2.5em;
@@ -325,6 +325,32 @@
                 justify-content: center;
             }
         }
+        /*FOOTER STYLES*/
+        footer{
+            flex-shrink:0;
+            background:linear-gradient(9deg,  #1b5e20, #2e7d32);
+            color:white;
+            text-align:center;
+            padding:1.5rem;
+            font-size:0.9rem;
+            box-shadow:0 -4px 20pxrgba(27,94,32,0.2);
+            position.relative;
+            margin-top:40px;
+        }
+        footer::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:2px;
+            background:linear-gradient(90deg, transparent, #66bb6a, transparent);
+        }
+        footer p{
+            margin:0;
+            font-weight:600;
+            letter-spacing:0.5px;
+        }
         /* Animations */
         @keyframes slideIn {
             from {
@@ -334,6 +360,13 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+            .page-wrapper{
+                padding:15px;
+            }   
+            footer{
+                font-size:0.85rem;
+                padding:1.2rem;
             }
         }
         .container > * {
@@ -486,5 +519,9 @@
             </form>
         </div>
     </div>
+    <!--FOOTER-->
+    <footer>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+    </footer>
 </body>
 </html>
