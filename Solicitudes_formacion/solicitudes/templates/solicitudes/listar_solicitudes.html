@@ -346,6 +346,16 @@
             background: #ef6c00;
             color: white;
         }
+        .btn-delete {
+            background: #cb5656ff;
+            color:white;
+        }
+
+        .btn-delete:hover {
+            background: #751414ff;
+            color:white;
+        }
+        
         .empty-state {
             background: white;
             padding: 60px 40px;
@@ -558,8 +568,9 @@
                         </div>
 
                         <div class="solicitud-actions">
-                            <a href="#" class="btn-action btn-view">👁️ Ver</a>
+                            <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
                             <a href="#" class="btn-action btn-edit">✏️ Editar</a>
+                            <a href="#" class="btn-action btn-delete">❌ Eliminar</a>
                         </div>
                     </div>
                 {% endfor %}

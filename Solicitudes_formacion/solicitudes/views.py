@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .email_handler import EmailSolicitudHandler
@@ -8,6 +8,7 @@ from django.utils import timezone
 from datetime import timedelta
 from programas.models import Programa
 from empresas.models import Empresa
+from instructores.models import Instructor
 
 # Create your views here.
 def listar_solicitudes(request):
@@ -169,3 +170,30 @@ def probar_conexion_email(request):
             'success': False,
             'message': f'❌ Error: {str(e)}\n\n{traceback.format_exc()}'
         })
+
+def detalle_solicitud(request, solicitud_id):
+    """Vista para el detalle de una solicitud"""
+    solicitud = get_object_or_404(
+        Solicitud.objects.select_related(
+            'empresa',
+            'programa',
+            'programa__area',
+            'instructor_asignado'
+        ),
+        id=solicitud_id
+    )
+    
+    # Obtener instructores disponibles para asignación
+    instructores_disponibles = Instructor.objects.filter(
+        activo=True,
+        especialidad=solicitud.programa
+    ).order_by('nombre')
+    
+    context = {
+        'solicitud': solicitud,
+        'instructores_disponibles': instructores_disponibles,
+    }
+    
+    return render(request, 'solicitudes/detalle_solicitud.html', context)
+        
+    

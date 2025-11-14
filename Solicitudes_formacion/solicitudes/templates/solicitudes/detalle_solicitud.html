@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud #{{ solicitud.id }} - Detalle SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-info p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .solicitud-id {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .status-badge-large {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status-recibida {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-respondida {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-atendida {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .status-finalizada {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #ef6c00;
+            border-left: 4px solid #ef6c00;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .stat-card .text-value {
+            color: #333;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .info-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .info-item .value a {
+            color: #1976d2;
+            transition: color 0.3s ease;
+        }
+
+        .info-item .value a:hover {
+            color: #0d47a1;
+            text-decoration: underline;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .observaciones-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.8;
+            color: #555;
+            border-left: 4px solid #64b5f6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            opacity: 0.3;
+        }
+
+        .instructor-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #1976d2;
+            margin-top: 20px;
+        }
+
+        .instructor-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .instructor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            color: white;
+            font-weight: 700;
+        }
+
+        .instructor-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #0d47a1;
+        }
+
+        .instructor-info {
+            color: #1565c0;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        .instructor-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .instructor-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1565c0;
+            font-size: 0.95em;
+        }
+
+        .asignar-instructor-section {
+            background: #f0f4f8;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px dashed #1976d2;
+            margin-top: 20px;
+        }
+
+        .asignar-instructor-section h3 {
+            color: #1976d2;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .instructor-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .instructor-select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin-top: 20px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2e7d32;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #2e7d32;
+        }
+
+        .timeline-item.inactive::before {
+            background: #e0e0e0;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+
+        .timeline-content {
+            background: #f9f9f9;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .timeline-item.inactive .timeline-content {
+            border-left-color: #e0e0e0;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item.inactive .timeline-title {
+            color: #999;
+        }
+
+        .timeline-date {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        .btn-secondary:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 2px solid #1565c0;
+        }
+
+        .btn-info:hover {
+            background: #1565c0;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #fff3e0;
+            color: #ef6c00;
+            border: 2px solid #ef6c00;
+        }
+
+        .btn-warning:hover {
+            background: #ef6c00;
+            color: white;
+        }
+
+        .btn-back {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background: linear-gradient(90deg, #1b5e20, #2e7d32);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            position: relative;
+            margin-top: 40px;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #66bb6a, transparent);
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .header-info h1 {
+                font-size: 1.8em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            footer {
+                font-size: 0.85rem;
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>📋 Solicitud de Formación</h1>
+                    <span class="solicitud-id">#{{ solicitud.id }}</span>
+                    <p style="margin-top: 15px;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
+                </div>
+                <span class="status-badge-large status-{{ solicitud.estado|lower }}">
+                    {{ solicitud.get_estado_display }}
+                </span>
+            </div>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
+            <span>›</span>
+            <span>Solicitud #{{ solicitud.id }}</span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% else %}alert-error{% endif %}">
+                    {% if 'success' in message.tags %}
+                        ✓
+                    {% elif 'warning' in message.tags %}
+                        ⚠️
+                    {% else %}
+                        ✕
+                    {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <br>
+        <div class="action-buttons">
+            <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-back">
+                ← Volver a Solicitudes
+            </a>
+            <a href="#" class="btn btn-info">
+                ✏️ Actualizar Estado
+            </a>
+            <a href="#" class="btn btn-secondary">
+                📧 Enviar Correo
+            </a>
+            <a href="#" class="btn btn-warning">
+                📄 Generar Reporte
+            </a>
+        </div>
+        <br>
+        <br>
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Fecha de Recepción</h3>
+                <div class="text-value">{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Días Transcurridos</h3>
+                <div class="number">{{ solicitud.fecha_recepcion|timesince|slice:":2" }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Estado Actual</h3>
+                <div class="text-value">{{ solicitud.get_estado_display }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Área de Formación</h3>
+                <div class="text-value" style="font-size: 1em;">{{ solicitud.programa.area.nombre }}</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>📋 Información General</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Empresa Solicitante</label>
+                    <div class="value">
+                        <a href="{% url 'empresas:detalle_empresa' solicitud.empresa.id %}">
+                            {{ solicitud.empresa.nombre }}
+                        </a>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Programa Solicitado</label>
+                    <div class="value">
+                        <a href="{% url 'programas:detalle_programa' solicitud.programa.id %}">
+                            {{ solicitud.programa.nombre }}
+                        </a>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Área de Formación</label>
+                    <div class="value">
+                        <a href="{% url 'area_formacion:detalle_area' solicitud.programa.area.id %}">
+                            {{ solicitud.programa.area.nombre }}
+                        </a>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Estado</label>
+                    <div class="value">{{ solicitud.get_estado_display }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Fecha de Recepción</label>
+                    <div class="value">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% if solicitud.fecha_respuesta %}
+                <div class="info-item">
+                    <label>Fecha de Respuesta</label>
+                    <div class="value">{{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+                {% if solicitud.fecha_atencion %}
+                <div class="info-item">
+                    <label>Fecha de Atención</label>
+                    <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👨‍🏫 Instructor Asignado</h2>
+            
+            {% if solicitud.instructor_asignado %}
+                <div class="instructor-card">
+                    <div class="instructor-header">
+                        <div class="instructor-avatar">
+                            {{ solicitud.instructor_asignado.nombre.0|upper }}
+                        </div>
+                        <div>
+                            <div class="instructor-name">{{ solicitud.instructor_asignado.nombre }}</div>
+                            <div class="instructor-info">Instructor Especializado</div>
+                        </div>
+                    </div>
+                    <div class="instructor-details">
+                        <div class="instructor-detail-item">
+                            <span>📧</span>
+                            <span>{{ solicitud.instructor_asignado.correo }}</span>
+                        </div>
+                        <div class="instructor-detail-item">
+                            <span>📞</span>
+                            <span>{{ solicitud.instructor_asignado.telefono }}</span>
+                        </div>
+                        <div class="instructor-detail-item">
+                            <span>📚</span>
+                            <span>{{ solicitud.instructor_asignado.especialidad.count }} especialidades</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="margin-top: 20px;">
+                        <a href="{% url 'instructores:detalle_instructor' solicitud.instructor_asignado.id %}" class="btn btn-info">
+                            👁️ Ver Perfil Completo
+                        </a>
+                        <a href="#" class="btn btn-warning">
+                            🔄 Cambiar Instructor
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="asignar-instructor-section">
+                    <h3>📌 Asignar Instructor</h3>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Esta solicitud aún no tiene instructor asignado. Selecciona uno de los instructores disponibles para este programa.
+                    </p>
+                    {% if instructores_disponibles %}
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <select name="instructor_id" class="instructor-select" required>
+                                <option value="">-- Seleccionar Instructor --</option>
+                                {% for instructor in instructores_disponibles %}
+                                    <option value="{{ instructor.id }}">
+                                        {{ instructor.nombre }} - {{ instructor.correo }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="action-buttons" style="margin-top: 15px; justify-content: flex-start;">
+                                <button type="submit" class="btn btn-primary">
+                                    ✓ Asignar Instructor
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <p>No hay instructores disponibles para este programa</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <h2>🕒 Historial de Estados</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">📥 Solicitud Recibida</div>
+                        <div class="timeline-date">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if not solicitud.fecha_respuesta %}inactive{% endif %}">
+                    <div class="timeline-content">
+                        <div class="timeline-title">📧 Respuesta Enviada</div>
+                        <div class="timeline-date">
+                            {% if solicitud.fecha_respuesta %}
+                                {{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Pendiente
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if not solicitud.fecha_atencion %}inactive{% endif %}">
+                    <div class="timeline-content">
+                        <div class="timeline-title">✓ Solicitud Atendida</div>
+                        <div class="timeline-date">
+                            {% if solicitud.fecha_atencion %}
+                                {{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Pendiente
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if solicitud.estado != 'FINALIZADA' %}inactive{% endif %}">
+                    <div class="timeline-content">
+                        <div class="timeline-title">🎓 Formación Finalizada</div>
+                        <div class="timeline-date">
+                            {% if solicitud.estado == 'FINALIZADA' %}
+                                Completada
+                            {% else %}
+                                Pendiente
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if solicitud.observaciones %}
+        <div class="section">
+            <h2>📝 Observaciones</h2>
+            <div class="observaciones-box">
+                {{ solicitud.observaciones|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+    </footer>
+</body>
+</html>
