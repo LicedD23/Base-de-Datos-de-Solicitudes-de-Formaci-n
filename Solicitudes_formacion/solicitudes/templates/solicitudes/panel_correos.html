@@ -14,33 +14,15 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             min-height: 100vh;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(46, 125, 50, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(27, 94, 32, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
         
         .header {
@@ -50,103 +32,29 @@
             padding: 40px;
             border-radius: 24px;
             margin-bottom: 30px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-            animation: slideDown 0.6s ease-out;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         
         .header h1 {
             font-size: 2.8em;
             margin-bottom: 12px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .header p {
-            font-size: 1.15em;
-            opacity: 0.95;
-            font-weight: 400;
         }
         
         .breadcrumb {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             padding: 18px 24px;
             border-radius: 16px;
             margin-bottom: 24px;
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 0.95em;
-            animation: fadeIn 0.6s ease-out 0.2s backwards;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .breadcrumb a {
             color: #2e7d32;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .breadcrumb a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #2e7d32;
-            transition: width 0.3s ease;
-        }
-        
-        .breadcrumb a:hover::after {
-            width: 100%;
-        }
-        
-        .breadcrumb span {
-            color: #999;
-            font-weight: 500;
         }
         
         .stats-grid {
@@ -158,43 +66,10 @@
         
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             padding: 32px;
             border-radius: 20px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border-left: 5px solid #2e7d32;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeIn 0.6s ease-out backwards;
-        }
-        
-        .stat-card:nth-child(1) { animation-delay: 0.3s; }
-        .stat-card:nth-child(2) { animation-delay: 0.4s; }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(46, 125, 50, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            transition: transform 0.6s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 
-                0 16px 48px rgba(46, 125, 50, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        }
-        
-        .stat-card:hover::before {
-            transform: scale(1.5);
         }
         
         .stat-card h3 {
@@ -202,38 +77,25 @@
             font-size: 0.85em;
             margin-bottom: 16px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
         }
         
         .stat-card .number {
             font-size: 3.2em;
             font-weight: 800;
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
+            color: #2e7d32;
         }
         
         .control-panel {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 24px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
             margin-bottom: 30px;
-            animation: fadeIn 0.6s ease-out 0.5s backwards;
         }
         
         .control-panel h2 {
             color: #2e7d32;
             margin-bottom: 24px;
             font-size: 1.8em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
         }
         
         .info-box {
@@ -242,42 +104,11 @@
             border-radius: 16px;
             border-left: 4px solid #1976d2;
             margin-bottom: 28px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .info-box::before {
-            content: '💡';
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 3em;
-            opacity: 0.1;
         }
         
         .info-box h3 {
             color: #1565c0;
             margin-bottom: 16px;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-        
-        .info-box p {
-            color: #424242;
-            line-height: 1.7;
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        
-        .info-box ul {
-            margin-left: 24px;
-            color: #424242;
-        }
-        
-        .info-box li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-            font-weight: 500;
         }
         
         .btn-group {
@@ -293,161 +124,207 @@
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
-            box-shadow: 
-                0 8px 24px rgba(46, 125, 50, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3);
         }
         
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 
-                0 12px 32px rgba(46, 125, 50, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 32px rgba(46, 125, 50, 0.4);
         }
         
-        .btn-primary:active {
-            transform: translateY(-1px);
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .btn-secondary {
             background: white;
             color: #2e7d32;
             border: 2px solid #2e7d32;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
         
         .btn-secondary:hover {
             background: #2e7d32;
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3);
         }
         
-        .recent-solicitudes {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            animation: fadeIn 0.6s ease-out 0.6s backwards;
+        /* MODAL MODERNO,ESTILO SENA */
+        .model-overlay{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:0;
+            background:rgba(0,0,0,0.55);
+            backdrop-filter:blur(4px);
+            z-index:999;
         }
-        
-        .recent-solicitudes h2 {
-            color: #2e7d32;
-            margin-bottom: 28px;
-            font-size: 1.8em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+        .modal-overlay.active{
+            display:block;
         }
+        /* Modal contenedor */
+        .console-modal{
+            display:none;
+            position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            width:90%;
+            max-width:850px;
+            max-height:85vh;
         
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
+        /* Fondo Moderno translucido */
+        background:rgba(255,255,255,0.94);
+        backdrop-filter:blur(20px);
+        border-radius:24px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.35);
+        overflow:hidden;
+        z-index:1000;
         }
-        
-        thead tr {
-            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+        .console-modal.active{
+            display:block;
+            animation:modalDrop 0.35s ease-out;
         }
-        
-        th {
-            padding: 16px;
-            text-align: left;
-            color: #333;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85em;
-            letter-spacing: 0.5px;
+        @keyframes modalDrop{
+            from{
+                opacity:0;
+                transform:ttranslate(-50%,-50%);
+            }
         }
-        
-        th:first-child {
-            border-radius: 12px 0 0 12px;
+        /*Header*/
+        .console-header{
+            padding:22px 28px;
+            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            box-shadow:0 4px 16px rgba(0,0,0,0.15);
         }
-        
-        th:last-child {
-            border-radius: 0 12px 12px 0;
+        .console-header h3{
+            font-size:1.5em;
+            font-weight:600;
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
-        
-        tbody tr {
-            background: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        /*Boton cerrar*/
+        .close-console{
+            width:36px;
+            height:36px;
+            border-radius:12px;
+            border:none;
+            background:rgba(255,255,255,0.25);
+            backdrop-filter:blur(10px);
+            font-size:1.2em;
+            color:white;
+            cursor:pointer;
+            transition:all .25s ease;
         }
-        
-        tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15);
+        .close-console:hover{
+            background:rgba(255,255,255,0.45);
+            transform:scale(1.1);
         }
-        
-        td {
-            padding: 18px 16px;
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
+        /* Body Moderno */
+        .console-body{
+            padding:24px 28px;
+            max-height:65vh;
+            overflow-y:auto;
+
+            /*fondo suave*/
+            background:#fafafa;
+
         }
-        
-        td:first-child {
-            border-left: 1px solid #f0f0f0;
-            border-radius: 12px 0 0 12px;
+        /*Entradas de log con estilo "notificacion"*/
+        .log-entry{
+            margin-bottom:12px;
+            padding:14px 18px;
+            border-radius:14px;
+
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+
+            background:white;
+            border-left:5px solid #2e7d32;
+            box-shadow:0 3px 12px rgba(0,0,0,0.06);
+
+            animation:fadeInUp .35s ease;
         }
-        
-        td:last-child {
-            border-right: 1px solid #f0f0f0;
-            border-radius: 0 12px 12px 0;
+        @keyframes fadeInUP{
+            from{opacity:0; transform:translateY(8px);}
+            to{opacity:1; transform:translateY(0);}
         }
-        
-        .badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        /*Tipos de logs*/
+        .log-info{
+            border-left-color:#2196f3;
         }
-        
-        .badge-recibida {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            color: #e65100;
+        .log-success{
+            border-left-color:#4caf50;
         }
-        
+        .log-error{
+            border-left-color:#f44336;
+        }
+        .log-warning{
+            border-left-color:#ff9800;
+        }
+        .log-section{
+            font-weight:700;
+            color:#2e7d32;
+            font-size:1.1em;
+        }
+        .log-separator{
+            text-align:center;
+            font-size:.9em;
+        }
+        /*Detalles empresa/ programa*/
+        .log-empresa{
+            border-left-color:#0288d1;
+        }
+        .log-programa{
+            border-left-color:#8bc34a;
+        }
+        /*Indicador de procesamiento*/
+        .processing-indicator{
+            text-align:center;
+            padding:30px 0;
+        }
+        .spinner{
+            width:45px;
+            height:45px;
+            border:4px solid rgba(0,0,0,0.1);
+            border-top-color:#2e7d32;
+            border-radius:50%
+            animation:spin 0.8s linear infinite;
+            margin:0 auto 10px;
+        }
         .alert {
             padding: 18px 24px;
             border-radius: 16px;
             margin-bottom: 24px;
             font-weight: 500;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             animation: slideDown 0.4s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .alert-success {
@@ -468,35 +345,61 @@
             border-left: 4px solid #fbc02d;
         }
         
-        footer {
-            background: linear-gradient(135deg, rgba(27, 94, 32, 0.95) 0%, rgba(46, 125, 50, 0.95) 100%);
-            backdrop-filter: blur(10px);
-            color: white;
-            text-align: center;
-            padding: 32px;
-            font-size: 0.95em;
-            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
-            margin-top: 48px;
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        
+        thead tr {
+            background: #f5f5f5;
+        }
+        
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+        
+        tbody tr {
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15);
+        }
+        
+        td {
+            padding: 18px 16px;
+        }
+        
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .badge-recibida {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .recent-solicitudes {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 24px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeIn 0.6s ease-out 0.7s backwards;
         }
         
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-        }
-        
-        footer p {
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .recent-solicitudes h2 {
+            color: #2e7d32;
+            margin-bottom: 28px;
+            font-size: 1.8em;
         }
         
         .empty-state {
@@ -504,36 +407,25 @@
             padding: 80px 20px;
             color: #999;
         }
-        
-        .empty-state::before {
-            content: '📭';
-            display: block;
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .btn-group {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
     </style>
 </head>
 <body>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    
+    <div class="console-modal" id="consoleModal">
+        <div class="console-header">
+            <h3>🖥️ Procesamiento en Tiempo Real</h3>
+            <button class="close-console" onclick="closeConsole()">×</button>
+        </div>
+        <div class="console-body">
+            <div class="processing-indicator" id="processingIndicator">
+                <div class="spinner"></div>
+                <p style="color: #fff;">Procesando correos...</p>
+            </div>
+            <div id="consoleContent"></div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>📧 Panel de Gestión de Correos</h1>
@@ -543,7 +435,7 @@
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes de Formación</a>
+            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
             <span>›</span>
             <span style="color: #2e7d32; font-weight: 600;">Panel de Correos</span>
         </div>
@@ -572,24 +464,20 @@
 
             <div class="info-box">
                 <h3>ℹ️ Cómo funciona el sistema automático</h3>
-                <p>El sistema realiza las siguientes tareas de forma inteligente:</p>
+                <p>El sistema realiza las siguientes tareas:</p>
                 <ul>
-                    <li>📥 Lee correos no leídos de la bandeja de entrada configurada</li>
-                    <li>🔍 Extrae información usando expresiones regulares avanzadas</li>
-                    <li>🏢 Crea empresas nuevas automáticamente si no existen en el sistema</li>
-                    <li>📋 Genera solicitudes de formación de manera automática</li>
-                    <li>✉️ Envía respuestas automáticas personalizadas al remitente</li>
+                    <li>📥 Lee correos no leídos</li>
+                    <li>🔍 Extrae información automáticamente</li>
+                    <li>🏢 Crea empresas si no existen</li>
+                    <li>📋 Genera solicitudes de formación</li>
+                    <li>✉️ Envía respuestas automáticas</li>
                 </ul>
             </div>
 
             <div class="btn-group">
-                <form method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="procesar">
-                    <button type="submit" class="btn btn-primary">
-                        📬 Procesar Correos Nuevos
-                    </button>
-                </form>
+                <button onclick="handleProcesarCorreos()" id="procesarBtn" class="btn btn-primary">
+                    📬 Procesar Correos Nuevos
+                </button>
 
                 <button onclick="probarConexion()" class="btn btn-secondary">
                     🔌 Probar Conexión Email
@@ -609,9 +497,9 @@
                         <tr>
                             <th>ID</th>
                             <th>Empresa</th>
-                            <th>Programa Solicitado</th>
+                            <th>Programa</th>
                             <th>Estado</th>
-                            <th>Fecha Recepción</th>
+                            <th>Fecha</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -632,65 +520,165 @@
                 </table>
             {% else %}
                 <div class="empty-state">
-                    <p style="font-size: 1.2em; font-weight: 500;">No hay solicitudes recientes</p>
-                    <p style="margin-top: 12px; opacity: 0.7;">Las solicitudes aparecerán aquí una vez procesadas</p>
+                    <p>📭 No hay solicitudes recientes</p>
                 </div>
             {% endif %}
         </div>
     </div>
 
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA) • Sistema de Gestión Automática</p>
-    </footer>
-
     <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function addLog(message, type = 'info') {
+            const consoleContent = document.getElementById('consoleContent');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'section': '📋',
+                'separator': '',
+                'empresa': '🏢',
+                'programa': '📚',
+                'info': 'ℹ️'
+            };
+
+            const icon = icons[type] || 'ℹ️';
+
+            if (type === 'separator') {
+                logEntry.className = 'log-separator';
+                logEntry.textContent = message;
+            } else {
+                logEntry.innerHTML = `<span class="log-icon">${icon}</span><span>${escapeHtml(message)}</span>`;
+            }
+
+            consoleContent.appendChild(logEntry);
+            consoleContent.parentElement.scrollTop = consoleContent.parentElement.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleContent').innerHTML = '';
+        }
+
+        function showProcessingIndicator(show) {
+            const indicator = document.getElementById('processingIndicator');
+            indicator.className = show ? 'processing-indicator active' : 'processing-indicator';
+        }
+
+        function openConsole() {
+            document.getElementById('consoleModal').classList.add('active');
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeConsole() {
+            document.getElementById('consoleModal').classList.remove('active');
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        async function handleProcesarCorreos() {
+            const btn = document.getElementById('procesarBtn');
+            const originalText = btn.innerHTML;
+
+            openConsole();
+            clearConsole();
+            showProcessingIndicator(true);
+
+            btn.disabled = true;
+            btn.innerHTML = '🔄 Procesando...';
+
+            addLog('🚀 Iniciando procesamiento de correos...', 'section');
+            addLog('='.repeat(60), 'separator');
+
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const response = await fetch('{% url "solicitudes:procesar_correos_ajax" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({action: 'procesar'})
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.logs && data.logs.length > 0) {
+                        data.logs.forEach(log => {
+                            addLog(log.message, log.type || 'info');
+                        });
+                    }
+
+                    addLog('='.repeat(60), 'separator');
+                    addLog(`📊 RESUMEN: ${data.solicitudes_count} solicitud(es) creada(s)`, 'section');
+                    addLog('='.repeat(60), 'separator');
+
+                    if (data.solicitudes && data.solicitudes.length > 0) {
+                        addLog('📝 Solicitudes creadas:', 'section');
+                        data.solicitudes.forEach((sol, index) => {
+                            addLog(`${index + 1}. Solicitud #${sol.id}`, 'success');
+                            addLog(`   - Empresa: ${sol.empresa}`, 'empresa');
+                            addLog(`   - Programa: ${sol.programa}`, 'programa');
+                        });
+                    }
+
+                    addLog('✅ Procesamiento completado exitosamente', 'success');
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    addLog('❌ ERROR EN EL PROCESAMIENTO', 'error');
+                    addLog(data.error || 'Error desconocido', 'error');
+                }
+            } catch (error) {
+                addLog('❌ ERROR DE CONEXIÓN', 'error');
+                addLog('Error: ' + error.message, 'error');
+            } finally {
+                showProcessingIndicator(false);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
         async function probarConexion() {
             const btn = event.target;
             const originalText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '🔄 Probando conexión...';
-            btn.style.opacity = '0.7';
+            btn.innerHTML = '🔄 Probando...';
 
             try {
                 const response = await fetch('{% url "solicitudes:probar_conexion_email" %}');
                 const data = await response.json();
-
-                // Crear alerta personalizada
-                const alertDiv = document.createElement('div');
-                alertDiv.className = data.success ? 'alert alert-success' : 'alert alert-error';
-                alertDiv.textContent = data.message;
-                alertDiv.style.animation = 'slideDown 0.4s ease-out';
-                
-                const container = document.querySelector('.container');
-                const breadcrumb = document.querySelector('.breadcrumb');
-                container.insertBefore(alertDiv, breadcrumb.nextSibling);
-                
-                // Remover alerta después de 5 segundos
-                setTimeout(() => {
-                    alertDiv.style.animation = 'fadeOut 0.4s ease-out';
-                    setTimeout(() => alertDiv.remove(), 400);
-                }, 5000);
-                
+                alert(data.message);
             } catch (error) {
-                alert('❌ Error al probar conexión: ' + error);
+                alert('❌ Error al probar conexión: ' + error.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
-                btn.style.opacity = '1';
             }
         }
-        
-        // Animación adicional para fadeOut
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                to {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>

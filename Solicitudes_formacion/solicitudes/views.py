@@ -4,12 +4,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .email_handler import EmailSolicitudHandler
 from django.db.models import Q, Count
 from .models import Solicitud
+from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
 from programas.models import Programa
 from empresas.models import Empresa
 from instructores.models import Instructor
-
+import re
 # Create your views here.
 def listar_solicitudes(request):
     """Vista para listar todas las solicitudes de formacion"""
@@ -196,4 +197,114 @@ def detalle_solicitud(request, solicitud_id):
     
     return render(request, 'solicitudes/detalle_solicitud.html', context)
         
+# solicitudes/views.py
+
+@login_required
+@user_passes_test(es_admin)
+def procesar_correos_ajax(request):
+    """Procesa correos y retorna logs en tiempo real"""
+    if request.method == 'POST':
+        import io
+        import sys
+        import json
+        
+        # Capturar la salida estándar
+        captured_output = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = captured_output
+        
+        try:
+            handler = EmailSolicitudHandler()
+            solicitudes_creadas = handler.procesar_correos()
+            
+            # Restaurar stdout
+            sys.stdout = old_stdout
+            output = captured_output.getvalue()
+            
+            # Parsear el output en logs estructurados
+            logs = [] 
+            lines = output.split('\n')
+            
+            for line in lines:
+                if not line.strip():
+                    continue
+                    
+                log_entry = {'message': line.strip()}
+                
+                # Clasificar tipo de log
+                if '=' * 50 in line or '-' * 50 in line:
+                    log_entry['type'] = 'separator'
+                elif 'INICIANDO' in line or 'PROCESANDO' in line or 'CORREO' in line:
+                    log_entry['type'] = 'section'
+                elif 'Conectado exitosamente' in line:
+                    log_entry['type'] = 'success'
+                elif 'Correos no leídos encontrados' in line:
+                    log_entry['type'] = 'info'
+                    match = re.search(r'(\d+)', line)
+                    if match:
+                        log_entry['count'] = int(match.group(1))
+                elif 'Empresa:' in line or 'nombre' in line.lower():
+                    log_entry['type'] = 'empresa'
+                elif 'Contacto:' in line:
+                    log_entry['type'] = 'info'
+                elif 'Email:' in line or 'correo' in line.lower():
+                    log_entry['type'] = 'info'
+                elif 'Programa:' in line:
+                    log_entry['type'] = 'programa'
+                elif 'Solicitud creada' in line or '#' in line:
+                    log_entry['type'] = 'success'
+                    match = re.search(r'#(\d+)', line)
+                    if match:
+                        log_entry['solicitud_id'] = int(match.group(1))
+                elif 'Respuesta enviada' in line:
+                    log_entry['type'] = 'success'
+                elif 'ERROR' in line or 'Error' in line:
+                    log_entry['type'] = 'error'
+                elif 'No encontrado' in line or 'no encontrado' in line.lower():
+                    log_entry['type'] = 'warning'
+                elif 'Buscando' in line or 'Encontrado' in line:
+                    log_entry['type'] = 'info'
+                elif 'Creando' in line:
+                    log_entry['type'] = 'info'
+                elif 'RESUMEN' in line:
+                    log_entry['type'] = 'section'
+                else:
+                    log_entry['type'] = 'info'
+                
+                logs.append(log_entry)
+            
+            # Información de las solicitudes creadas
+            solicitudes_data = []
+            for solicitud in solicitudes_creadas:
+                solicitudes_data.append({
+                    'id': solicitud.id,
+                    'empresa': solicitud.empresa.nombre,
+                    'programa': solicitud.programa.nombre,
+                    'estado': solicitud.get_estado_display(),
+                    'fecha': solicitud.fecha_recepcion.strftime('%d/%m/%Y %H:%M')
+                })
+            
+            return JsonResponse({
+                'success': True,
+                'solicitudes_count': len(solicitudes_creadas),
+                'solicitudes': solicitudes_data,
+                'logs': logs,
+                'raw_output': output   
+            })
+            
+        except Exception as e:
+            sys.stdout = old_stdout
+            import traceback
+            error_trace = traceback.format_exc()
+            
+            return JsonResponse({
+                'success': False,
+                'error': str(e),
+                'traceback': error_trace,
+                'logs': [
+                    {'type': 'error', 'message': f'❌ ERROR: {str(e)}'},
+                    {'type': 'error', 'message': error_trace}
+                ]
+            }, status=500)
     
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
