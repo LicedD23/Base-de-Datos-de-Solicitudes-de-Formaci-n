@@ -197,7 +197,94 @@ def detalle_solicitud(request, solicitud_id):
     
     return render(request, 'solicitudes/detalle_solicitud.html', context)
         
-# solicitudes/views.py
+def editar_solicitud(request, solicitud_id):
+    """Vista para editar una solicitud existente"""
+    solicitud = get_object_or_404(
+        Solicitud.objects.select_related(
+            'empresa',
+            'programa',
+            'programa__area',
+            'instructor_asignado'
+        ),
+        id=solicitud_id
+    )
+    
+    if request.method == 'POST':
+        try:
+            #Obtener datos del formulario
+            estado=request.POST.get('estado')
+            instructor_id=request.POST.get('instructor_asignado')
+            observaciones= request.POST.get('observaciones')
+            numero_aprendices=request.POST.get('numero_aprendices')
+            
+            #Validar campos requeridos
+            if not estado:
+                messages.error(request,'❌ El estado es obligatorio')
+                return redirect('solicitudes:editar_solicitud',solicitud_id=solicitud_id)
+            
+            #Actualiza campos basicos
+            solicitud.estado=estado
+            solicitud.observaciones=observaciones
+            
+            #Actualizar numero de aprendices si  se proporciono
+            if numero_aprendices:
+                try:
+                    solicitud.numero_aprendices=int(numero_aprendices)
+                except ValueError:
+                    messages.warning(request, '⚠️ Numero  de Aprendices no valido, se mantuvo el  valor anterior')
+            #Actualizar instructor asignado
+            if instructor_id:
+                try:
+                    instructor= Instructor.objects.get(id=instructor_id, activo= True)
+                    solicitud.instructor_asignado= instructor
+                except Instructor.DoesNotExist:
+                    messages.warning(request,'⚠️ Instructor no  encontrado')
+            else:
+                solicitud.instructor_asignado=None
+            #Actualizar fechas segun el  estado
+            now= timezone.now()
+            
+            if estado=='RESPONDIDA' and not solicitud.fecha_respuesta:
+                solicitud.fecha_respuesta = now
+            if estado=='ATENDIDA' and not solicitud.fecha_atencion:
+                solicitud.fecha_atencion=now
+                
+            #Guardar cambios
+            
+            messages.success(
+                request,
+                f'✅ Solicitud #{solicitud.id} actualizada exitosamente'
+            )
+            return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
+        except Exception as e:
+            messages.error(
+                request,
+                f'❌ Error al  actualizar la solicitud:{str(e)}'
+            )
+            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+        
+    #GET request - mostrar formulario
+    #Obtener todos los instructores activos para el  dropdown
+    instructores = Instructor.objects.filter(activo=True)
+    
+    #Obtener instructores especializados en  el programa de la solicitud
+    instructores_especializados = instructores.filter(
+        especialidad=solicitud.programa
+    )
+    #Obtener todos los programas activos(por si  se quiere cambiar)
+    programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
+    
+    context={
+        'solicitud':solicitud,
+        'instructores': instructores,
+        'instructores_especializados':instructores_especializados,
+        'programas':programas,
+        'ESTADO_CHOICES':solicitud.ESTADO_CHOICES,  
+    }
+    return render(request, 'solicitudes/editar_solicitud.html', context)
+                
+                
+            
 
 @login_required
 @user_passes_test(es_admin)

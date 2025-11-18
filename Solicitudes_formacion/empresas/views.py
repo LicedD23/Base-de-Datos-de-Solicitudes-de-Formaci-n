@@ -2,14 +2,12 @@ from datetime import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Empresa
-from django.db.models import Q,Count
+from django.db.models import Q, Count
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
 from django.db import transaction
 
-# Create your views here.
+
 def listar_empresas(request):
     """Vista para listar todas las empresas"""
     search = request.GET.get('search', '')
@@ -41,8 +39,12 @@ def listar_empresas(request):
     # Ordenar por nombre
     empresas = empresas.order_by('nombre')
     
-    # Obtener lista de municipios únicos para el filtro
-    municipios = Empresa.objects.values_list('municipio', flat=True).distinct().order_by('municipio')
+    # Obtener lista de municipios únicos para el filtro (excluir vacíos)
+    municipios = Empresa.objects.exclude(
+        municipio__isnull=True
+    ).exclude(
+        municipio=''
+    ).values_list('municipio', flat=True).distinct().order_by('municipio')
     
     # Calcular estadísticas
     total_empresas = empresas.count()
@@ -57,7 +59,8 @@ def listar_empresas(request):
         'total_empresas': total_empresas,
         'total_solicitudes': total_solicitudes,
     }
-    return render(request,'empresas/listar_empresas.html',context)
+    return render(request, 'empresas/listar_empresas.html', context)
+
 
 @login_required
 #@permission_required('empresas.add_empresa', raise_exception=True)
@@ -72,11 +75,13 @@ def crear_empresa(request):
         correo = request.POST.get('correo', '').strip()
         telefono = request.POST.get('telefono', '').strip()
         municipio = request.POST.get('municipio', '').strip()
+        direccion = request.POST.get('direccion', '').strip()
         numero_trabajadores = request.POST.get('numero_trabajadores', '').strip()
         
         # Validaciones
         errores = []
         
+        # Validar nombre (obligatorio)
         if not nombre:
             errores.append('El nombre de la empresa es obligatorio')
         elif len(nombre) < 3:
@@ -84,9 +89,24 @@ def crear_empresa(request):
         elif Empresa.objects.filter(nombre__iexact=nombre).exists():
             errores.append(f'Ya existe una empresa con el nombre "{nombre}"')
         
-        if correo and '@' not in correo:
-            errores.append('El correo electrónico no es válido')
+        # Validar correo (opcional, pero si se proporciona debe ser válido)
+        if correo:
+            if '@' not in correo or '.' not in correo:
+                errores.append('El correo electrónico no es válido')
         
+        # Validar teléfono (opcional, pero si se proporciona debe ser válido)
+        if telefono:
+            # Limpiar el teléfono de espacios y guiones
+            telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            if not telefono_limpio.isdigit():
+                errores.append('El teléfono solo debe contener números')
+            elif len(telefono_limpio) < 7:
+                errores.append('El teléfono debe tener al menos 7 dígitos')
+            else:
+                # Actualizar el telefono con la versión limpia
+                telefono = telefono_limpio
+        
+        # Validar número de trabajadores (opcional)
         if numero_trabajadores:
             try:
                 num_trabajadores = int(numero_trabajadores)
@@ -106,6 +126,7 @@ def crear_empresa(request):
                 'correo': correo,
                 'telefono': telefono,
                 'municipio': municipio,
+                'direccion': direccion,
                 'numero_trabajadores': numero_trabajadores,
             }
             return render(request, 'empresas/crear_empresa.html', context)
@@ -115,12 +136,12 @@ def crear_empresa(request):
             with transaction.atomic():
                 empresa = Empresa.objects.create(
                     nombre=nombre,
-                    contacto=contacto if contacto else None,
-                    correo=correo if correo else None,
-                    telefono=telefono if telefono else None,
-                    municipio=municipio if municipio else None,
-                    numero_trabajadores=int(numero_trabajadores) if numero_trabajadores else None,
-                    
+                    contacto=contacto if contacto else '',
+                    correo=correo if correo else '',
+                    telefono=telefono if telefono else '',
+                    municipio=municipio if municipio else '',
+                    direccion=direccion if direccion else '',
+                    numero_trabajadores=int(numero_trabajadores) if numero_trabajadores else 0,
                 )
             
             messages.success(request, f'Empresa "{empresa.nombre}" creada exitosamente')
@@ -135,12 +156,15 @@ def crear_empresa(request):
                 'correo': correo,
                 'telefono': telefono,
                 'municipio': municipio,
+                'direccion': direccion,
                 'numero_trabajadores': numero_trabajadores,
             }
             return render(request, 'empresas/crear_empresa.html', context)
     
     # GET request - mostrar formulario vacío
     return render(request, 'empresas/crear_empresa.html')
+
+
 def detalle_empresa(request, empresa_id):
     """Vista para el detalle de una empresa"""
     empresa = get_object_or_404(
@@ -174,46 +198,83 @@ def detalle_empresa(request, empresa_id):
     return render(request, 'empresas/detalle_empresa.html', context)
 
 
-
-
+@login_required
 def editar_empresa(request, empresa_id):
-    """vista para editar una empresa"""
+    """Vista para editar una empresa"""
     empresa = get_object_or_404(Empresa, id=empresa_id)
     
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        contacto = request.POST.get('contacto')
-        correo = request.POST.get('correo')
-        telefono = request.POST.get('telefono')
-        municipio = request.POST.get('municipio')
-        direccion = request.POST.get('direccion')
-        numero_trabajadores = request.POST.get('numero_trabajadores')
+        nombre = request.POST.get('nombre', '').strip()
+        contacto = request.POST.get('contacto', '').strip()
+        correo = request.POST.get('correo', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+        municipio = request.POST.get('municipio', '').strip()
+        direccion = request.POST.get('direccion', '').strip()
+        numero_trabajadores = request.POST.get('numero_trabajadores', '').strip()
         
+        # Validaciones
+        errores = []
+        
+        # Validar nombre (obligatorio)
         if not nombre:
-            messages.error(request, 'El nombre es obligatorio')
+            errores.append('El nombre de la empresa es obligatorio')
+        elif len(nombre) < 3:
+            errores.append('El nombre debe tener al menos 3 caracteres')
+        elif Empresa.objects.filter(nombre__iexact=nombre).exclude(id=empresa_id).exists():
+            errores.append(f'Ya existe otra empresa con el nombre "{nombre}"')
+        
+        # Validar correo (opcional, pero si se proporciona debe ser válido)
+        if correo:
+            if '@' not in correo or '.' not in correo:
+                errores.append('El correo electrónico no es válido')
+        
+        # Validar teléfono (opcional, pero si se proporciona debe ser válido)
+        if telefono:
+            # Limpiar el teléfono de espacios y guiones
+            telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            if not telefono_limpio.isdigit():
+                errores.append('El teléfono solo debe contener números')
+            elif len(telefono_limpio) < 7:
+                errores.append('El teléfono debe tener al menos 7 dígitos')
+            else:
+                # Actualizar el telefono con la versión limpia
+                telefono = telefono_limpio
+        
+        # Validar número de trabajadores (opcional)
+        if numero_trabajadores:
+            try:
+                num_trabajadores = int(numero_trabajadores)
+                if num_trabajadores < 1:
+                    errores.append('El número de trabajadores debe ser mayor a 0')
+            except ValueError:
+                errores.append('El número de trabajadores debe ser un número válido')
+        
+        # Si hay errores, mostrarlos
+        if errores:
+            for error in errores:
+                messages.error(request, error)
             return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
         
-        if Empresa.objects.filter(nombre__iexact=nombre).exclude(id=empresa_id).exists():
-            messages.error(request, f'Ya existe otra empresa con el nombre "{nombre}"')
-            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
-        
+        # Actualizar la empresa
         try:
-            empresa.nombre = nombre
-            empresa.contacto = contacto
-            empresa.correo = correo
-            empresa.telefono = telefono
-            empresa.municipio = municipio
-            empresa.direccion = direccion
-            empresa.numero_trabajadores = numero_trabajadores
-            empresa.save()
+            with transaction.atomic():
+                empresa.nombre = nombre
+                empresa.contacto = contacto if contacto else ''
+                empresa.correo = correo if correo else ''
+                empresa.telefono = telefono if telefono else ''
+                empresa.municipio = municipio if municipio else ''
+                empresa.direccion = direccion if direccion else ''
+                empresa.numero_trabajadores = int(numero_trabajadores) if numero_trabajadores else 0
+                empresa.save()
+            
             messages.success(request, f'Empresa "{empresa.nombre}" actualizada exitosamente')
             return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
+            
         except Exception as e:
             messages.error(request, f'Error al actualizar la empresa: {str(e)}')
             return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
     
     return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
-
 
 
 @login_required
@@ -247,10 +308,3 @@ def desactivar_empresa(request, empresa_id):
         'tiene_dependencias': tiene_dependencias,
     }
     return render(request, 'empresas/desactivar_empresa.html', context)
-    
-            
-        
-        
-    
-
-        

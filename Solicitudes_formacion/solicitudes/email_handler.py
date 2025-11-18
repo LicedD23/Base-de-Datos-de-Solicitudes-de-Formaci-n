@@ -24,7 +24,27 @@ class EmailSolicitudHandler:
         self.email_account = getattr(settings, 'EMAIL_HOST_USER', '')
         self.email_password = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
         self.imap_port = getattr(settings, 'EMAIL_PORT', 993)
+    
+    def limpiar_texto(self, texto):
+        """Limpia asteriscos, espacios extras y caracteres no deseados"""
+        if not texto:
+            return None
         
+        # Eliminar asteriscos
+        texto = texto.replace('*', '')
+        
+        # Eliminar espacios múltiples
+        texto = re.sub(r'\s+', ' ', texto)
+        
+        # Eliminar espacios al inicio y final
+        texto = texto.strip()
+        
+        # Si queda vacío, retornar None
+        if not texto or texto.lower() in ['sin especificar', 'no especificado', 'n/a', 'na']:
+            return None
+        
+        return texto
+    
     def conectar_email(self):
         """Conecta al servidor de correo"""
         try:
@@ -152,7 +172,8 @@ class EmailSolicitudHandler:
                 'correo': None,
                 'telefono': None,
                 'municipio': None,
-                'numero_trabajadores': 0,
+                'direccion': None,
+                'numero_trabajadores': None,
                 'programa_solicitado': None,
                 'observaciones': cuerpo[:500]
             }
@@ -163,10 +184,12 @@ class EmailSolicitudHandler:
             # METODO 1: Buscar "Nombre:" en seccion estructurada
             nombre_match = re.search(r'Nombre:\s*([^\n]+)', cuerpo, re.IGNORECASE)
             if nombre_match:
-                nombre = nombre_match.group(1).strip()
-                nombre = re.sub(r'\s*NIT:.*', '', nombre, flags=re.IGNORECASE).strip()
-                info['nombre'] = nombre[:200]
-                print("   METODO 1 - Campo Nombre: " + info['nombre'])
+                nombre = self.limpiar_texto(nombre_match.group(1))
+                if nombre:
+                    # Eliminar NIT si está presente
+                    nombre = re.sub(r'\s*NIT:.*', '', nombre, flags=re.IGNORECASE).strip()
+                    info['nombre'] = nombre[:200]
+                    print("   METODO 1 - Campo Nombre: " + info['nombre'])
             
             # METODO 2: Buscar "la empresa NOMBRE" en el texto
             if not info['nombre']:
@@ -176,8 +199,10 @@ class EmailSolicitudHandler:
                     re.IGNORECASE
                 )
                 if empresa_match:
-                    info['nombre'] = empresa_match.group(1).strip()[:200]
-                    print("   METODO 2 - Texto narrativo: " + info['nombre'])
+                    nombre = self.limpiar_texto(empresa_match.group(1))
+                    if nombre:
+                        info['nombre'] = nombre[:200]
+                        print("   METODO 2 - Texto narrativo: " + info['nombre'])
             
             # METODO 3: Buscar empresas en mayusculas al inicio del correo
             if not info['nombre']:
@@ -187,9 +212,9 @@ class EmailSolicitudHandler:
                     primeras_lineas
                 )
                 if empresa_match:
-                    nombre_candidato = empresa_match.group(1).strip()
+                    nombre_candidato = self.limpiar_texto(empresa_match.group(1))
                     # Excluir si es muy corto o parece firma
-                    if len(nombre_candidato) > 8 and 'SENA' not in nombre_candidato.upper():
+                    if nombre_candidato and len(nombre_candidato) > 8 and 'SENA' not in nombre_candidato.upper():
                         info['nombre'] = nombre_candidato[:200]
                         print("   METODO 3 - Mayusculas: " + info['nombre'])
             
@@ -197,18 +222,18 @@ class EmailSolicitudHandler:
                 print("   NO SE ENCONTRO NOMBRE DE EMPRESA")
             
             # ========== EXTRACCION DE CONTACTO ==========
-            # METODO 1: Campo estructurado "Contacto:" o "Representante de contacto:"
             contacto_match = re.search(
                 r'(?:Contacto|Representante\s+de\s+contacto):\s*([^\n]+)',
                 cuerpo,
                 re.IGNORECASE
             )
             if contacto_match:
-                contacto = contacto_match.group(1).strip()
-                # Limpiar si viene con "Nombre:" o similar
-                contacto = re.sub(r'^Nombre:\s*', '', contacto, flags=re.IGNORECASE)
-                info['contacto'] = contacto[:100]
-                print("   Contacto: " + info['contacto'])
+                contacto = self.limpiar_texto(contacto_match.group(1))
+                if contacto:
+                    # Limpiar si viene con "Nombre:" o similar
+                    contacto = re.sub(r'^Nombre:\s*', '', contacto, flags=re.IGNORECASE).strip()
+                    info['contacto'] = contacto[:100]
+                    print("   Contacto: " + info['contacto'])
             
             # ========== EXTRACCION DE EMAIL ==========
             # METODO 1: Campo "Correo:" o "Email:"
@@ -218,7 +243,7 @@ class EmailSolicitudHandler:
                 re.IGNORECASE
             )
             if email_match:
-                info['correo'] = email_match.group(1).strip()
+                info['correo'] = email_match.group(1).strip().lower()
                 print("   Email (campo): " + info['correo'])
             
             # METODO 2: Cualquier email en el texto
@@ -228,7 +253,7 @@ class EmailSolicitudHandler:
                     cuerpo
                 )
                 if email_match:
-                    info['correo'] = email_match.group(1).strip()
+                    info['correo'] = email_match.group(1).strip().lower()
                     print("   Email (texto): " + info['correo'])
             
             # METODO 3: Email del remitente
@@ -238,21 +263,43 @@ class EmailSolicitudHandler:
                     remitente
                 )
                 if email_match:
-                    info['correo'] = email_match.group(1).strip()
+                    info['correo'] = email_match.group(1).strip().lower()
                     print("   Email (remitente): " + info['correo'])
             
-            # ========== EXTRACCION DE TELEFONO ==========
+            # ========== EXTRACCION DE TELEFONO - MEJORADO ==========
+            print("\n   === BUSCANDO TELEFONO ===")
+            
+            # METODO 1: Campo "Telefono:" o "Tel:"
             tel_match = re.search(
-                r'Tel[eéÉ]fono:\s*([0-9\-\s\(\)]+)',
+                r'(?:Tel[eéÉ]fono|Tel|Celular|Móvil|Movil):\s*([0-9\s\-\(\)+]+)',
                 cuerpo,
                 re.IGNORECASE
             )
             if tel_match:
                 telefono = tel_match.group(1).strip()
-                # Limpiar espacios y guiones innecesarios
-                telefono = re.sub(r'[\s\-\(\)]', '', telefono)
-                info['telefono'] = telefono[:20]
-                print("   Telefono: " + info['telefono'])
+                # Limpiar espacios, guiones y paréntesis
+                telefono_limpio = re.sub(r'[\s\-\(\)]', '', telefono)
+                # Validar que tenga al menos 7 dígitos
+                if len(telefono_limpio) >= 7 and telefono_limpio.isdigit():
+                    info['telefono'] = telefono_limpio[:20]
+                    print("   Telefono encontrado: " + info['telefono'])
+            
+            # METODO 2: Buscar números de 10 dígitos (celular colombiano)
+            if not info['telefono']:
+                tel_match = re.search(r'\b(3\d{9})\b', cuerpo)
+                if tel_match:
+                    info['telefono'] = tel_match.group(1)
+                    print("   Telefono (celular): " + info['telefono'])
+            
+            # METODO 3: Buscar números de 7 dígitos (fijo)
+            if not info['telefono']:
+                tel_match = re.search(r'\b([2-8]\d{6})\b', cuerpo)
+                if tel_match:
+                    info['telefono'] = tel_match.group(1)
+                    print("   Telefono (fijo): " + info['telefono'])
+            
+            if not info['telefono']:
+                print("   NO SE ENCONTRO TELEFONO")
             
             # ========== EXTRACCION DE MUNICIPIO ==========
             municipio_match = re.search(
@@ -261,11 +308,30 @@ class EmailSolicitudHandler:
                 re.IGNORECASE
             )
             if municipio_match:
-                municipio = municipio_match.group(1).strip()
-                # Limpiar si viene con guion o mas texto
-                municipio = re.split(r'\s*[-–]\s*', municipio)[0]
-                info['municipio'] = municipio[:100]
-                print("   Municipio: " + info['municipio'])
+                municipio = self.limpiar_texto(municipio_match.group(1))
+                if municipio:
+                    # Limpiar si viene con guion o más texto
+                    municipio = re.split(r'\s*[-–]\s*', municipio)[0]
+                    info['municipio'] = municipio[:100]
+                    print("   Municipio: " + info['municipio'])
+            
+            # ========== EXTRACCION DE DIRECCION - NUEVO ==========
+            print("\n   === BUSCANDO DIRECCION ===")
+            
+            # METODO 1: Campo "Dirección:"
+            dir_match = re.search(
+                r'(?:Direcci[oó]n|Direccion):\s*([^\n]+)',
+                cuerpo,
+                re.IGNORECASE
+            )
+            if dir_match:
+                direccion = self.limpiar_texto(dir_match.group(1))
+                if direccion:
+                    info['direccion'] = direccion[:250]
+                    print("   Direccion encontrada: " + info['direccion'])
+            
+            if not info['direccion']:
+                print("   NO SE ENCONTRO DIRECCION")
             
             # ========== EXTRACCION DE TRABAJADORES ==========
             trab_match = re.search(
@@ -274,8 +340,10 @@ class EmailSolicitudHandler:
                 re.IGNORECASE
             )
             if trab_match:
-                info['numero_trabajadores'] = int(trab_match.group(1))
-                print("   Trabajadores: " + str(info['numero_trabajadores']))
+                num_trab = int(trab_match.group(1))
+                if num_trab > 0:
+                    info['numero_trabajadores'] = num_trab
+                    print("   Trabajadores: " + str(info['numero_trabajadores']))
             
             # ========== EXTRACCION DE PROGRAMA ==========
             print("\n   === BUSCANDO PROGRAMA ===")
@@ -286,13 +354,14 @@ class EmailSolicitudHandler:
                 asunto.lower()
             )
             if prog_match:
-                programa = prog_match.group(1).strip()
-                # Limpiar palabras comunes
-                programa = re.sub(r'\s+en\s+.*$', '', programa, flags=re.IGNORECASE)
-                info['programa_solicitado'] = programa
-                print("   METODO 1 - Asunto: " + info['programa_solicitado'])
+                programa = self.limpiar_texto(prog_match.group(1))
+                if programa:
+                    # Limpiar palabras comunes
+                    programa = re.sub(r'\s+en\s+.*$', '', programa, flags=re.IGNORECASE)
+                    info['programa_solicitado'] = programa
+                    print("   METODO 1 - Asunto: " + info['programa_solicitado'])
             
-            # METODO 2: Buscar "programa de formacion NOMBRE" en comillas o negrita
+            # METODO 2: Buscar "programa de formacion NOMBRE"
             if not info['programa_solicitado']:
                 prog_match = re.search(
                     r'programa\s+de\s+formaci[oó]n\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?:\s+para|,|\.|\n)',
@@ -300,8 +369,10 @@ class EmailSolicitudHandler:
                     re.IGNORECASE
                 )
                 if prog_match:
-                    info['programa_solicitado'] = prog_match.group(1).strip()
-                    print("   METODO 2 - Texto: " + info['programa_solicitado'])
+                    programa = self.limpiar_texto(prog_match.group(1))
+                    if programa:
+                        info['programa_solicitado'] = programa
+                        print("   METODO 2 - Texto: " + info['programa_solicitado'])
             
             # METODO 3: Palabras clave de operadores
             if not info['programa_solicitado']:
@@ -326,6 +397,8 @@ class EmailSolicitudHandler:
             print("\n   === RESUMEN ===")
             print("   Empresa: " + (info['nombre'] or 'NO ENCONTRADA'))
             print("   Contacto: " + (info['contacto'] or 'NO ENCONTRADO'))
+            print("   Telefono: " + (info['telefono'] or 'NO ENCONTRADO'))
+            print("   Direccion: " + (info['direccion'] or 'NO ENCONTRADA'))
             print("   Programa: " + (info['programa_solicitado'] or 'NO ENCONTRADO'))
             print("   " + "=" * 50)
             
@@ -338,33 +411,47 @@ class EmailSolicitudHandler:
             return None
     
     def buscar_o_crear_empresa(self, info):
-        """Busca o crea empresa"""
+        """Busca o crea empresa con validaciones mejoradas"""
         try:
             nombre = info.get('nombre')
             correo = info.get('correo')
             
-            # Buscar por nombre
+            # Validar que al menos tengamos nombre o correo
+            if not nombre and not correo:
+                print("   ERROR: No hay nombre ni correo para crear empresa")
+                return None, False
+            
+            # Buscar por nombre exacto
             if nombre:
                 empresa = Empresa.objects.filter(nombre__iexact=nombre).first()
                 if empresa:
                     print("   Empresa ENCONTRADA: " + empresa.nombre)
                     
-                    # Actualizar datos vacios
+                    # Actualizar solo campos vacíos o por defecto
                     actualizado = False
-                    if empresa.contacto in ['Sin contacto', '', None] and info.get('contacto'):
+                    
+                    if not empresa.contacto and info.get('contacto'):
                         empresa.contacto = info.get('contacto')[:100]
                         actualizado = True
-                    if empresa.correo in ['sin-correo@ejemplo.com', '', None] and info.get('correo'):
+                    
+                    if not empresa.correo and info.get('correo'):
                         empresa.correo = info.get('correo')
                         actualizado = True
-                    if empresa.telefono in ['Sin telefono', '', None] and info.get('telefono'):
+                    
+                    if not empresa.telefono and info.get('telefono'):
                         empresa.telefono = info.get('telefono')[:20]
                         actualizado = True
-                    if empresa.municipio in ['No especificado', '', None] and info.get('municipio'):
+                    
+                    if not empresa.municipio and info.get('municipio'):
                         empresa.municipio = info.get('municipio')[:100]
                         actualizado = True
-                    if empresa.numero_trabajadores == 0 and info.get('numero_trabajadores', 0) > 0:
-                        empresa.numero_trabajadores = info.get('numero_trabajadores', 0)
+                    
+                    if not empresa.direccion and info.get('direccion'):
+                        empresa.direccion = info.get('direccion')[:250]
+                        actualizado = True
+                    
+                    if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
+                        empresa.numero_trabajadores = info.get('numero_trabajadores')
                         actualizado = True
                     
                     if actualizado:
@@ -373,21 +460,36 @@ class EmailSolicitudHandler:
                     
                     return empresa, False
             
-            # Crear nueva
+            # Crear nueva empresa con validaciones
             print("   Creando NUEVA empresa...")
+            
+            # Preparar datos con valores por defecto solo si es necesario
+            nombre_empresa = nombre if nombre else f"Empresa {correo.split('@')[0]}"
+            contacto_empresa = info.get('contacto') if info.get('contacto') else 'Sin contacto'
+            telefono_empresa = info.get('telefono') if info.get('telefono') else ''
+            correo_empresa = correo if correo else f"sin-correo-{timezone.now().timestamp()}@ejemplo.com"
+            municipio_empresa = info.get('municipio') if info.get('municipio') else ''
+            direccion_empresa = info.get('direccion') if info.get('direccion') else ''
+            num_trabajadores = info.get('numero_trabajadores') if info.get('numero_trabajadores') else 0
+            
             empresa = Empresa.objects.create(
-                nombre=(nombre or 'Empresa sin nombre')[:200],
-                contacto=(info.get('contacto') or 'Sin contacto')[:100],
-                telefono=(info.get('telefono') or 'Sin telefono')[:20],
-                correo=(correo or 'sin-correo@ejemplo.com'),
-                municipio=(info.get('municipio') or 'No especificado')[:100],
-                numero_trabajadores=info.get('numero_trabajadores', 0)
+                nombre=nombre_empresa[:200],
+                contacto=contacto_empresa[:100],
+                telefono=telefono_empresa[:20],
+                correo=correo_empresa,
+                municipio=municipio_empresa[:100],
+                direccion=direccion_empresa[:250],
+                numero_trabajadores=num_trabajadores
             )
+            
             print("   Empresa CREADA: " + empresa.nombre)
+            print("   - Telefono: " + (empresa.telefono or 'NO REGISTRADO'))
+            print("   - Direccion: " + (empresa.direccion or 'NO REGISTRADA'))
+            
             return empresa, True
             
         except Exception as e:
-            print("   Error: " + str(e))
+            print("   Error creando empresa: " + str(e))
             import traceback
             traceback.print_exc()
             return None, False
@@ -408,7 +510,7 @@ class EmailSolicitudHandler:
             if not nombre_programa:
                 return None
             
-            print("   Buscando: " + nombre_programa)
+            print("   Buscando programa: " + nombre_programa)
             nombre_norm = self.normalizar_texto(nombre_programa)
             
             programas = Programa.objects.filter(activo=True)
@@ -416,14 +518,14 @@ class EmailSolicitudHandler:
             for programa in programas:
                 prog_norm = self.normalizar_texto(programa.nombre)
                 if prog_norm == nombre_norm or nombre_norm in prog_norm or prog_norm in nombre_norm:
-                    print("   Encontrado: " + programa.nombre)
+                    print("   Programa encontrado: " + programa.nombre)
                     return programa
             
-            print("   NO encontrado en BD")
+            print("   Programa NO encontrado en BD")
             return None
             
         except Exception as e:
-            print("   Error: " + str(e))
+            print("   Error buscando programa: " + str(e))
             return None
     
     def crear_solicitud(self, correo_info):
@@ -447,7 +549,7 @@ class EmailSolicitudHandler:
                 programa = self.buscar_programa(info.get('programa_solicitado'))
             
             if not programa:
-                print("   ERROR: Programa no encontrado")
+                print("   ERROR: Programa no encontrado - No se puede crear solicitud")
                 return None
             
             solicitud = Solicitud.objects.create(
@@ -458,12 +560,12 @@ class EmailSolicitudHandler:
                 observaciones=info.get('observaciones', '')
             )
             
-            print("   Solicitud creada: #" + str(solicitud.id))
+            print("   Solicitud creada exitosamente: #" + str(solicitud.id))
             self.enviar_respuesta_automatica(empresa, solicitud, correo_info)
             return solicitud
             
         except Exception as e:
-            print("Error: " + str(e))
+            print("Error creando solicitud: " + str(e))
             import traceback
             traceback.print_exc()
             return None
@@ -472,12 +574,12 @@ class EmailSolicitudHandler:
         """Envia respuesta"""
         try:
             asunto = "RE: " + correo_info['asunto']
-            mensaje = "Estimado/a " + empresa.contacto + ",\n\nSolicitud #" + str(solicitud.id) + " recibida.\n\nSENA"
+            mensaje = f"Estimado/a {empresa.contacto},\n\nSu solicitud #{solicitud.id} ha sido recibida correctamente.\n\nSENA"
             
             email_match = re.search(r'[\w\.-]+@[\w\.-]+', correo_info['remitente'])
             destinatario = email_match.group(0) if email_match else empresa.correo
             
-            if destinatario and destinatario != 'sin-correo@ejemplo.com':
+            if destinatario and '@ejemplo.com' not in destinatario:
                 send_mail(
                     subject=asunto,
                     message=mensaje,
@@ -485,25 +587,25 @@ class EmailSolicitudHandler:
                     recipient_list=[destinatario],
                     fail_silently=False
                 )
-                print("   Respuesta enviada a: " + destinatario)
+                print("   Respuesta automatica enviada a: " + destinatario)
         except Exception as e:
-            print("   Error enviando: " + str(e))
+            print("   Error enviando respuesta: " + str(e))
     
     def procesar_correos(self):
-        """Procesa correos"""
+        """Procesa todos los correos no leídos"""
         print("\n" + "=" * 60)
-        print("PROCESANDO CORREOS")
+        print("INICIANDO PROCESAMIENTO DE CORREOS")
         print("=" * 60)
         
         correos = self.leer_correos_no_leidos()
         if not correos:
-            print("\nNo hay correos nuevos")
+            print("\nNo hay correos nuevos para procesar")
             return []
         
         solicitudes_creadas = []
         for idx, correo in enumerate(correos, 1):
             print("\n" + "=" * 60)
-            print("CORREO " + str(idx) + "/" + str(len(correos)))
+            print(f"PROCESANDO CORREO {idx}/{len(correos)}")
             print("=" * 60)
             
             solicitud = self.crear_solicitud(correo)
@@ -511,7 +613,7 @@ class EmailSolicitudHandler:
                 solicitudes_creadas.append(solicitud)
         
         print("\n" + "=" * 60)
-        print("RESUMEN: " + str(len(solicitudes_creadas)) + " creadas")
+        print(f"RESUMEN FINAL: {len(solicitudes_creadas)} solicitudes creadas de {len(correos)} correos")
         print("=" * 60)
         
         return solicitudes_creadas
