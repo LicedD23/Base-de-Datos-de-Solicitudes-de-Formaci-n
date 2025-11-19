@@ -600,10 +600,10 @@
             <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-back">
                 ← Volver a Solicitudes
             </a>
-            <a href="#" class="btn btn-info">
+            <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-info">
                 ✏️ Actualizar Estado
             </a>
-            <a href="#" class="btn btn-secondary">
+            <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn btn-secondary">
                 📧 Enviar Correo
             </a>
             <a href="#" class="btn btn-warning">

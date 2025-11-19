@@ -250,6 +250,7 @@ def editar_solicitud(request, solicitud_id):
                 solicitud.fecha_atencion=now
                 
             #Guardar cambios
+            solicitud.save()
             
             messages.success(
                 request,
@@ -283,7 +284,57 @@ def editar_solicitud(request, solicitud_id):
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
                 
+def enviar_respuesta(request, solicitud_id):
+        """Vista para enviar correo  de respuesta y cambiar estado a RESPONDIDA"""
+        solicitud = get_object_or_404(
+            Solicitud.objects.select_related(
+                'empresa',
+                'programa',
+                'programa__area'
+            ),
+            id=solicitud_id    
+        )
+        if request.method == 'POST':
+            try:
+                asunto=request.POST.get('asunto')
+                mensaje=request.POST.get('mensaje')
                 
+                #Validad campos
+                if not asunto  or not mensaje:
+                    messages.error(request, '❌ El asunto  y el mensaje son obligatorios')
+                    return redirect('solicitudes:enviar_respuesta',solicitud_id=solicitud_id)
+                #Enviar correo
+                from django.core.mail import send_mail 
+                from django.conf import settings
+                
+                send_mail(
+                    subject=asunto,
+                    message=mensaje,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[solicitud.empresa.correo],
+                    fail_silently=False,
+                )
+                #Actualizar estado a RESPONDIDA
+                solicitud.estado="RESPONDIDA"
+                solicitud.fecha_respuesta=timezone.now()
+                solicitud.save()
+                
+                messages.success(request, f'✅ Correo enviado  exitosamente a {solicitud.empresa.correo}.'f'Estado actualizado  a RESPONDIDA')
+                
+                return redirect('solicitudes:detalle_solicitud',solicitud_id=solicitud.id)
+            
+            except Exception as e:
+                messages.error(request, f'❌ Error al  enviar el  cooreo:{str(e)}')
+                
+                return redirect ('solicitudes:enviar_respuesta',solicitud_id=solicitud_id)
+            
+            #GET request - mostrar formulaerio 
+        context={
+            'solicitud':solicitud,
+            }
+        return render (request, 'solicitudes/enviar_respuesta.html', context)
+                    
+        
             
 
 @login_required

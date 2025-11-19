@@ -20,10 +20,14 @@ class EmailSolicitudHandler:
     """Manejador de correos electronicos para solicitudes de formacion"""
     
     def __init__(self):
-        self.imap_server = getattr(settings, 'EMAIL_HOST', 'imap.gmail.com')
-        self.email_account = getattr(settings, 'EMAIL_HOST_USER', '')
-        self.email_password = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
-        self.imap_port = getattr(settings, 'EMAIL_PORT', 993)
+        # Configuración IMAP para RECIBIR correos
+        self.imap_server = getattr(settings, 'IMAP_HOST', 'imap.gmail.com')
+        self.imap_port = getattr(settings, 'IMAP_PORT', 993)
+        self.email_account = getattr(settings, 'IMAP_USER', settings.EMAIL_HOST_USER)
+        self.email_password = getattr(settings, 'IMAP_PASSWORD', settings.EMAIL_HOST_PASSWORD)
+        
+        print(f"🔧 Configuración IMAP: {self.imap_server}:{self.imap_port}")
+        print(f"📧 Cuenta: {self.email_account}")
     
     def limpiar_texto(self, texto):
         """Limpia asteriscos, espacios extras y caracteres no deseados"""
@@ -46,21 +50,23 @@ class EmailSolicitudHandler:
         return texto
     
     def conectar_email(self):
-        """Conecta al servidor de correo"""
+        """Conecta al servidor IMAP para RECIBIR correos"""
         try:
             if not self.email_account or not self.email_password:
-                print("ERROR: EMAIL_HOST_USER o EMAIL_HOST_PASSWORD no configurados")
+                print("❌ ERROR: EMAIL_HOST_USER o EMAIL_HOST_PASSWORD no configurados")
                 return None
                 
-            print("Intentando conectar a " + self.imap_server + ":" + str(self.imap_port))
+            print(f"🔌 Intentando conectar a {self.imap_server}:{self.imap_port}")
             
             mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
             mail.login(self.email_account, self.email_password)
-            print("Conectado exitosamente a " + self.email_account)
+            print(f"✅ Conectado exitosamente a {self.email_account} (IMAP)")
             return mail
             
         except Exception as e:
-            print("Error conectando al correo: " + str(e))
+            print(f"❌ Error conectando al correo IMAP: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def leer_correos_no_leidos(self):
@@ -571,25 +577,46 @@ class EmailSolicitudHandler:
             return None
     
     def enviar_respuesta_automatica(self, empresa, solicitud, correo_info):
-        """Envia respuesta"""
+        """Envia respuesta automatica usando SMTP"""
         try:
             asunto = "RE: " + correo_info['asunto']
-            mensaje = f"Estimado/a {empresa.contacto},\n\nSu solicitud #{solicitud.id} ha sido recibida correctamente.\n\nSENA"
+            mensaje = f"""Estimado/a {empresa.contacto},
+
+Hemos recibido correctamente su solicitud de formación.
+
+Detalles de su solicitud:
+- Número de Solicitud: #{solicitud.id}
+- Empresa: {empresa.nombre}
+- Programa: {solicitud.programa.nombre}
+- Estado: Recibida
+
+En breve nos pondremos en contacto con ustedes para coordinar los siguientes pasos.
+
+Cordialmente,
+Servicio Nacional de Aprendizaje (SENA)
+Coordinación de Formación Empresarial"""
             
+            # Extraer email del remitente
             email_match = re.search(r'[\w\.-]+@[\w\.-]+', correo_info['remitente'])
             destinatario = email_match.group(0) if email_match else empresa.correo
             
             if destinatario and '@ejemplo.com' not in destinatario:
+                # Usar send_mail de Django que usa la configuración SMTP
                 send_mail(
                     subject=asunto,
                     message=mensaje,
-                    from_email=self.email_account,
+                    from_email=settings.EMAIL_HOST_USER,  # ← Usa EMAIL_HOST_USER (SMTP)
                     recipient_list=[destinatario],
                     fail_silently=False
                 )
-                print("   Respuesta automatica enviada a: " + destinatario)
+                print(f"   ✅ Respuesta automatica enviada a: {destinatario}")
+            else:
+                print(f"   ⚠️ Correo no válido, no se envió respuesta: {destinatario}")
+                
         except Exception as e:
-            print("   Error enviando respuesta: " + str(e))
+            print(f"   ❌ Error enviando respuesta automatica: {str(e)}")
+            import traceback
+            traceback.print_exc()
     
     def procesar_correos(self):
         """Procesa todos los correos no leídos"""

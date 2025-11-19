@@ -128,10 +128,25 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #configuracion de email 
-# Email Configuration
+# SMTP - Para ENVIAR correos (Django send_mail)
+# -------------------------------
+# =============================================================================
+# CONFIGURACIÓN DE EMAIL
+# =============================================================================
+
+# ✅ SMTP - Para ENVIAR correos (Django send_mail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'imap.gmail.com'
-EMAIL_PORT = 993
-EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # Solo TLS para SMTP
 EMAIL_HOST_USER = 'mayorgaliced@gmail.com'
-EMAIL_HOST_PASSWORD = 'r f h a f c j a d n j p g r b q'  # Ver instrucciones abajo
+EMAIL_HOST_PASSWORD = 'rfhafcjadnjpgrbq'  # Sin espacios
+DEFAULT_FROM_EMAIL = 'mayorgaliced@gmail.com'
+
+# ✅ IMAP - Para RECIBIR correos (imaplib)
+# Estas configuraciones las lee EmailSolicitudHandler
+IMAP_HOST = 'imap.gmail.com'
+IMAP_PORT = 993
+IMAP_USER = 'mayorgaliced@gmail.com'
+IMAP_PASSWORD = 'rfhafcjadnjpgrbq'  # Sin espacios
+# Nota: IMAP usa SSL implícitamente en puerto 993, no requiere EMAIL_USE_SSL
