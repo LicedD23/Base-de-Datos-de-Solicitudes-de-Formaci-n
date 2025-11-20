@@ -169,6 +169,30 @@
             padding-left: 5px;
         }
 
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #2e7d32;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -333,7 +357,7 @@
             flex-shrink:0;
             background:linear-gradient(90deg, #1b5e20, #2e7d32);
             color:white;
-            text-align.center;
+            text-align:center;
             padding:1.5rem;
             font-size:0.9rem;
             box-shadow:0 -4px 20px rgba(27,94,32,0.2);
@@ -442,6 +466,10 @@
                         <label>Municipio Actual</label>
                         <div class="value">{{ empresa.municipio }}</div>
                     </div>
+                    <div class="metadata-item">
+                        <label>Estado</label>
+                        <div class="value">{% if empresa.activo %}✓ Activo{% else %}○ Inactivo{% endif %}</div>
+                    </div>
                 </div>
             </div>
 
@@ -547,6 +575,23 @@
                         placeholder="Dirección completa de la empresa..."
                     >{{ empresa.direccion }}</textarea>
                     <small>Dirección física de la empresa (opcional)</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="activo" 
+                            name="activo"
+                            {% if empresa.activo %}checked{% endif %}
+                        >
+                        <label for="activo">
+                            ✓ Empresa activa (disponible para asociar solicitudes)
+                        </label>
+                    </div>
+                    <small style="margin-left: 15px; margin-top: 10px;">
+                        Si está inactiva, la empresa no aparecerá en los listados de selección.
+                    </small>
                 </div>
 
                 {% if empresa.solicitud_set.count > 0 %}

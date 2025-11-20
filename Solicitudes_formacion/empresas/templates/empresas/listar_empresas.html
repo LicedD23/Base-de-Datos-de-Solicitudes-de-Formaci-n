@@ -271,6 +271,27 @@
             opacity: 0.2;
         }
 
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .status-active {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .status-inactive {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
         .empresa-info {
             margin-bottom: 15px;
         }
@@ -532,6 +553,10 @@
                     <h2 class="empresa-title">{{ empresa.nombre }}</h2>
                     <div class="empresa-icon">🏢</div>
                 </div>
+
+                <span class="status-badge {% if empresa.activo %}status-active{% else %}status-inactive{% endif %}">
+                    {% if empresa.activo %}● Activo{% else %}○ Inactivo{% endif %}
+                </span>
 
                 <div class="empresa-info">
                     <div class="info-item">

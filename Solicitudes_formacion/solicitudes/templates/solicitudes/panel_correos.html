@@ -70,6 +70,12 @@
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border-left: 5px solid #2e7d32;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
         
         .stat-card h3 {
@@ -77,6 +83,7 @@
             font-size: 0.85em;
             margin-bottom: 16px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .stat-card .number {
@@ -90,12 +97,14 @@
             padding: 40px;
             border-radius: 24px;
             margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
         .control-panel h2 {
             color: #2e7d32;
             margin-bottom: 24px;
             font-size: 1.8em;
+            font-weight: 700;
         }
         
         .info-box {
@@ -109,12 +118,23 @@
         .info-box h3 {
             color: #1565c0;
             margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+        }
+
+        .info-box ul li {
+            margin-bottom: 8px;
+            color: #555;
         }
         
         .btn-group {
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .btn {
@@ -128,6 +148,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            text-decoration: none;
         }
         
         .btn-primary {
@@ -158,156 +179,216 @@
             color: white;
         }
         
-        /* MODAL MODERNO,ESTILO SENA */
-        .model-overlay{
-            display:none;
-            position:fixed;
-            inset:0;
-            background:0;
-            background:rgba(0,0,0,0.55);
-            backdrop-filter:blur(4px);
-            z-index:999;
+        /* MODAL MODERNO ESTILO SENA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 999;
         }
-        .modal-overlay.active{
-            display:block;
+
+        .modal-overlay.active {
+            display: block;
         }
+
         /* Modal contenedor */
-        .console-modal{
-            display:none;
-            position:fixed;
-            top:50%;
-            left:50%;
-            transform:translate(-50%,-50%);
-            width:90%;
-            max-width:850px;
-            max-height:85vh;
-        
-        /* Fondo Moderno translucido */
-        background:rgba(255,255,255,0.94);
-        backdrop-filter:blur(20px);
-        border-radius:24px;
-        box-shadow:0 20px 60px rgba(0,0,0,0.35);
-        overflow:hidden;
-        z-index:1000;
+        .console-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 1000;
         }
-        .console-modal.active{
-            display:block;
-            animation:modalDrop 0.35s ease-out;
+
+        .console-modal.active {
+            display: block;
+            animation: modalDrop 0.35s ease-out;
         }
-        @keyframes modalDrop{
-            from{
-                opacity:0;
-                transform:ttranslate(-50%,-50%);
+
+        @keyframes modalDrop {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
             }
         }
-        /*Header*/
-        .console-header{
-            padding:22px 28px;
-            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
 
-            box-shadow:0 4px 16px rgba(0,0,0,0.15);
+        /* Header */
+        .console-header {
+            padding: 24px 32px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
-        .console-header h3{
-            font-size:1.5em;
-            font-weight:600;
-            display:flex;
-            align-items:center;
-            gap:12px;
+
+        .console-header h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        /*Boton cerrar*/
-        .close-console{
-            width:36px;
-            height:36px;
-            border-radius:12px;
-            border:none;
-            background:rgba(255,255,255,0.25);
-            backdrop-filter:blur(10px);
-            font-size:1.2em;
-            color:white;
-            cursor:pointer;
-            transition:all .25s ease;
+
+        /* Botón cerrar */
+        .close-console {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            font-size: 1.5em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .close-console:hover{
-            background:rgba(255,255,255,0.45);
-            transform:scale(1.1);
+
+        .close-console:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: scale(1.1) rotate(90deg);
         }
+
         /* Body Moderno */
-        .console-body{
-            padding:24px 28px;
-            max-height:65vh;
-            overflow-y:auto;
+        .console-body {
+            padding: 28px 32px;
+            max-height: 65vh;
+            overflow-y: auto;
+            background: #fafafa;
+        }
 
-            /*fondo suave*/
-            background:#fafafa;
+        /* Scroll personalizado */
+        .console-body::-webkit-scrollbar {
+            width: 8px;
+        }
 
+        .console-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
-        /*Entradas de log con estilo "notificacion"*/
-        .log-entry{
-            margin-bottom:12px;
-            padding:14px 18px;
-            border-radius:14px;
 
-            display:flex;
-            align-items:flex-start;
-            gap:12px;
+        .console-body::-webkit-scrollbar-thumb {
+            background: #2e7d32;
+            border-radius: 10px;
+        }
 
-            background:white;
-            border-left:5px solid #2e7d32;
-            box-shadow:0 3px 12px rgba(0,0,0,0.06);
+        .console-body::-webkit-scrollbar-thumb:hover {
+            background: #1b5e20;
+        }
 
-            animation:fadeInUp .35s ease;
+        /* Entradas de log con estilo "notificación" */
+        .log-entry {
+            margin-bottom: 12px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: white;
+            border-left: 5px solid #2e7d32;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            animation: fadeInUp 0.35s ease;
         }
-        @keyframes fadeInUP{
-            from{opacity:0; transform:translateY(8px);}
-            to{opacity:1; transform:translateY(0);}
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        /*Tipos de logs*/
-        .log-info{
-            border-left-color:#2196f3;
+
+        .log-icon {
+            font-size: 1.3em;
+            min-width: 24px;
         }
-        .log-success{
-            border-left-color:#4caf50;
+
+        /* Tipos de logs */
+        .log-info {
+            border-left-color: #2196f3;
         }
-        .log-error{
-            border-left-color:#f44336;
+
+        .log-success {
+            border-left-color: #4caf50;
         }
-        .log-warning{
-            border-left-color:#ff9800;
+
+        .log-error {
+            border-left-color: #f44336;
         }
-        .log-section{
-            font-weight:700;
-            color:#2e7d32;
-            font-size:1.1em;
+
+        .log-warning {
+            border-left-color: #ff9800;
         }
-        .log-separator{
-            text-align:center;
-            font-size:.9em;
+
+        .log-section {
+            font-weight: 700;
+            color: #2e7d32;
+            font-size: 1.1em;
         }
-        /*Detalles empresa/ programa*/
-        .log-empresa{
-            border-left-color:#0288d1;
+
+        .log-separator {
+            text-align: center;
+            font-size: 0.9em;
+            color: #999;
+            padding: 8px 0;
         }
-        .log-programa{
-            border-left-color:#8bc34a;
+
+        /* Detalles empresa/programa */
+        .log-empresa {
+            border-left-color: #0288d1;
         }
-        /*Indicador de procesamiento*/
-        .processing-indicator{
-            text-align:center;
-            padding:30px 0;
+
+        .log-programa {
+            border-left-color: #8bc34a;
         }
-        .spinner{
-            width:45px;
-            height:45px;
-            border:4px solid rgba(0,0,0,0.1);
-            border-top-color:#2e7d32;
-            border-radius:50%
-            animation:spin 0.8s linear infinite;
-            margin:0 auto 10px;
+
+        /* Indicador de procesamiento */
+        .processing-indicator {
+            text-align: center;
+            padding: 30px 0;
         }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #2e7d32;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-indicator p {
+            color: #666;
+            font-weight: 600;
+        }
+        
         .alert {
             padding: 18px 24px;
             border-radius: 16px;
@@ -345,36 +426,79 @@
             border-left: 4px solid #fbc02d;
         }
         
+        /* TABLA MODERNA */
+        .recent-solicitudes {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recent-solicitudes h2 {
+            color: #2e7d32;
+            margin-bottom: 28px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
+            border-collapse: collapse;
+            background: white;
         }
         
-        thead tr {
-            background: #f5f5f5;
+        thead {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
         }
         
-        th {
-            padding: 16px;
+        thead tr th {
+            padding: 18px 20px;
             text-align: left;
             font-weight: 700;
             text-transform: uppercase;
             font-size: 0.85em;
+            letter-spacing: 1px;
+            color: white;
+            border: none;
+        }
+
+        thead tr th:first-child {
+            border-radius: 16px 0 0 0;
+        }
+
+        thead tr th:last-child {
+            border-radius: 0 16px 0 0;
         }
         
         tbody tr {
-            background: white;
             transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15);
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.03) 0%, rgba(27, 94, 32, 0.02) 100%);
+            transform: translateX(5px);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
         }
         
-        td {
-            padding: 18px 16px;
+        tbody td {
+            padding: 20px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        tbody td:first-child {
+            font-weight: 700;
+            color: #2e7d32;
         }
         
         .badge {
@@ -383,29 +507,87 @@
             font-size: 0.85em;
             font-weight: 700;
             text-transform: uppercase;
+            display: inline-block;
         }
         
         .badge-recibida {
-            background: #fff3e0;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             color: #e65100;
         }
-        
-        .recent-solicitudes {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 24px;
+
+        .badge-respondida {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
         }
-        
-        .recent-solicitudes h2 {
-            color: #2e7d32;
-            margin-bottom: 28px;
-            font-size: 1.8em;
+
+        .badge-atendida {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #6a1b9a;
+        }
+
+        .badge-finalizada {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #1b5e20;
+        }
+
+        .btn-view-detail {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-view-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
         }
         
         .empty-state {
             text-align: center;
             padding: 80px 20px;
             color: #999;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .console-modal {
+                width: 95%;
+                max-width: 95%;
+            }
+
+            .table-container {
+                overflow-x: scroll;
+            }
+
+            table {
+                min-width: 600px;
+            }
         }
     </style>
 </head>
@@ -420,7 +602,7 @@
         <div class="console-body">
             <div class="processing-indicator" id="processingIndicator">
                 <div class="spinner"></div>
-                <p style="color: #fff;">Procesando correos...</p>
+                <p>Procesando correos...</p>
             </div>
             <div id="consoleContent"></div>
         </div>
@@ -434,8 +616,6 @@
         
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
-            <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
             <span>›</span>
             <span style="color: #2e7d32; font-weight: 600;">Panel de Correos</span>
         </div>
@@ -492,32 +672,40 @@
         <div class="recent-solicitudes">
             <h2>📝 Últimas Solicitudes Creadas</h2>
             {% if ultimas_solicitudes %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Empresa Solicitante</th>
-                            <th>Programa Solicitado</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for solicitud in ultimas_solicitudes %}
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td><strong>#{{ solicitud.id }}</strong></td>
-                                <td>{{ solicitud.empresa.nombre }}</td>
-                                <td>{{ solicitud.programa.nombre }}</td>
-                                <td>
-                                    <span class="badge badge-{{ solicitud.estado|lower }}">
-                                        {{ solicitud.get_estado_display }}
-                                    </span>
-                                </td>
-                                <td>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</td>
+                                <th>ID</th>
+                                <th>Empresa Solicitante</th>
+                                <th>Programa Solicitado</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for solicitud in ultimas_solicitudes %}
+                                <tr>
+                                    <td><strong>#{{ solicitud.id }}</strong></td>
+                                    <td>{{ solicitud.empresa.nombre }}</td>
+                                    <td>{{ solicitud.programa.nombre }}</td>
+                                    <td>
+                                        <span class="badge badge-{{ solicitud.estado|lower }}">
+                                            {{ solicitud.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-view-detail">
+                                            👁️ Ver Detalle
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
                 <div class="empty-state">
                     <p>📭 No hay solicitudes recientes</p>
@@ -583,7 +771,7 @@
 
         function showProcessingIndicator(show) {
             const indicator = document.getElementById('processingIndicator');
-            indicator.className = show ? 'processing-indicator active' : 'processing-indicator';
+            indicator.style.display = show ? 'block' : 'none';
         }
 
         function openConsole() {

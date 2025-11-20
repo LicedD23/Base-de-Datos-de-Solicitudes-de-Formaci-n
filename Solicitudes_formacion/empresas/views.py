@@ -211,6 +211,7 @@ def editar_empresa(request, empresa_id):
         municipio = request.POST.get('municipio', '').strip()
         direccion = request.POST.get('direccion', '').strip()
         numero_trabajadores = request.POST.get('numero_trabajadores', '').strip()
+        activo = request.POST.get('activo') == 'on'  # Nuevo campo
         
         # Validaciones
         errores = []
@@ -265,6 +266,7 @@ def editar_empresa(request, empresa_id):
                 empresa.municipio = municipio if municipio else ''
                 empresa.direccion = direccion if direccion else ''
                 empresa.numero_trabajadores = int(numero_trabajadores) if numero_trabajadores else 0
+                empresa.activo = activo  # Actualizar estado activo
                 empresa.save()
             
             messages.success(request, f'Empresa "{empresa.nombre}" actualizada exitosamente')

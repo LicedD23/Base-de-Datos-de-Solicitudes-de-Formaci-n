@@ -10,6 +10,7 @@ class Empresa(models.Model):
     numero_trabajadores = models.IntegerField()
     municipio = models.CharField(max_length=100)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    activo = models.BooleanField(default=True, verbose_name='Activo')
 
     class Meta:
         verbose_name_plural = "Empresas"
