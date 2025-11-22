@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "empresas",
     "solicitudes",
     "core",
+    "reportes",
 ]
 
 MIDDLEWARE = [
