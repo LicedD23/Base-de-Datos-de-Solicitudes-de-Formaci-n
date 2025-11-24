@@ -10,6 +10,12 @@ class Programa(models.Model):
         related_name='programas'
     )
     nombre = models.CharField(max_length=200)
+    codigo = models.CharField(
+        max_length=50,
+        blank=True,
+        default='',
+        help_text='Código interno del programa'
+    )
     descripcion = models.TextField(blank=True)
     duracion_horas = models.IntegerField(
         null=True, 

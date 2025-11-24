@@ -14,6 +14,7 @@ from programas.models import Programa
 from instructores.models import Instructor
 
 from .generators import PDFReportGenerator, ExcelReportGenerator
+from openpyxl.utils import get_column_letter
 
 
 @login_required
@@ -300,15 +301,15 @@ def generar_reporte_instructores_excel(request):
             inst.solicitud_set.count()
         ])
     
-    # Ajustar anchos
-    for column in ws.columns:
+    # Ajustar anchos de forma robusta (evita errores con MergedCell)
+    for idx, column in enumerate(ws.columns, start=1):
         max_length = 0
-        column_letter = column[0].column_letter
+        column_letter = get_column_letter(idx)
         for cell in column:
             try:
-                if len(str(cell.value)) > max_length:
+                if cell.value is not None and len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
                 pass
         ws.column_dimensions[column_letter].width = min(max_length + 2, 50)
     

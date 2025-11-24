@@ -20,6 +20,7 @@ def listar_programas(request):
     if search:
         programas = programas.filter(
             Q(nombre__icontains=search) | 
+            Q(codigo__icontains=search) |
             Q(descripcion__icontains=search)
         )
     if area_id:
@@ -49,34 +50,39 @@ def listar_programas(request):
         'total_areas': total_areas,
     }
     return render(request, 'programas/listar_programas.html', context)
-def detalle_programa(request,programa_id):
-    """Vista para el  detalle de un programa"""
+
+
+def detalle_programa(request, programa_id):
+    """Vista para el detalle de un programa"""
     programa = get_object_or_404(
         Programa.objects.select_related('area').annotate(
             total_solicitudes=Count('solicitud')
         ),
         id=programa_id
     )
-    # obtener ultimas 5 solicitudes  de este programa
+    # obtener ultimas 5 solicitudes de este programa
     solicitudes_recientes = programa.solicitud_set.select_related(
         'empresa', 'instructor_asignado'
     ).order_by('-fecha_recepcion')[:5]
     
-    #obtener instructores que pueden  dar este programa
+    # obtener instructores que pueden dar este programa
     instructores = programa.instructores.filter(activo=True)
     
-    context ={
+    context = {
         'programa': programa,
         'solicitudes_recientes': solicitudes_recientes,
-        'instructores':instructores,   
+        'instructores': instructores,   
     }
-    return render(request,'programas/detalle_programa.html',context)
+    return render(request, 'programas/detalle_programa.html', context)
+
     
 def crear_programa(request):
     """vista para crear un nuevo programa"""
-    areas = Area.objects.filter(activo=True).order_by('nombre')  # Inicializa areas
+    areas = Area.objects.filter(activo=True).order_by('nombre')
+    
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
+        codigo = request.POST.get('codigo', '').strip()
         area_id = request.POST.get('area')
         descripcion = request.POST.get('descripcion', '')
         duracion_horas = request.POST.get('duracion_horas', '')
@@ -89,9 +95,11 @@ def crear_programa(request):
         
         try:
             area = Area.objects.get(id=area_id)
+            
             # Crear Programa
             programa = Programa.objects.create(
                 nombre=nombre,
+                codigo=codigo,
                 area=area,
                 descripcion=descripcion,
                 duracion_horas=int(duracion_horas) if duracion_horas else None,
@@ -105,16 +113,18 @@ def crear_programa(request):
             messages.error(request, f'Error al crear el programa: {str(e)}')
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
+
             
 def editar_programa(request, programa_id):
     """vista para editar un programa existente"""
     programa = get_object_or_404(Programa, id=programa_id)
     
-    # IMPORTANTE: Inicializar areas ANTES del if
+    # Inicializar areas ANTES del if
     areas = Area.objects.filter(activo=True).order_by('nombre')
     
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
+        codigo = request.POST.get('codigo', '').strip()
         area_id = request.POST.get('area')
         descripcion = request.POST.get('descripcion', '')
         duracion_horas = request.POST.get('duracion_horas', '')
@@ -133,6 +143,7 @@ def editar_programa(request, programa_id):
             
             # Actualizar el programa
             programa.nombre = nombre
+            programa.codigo = codigo
             programa.area = area
             programa.descripcion = descripcion
             programa.duracion_horas = int(duracion_horas) if duracion_horas else None
@@ -152,6 +163,8 @@ def editar_programa(request, programa_id):
         'programa': programa,
         'areas': areas
     })
+
+
 def desactivar_programa(request, programa_id):
     """Vista para desactivar un programa"""
     programa = get_object_or_404(Programa, id=programa_id)
@@ -179,8 +192,3 @@ def desactivar_programa(request, programa_id):
         'solicitudes_activas': solicitudes_activas,
     }
     return render(request, 'programas/desactivar_programa.html', context)
-    
-        
-    
-    
-

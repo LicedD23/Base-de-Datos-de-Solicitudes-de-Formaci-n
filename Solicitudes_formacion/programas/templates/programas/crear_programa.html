@@ -388,17 +388,31 @@
                     <small>Categoría a la que pertenece este programa</small>
                 </div>
 
-                <div class="form-group">
-                    <label for="nombre" class="required">Nombre del Programa</label>
-                    <input 
-                        type="text" 
-                        id="nombre" 
-                        name="nombre" 
-                        placeholder="Ejemplo: Operador de Excavadora"
-                        required
-                        maxlength="200"
-                    >
-                    <small>Nombre descriptivo del programa de formación (máximo 200 caracteres)</small>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre" class="required">Nombre del Programa</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            placeholder="Ejemplo: Operador de Excavadora"
+                            required
+                            maxlength="200"
+                        >
+                        <small>Nombre descriptivo del programa (máx. 200 caracteres)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="codigo">Código del Programa</label>
+                        <input 
+                            type="text" 
+                            id="codigo" 
+                            name="codigo" 
+                            placeholder="Ejemplo: 2874586"
+                            maxlength="50"
+                        >
+                        <small>Código interno para identificación (opcional)</small>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -445,6 +459,7 @@
                     <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
                         <li>El nombre del programa es claro y descriptivo</li>
                         <li>Has seleccionado el área correcta</li>
+                        <li>El código es único (si decides asignarlo)</li>
                         <li>La duración en horas es correcta (si aplica)</li>
                         <li>El programa no existe previamente en el catálogo</li>
                     </ul>

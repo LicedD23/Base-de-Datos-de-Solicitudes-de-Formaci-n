@@ -293,7 +293,15 @@
             margin-left: 10px;
             white-space: nowrap;
         }
-
+        .codigo-badge-large{
+            background:linear-gradient(135deg, #9575cd 0%, #5e33b1 100%);
+            color:white;
+            padding:8px 18px;
+            border-radius:20px;
+            font-size:0.9em;
+            font-weight;600;
+            display:inline-block;
+        }
         .status-badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -545,6 +553,9 @@
                     <div style="flex: 1;">
                         <h2 class="programa-title">{{ programa.nombre }}</h2>
                         <span class="area-badge">📂 {{ programa.area.nombre }}</span>
+                        {% if programa.codigo %}
+                        <span class="codigo-badge-large">🔖 {{ programa.codigo }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 

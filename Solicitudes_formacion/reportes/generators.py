@@ -18,6 +18,7 @@ from openpyxl.utils import get_column_letter
 
 from django.http import HttpResponse
 from django.utils import timezone
+from django.db.models import Count
 from datetime import datetime
 import io
 
@@ -562,14 +563,16 @@ class ExcelReportGenerator:
     
     def adjust_column_width(self, ws):
         """Ajusta el ancho de las columnas automáticamente"""
-        for column in ws.columns:
+        # Recorremos las columnas por índice para evitar errores con MergedCell
+        for idx, column in enumerate(ws.columns, start=1):
             max_length = 0
-            column_letter = get_column_letter(column[0].column)
+            column_letter = get_column_letter(idx)
             for cell in column:
                 try:
-                    if len(str(cell.value)) > max_length:
+                    if cell.value is not None and len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except:
+                except Exception:
+                    # Ignoramos celdas que no se puedan convertir a str
                     pass
             adjusted_width = min(max_length + 2, 50)
             ws.column_dimensions[column_letter].width = adjusted_width

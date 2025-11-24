@@ -54,6 +54,13 @@
             opacity: 0.95;
         }
 
+        .header-badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
         .area-badge-large {
             background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
             color: white;
@@ -61,7 +68,16 @@
             border-radius: 20px;
             font-size: 0.9em;
             font-weight: 600;
-            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .codigo-badge-large {
+            background: linear-gradient(135deg, #9575cd 0%, #5e35b1 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
             display: inline-block;
         }
 
@@ -508,7 +524,12 @@
             <div class="header-content">
                 <div class="header-info">
                     <h1>📚 {{ programa.nombre }}</h1>
-                    <span class="area-badge-large">📂 {{ programa.area.nombre }}</span>
+                    <div class="header-badges">
+                        <span class="area-badge-large">📂 {{ programa.area.nombre }}</span>
+                        {% if programa.codigo %}
+                        <span class="codigo-badge-large">🔖 {{ programa.codigo }}</span>
+                        {% endif %}
+                    </div>
                     <p style="margin-top: 15px;">Información detallada del programa de formación</p>
                 </div>
                 <span class="status-badge-large {% if programa.activo %}status-active{% else %}status-inactive{% endif %}">
@@ -578,6 +599,12 @@
                     <label>Nombre del Programa</label>
                     <div class="value">{{ programa.nombre }}</div>
                 </div>
+                {% if programa.codigo %}
+                <div class="info-item">
+                    <label>Código del Programa</label>
+                    <div class="value">{{ programa.codigo }}</div>
+                </div>
+                {% endif %}
                 <div class="info-item">
                     <label>Área de Formación</label>
                     <div class="value">{{ programa.area.nombre }}</div>
