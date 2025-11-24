@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.utils import timezone
-
+from django.contrib.auth import authenticate,login
+from django.contrib.auth import logout
 # imports directos de modelos (están en apps separadas)
 from area_formacion.models import Area
 from programas.models import Programa
@@ -71,3 +72,24 @@ def dashboard(request):
 def home(request):
     """Página de inicio pública."""
     return render(request, 'core/home.html')
+
+def login_view(request):
+    """Vista para iniciar sesion"""
+    if request.method == 'POST':
+        user = authenticate(
+            request,
+            username= request.POST["username"],
+            password= request.POST["password"]
+        )
+        if user:
+            login(request, user)
+            return redirect('core:dashboard')
+        
+    return render(request, 'core/login.html')
+
+def logout_view(request):
+    """vista para cerrar sesion"""
+    logout(request)
+    return redirect('core:home')
+
+

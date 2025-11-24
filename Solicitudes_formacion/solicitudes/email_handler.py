@@ -181,7 +181,7 @@ class EmailSolicitudHandler:
                 'direccion': None,
                 'numero_trabajadores': None,
                 'programa_solicitado': None,
-                'observaciones': cuerpo[:500]
+                'observaciones': None,
             }
             
             # ========== EXTRACCION DE NOMBRE DE EMPRESA ==========
@@ -563,7 +563,7 @@ class EmailSolicitudHandler:
                 programa=programa,
                 estado='RECIBIDA',
                 fecha_recepcion=timezone.now(),
-                observaciones=info.get('observaciones', '')
+                observaciones=''
             )
             
             print("   Solicitud creada exitosamente: #" + str(solicitud.id))
