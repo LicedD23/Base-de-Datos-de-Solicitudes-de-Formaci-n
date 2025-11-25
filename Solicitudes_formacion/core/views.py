@@ -4,6 +4,9 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.contrib.auth import authenticate,login
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.db import IntegrityError
 # imports directos de modelos (están en apps separadas)
 from area_formacion.models import Area
 from programas.models import Programa
@@ -75,21 +78,89 @@ def home(request):
 
 def login_view(request):
     """Vista para iniciar sesion"""
-    if request.method == 'POST':
-        user = authenticate(
-            request,
-            username= request.POST["username"],
-            password= request.POST["password"]
-        )
-        if user:
-            login(request, user)
-            return redirect('core:dashboard')
+    #Si el usuario ya esta auntenticado, redirigir al  dashboard
+    if request.user.is_authenticated:
+        return redirect('core:dashboard')
+    
+    if request.method=='POST':
+        username= request.POST.get('username','').strip()
+        password = request.POST.get('password','')
         
+        user= authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'¡Bienvenido {user.first_name or user.username}!')
+            
+            #Redirigir a la pagina solicitada o  al  dashboard
+            next_url = request.GET.get('next','core:dashboard')
+            return redirect(next_url)
+        else:
+            messages.error(request, 'Usuario o  contraseña incorrectos')
+    
     return render(request, 'core/login.html')
+
+def register_view(request):
+    """Vista para registrar nuevos usuarios"""
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        password2 = request.POST.get('password2', '')
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        
+        # Validaciones
+        if not all([username, email, password, password2]):
+            messages.error(request, 'Todos los campos son obligatorios')
+            return render(request, 'core/register.html')
+        
+        if password != password2:
+            messages.error(request, 'Las contraseñas no coinciden')
+            return render(request, 'core/register.html')
+        
+        if len(password) < 8:
+            messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
+            return render(request, 'core/register.html')
+        
+        # Verificar si el usuario ya existe
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'El nombre de usuario ya está en uso')
+            return render(request, 'core/register.html')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'El correo electrónico ya está registrado')
+            return render(request, 'core/register.html')
+        
+        try:
+            # Crear el usuario
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+            
+            messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión')
+            return redirect('core:login')
+            
+        except IntegrityError:
+            messages.error(request, 'Error al crear el usuario. Intenta con otro nombre de usuario')
+            return render(request, 'core/register.html')
+        except Exception as e:
+            messages.error(request, f'Error inesperado: {str(e)}')
+            return render(request, 'core/register.html')
+    
+    return render(request, 'core/register.html')
 
 def logout_view(request):
     """vista para cerrar sesion"""
     logout(request)
+    messages.success(request,'Has cerrado sesion exitosamente')
     return redirect('core:home')
+
+            
+            
 
 
