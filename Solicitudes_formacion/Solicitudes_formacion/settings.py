@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "solicitudes",
     "core",
     "reportes",
+    "backups",
 ]
 
 MIDDLEWARE = [

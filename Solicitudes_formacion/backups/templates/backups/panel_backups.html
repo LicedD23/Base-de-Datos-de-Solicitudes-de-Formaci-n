@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Backups - SENA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-success {
+            background: #c8e6c9;
+            color: #1b5e20;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .alert-error {
+            background: #ffcdd2;
+            color: #c62828;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #ef6c00;
+        }
+
+        .alert-info {
+            background: #e1f5fe;
+            color: #01579b;
+            border-left: 4px solid #0288d1;
+        }
+
+        .controls-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .db-info-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2e7d32;
+        }
+
+        .db-info-section h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .db-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .db-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.95em;
+            background: #f5f5f5;
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        .db-info-item strong {
+            color: #333;
+            min-width: 100px;
+        }
+
+        .backups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .backup-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid #2e7d32;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .backup-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%);
+        }
+
+        .backup-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
+        }
+
+        .backup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .backup-title {
+            font-size: 1.2em;
+            color: #2e7d32;
+            font-weight: 700;
+            margin-bottom: 5px;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .backup-icon {
+            font-size: 2.5em;
+            opacity: 0.2;
+        }
+
+        .backup-info {
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+            padding: 8px 0;
+        }
+
+        .info-item strong {
+            color: #333;
+            min-width: 90px;
+        }
+
+        .info-icon {
+            font-size: 1.1em;
+            min-width: 20px;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-download {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-download:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-restore {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .btn-restore:hover {
+            background: #ef6c00;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-delete:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #bdbdbd;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background: linear-gradient(90deg, #1b5e20, #2e7d32);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            position: relative;
+            margin-top: 40px;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #66bb6a, transparent);
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .actions-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .backups-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+            }
+
+            footer {
+                font-size: 0.85rem;
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💾 Panel de Backups</h1>
+            <p>Gestión y restauración de copias de seguridad de la base de datos</p>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <span>Backups</span>
+        </div>
+
+        <!-- Mensajes -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Controles -->
+        <div class="controls-section">
+            <div class="actions-row">
+                <div style="display: flex; gap: 10px;">
+                    <form method="post" action="{% url 'backups:crear_backup' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            ➕ Crear Nuevo Backup
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'backups:limpiar_backups' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar backups antiguos (mantener solo los últimos 10)?')">
+                            🗑️ Limpiar Antiguos
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Total de Backups</h3>
+                <div class="number">{{ total_backups }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Espacio Usado</h3>
+                <div class="number">{{ espacio_usado_legible }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Tamaño BD Actual</h3>
+                <div class="number">{{ db_size_legible }}</div>
+            </div>
+        </div>
+
+        <!-- Información de la Base de Datos -->
+        <div class="db-info-section">
+            <h2>📊 Información de la Base de Datos</h2>
+            <div class="db-info-grid">
+                <div class="db-info-item">
+                    <span class="info-icon">📁</span>
+                    <strong>Ruta:</strong>
+                    <span>{{ db_path }}</span>
+                </div>
+                <div class="db-info-item">
+                    <span class="info-icon">💽</span>
+                    <strong>Tamaño:</strong>
+                    <span>{{ db_size_legible }}</span>
+                </div>
+                <div class="db-info-item">
+                    <span class="info-icon">🗂️</span>
+                    <strong>Backups:</strong>
+                    <span>{{ total_backups }} archivo(s)</span>
+                </div>
+                <div class="db-info-item">
+                    <span class="info-icon">📦</span>
+                    <strong>Espacio Total:</strong>
+                    <span>{{ espacio_usado_legible }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Backups -->
+        {% if backups %}
+        <div class="backups-grid">
+            {% for backup in backups %}
+            <div class="backup-card">
+                <div class="backup-header">
+                    <h2 class="backup-title">{{ backup.nombre }}</h2>
+                    <div class="backup-icon">💾</div>
+                </div>
+
+                <div class="backup-info">
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <strong>Fecha:</strong>
+                        <span>{{ backup.fecha|date:"d/m/Y H:i:s" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📦</span>
+                        <strong>Tamaño:</strong>
+                        <span>{{ backup.tamaño_legible }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📂</span>
+                        <strong>Ubicación:</strong>
+                        <span style="font-size: 0.85em; word-break: break-all;">backups/</span>
+                    </div>
+                </div>
+
+                <div class="backup-actions">
+                    <a href="{% url 'backups:descargar_backup' backup.nombre %}" class="btn-action btn-download" title="Descargar backup">
+                        ⬇️ Descargar
+                    </a>
+                    <button onclick="confirmRestore('{{ backup.nombre }}')" class="btn-action btn-restore" title="Restaurar backup">
+                        🔄 Restaurar
+                    </button>
+                    <button onclick="confirmDelete('{{ backup.nombre }}')" class="btn-action btn-delete" title="Eliminar backup">
+                        🗑️ Eliminar
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💾</div>
+            <h3>No hay backups disponibles</h3>
+            <p>Aún no se han creado copias de seguridad de la base de datos</p>
+            <form method="post" action="{% url 'backups:crear_backup' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">➕ Crear Primer Backup</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+    </footer>
+
+    <!-- Modal de confirmación para restaurar -->
+    <div id="restoreModal" class="confirm-modal">
+        <div class="modal-content">
+            <h3>⚠️ Confirmar Restauración</h3>
+            <p>
+                ¿Estás seguro de que deseas restaurar este backup?<br><br>
+                <strong>Esta acción:</strong><br>
+                • Creará un backup de seguridad automático<br>
+                • Reemplazará la base de datos actual<br>
+                • Requerirá reiniciar el servidor<br><br>
+                <strong>Backup a restaurar:</strong> <span id="restoreFileName"></span>
+            </p>
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn btn-cancel">Cancelar</button>
+                <form id="restoreForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">🔄 Sí, Restaurar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="deleteModal" class="confirm-modal">
+        <div class="modal-content">
+            <h3>⚠️ Confirmar Eliminación</h3>
+            <p>
+                ¿Estás seguro de que deseas eliminar este backup?<br><br>
+                <strong>Esta acción no se puede deshacer.</strong><br><br>
+                <strong>Backup a eliminar:</strong> <span id="deleteFileName"></span>
+            </p>
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn btn-cancel">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmRestore(filename) {
+            document.getElementById('restoreFileName').textContent = filename;
+            document.getElementById('restoreForm').action = "{% url 'backups:restaurar_backup' 'FILENAME' %}".replace('FILENAME', filename);
+            document.getElementById('restoreModal').classList.add('active');
+        }
+
+        function confirmDelete(filename) {
+            document.getElementById('deleteFileName').textContent = filename;
+            document.getElementById('deleteForm').action = "{% url 'backups:eliminar_backup' 'FILENAME' %}".replace('FILENAME', filename);
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('restoreModal').classList.remove('active');
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const restoreModal = document.getElementById('restoreModal');
+            const deleteModal = document.getElementById('deleteModal');
+            if (event.target === restoreModal) {
+                restoreModal.classList.remove('active');
+            }
+            if (event.target === deleteModal) {
+                deleteModal.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

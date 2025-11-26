@@ -30,6 +30,7 @@ urlpatterns = [
     path('instructores/', include('instructores.urls')),
     path('solicitudes/', include('solicitudes.urls')),
     path('reportes/', include('reportes.urls')),
+    path('backups/', include('backups.urls')),
     
     # Login y Logout estándar de Django (clase correcta: LoginView)
     path('login/', auth_views.LoginView.as_view(template_name="core/login.html"), name="login"),
