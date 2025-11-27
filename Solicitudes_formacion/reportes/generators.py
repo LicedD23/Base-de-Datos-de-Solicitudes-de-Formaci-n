@@ -70,7 +70,7 @@ class PDFReportGenerator:
             parent=self.styles['Normal'],
             fontSize=8,
             leading=11,
-            alignment=TA_LEFT,
+            alignment=TA_CENTER,
             wordWrap='CJK',
             fontName='Helvetica'
         ))
@@ -106,85 +106,91 @@ class PDFReportGenerator:
             topMargin=80,
             bottomMargin=50
         )
-        
+    
         elements = []
-        
+    
         # Título
         title = Paragraph("REPORTE DE SOLICITUDES DE FORMACIÓN", self.styles['CustomTitle'])
         elements.append(title)
         elements.append(Spacer(1, 0.2 * inch))
-        
+    
         # Información de filtros
         if filtros:
             info_text = f"<b>Filtros aplicados:</b> {filtros}"
             elements.append(Paragraph(info_text, self.styles['Normal']))
             elements.append(Spacer(1, 0.2 * inch))
-        
+    
         # Estadísticas resumidas
         total = solicitudes.count()
         recibidas = solicitudes.filter(estado='RECIBIDA').count()
         respondidas = solicitudes.filter(estado='RESPONDIDA').count()
         atendidas = solicitudes.filter(estado='ATENDIDA').count()
         finalizadas = solicitudes.filter(estado='FINALIZADA').count()
-        
+    
         stats_data = [
             ['Total Solicitudes', 'Recibidas', 'Respondidas', 'Atendidas', 'Finalizadas'],
             [str(total), str(recibidas), str(respondidas), str(atendidas), str(finalizadas)]
         ]
-        
+    
         stats_table = Table(stats_data, colWidths=[1.1*inch]*5)
         stats_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.grey)
         ]))
-        
+    
         elements.append(stats_table)
         elements.append(Spacer(1, 0.3 * inch))
-        
+    
         # Tabla de solicitudes
         elements.append(Paragraph("Detalle de Solicitudes", self.styles['SectionHeader']))
-        
-        # Preparar datos
+    
+        # Preparar datos CON Paragraph y TableCell
         data = [['ID', 'Empresa', 'Programa', 'Estado', 'Fecha Recepción', 'Instructor']]
-        
+    
         for sol in solicitudes[:50]:  # Limitar a 50 para no sobrecargar
             data.append([
-                f"#{sol.id}",
-                Paragraph(sol.empresa.nombre, self.styles['Normal']),
-                Paragraph(sol.programa.nombre,self.styles['Normal']),
-                sol.get_estado_display(),
-                sol.fecha_recepcion.strftime('%d/%m/%Y'),
-                Paragraph(sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar', self.styles['Normal'])
+                Paragraph(f"#{sol.id}", self.styles['TableCell']),
+                Paragraph(sol.empresa.nombre, self.styles['TableCell']),
+                Paragraph(sol.programa.nombre, self.styles['TableCell']),
+                Paragraph(sol.get_estado_display(), self.styles['TableCell']),
+                Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y'), self.styles['TableCell']),
+                Paragraph(sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar', self.styles['TableCell'])
             ])
-        
-        # Crear tabla
-        table = Table(data, colWidths=[0.5*inch, 2.2*inch, 2*inch, 1*inch, 1*inch, 1.5*inch]) 
+    
+        # Crear tabla con anchos ajustados
+        table = Table(data, colWidths=[0.5*inch, 2*inch, 2*inch, 1*inch, 1.2*inch, 1.5*inch]) 
         table.setStyle(TableStyle([
             # Encabezado
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-            
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+        
             # Cuerpo
             ('BACKGROUND', (0, 1), (-1, -1), colors.white),
             ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
-        
+    
         elements.append(table)
-        
+    
         if solicitudes.count() > 50:
             elements.append(Spacer(1, 0.2 * inch))
             note = Paragraph(
@@ -192,10 +198,10 @@ class PDFReportGenerator:
                 self.styles['Normal']
             )
             elements.append(note)
-        
+    
         # Construir PDF
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
-        
+    
         buffer.seek(0)
         return buffer
     
@@ -339,7 +345,7 @@ class PDFReportGenerator:
         summary_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 9),
@@ -379,12 +385,14 @@ class PDFReportGenerator:
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING',(0,0),(-1,-1),5),
+            ('RIGHTPADDING',(0,0),(-1,-1),5),
         ]))
     
         elements.append(sol_stats_table)
@@ -408,17 +416,17 @@ class PDFReportGenerator:
         sol_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 8),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
         ]))
     
         elements.append(sol_table)
@@ -448,22 +456,18 @@ class PDFReportGenerator:
         # Anchos optimizados - sin truncar texto
         emp_table = Table(emp_data, colWidths=[2*inch, 1.4*inch, 0.9*inch, 1*inch, 1*inch])
         emp_table.setStyle(TableStyle([
-            # Encabezado
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 8),
-        
-            # Cuerpo
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
-        
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
@@ -492,18 +496,17 @@ class PDFReportGenerator:
         area_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-            ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
         ]))
     
         elements.append(area_table)
@@ -526,18 +529,17 @@ class PDFReportGenerator:
         prog_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (1, -1), 'LEFT'),
-            ('ALIGN', (2, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 8),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
         ]))
     
         elements.append(prog_table)
@@ -568,18 +570,17 @@ class PDFReportGenerator:
         inst_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (2, -1), 'LEFT'),
-            ('ALIGN', (3, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 8),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
         ]))
     
         elements.append(inst_table)
@@ -832,10 +833,11 @@ class ExcelReportGenerator:
             for col_idx, value in enumerate(row, start=1):
                 cell = ws_resumen.cell(row=idx, column=col_idx, value=value)
                 cell.border = self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center')
                 if idx == 6:
                     cell.fill = self.header_fill
                     cell.font = self.header_font
-                    cell.alignment = Alignment(horizontal='center', vertical='center')
+                    
         
         # Ajustar anchos
         ws_resumen.column_dimensions['A'].width = 20
@@ -870,6 +872,7 @@ class ExcelReportGenerator:
             for col_idx, value in enumerate(row, start=1):
                 cell = ws_sol.cell(row=idx, column=col_idx, value=value)
                 cell.border = self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center')
                 if idx == 4:
                     cell.fill = self.header_fill
                     cell.font = self.header_font
@@ -899,6 +902,11 @@ class ExcelReportGenerator:
                 sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',
                 sol.observaciones[:100] if sol.observaciones else ''
             ])
+        #Aplicar centrado  a todas las celdas de datos
+        for row in ws_sol.iter_rows(min_row=12, max_row=ws_sol.max_row,max_col=8):
+            for cell in row:
+                cell.border = self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center',wrap_text=True)
         
         self.adjust_column_width(ws_sol)
         
@@ -930,6 +938,11 @@ class ExcelReportGenerator:
                 emp.numero_trabajadores or 0,
                 emp.solicitud_set.count()
             ])
+            #Aplicar Centrado
+        for row in ws_emp.iter_rows(min_row=3,max_row=ws_emp.max_row, max_col=9):
+            for cell in row:
+                cell.border = self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center',wrap_text=True)
         
         self.adjust_column_width(ws_emp)
         
@@ -960,7 +973,11 @@ class ExcelReportGenerator:
                 'Activo' if prog.activo else 'Inactivo',
                 prog.num_sol
             ])
-        
+        #Aplicar centrado
+        for row in ws_prog.iter_rows(min_row=3, max_row=ws_prog.max_row, max_col=7):
+            for cell in row:
+                cell.border = self.border
+                cell.alignment=Alignment( horizontal='center', vertical='center',wrap_text=True)
         self.adjust_column_width(ws_prog)
         
         # ========== HOJA 5: INSTRUCTORES ==========
@@ -989,6 +1006,11 @@ class ExcelReportGenerator:
                 inst.especialidad.count(),
                 inst.solicitud_set.count()
             ])
+        #Aplicar centrado
+        for row in ws_inst.iter_rows(min_row=3, max_row=ws_inst.max_row, max_col=7):
+            for cell in row:
+                cell.border=self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center',wrap_text=True)
         
         self.adjust_column_width(ws_inst)
         
