@@ -5,198 +5,382 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Reportes - SENA</title>
     <style>
-        @import url ('https://googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-        body{
-            font-family:'Inter',sans-serif;
-            background:linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-            min-height:100vh;
-            padding:20px;
-        }
-        .container{
-            max-width:1400px;
-            margin:0 auto;
-        }
-        /* Header*/
-        .header{
-            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color:white;
-            padding:35px 40px;
-            border-radius:20px;
-            margin-bottom:30px;
-            box-shadow:0 10px 40px rgba(48,125,50,0.3);
-        }
-        .header h1{
-            font-size:2.5em;
-            margin-bototm:10px;
-            font-weight:800;
-            display:flex;
-            align-items:center;
-            gap:15px;
-        }
-        .header p{
-            font-size:1.1em;
-            opacity:0.95;
-        }
-        /*breadcrumb{
-            background:white;
-            padding:15px 20px;
-            border-radius:12px;
-            margin-bottom:25px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.05);
-            display:flex;
-            align-items.center;
-            gap:10px;
-            font-size:0.95em;
-        }
-        .breadcrumb a{
-            color:#2e7d32;
-            text-decoration:none;
-            font-weight:600;
-            transition:color 0.3s;
-        }
-        .breadcrumb a:hover{
-            color:#1b5320;
-            text-decoration:underline;
-        }
-        .breadcrumb span{
-            color:#999;
-        }
-        /*Stats Grid*/
-        .stats-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-            gap:20px;
-            margin-bottom:30px;
-        }
-        .stats-card{
-            background:white;
-            padding:25px;
-            border-radius:16px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
-            border-left:5px solid #2e7d32;
-            transition:all 0.3s ease;
-        }
-        .stat-card:hover{
-            transform:translateY(-5px);
-            box-shadow:0 8px 30px rgba(0,0,0,0.12);
-        }
-        .stat-card.recibidas{border-left-color:#ff9800;}
-        .stat-card.respondidas{border-left-color:#9c27b0;}
-        .stat-card.finalizadas{border-left-color:#4caf50;}
-
-        .stat-card h3{
-            color:#666;
-            font-size:0.85em;
-            margin-bottom:10px;
-            text-transform:uppercase;
-            letter-spacing:1px;
-        }
-        .stat-card .number{
-            font-size:2.5em;
-            font-weight:800;
-            color:#2e7d32;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .stat-card.recibidas .number {color:#ff9800;}
-        .stat-card.respondidas .number {color:#2196f3;}
-        .stat-card.atendidas .number{color:#9c27b0;}
-        .stat-card.finalizadas .number{color:#4caf50;}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        /* Seccion de Reportes*/
-        .report-section{
-            margin-bottom:30px;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .section-title{
-            background:white;
-            padding:20px 25px;
-            border-radius:16px 16px 0 0;
-            border-bottom:3px solid #2e7d32;
-            display:flex;
-            align-items:center;
-            gap:12px;
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 35px 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(48, 125, 50, 0.3);
         }
-        .section-title h2{
-            color:#2e7d32;
-            font-size:1.5em;
-            font-weight:700;
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .section-title .icon{
-            font-size:1.8em;
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
         }
-        /* Cards de Reportes*/
-        .reports-grid{
-            display:grid;
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        /* Filtros debajo del breadcrumb */
+        .filters-section {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .filters-section h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-filter.primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-filter.secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estadísticas */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        /* Reporte Consolidado */
+        .consolidated-section {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(46, 125, 50, 0.3);
+            color: white;
+        }
+
+        .consolidated-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        .consolidated-section p {
+            font-size: 1.05em;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .consolidated-section ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .consolidated-section ul li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .consolidated-btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-consolidated {
+            padding: 16px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-consolidated.pdf {
+            background: white;
+            color: #c62828;
+        }
+
+        .btn-consolidated.excel {
+            background: white;
+            color: #2e7d32;
+        }
+
+        .btn-consolidated:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Reportes */
+        .reports-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 16px 16px 0 0;
+            border-bottom: 3px solid #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .section-title .icon {
+            font-size: 1.8em;
+        }
+
+        .reports-grid {
+            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap:0;
-            background:white;
-            border-radius:0 0 16px 16px;
-            overflow:hidden;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            gap: 0;
+            background: white;
+            border-radius: 0 0 16px 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
-        .report-card{
-            padding:30px;
-            border-right:1px solid #f0f0f0;
-            border-bottom:1px solid #f0f0f0;
-            transition:all 0.3s ease;
+
+        .report-card {
+            padding: 30px;
+            border-right: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
         }
-        report-card:hover{
-            background:linear-gradient(135deg, rgba(46,125,50,0.03)05, rgba(27,94,32,0.02)100%);
+
+        .report-card:hover {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.03) 0%, rgba(27, 94, 32, 0.02) 100%);
         }
-        .report-card-header{
-            display:flex;
-            align-items:center;
-            gap:15px;
-            margin-bottom:15px;
+
+        .report-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
         }
-        .report-icon{
-            width:55px;
-            height:55px;
-            border-radius:14px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:1.8em;
+
+        .report-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
         }
-        .report-icon.solicitudes{
-            background:linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+
+        .report-icon.solicitudes {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
         }
-        .report-icon.empresas{
-            background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+
+        .report-icon.empresas {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
         }
-        .report-icon.instructores{
-            background:linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+
+        .report-icon.instructores {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
         }
-        .report-icon.consolidado{
-            background:linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+
+        .report-card h3 {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
-        .report-card 3{
-            color:#333;
-            font-size:1.2em;
-            font-weight:700;
-            margin-bottom:5px;
+
+        .report-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
-        .report-card p{
-            color:#666;
-            font-size:0.9em;
-            margin-bottom:20px;
-            line-height:1.5;
+
+        .report-card .count {
+            color: #2e7d32;
+            font-weight: 700;
         }
-        .report-card .count{
-            color:#2e7d32;
-            font-weight:700;
-        }
-        /* Botones de Descarga */
+
         .btn-group {
             display: flex;
             gap: 10px;
+            justify-content: center;
         }
-        
+
         .btn {
             padding: 12px 20px;
             border: none;
@@ -211,197 +395,31 @@
             text-decoration: none;
             flex: 1;
             justify-content: center;
+            font-family: 'Inter', sans-serif;
         }
-        
+
         .btn-pdf {
             background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
         }
-        
+
         .btn-pdf:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
         }
-        
+
         .btn-excel {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
         }
-        
+
         .btn-excel:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
-        
-        /* Reporte Consolidado Destacado */
-        .consolidated-section {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(46, 125, 50, 0.3);
-            color: white;
-        }
-        
-        .consolidated-section h2 {
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .consolidated-section p {
-            font-size: 1.05em;
-            opacity: 0.95;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .consolidated-section ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .consolidated-section ul li {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-        
-        .consolidated-btn-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .btn-consolidated {
-            padding: 16px 35px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        
-        .btn-consolidated.pdf {
-            background: white;
-            color: #c62828;
-        }
-        
-        .btn-consolidated.excel {
-            background: white;
-            color: #2e7d32;
-        }
-        
-        .btn-consolidated:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Filtros para Solicitudes */
-        .filters-section {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .filters-section h3 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .filter-group label {
-            display: block;
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .filter-group select,
-        .filter-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 0.95em;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-        
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
-        }
-        
-        .btn-filter {
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 0.95em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-        
-        .btn-filter.primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            border: none;
-        }
-        
-        .btn-filter.secondary {
-            background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-        
-        .btn-filter:hover {
-            transform: translateY(-2px);
-        }
-        
+
         /* Footer */
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
@@ -412,50 +430,91 @@
             margin-top: 30px;
             box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        
+
         footer p {
             font-weight: 500;
             letter-spacing: 0.5px;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
+            body {
+                padding: 10px;
             }
-            
-            .reports-grid {
+
+            .header {
+                padding: 25px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header p {
+                font-size: 0.95em;
+            }
+
+            .filters-section {
+                padding: 20px;
+            }
+
+            .filters-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .report-card {
-                border-right: none;
-            }
-            
-            .btn-group {
+
+            .filter-actions {
                 flex-direction: column;
             }
-            
+
+            .btn-filter {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .consolidated-section {
+                padding: 25px 20px;
+            }
+
+            .consolidated-section h2 {
+                font-size: 1.4em;
+            }
+
             .consolidated-btn-group {
                 flex-direction: column;
             }
-            
+
             .btn-consolidated {
                 width: 100%;
                 justify-content: center;
             }
-            
-            .filters-grid {
+
+            .reports-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .filter-actions {
+
+            .report-card {
+                border-right: none;
+            }
+
+            .btn-group {
                 flex-direction: column;
             }
-            
-            .btn-filter {
-                width: 100%;
-                justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.4em;
             }
         }
     </style>
@@ -472,53 +531,10 @@
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
-            <span style="color: #2e7d32; font-weight: 600;">Panel de Reportes</span>
+            <span>Panel de Reportes</span>
         </div>
         
-        <!-- Estadísticas Generales -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>📋 Solicitudes</h3>
-                <div class="number">{{ total_solicitudes }}</div>
-            </div>
-            <div class="stat-card recibidas">
-                <h3>⏳ Recibidas</h3>
-                <div class="number">{{ solicitudes_recibidas }}</div>
-            </div>
-            <div class="stat-card respondidas">
-                <h3>💬 Respondidas</h3>
-                <div class="number">{{ solicitudes_respondidas }}</div>
-            </div>
-            <div class="stat-card finalizadas">
-                <h3>✅ Finalizadas</h3>
-                <div class="number">{{ solicitudes_finalizadas }}</div>
-            </div>
-        </div>
-        
-        <!-- Reporte Consolidado Destacado -->
-        <div class="consolidated-section">
-            <h2>⭐ Reporte Consolidado del Sistema</h2>
-            <p>
-                Genera un reporte completo con toda la información del sistema en un solo documento.
-                Ideal para informes ejecutivos y auditorías.
-            </p>
-            <ul>
-                <li>📋 {{ total_solicitudes }} Solicitudes</li>
-                <li>🏢 {{ total_empresas }} Empresas</li>
-                <li>📚 {{ total_programas }} Programas</li>
-                <li>👨‍🏫 {{ total_instructores }} Instructores</li>
-            </ul>
-            <div class="consolidated-btn-group">
-                <a href="{% url 'reportes:reporte_consolidado_pdf' %}" class="btn-consolidated pdf">
-                    📄 Descargar PDF Completo
-                </a>
-                <a href="{% url 'reportes:reporte_consolidado_excel' %}" class="btn-consolidated excel">
-                    📊 Descargar Excel Completo
-                </a>
-            </div>
-        </div>
-        
-        <!-- Filtros para Solicitudes -->
+        <!-- Filtros debajo del breadcrumb -->
         <div class="filters-section">
             <h3>🔍 Filtros para Reporte de Solicitudes</h3>
             <form id="filtrosForm">
@@ -571,6 +587,49 @@
                     </button>
                 </div>
             </form>
+        </div>
+        
+        <!-- Estadísticas Generales -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>📋 Solicitudes</h3>
+                <div class="number">{{ total_solicitudes }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>⏳ Recibidas</h3>
+                <div class="number">{{ solicitudes_recibidas }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>💬 Respondidas</h3>
+                <div class="number">{{ solicitudes_respondidas }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Finalizadas</h3>
+                <div class="number">{{ solicitudes_finalizadas }}</div>
+            </div>
+        </div>
+        
+        <!-- Reporte Consolidado Destacado -->
+        <div class="consolidated-section">
+            <h2>⭐ Reporte Consolidado del Sistema</h2>
+            <p>
+                Genera un reporte completo con toda la información del sistema en un solo documento.
+                Ideal para informes ejecutivos y auditorías.
+            </p>
+            <ul>
+                <li>📋 {{ total_solicitudes }} Solicitudes</li>
+                <li>🏢 {{ total_empresas }} Empresas</li>
+                <li>📚 {{ total_programas }} Programas</li>
+                <li>👨‍🏫 {{ total_instructores }} Instructores</li>
+            </ul>
+            <div class="consolidated-btn-group">
+                <a href="{% url 'reportes:reporte_consolidado_pdf' %}" class="btn-consolidated pdf">
+                    📄 Descargar PDF Completo
+                </a>
+                <a href="{% url 'reportes:reporte_consolidado_excel' %}" class="btn-consolidated excel">
+                    📊 Descargar Excel Completo
+                </a>
+            </div>
         </div>
         
         <!-- Reportes Individuales -->

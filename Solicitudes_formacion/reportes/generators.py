@@ -42,7 +42,7 @@ class PDFReportGenerator:
             alignment=TA_CENTER,
             fontName='Helvetica-Bold'
         ))
-        
+    
         # Subtítulo
         self.styles.add(ParagraphStyle(
             name='CustomSubtitle',
@@ -52,7 +52,7 @@ class PDFReportGenerator:
             spaceAfter=20,
             fontName='Helvetica-Bold'
         ))
-        
+    
         # Encabezado de sección
         self.styles.add(ParagraphStyle(
             name='SectionHeader',
@@ -62,6 +62,17 @@ class PDFReportGenerator:
             spaceAfter=10,
             spaceBefore=15,
             fontName='Helvetica-Bold'
+        ))
+    
+        # Estilo para celdas de tabla (NUEVO)
+        self.styles.add(ParagraphStyle(
+            name='TableCell',
+            parent=self.styles['Normal'],
+            fontSize=8,
+            leading=11,
+            alignment=TA_LEFT,
+            wordWrap='CJK',
+            fontName='Helvetica'
         ))
     
     def add_header_footer(self, canvas, doc):
@@ -145,29 +156,29 @@ class PDFReportGenerator:
         for sol in solicitudes[:50]:  # Limitar a 50 para no sobrecargar
             data.append([
                 f"#{sol.id}",
-                sol.empresa.nombre[:30],
-                sol.programa.nombre[:25],
+                Paragraph(sol.empresa.nombre, self.styles['Normal']),
+                Paragraph(sol.programa.nombre,self.styles['Normal']),
                 sol.get_estado_display(),
                 sol.fecha_recepcion.strftime('%d/%m/%Y'),
-                sol.instructor_asignado.nombre[:20] if sol.instructor_asignado else 'Sin asignar'
+                Paragraph(sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar', self.styles['Normal'])
             ])
         
         # Crear tabla
-        table = Table(data, colWidths=[0.5*inch, 1.8*inch, 1.5*inch, 1*inch, 1*inch, 1.2*inch])
+        table = Table(data, colWidths=[0.5*inch, 2.2*inch, 2*inch, 1*inch, 1*inch, 1.5*inch]) 
         table.setStyle(TableStyle([
             # Encabezado
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
             
             # Cuerpo
             ('BACKGROUND', (0, 1), (-1, -1), colors.white),
             ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
@@ -210,22 +221,22 @@ class PDFReportGenerator:
         
         for emp in empresas[:50]:
             data.append([
-                emp.nombre[:35],
-                emp.contacto[:25],
+                Paragraph(emp.nombre,self.styles['Normal']),
+                Paragraph(emp.contacto, self.styles['Normal']),
                 emp.telefono or 'N/A',
-                emp.correo[:30],
-                emp.municipio[:20] if emp.municipio else 'N/A',
+                Paragraph(emp.correo, self.styles['Normal']),
+                emp.municipio if emp.municipio else 'N/A',
                 str(emp.numero_trabajadores) if emp.numero_trabajadores else '0'
             ])
         
-        table = Table(data, colWidths=[1.5*inch, 1.2*inch, 0.9*inch, 1.3*inch, 1*inch, 0.8*inch])
+        table = Table(data, colWidths=[2*inch, 1.5*inch, 1*inch, 1.8*inch, 1.2*inch, 0.9*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 7),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
@@ -264,8 +275,8 @@ class PDFReportGenerator:
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
@@ -283,262 +294,308 @@ class PDFReportGenerator:
             buffer,
             pagesize=letter,
             topMargin=80,
-            bottomMargin=50
+            bottomMargin=50,
+            leftMargin=50,
+            rightMargin=50
         )
-        
+    
         elements = []
-        
+    
         # ========== PORTADA ==========
         title = Paragraph("REPORTE CONSOLIDADO DEL SISTEMA", self.styles['CustomTitle'])
         elements.append(title)
         elements.append(Spacer(1, 0.1 * inch))
-        
+    
         subtitle = Paragraph(
             "Sistema de Gestión de Solicitudes de Formación SENA",
             self.styles['CustomSubtitle']
         )
         elements.append(subtitle)
         elements.append(Spacer(1, 0.3 * inch))
-        
+    
         # Fecha de generación
         fecha_text = f"<b>Fecha de generación:</b> {timezone.now().strftime('%d/%m/%Y %H:%M')}"
         elements.append(Paragraph(fecha_text, self.styles['Normal']))
         elements.append(Spacer(1, 0.5 * inch))
-        
+    
         # ========== RESUMEN EJECUTIVO ==========
         elements.append(Paragraph("RESUMEN EJECUTIVO", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
-        
+    
         summary_data = [
             ['Módulo', 'Cantidad', 'Detalles'],
             ['Solicitudes', str(solicitudes.count()), 
-             f"Recibidas: {solicitudes.filter(estado='RECIBIDA').count()}, "
-             f"Finalizadas: {solicitudes.filter(estado='FINALIZADA').count()}"],
+            f"Recibidas: {solicitudes.filter(estado='RECIBIDA').count()}, "
+            f"Finalizadas: {solicitudes.filter(estado='FINALIZADA').count()}"],
             ['Empresas', str(empresas.count()), 
-             f"Con solicitudes activas: {empresas.filter(solicitud__isnull=False).distinct().count()}"],
+            f"Con solicitudes activas: {empresas.filter(solicitud__isnull=False).distinct().count()}"],
             ['Programas', str(programas.count()), 
-             f"Activos: {programas.filter(activo=True).count()}"],
+            f"Activos: {programas.filter(activo=True).count()}"],
             ['Instructores', str(instructores.count()), 
-             f"Activos: {instructores.filter(activo=True).count()}"],
+            f"Activos: {instructores.filter(activo=True).count()}"],
         ]
-        
-        summary_table = Table(summary_data, colWidths=[2*inch, 1.2*inch, 3.5*inch])
+    
+        summary_table = Table(summary_data, colWidths=[1.5*inch, 1*inch, 4*inch])
         summary_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
         ]))
-        
+    
         elements.append(summary_table)
         elements.append(PageBreak())
-        
+    
         # ========== SECCIÓN 1: SOLICITUDES ==========
         elements.append(Paragraph("1. SOLICITUDES DE FORMACIÓN", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
-        
+    
         # Estadísticas de solicitudes
         sol_stats_data = [
             ['Estado', 'Cantidad', 'Porcentaje'],
             ['Recibidas', str(solicitudes.filter(estado='RECIBIDA').count()), 
-             f"{(solicitudes.filter(estado='RECIBIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
+            f"{(solicitudes.filter(estado='RECIBIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
             ['Respondidas', str(solicitudes.filter(estado='RESPONDIDA').count()),
-             f"{(solicitudes.filter(estado='RESPONDIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
+            f"{(solicitudes.filter(estado='RESPONDIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
             ['Atendidas', str(solicitudes.filter(estado='ATENDIDA').count()),
-             f"{(solicitudes.filter(estado='ATENDIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
+            f"{(solicitudes.filter(estado='ATENDIDA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
             ['Finalizadas', str(solicitudes.filter(estado='FINALIZADA').count()),
-             f"{(solicitudes.filter(estado='FINALIZADA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
+            f"{(solicitudes.filter(estado='FINALIZADA').count() / max(solicitudes.count(), 1) * 100):.1f}%"],
         ]
-        
+    
         sol_stats_table = Table(sol_stats_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
         sol_stats_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
-        ]))
-        
-        elements.append(sol_stats_table)
-        elements.append(Spacer(1, 0.3 * inch))
-        
-        # Top 10 solicitudes recientes
-        elements.append(Paragraph("Últimas 10 Solicitudes", self.styles['SectionHeader']))
-        
-        sol_data = [['ID', 'Empresa', 'Programa', 'Estado', 'Fecha']]
-        for sol in solicitudes[:10]:
-            sol_data.append([
-                f"#{sol.id}",
-                sol.empresa.nombre[:25],
-                sol.programa.nombre[:25],
-                sol.get_estado_display()[:15],
-                sol.fecha_recepcion.strftime('%d/%m/%Y')
-            ])
-        
-        sol_table = Table(sol_data, colWidths=[0.6*inch, 1.7*inch, 1.7*inch, 1.2*inch, 1*inch])
-        sol_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 9),
             ('FONTSIZE', (0, 1), (-1, -1), 8),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ]))
-        
+    
+        elements.append(sol_stats_table)
+        elements.append(Spacer(1, 0.3 * inch))
+    
+        # Top 10 solicitudes recientes
+        elements.append(Paragraph("Últimas 10 Solicitudes", self.styles['SectionHeader']))
+        elements.append(Spacer(1, 0.1 * inch))
+    
+        sol_data = [['ID', 'Empresa', 'Programa', 'Estado', 'Fecha']]
+        for sol in solicitudes[:10]:
+            sol_data.append([
+                Paragraph(f"#{sol.id}", self.styles['TableCell']),
+                Paragraph(sol.empresa.nombre, self.styles['TableCell']),
+                Paragraph(sol.programa.nombre, self.styles['TableCell']),
+                Paragraph(sol.get_estado_display(), self.styles['TableCell']),
+                Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y'), self.styles['TableCell'])
+            ])
+    
+        sol_table = Table(sol_data, colWidths=[0.5*inch, 2.2*inch, 2.2*inch, 1*inch, 0.8*inch])
+        sol_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ]))
+    
         elements.append(sol_table)
         elements.append(PageBreak())
-        
+    
         # ========== SECCIÓN 2: EMPRESAS ==========
         elements.append(Paragraph("2. DIRECTORIO DE EMPRESAS", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
-        
+
         elements.append(Paragraph(
             f"Total de empresas registradas: <b>{empresas.count()}</b>",
             self.styles['Normal']
         ))
         elements.append(Spacer(1, 0.2 * inch))
-        
-        # Top 15 empresas
+
+        # Top 15 empresas - MEJORADO CON TEXTO COMPLETO
         emp_data = [['Empresa', 'Contacto', 'Teléfono', 'Municipio', 'Solicitudes']]
         for emp in empresas[:15]:
             emp_data.append([
-                emp.nombre[:30],
-                emp.contacto[:20],
-                emp.telefono[:15] or 'N/A',
-                emp.municipio[:15] if emp.municipio else 'N/A',
-                str(emp.solicitud_set.count())
-            ])
-        
-        emp_table = Table(emp_data, colWidths=[1.8*inch, 1.3*inch, 1*inch, 1*inch, 0.8*inch])
+                Paragraph(emp.nombre or 'Sin nombre', self.styles['TableCell']),
+                Paragraph(emp.contacto or 'Sin contacto', self.styles['TableCell']),
+                Paragraph(emp.telefono or 'N/A', self.styles['TableCell']),
+                Paragraph(emp.municipio or 'No especificado', self.styles['TableCell']),
+                Paragraph(str(emp.solicitud_set.count()), self.styles['TableCell'])
+        ])
+
+        # Anchos optimizados - sin truncar texto
+        emp_table = Table(emp_data, colWidths=[2*inch, 1.4*inch, 0.9*inch, 1*inch, 1*inch])
         emp_table.setStyle(TableStyle([
+            # Encabezado
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 7),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+        
+            # Cuerpo
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
-        
+    
         elements.append(emp_table)
         elements.append(PageBreak())
-        
+    
         # ========== SECCIÓN 3: PROGRAMAS ==========
         elements.append(Paragraph("3. PROGRAMAS DE FORMACIÓN", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
-        
+    
         # Programas por área
         from django.db.models import Count
         areas_stats = programas.values('area__nombre').annotate(
             total=Count('id')
         ).order_by('-total')[:5]
-        
+    
         area_data = [['Área de Formación', 'Cantidad de Programas']]
         for area in areas_stats:
             area_data.append([
-                area['area__nombre'][:40],
-                str(area['total'])
+                Paragraph(area['area__nombre'] or 'Sin área', self.styles['TableCell']),
+                Paragraph(str(area['total']), self.styles['TableCell'])
             ])
-        
-        area_table = Table(area_data, colWidths=[4*inch, 2*inch])
+    
+        area_table = Table(area_data, colWidths=[4.5*inch, 1.5*inch])
         area_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
-        ]))
-        
-        elements.append(area_table)
-        elements.append(Spacer(1, 0.3 * inch))
-        
-        # Lista de programas
-        elements.append(Paragraph("Programas Más Solicitados", self.styles['SectionHeader']))
-        
-        prog_data = [['Programa', 'Área', 'Duración', 'Solicitudes']]
-        for prog in programas.annotate(num_sol=Count('solicitud')).order_by('-num_sol')[:15]:
-            prog_data.append([
-                prog.nombre[:35],
-                prog.area.nombre[:20],
-                f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A',
-                str(prog.num_sol)
-            ])
-        
-        prog_table = Table(prog_data, colWidths=[2.5*inch, 1.5*inch, 1*inch, 1*inch])
-        prog_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+            ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 9),
             ('FONTSIZE', (0, 1), (-1, -1), 8),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
         ]))
-        
+    
+        elements.append(area_table)
+        elements.append(Spacer(1, 0.3 * inch))
+    
+        # Lista de programas
+        elements.append(Paragraph("Programas Más Solicitados", self.styles['SectionHeader']))
+        elements.append(Spacer(1, 0.1 * inch))
+    
+        prog_data = [['Programa', 'Área', 'Duración', 'Solicitudes']]
+        for prog in programas.annotate(num_sol=Count('solicitud')).order_by('-num_sol')[:15]:
+            prog_data.append([
+                Paragraph(prog.nombre, self.styles['TableCell']),
+                Paragraph(prog.area.nombre, self.styles['TableCell']),
+                Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A', self.styles['TableCell']),
+                Paragraph(str(prog.num_sol), self.styles['TableCell'])
+            ])
+    
+        prog_table = Table(prog_data, colWidths=[2.5*inch, 2*inch, 0.8*inch, 1*inch])
+        prog_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (1, -1), 'LEFT'),
+            ('ALIGN', (2, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ]))
+    
         elements.append(prog_table)
         elements.append(PageBreak())
-        
+    
         # ========== SECCIÓN 4: INSTRUCTORES ==========
         elements.append(Paragraph("4. INSTRUCTORES", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
-        
+    
         elements.append(Paragraph(
             f"Total de instructores: <b>{instructores.count()}</b> "
             f"(Activos: <b>{instructores.filter(activo=True).count()}</b>)",
             self.styles['Normal']
         ))
         elements.append(Spacer(1, 0.2 * inch))
-        
-        inst_data = [['Instructor', 'Correo', 'Teléfono', 'Especialidades', 'Solicitudes Asignadas']]
+    
+        inst_data = [['Instructor', 'Correo', 'Teléfono', 'Especialidades', 'Solicitudes']]
         for inst in instructores.filter(activo=True)[:20]:
             inst_data.append([
-                inst.nombre[:25],
-                inst.correo[:25],
-                inst.telefono[:15],
-                str(inst.especialidad.count()),
-                str(inst.solicitud_set.count())
+                Paragraph(inst.nombre, self.styles['TableCell']),
+                Paragraph(inst.correo, self.styles['TableCell']),
+                Paragraph(inst.telefono if inst.telefono else 'N/A', self.styles['TableCell']),
+                Paragraph(str(inst.especialidad.count()), self.styles['TableCell']),
+                Paragraph(str(inst.solicitud_set.count()), self.styles['TableCell'])
             ])
-        
-        inst_table = Table(inst_data, colWidths=[1.5*inch, 1.8*inch, 1*inch, 1*inch, 1*inch])
+    
+        inst_table = Table(inst_data, colWidths=[1.6*inch, 1.9*inch, 0.8*inch, 1.1*inch, 0.9*inch])
         inst_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (2, -1), 'LEFT'),
+            ('ALIGN', (3, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('FONTSIZE', (0, 1), (-1, -1), 7),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
         ]))
-        
+    
         elements.append(inst_table)
-        
+    
         # ========== PIE DE REPORTE ==========
         elements.append(Spacer(1, 0.5 * inch))
         elements.append(Paragraph(
             "<i>--- Fin del Reporte Consolidado ---</i>",
             self.styles['Normal']
         ))
-        
+    
         # Construir PDF
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
-        
+    
         buffer.seek(0)
         return buffer
-
 
 class ExcelReportGenerator:
     """Generador de reportes Excel con formato SENA"""
@@ -569,12 +626,14 @@ class ExcelReportGenerator:
             column_letter = get_column_letter(idx)
             for cell in column:
                 try:
-                    if cell.value is not None and len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
+                    if cell.value is not None:
+                        cell_length = len(str(cell.value))
+                        if cell_length > max_length:
+                            max_length = cell_length
                 except Exception:
                     # Ignoramos celdas que no se puedan convertir a str
                     pass
-            adjusted_width = min(max_length + 2, 50)
+            adjusted_width = max(12, min(max_length + 4,60))
             ws.column_dimensions[column_letter].width = adjusted_width
     
     def generate_solicitudes_report(self, solicitudes):
@@ -599,14 +658,19 @@ class ExcelReportGenerator:
         ws['A4'].font = Font(bold=True, size=12)
         
         stats_row = 5
-        ws[f'A{stats_row}'] = 'Total Solicitudes'
-        ws[f'B{stats_row}'] = solicitudes.count()
-        ws[f'C{stats_row}'] = 'Recibidas'
-        ws[f'D{stats_row}'] = solicitudes.filter(estado='RECIBIDA').count()
-        ws[f'E{stats_row}'] = 'Respondidas'
-        ws[f'F{stats_row}'] = solicitudes.filter(estado='RESPONDIDA').count()
-        ws[f'G{stats_row}'] = 'Finalizadas'
-        ws[f'H{stats_row}'] = solicitudes.filter(estado='FINALIZADA').count()
+        stats_data = [
+            ['Total Solicitudes', solicitudes.count(), 'Recibidas', solicitudes.filter(estado='RECIBIDA').count()],
+            ['Respondidas', solicitudes.filter(estado='RESPONDIDA').count(), 'Finalizadas', solicitudes.filter(estado='FINALIZADA').count()]
+        ]
+
+        for row_idx, row_data in enumerate(stats_data, start=stats_row):
+            for col_idx, value in enumerate(row_data, start=1):
+                cell = ws.cell(row=row_idx, column=col_idx, value=value)
+                cell.border = self.border
+                cell.alignment = Alignment(horizontal='center', vertical='center')  # ✓ CENTRADO
+                if col_idx % 2 == 1:  # Etiquetas en columnas impares
+                    cell.fill = PatternFill(start_color="E8F5E9", end_color="E8F5E9", fill_type="solid")
+                    cell.font = Font(bold=True)
         
         # Encabezados de tabla
         headers = ['ID', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
@@ -632,7 +696,7 @@ class ExcelReportGenerator:
         for row in ws.iter_rows(min_row=7, max_row=ws.max_row, max_col=8):
             for cell in row:
                 cell.border = self.border
-                cell.alignment = Alignment(vertical='center', wrap_text=True)
+                cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
         
         self.adjust_column_width(ws)
         
@@ -679,7 +743,7 @@ class ExcelReportGenerator:
         for row in ws.iter_rows(min_row=4, max_row=ws.max_row, max_col=8):
             for cell in row:
                 cell.border = self.border
-                cell.alignment = Alignment(vertical='center')
+                cell.alignment = Alignment(horizontal='center', vertical='center',wrap_text=True)
         
         self.adjust_column_width(ws)
         
@@ -717,7 +781,7 @@ class ExcelReportGenerator:
         for row in ws.iter_rows(min_row=3, max_row=ws.max_row, max_col=6):
             for cell in row:
                 cell.border = self.border
-                cell.alignment = Alignment(vertical='center')
+                cell.alignment = Alignment(horizontal='center',vertical='center', wrap_text=True)
         
         self.adjust_column_width(ws)
         
