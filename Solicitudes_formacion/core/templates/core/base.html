@@ -736,7 +736,7 @@
             
             {% if request.user.is_authenticated %}
             <li>
-                <a href="#">
+                <a href="{% url 'core:profile' %}">
                     <i class="bi bi-person-circle"></i>
                     <span>Mi Perfil</span>
                 </a>

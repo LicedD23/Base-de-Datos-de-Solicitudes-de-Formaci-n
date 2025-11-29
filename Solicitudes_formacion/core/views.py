@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.utils import timezone
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
 # imports directos de modelos (están en apps separadas)
 from area_formacion.models import Area
 from programas.models import Programa
@@ -160,7 +161,101 @@ def logout_view(request):
     messages.success(request,'Has cerrado sesion exitosamente')
     return redirect('core:home')
 
-            
-            
+@login_required
+def profile_view(request):
+    """Vista para ver el perfil del usuario"""
+    #Estadisticas del  usuario si es staff
+    context = {
+        'user':request.user
+    }
+    if request.user.is_staff:
+        #Metricas del  sistema para el  administrador
+        context['total_solicitudes'] = Solicitud.objects.count()
+        context['total_empresas'] = Empresa.objects.count()
+        context['total_programas'] = Programa.objects.count()
+        context['total_instructores'] = Instructor.objects.filter(activo=True).count()
+    
+    return render(request, 'core/profile.html', context)
 
+@login_required
+def profile_edit(request):
+    """Vista para editar el perfil del usuario"""
+    
+    if request.method == 'POST':
+        user = request.user
+        
+        #Obtener datos del formulario
+        first_name = request.POST.get('first_name','').strip()
+        last_name = request.POST.get('last_name','').strip()
+        email = request.POST.get('email','').strip()
+        
+        #Validaciones
+        if not email:
+            messages.error(request,'El correo electronico es obligatorio')
+            return render(request, 'core/profile_edit.html')
+    
+        # ✅ CORRECCIÓN 1: User con mayúscula
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            messages.error(request, 'Este correo electronico ya esta en uso')
+            return render(request, 'core/profile_edit.html')
+        
+        try:
+            #Actualizar datos del usuario
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+            
+            messages.success(request, '¡Perfil actualizado exitosamente!')
+            return redirect('core:profile')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar el perfil: {str(e)}')
+            return render(request,'core/profile_edit.html')
+    return render(request, 'core/profile_edit.html')
 
+@login_required
+def change_password(request):
+    """Vista para cambiar la contraseña del usuario"""
+    
+    if request.method == 'POST':
+        user = request.user
+        current_password = request.POST.get('current_password','')
+        # ✅ CORRECCIÓN 2: new_password en lugar de nex_password
+        new_password = request.POST.get('new_password','')
+        confirm_password = request.POST.get('confirm_password','')
+        
+        #Validaciones
+        if not all([current_password, new_password, confirm_password]):
+            messages.error(request, 'Todos los campos son obligatorios')
+            return render(request, 'core/change_password.html')
+        
+        #Verificar contraseña actual
+        if not user.check_password(current_password):
+            messages.error(request, 'La contraseña actual es incorrecta')
+            return render(request, 'core/change_password.html')
+        
+        #Verificar que las contraseñas coincidan
+        if new_password != confirm_password:
+            messages.error(request, 'Las contraseñas nuevas no coinciden')
+            return render(request, 'core/change_password.html')
+        
+        #Verificar longitud minima
+        if len(new_password) < 8:
+            messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
+            return render(request, 'core/change_password.html')
+        
+        try:
+            #Cambiar contraseña
+            user.set_password(new_password)
+            user.save()
+            
+            # Mantener la sesion activa despues de cambiar la contraseña
+            update_session_auth_hash(request, user)
+            
+            messages.success(request, '¡Contraseña cambiada exitosamente!')
+            return redirect('core:profile')
+        except Exception as e:
+            messages.error(request, f'Error al cambiar la contraseña: {str(e)}')
+            return render(request, 'core/change_password.html')
+    
+    return render(request, 'core/change_password.html')
