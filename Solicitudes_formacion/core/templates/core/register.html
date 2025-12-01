@@ -152,7 +152,7 @@
             position: relative;
         }
 
-        .input-wrapper i {
+        .input-wrapper i:not(.toggle-password) {
             position: absolute;
             left: 14px;
             top: 50%;
@@ -160,11 +160,30 @@
             color: #999;
             font-size: 1.1rem;
             transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toggle-password {
+            position: absolute !important;
+            right: 14px !important;
+            left: auto !important;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: var(--sena-green);
+            transform: translateY(-50%) scale(1.1);
         }
 
         input {
             width: 100%;
-            padding: 13px 14px 13px 44px;
+            padding: 13px 44px 13px 14px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             font-size: 14px;
@@ -172,6 +191,18 @@
             outline: none;
             transition: all 0.3s ease;
             background: white;
+        }
+
+        input[name="first_name"],
+        input[name="last_name"],
+        input[name="username"],
+        input[name="email"] {
+            padding: 13px 14px 13px 44px;
+        }
+
+        input[name="password"],
+        input[name="password2"] {
+            padding: 13px 44px 13px 14px;
         }
 
         input:focus {
@@ -474,7 +505,7 @@
                         autocomplete="new-password"
                         minlength="8"
                     >
-                    <i class="bi bi-lock"></i>
+                    <i class="bi bi-eye-slash-fill toggle-password" id="togglePassword"></i>
                 </div>
                 <div class="password-strength" id="passwordStrength"></div>
             </div>
@@ -491,7 +522,7 @@
                         autocomplete="new-password"
                         minlength="8"
                     >
-                    <i class="bi bi-lock-fill"></i>
+                    <i class="bi bi-eye-slash-fill toggle-password" id="togglePassword2"></i>
                 </div>
             </div>
 
@@ -511,8 +542,29 @@
     </div>
 
     <script>
-        // Validación de fortaleza de contraseña
+        // Toggle para contraseña
+        const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye-slash-fill');
+            this.classList.toggle('bi-eye-fill');
+        });
+
+        // Toggle para confirmar contraseña
+        const togglePassword2 = document.getElementById('togglePassword2');
+        const password2Input = document.getElementById('password2');
+
+        togglePassword2.addEventListener('click', function() {
+            const type = password2Input.getAttribute('type') === 'password' ? 'text' : 'password';
+            password2Input.setAttribute('type', type);
+            this.classList.toggle('bi-eye-slash-fill');
+            this.classList.toggle('bi-eye-fill');
+        });
+
+        // Validación de fortaleza de contraseña
         const strengthDiv = document.getElementById('passwordStrength');
 
         passwordInput.addEventListener('input', function() {
@@ -548,7 +600,6 @@
         });
 
         // Validar que las contraseñas coincidan
-        const password2Input = document.getElementById('password2');
         const form = document.querySelector('form');
 
         form.addEventListener('submit', function(e) {
