@@ -91,7 +91,8 @@ def login_view(request):
         
         if user is not None:
             login(request, user)
-            messages.success(request, f'¡Bienvenido {user.first_name or user.username}!')
+            nombre = user.get_full_name() or user.username
+            messages.success(request, f'¡Bienvenido {nombre}!')
             
             #Redirigir a la pagina solicitada o  al  dashboard
             next_url = request.GET.get('next','core:dashboard')
@@ -157,8 +158,9 @@ def register_view(request):
 
 def logout_view(request):
     """vista para cerrar sesion"""
+    nombre = request.user.get_full_name() or request.user.username
     logout(request)
-    messages.success(request,'Has cerrado sesion exitosamente')
+    messages.success(request,f'Hasta pronto {nombre}! Has cerrado sesion exitosamente')
     return redirect('core:home')
 
 @login_required
@@ -259,3 +261,6 @@ def change_password(request):
             return render(request, 'core/change_password.html')
     
     return render(request, 'core/change_password.html')
+
+def accessibility(request):
+    return render(request, 'core/accessibility.html')

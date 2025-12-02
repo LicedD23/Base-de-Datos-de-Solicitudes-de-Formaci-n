@@ -226,14 +226,15 @@
             justify-content: center;
         }
 
-        .btn-primary {
+        .btn-warning {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
             flex: 1;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            
         }
 
-        .btn-primary:hover {
+        .btn-warning:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
@@ -242,11 +243,12 @@
             background: white;
             color: #666;
             border: 2px solid #e0e0e0;
+            flex: 1;
         }
 
         .btn-secondary:hover {
             background: #f5f5f5;
-            border-color: #999;
+            border-color: #bdbdbd;
         }
 
         .current-info {
@@ -510,12 +512,12 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        💾 Guardar Cambios
-                    </button>
                     <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-secondary">
                         ✖️ Cancelar
                     </a>
+                    <button type="submit" class="btn btn-warning">
+                        💾 Guardar Cambios
+                    </button>
                 </div>
             </form>
         </div>

@@ -646,7 +646,260 @@
                 opacity: 0.7;
             }
         }
+        /*Toast notifications (Mensajes Flotantes)*/
+        /* ============================================
+   🎨 TOAST NOTIFICATIONS (Mensajes Flotantes)
+   ============================================ */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    z-index: 9999;
+    pointer-events: none;
+}
 
+.toast-message {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 26px;
+    margin-bottom: 16px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 360px;
+    max-width: 480px;
+    pointer-events: auto;
+    animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Barra de progreso animada */
+.toast-message::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+    background: currentColor;
+    animation: progressBar 4s linear forwards;
+    opacity: 0.8;
+}
+
+@keyframes progressBar {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* Animación de entrada más moderna */
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(120px) scale(0.8);
+    }
+    60% {
+        transform: translateX(-10px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* Animación de salida tipo "explosión de burbuja" */
+.toast-message.hiding {
+    animation: bubblePop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes bubblePop {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateX(0);
+    }
+    30% {
+        transform: scale(1.1) translateX(10px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) translateX(150px) rotate(45deg);
+        filter: blur(5px);
+    }
+}
+
+/* Colores por tipo de mensaje */
+.toast-message.success {
+    border-left-color: #00b050;
+    color: #00b050;
+}
+
+.toast-message.success::before {
+    background: linear-gradient(90deg, #00b050, #00d45f);
+}
+
+.toast-message.error {
+    border-left-color: #dc3545;
+    color: #dc3545;
+}
+
+.toast-message.error::before {
+    background: linear-gradient(90deg, #dc3545, #ff4757);
+}
+
+.toast-message.warning {
+    border-left-color: #ffc107;
+    color: #f57c00;
+}
+
+.toast-message.warning::before {
+    background: linear-gradient(90deg, #ffc107, #ffb300);
+}
+
+.toast-message.info {
+    border-left-color: #2196F3;
+    color: #2196F3;
+}
+
+.toast-message.info::before {
+    background: linear-gradient(90deg, #2196F3, #03A9F4);
+}
+
+/* Icono con efecto de pulso */
+.toast-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    animation: iconPulse 0.6s ease;
+    position: relative;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Aro animado alrededor del icono */
+.toast-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    opacity: 0;
+    animation: ripple 1.5s ease-out infinite;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.toast-message.success .toast-icon {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #00b050;
+    box-shadow: 0 4px 15px rgba(0, 176, 80, 0.3);
+}
+
+.toast-message.error .toast-icon {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #dc3545;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.toast-message.warning .toast-icon {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #f57c00;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.toast-message.info .toast-icon {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    color: #2196F3;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+/* Contenido del mensaje */
+.toast-content {
+    flex: 1;
+}
+
+.toast-content p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+}
+
+/* Botón de cerrar mejorado */
+.toast-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #333;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.toast-close:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .toast-container {
+        right: 15px;
+        left: 15px;
+        top: 80px;
+    }
+    
+    .toast-message {
+        min-width: auto;
+        width: 100%;
+        padding: 16px 20px;
+    }
+
+    .toast-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.3rem;
+    }
+}
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .sidebar {
@@ -832,9 +1085,50 @@
             <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
         </footer>
     </div>
-
+    
+    <!--Toast container para mensajes flotantes-->
+    <!-- Toast Container para mensajes flotantes -->
+    <div class="toast-container" id="toastContainer">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="toast-message {{ message.tags }}" data-auto-hide="true">
+                <div class="toast-icon">
+                    {% if message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="bi bi-x-circle-fill"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill"></i>
+                    {% endif %}
+                </div>
+                <div class="toast-content">
+                    <p>{{ message }}</p>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Función para auto-ocultar toasts con efecto de explosión
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast-message[data-auto-hide="true"]');
+    
+            toasts.forEach(toast => {
+                // Auto-ocultar después de 4 segundos
+                setTimeout(() => {
+                    toast.classList.add('hiding');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 600); // Duración de la animación bubblePop
+                }, 4000);
+            });
+        });
         // Toggle Sidebar
         const sidebar = document.getElementById('sidebar');
         const mainWrapper = document.getElementById('mainWrapper');

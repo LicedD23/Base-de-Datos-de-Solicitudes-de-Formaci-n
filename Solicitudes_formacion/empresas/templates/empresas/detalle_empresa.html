@@ -83,49 +83,41 @@
         .action-buttons {
             display: flex;
             gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 14px 30px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        
         }
 
-        .btn-edit {
-            background: white;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
+        .btn-warning{
+            background: #fff3e0;
+            color: #ef6c00;
+            border:2px solid #ef6c00;
         }
-
-        .btn-edit:hover {
-            background: #2e7d32;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+        .btn-warning:hover{
+            background: #ef6c00;
+            color:white;
         }
-
-        .btn-delete {
-            background: white;
+        .btn-danger{
+            background: #ffebee;
             color: #c62828;
-            border: 2px solid #c62828;
+            border:2px solid #c62828;
         }
-
-        .btn-delete:hover {
+        .btn-danger:hover{
             background: #c62828;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.3);
         }
 
         /* Estadísticas principales */
@@ -500,15 +492,15 @@
         </div>
 
         <!-- Botones de acción (entre breadcrumb y estadísticas) -->
-        <div class="action-buttons">
-            <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn btn-editar">
+        <div class="action-buttons"style="justify-content:center; gap:20px;">
+            <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn btn-warning">
                 ✏️ Editar Empresa
             </a>
-            <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn btn-desactivar">
+            <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn btn-danger">
                 ❌ Desactivar
             </a>
         </div>
-
+        <br>
         <!-- Estadísticas principales -->
         <div class="stats-bar">
             <div class="stat-card">
@@ -602,9 +594,6 @@
         <div class="solicitudes-section">
             <div class="section-header">
                 <h2>📋 Historial de Solicitudes</h2>
-                <a href="#" class="btn-nueva-solicitud">
-                    ➕ Nueva Solicitud
-                </a>
             </div>
 
             <!-- Tabs -->
