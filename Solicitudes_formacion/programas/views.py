@@ -51,7 +51,6 @@ def listar_programas(request):
     }
     return render(request, 'programas/listar_programas.html', context)
 
-
 def detalle_programa(request, programa_id):
     """Vista para el detalle de un programa"""
     programa = get_object_or_404(
@@ -77,9 +76,9 @@ def detalle_programa(request, programa_id):
 
     
 def crear_programa(request):
-    """vista para crear un nuevo programa"""
+    """Vista para crear un nuevo programa"""
     areas = Area.objects.filter(activo=True).order_by('nombre')
-    
+
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         codigo = request.POST.get('codigo', '').strip()
@@ -87,16 +86,17 @@ def crear_programa(request):
         descripcion = request.POST.get('descripcion', '')
         duracion_horas = request.POST.get('duracion_horas', '')
         activo = request.POST.get('activo') == 'on'
-        
-        # validaciones
+
+        # Validaciones
         if not nombre or not area_id:
             messages.error(request, 'El nombre y el área son obligatorios.')
-            return render(request, 'programas/crear_programa.html', {'areas': areas})
-        
+            return render(request, 'programas/crear_programa.html', {
+                'areas': areas,
+            })
+
         try:
             area = Area.objects.get(id=area_id)
-            
-            # Crear Programa
+
             programa = Programa.objects.create(
                 nombre=nombre,
                 codigo=codigo,
@@ -105,14 +105,18 @@ def crear_programa(request):
                 duracion_horas=int(duracion_horas) if duracion_horas else None,
                 activo=activo
             )
+
             messages.success(request, f'Programa "{programa.nombre}" creado exitosamente')
-            return redirect('detalle_programa', programa_id=programa.id)
+            return redirect('programas:detalle_programa', programa_id=programa.id)
+
         except Area.DoesNotExist:
             messages.error(request, 'El área seleccionada no existe')
+
         except Exception as e:
             messages.error(request, f'Error al crear el programa: {str(e)}')
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
+
 
             
 def editar_programa(request, programa_id):

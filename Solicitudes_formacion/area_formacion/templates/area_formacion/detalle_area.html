@@ -461,7 +461,7 @@
                 ✏️ Editar Área
             </a>
             <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn btn-danger">
-                🗑️ Eliminar Área
+                🗑️ Desactivar Área
             </a>
         </div>
         <br>
@@ -596,5 +596,6 @@
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
