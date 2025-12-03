@@ -42,6 +42,7 @@
             font-size: 1.1em;
             opacity: 0.95;
         }
+
         .breadcrumb {
             background: white;
             padding: 15px 20px;
@@ -68,6 +69,147 @@
         .breadcrumb span {
             color: #999;
         }
+
+        /* 🎨 MENSAJES - ESTILOS COMPLETOS */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        /* ✅ Mensaje de ÉXITO - Verde brillante */
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
+        }
+
+        .alert-success::before {
+            background: #fff;
+        }
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* ❌ Mensaje de ERROR - Rojo vibrante */
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
+        }
+
+        .alert-error::before {
+            background: #fff;
+        }
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { 
+                transform: translateX(0); 
+            }
+            25% { 
+                transform: translateX(-10px); 
+            }
+            75% { 
+                transform: translateX(10px); 
+            }
+        }
+
+        /* ⚠️ Mensaje de WARNING - Naranja */
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
+        }
+
+        .alert-warning::before {
+            background: #fff;
+        }
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        /* Botón de cerrar mensaje */
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
         .controls-section {
             background: white;
             padding: 25px;
@@ -366,33 +508,35 @@
             color: #999;
             margin-bottom: 20px;
         }
-        /*FOOTER STYLES*/
-        footer{
-            flex-shrink: 0;
-            background:linear-gradient(90deg, #1b5e20, #2e7d32);
-            color:white;
-            text-align:center;
-            padding:1.5rem;
-            font-size:0.9rem;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
-            position:relative;
-            margin-top:40px;
-        }
-        footer::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:2px;
-            background:linear-gradient(90deg, transparent, #66bb6a, transparent);
 
+        footer {
+            flex-shrink: 0;
+            background: linear-gradient(90deg, #1b5e20, #2e7d32);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            position: relative;
+            margin-top: 40px;
         }
-        footer p{
-            margin:0;
-            font-weight:600;
-            letter-spacing:0.5px;
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #66bb6a, transparent);
         }
+
+        footer p {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -409,30 +553,51 @@
             .areas-grid {
                 grid-template-columns: 1fr;
             }
-            .page-wrapper{
-                padding:15px;
-            }
-            footer{
-                font-size:0.85rem;
-                padding:1.2rem;
+
+            footer {
+                font-size: 0.85rem;
+                padding: 1.2rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        
-
         <div class="header">
             <h1>🎓 Áreas de Formación</h1>
             <p>Gestiona las áreas de formación del SENA - Transformando la educación con tecnología</p>
         </div>
+
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
             <a href="{% url 'area_formacion:listar_areas' %}">Áreas de Formación</a>
             <span>›</span>
         </div>
+
+        <!-- 🎨 MENSAJES - SECCIÓN CORREGIDA -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}
+                            ❌
+                        {% elif 'warning' in message.tags %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        {{ message }}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="controls-section">
             <form method="get" style="display: flex; flex: 1; gap: 15px; flex-wrap: wrap;">
                 <div class="search-box">
@@ -516,11 +681,40 @@
         </div>
         {% endif %}
     </div>
-    </div>
 
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
-    {% include 'core/accessibility.html'%}
+
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+    {% include 'core/accessibility.html' %}
 </body>
 </html>

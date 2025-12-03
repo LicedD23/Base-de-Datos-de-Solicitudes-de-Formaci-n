@@ -80,12 +80,12 @@ def crear_area(request):
         
         # Validaciones
         if not nombre:
-            messages.error(request, 'El nombre es obligatorio')
+            messages.error(request, '⚠️ El nombre es obligatorio')  # 👈 Agrega emoji
             return render(request, 'area_formacion/crear_area.html')
 
         # Verificar si ya existe un area con ese nombre
         if Area.objects.filter(nombre__iexact=nombre).exists():
-            messages.error(request, f'Ya existe un área con el nombre "{nombre}"')
+            messages.error(request, f'❌ Ya existe un área con el nombre "{nombre}"')  # 👈 Agrega emoji
             return render(request, 'area_formacion/crear_area.html', {
                 'nombre': nombre,
                 'descripcion': descripcion
@@ -98,19 +98,20 @@ def crear_area(request):
                 descripcion=descripcion,
                 activo=activo
             )
-            messages.success(request, f'Área "{area.nombre}" creada exitosamente')
-            # ✅ CAMBIA ESTO - Redirige al listado en lugar del detalle
+            messages.success(
+                request, 
+                f'✅ ¡Área "{area.nombre}" creada exitosamente! Ya está disponible en el listado de áreas.'
+            )
             return redirect('area_formacion:listar_areas')
         except Exception as e:
-            messages.error(request, f'Error al crear el área: {str(e)}')
+            messages.error(request, f'❌ Error al crear el área: {str(e)}')  # 👈 Agrega emoji
             return render(request, 'area_formacion/crear_area.html', {
                 'nombre': nombre,
                 'descripcion': descripcion
             })
     
-    # GET request
     return render(request, 'area_formacion/crear_area.html')
-
+            
 def editar_area(request, area_id):
     """Vista para editar un area existente"""
     area = get_object_or_404(Area, id=area_id)
@@ -121,11 +122,11 @@ def editar_area(request, area_id):
         activo = request.POST.get('activo') == 'on'
         
         if not nombre:
-            messages.error(request, 'El nombre es obligatorio')
+            messages.error(request, '⚠️ El nombre es obligatorio')
             return render(request, 'area_formacion/editar_area.html', {'area': area})
         
         if Area.objects.filter(nombre__iexact=nombre).exclude(id=area_id).exists():
-            messages.error(request, f'Ya existe otra área con el nombre "{nombre}"')
+            messages.error(request, f'❌ Ya existe otra área con el nombre "{nombre}"')
             return render(request, 'area_formacion/editar_area.html', {'area': area})
         
         try:
@@ -133,13 +134,19 @@ def editar_area(request, area_id):
             area.descripcion = descripcion
             area.activo = activo
             area.save()
-            messages.success(request, f'Área "{area.nombre}" actualizada exitosamente')
+            
+            # 🎯 MENSAJE MEJORADO:
+            messages.success(
+                request, 
+                f'✅ ¡Área "{area.nombre}" actualizada exitosamente! Los cambios ya están disponibles en el sistema.'
+            )
             return redirect('area_formacion:detalle_area', area_id=area.id)
         except Exception as e:
-            messages.error(request, f'Error al actualizar el área: {str(e)}')
+            messages.error(request, f'❌ Error al actualizar el área: {str(e)}')
             return render(request, 'area_formacion/editar_area.html', {'area': area})
     
     return render(request, 'area_formacion/editar_area.html', {'area': area})
+
 def desactivar_area(request, area_id):
     """Vista para desactivar un área y opcionalmente sus programas"""
     area = get_object_or_404(Area, id=area_id)
