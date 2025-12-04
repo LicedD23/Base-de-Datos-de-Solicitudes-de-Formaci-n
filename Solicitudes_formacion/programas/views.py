@@ -94,6 +94,13 @@ def crear_programa(request):
                 'areas': areas,
             })
 
+        # ✅ Validar código duplicado (solo si se proporciona un código)
+        if codigo and Programa.objects.filter(codigo=codigo).exists():
+            messages.error(request, f'Ya existe un programa con el código "{codigo}". Por favor, usa otro código.')
+            return render(request, 'programas/crear_programa.html', {
+                'areas': areas,
+            })
+
         try:
             area = Area.objects.get(id=area_id)
 
@@ -106,8 +113,8 @@ def crear_programa(request):
                 activo=activo
             )
 
-            messages.success(request, f'Programa "{programa.nombre}" creado exitosamente')
-            return redirect('programas:detalle_programa', programa_id=programa.id)
+            messages.success(request, f'✅ Programa "{programa.nombre}" creado exitosamente')
+            return redirect('programas:listar_programas')
 
         except Area.DoesNotExist:
             messages.error(request, 'El área seleccionada no existe')
@@ -116,8 +123,6 @@ def crear_programa(request):
             messages.error(request, f'Error al crear el programa: {str(e)}')
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
-
-
             
 def editar_programa(request, programa_id):
     """vista para editar un programa existente"""
@@ -141,6 +146,14 @@ def editar_programa(request, programa_id):
                 'programa': programa,
                 'areas': areas
             })
+            
+        #codigo  duplicado
+        if codigo and Programa.objects.filter(codigo=codigo).exclude(id=programa_id).exists():
+            messages.error(request, f'Ya existe otro programa con el  codigo "{codigo}".')
+            return render(request, 'programas/editar_programa.html',{
+                'programa':programa,
+                'areas': areas
+            })
         
         try:
             area = Area.objects.get(id=area_id)
@@ -154,13 +167,13 @@ def editar_programa(request, programa_id):
             programa.activo = activo
             programa.save()
             
-            messages.success(request, f'Programa "{programa.nombre}" actualizado exitosamente')
+            messages.success(request, f' ✅Programa "{programa.nombre}" actualizado exitosamente')
             return redirect('programas:detalle_programa', programa_id=programa.id)
         
         except Area.DoesNotExist:
             messages.error(request, 'El área seleccionada no existe')
         except Exception as e:
-            messages.error(request, f'Error al actualizar el programa: {str(e)}')
+            messages.error(request, f'❌ Error al actualizar el programa: {str(e)}')
     
     # GET request - retornar el contexto con areas
     return render(request, 'programas/editar_programa.html', {

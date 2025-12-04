@@ -97,7 +97,7 @@ def crear_instructor(request):
         
         #Validaciones
         if not all([nombre, telefono, correo]):
-            messages.error(request, 'El nombre, telefono y correo son obligatorios')
+            messages.error(request, '⚠️ El nombre, telefono y correo son obligatorios')
             
             programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
@@ -108,7 +108,7 @@ def crear_instructor(request):
             })
         #validar que tenga al menos una especialidad
         if not especialidades_ids:
-            messages.error(request,'Debe seleccionar al menos una especialidad')
+            messages.error(request,'⚠️ Debe seleccionar al menos una especialidad')
             programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
                 'programas': programas,
@@ -118,7 +118,7 @@ def crear_instructor(request):
             })
         #Verificar si ya existe un instructor con ese correo
         if Instructor.objects.filter(correo__iexact=correo).exists():
-            messages.error(request,f'Ya existe un instructor con el correo "{correo}"')
+            messages.error(request,f' ❌ Ya existe un instructor con el correo "{correo}"')
             programas = programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
                 'programas': programas,
@@ -139,10 +139,10 @@ def crear_instructor(request):
             #Asignar especialidades (relación ManyToMany)
             instructor.especialidad.set(especialidades_ids)
             
-            messages.success(request, f'Instructor "{instructor.nombre}" creado exitosamente')
-            return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
+            messages.success(request, f'Instructor "{instructor.nombre}" creado exitosamente! Ya esta disponible en el  sistema.')
+            return redirect('instructores:listar_instructores')
         except Exception as e:
-            messages.error(request,f'Error al  crear el instructor: {str(e)}')
+            messages.error(request,f' ❌ Error al  crear el instructor: {str(e)}')
             
         #GET request
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
@@ -161,7 +161,7 @@ def editar_instructor(request, instructor_id):
         
         # Validaciones
         if not all([nombre, telefono, correo]):
-            messages.error(request, 'El nombre, teléfono y correo son obligatorios')
+            messages.error(request, '⚠️ El nombre, teléfono y correo son obligatorios')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
@@ -172,7 +172,7 @@ def editar_instructor(request, instructor_id):
         
         # Validar que tenga al menos una especialidad
         if not especialidades_ids:
-            messages.error(request, 'Debe seleccionar al menos una especialidad')
+            messages.error(request, ' ⚠️ Debe seleccionar al menos una especialidad')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
@@ -183,7 +183,7 @@ def editar_instructor(request, instructor_id):
         
         # Verificar si ya existe otro instructor con ese correo
         if Instructor.objects.filter(correo__iexact=correo).exclude(id=instructor_id).exists():
-            messages.error(request, f'Ya existe otro instructor con el correo "{correo}"')
+            messages.error(request, f'❌ Ya existe otro instructor con el correo "{correo}"')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
@@ -203,18 +203,11 @@ def editar_instructor(request, instructor_id):
             # Actualizar especialidades
             instructor.especialidad.set(especialidades_ids)
             
-            messages.success(request, f'Instructor "{instructor.nombre}" actualizado exitosamente')
+            messages.success(request, f'✅ Instructor "{instructor.nombre}" actualizado exitosamente')
             return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
         except Exception as e:
-            messages.error(request, f'Error al actualizar el instructor: {str(e)}')
-        programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-        especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
-        return render(request, 'instructores/editar_instructor.html', {
-                'instructor': instructor,
-                'programas': programas,
-                'especialidades_instructor': list(especialidades_instructor),
-            })
-    
+            messages.error(request, f'❌ Error al actualizar el instructor: {str(e)} actualizado exitosamente')
+        
     # GET request
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
     especialidades_instructor = instructor.especialidad.values_list('id', flat=True)

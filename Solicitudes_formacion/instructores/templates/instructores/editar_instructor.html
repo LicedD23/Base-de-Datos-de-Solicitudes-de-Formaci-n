@@ -69,7 +69,148 @@
         .breadcrumb span {
             color: #999;
         }
-
+        /* Mensajes */
+        .messages-container{
+            margin-bottom:25px;
+        }
+        .alert{
+            padding:18px 25px;
+            border-radius:12px;
+            margin-bottom:15px;
+            display:flex;
+            align-items:center;
+            gap:15px;
+            font-size:1em;
+            font-weight:500;
+            box-shadow:0 4px 15px rgba(0,0,0,0.1);
+            animation:slideInDown 0.4s ease-out;
+            position:relative;
+            overflow:hidden;
+        }
+        @keyframes slideInDown{
+            from{
+                transform:translateY(-20%);
+                opacity:0; 
+            }
+            to{
+                transform:translateY(0);
+                opacity:1;
+            }
+        }
+        .alert::before{
+            content:'';
+            position:absolute;
+            left:0;
+            top:0;
+            bottom:0;
+            width:5px; 
+        }
+        .alert-success{
+            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%) !important;
+            color:white !important;
+            border:2px solid #1b5e20 !important;
+        }
+        .alert-success::before{
+            background:#fff;
+        }
+        .alert-success .alert-icon{
+            font-size:1.8em;
+            animation:scaleIn 0.5s ease-out;
+            color:white !important;
+        }
+        .alert-success .alert-content{
+            color:white !important;
+        }
+        .alert-success *{
+            color:white !important;
+        }
+        @keyframes scaleIn{
+            0%{
+                transform:scale(0);
+            }
+            50%{
+                transform:scale(1.2);
+            }
+            100%{
+                transform:scale(1);
+            }
+        }
+        .alert-error{
+            background:linear-gradient(135deg, #c62828 0%, #e53935 100%) !important;
+            color:white !important;
+            border:2px solid #b71c1c !important;
+        }
+        .alert-error::before{
+            background:#fff;
+        }
+        .alert-error .alert-icon{
+            font-size:1.8em;
+            animation:shake 0.5s ease-out;
+            color:white !important;
+        }
+        .alert-error .alert-content{
+            color:white !important;
+        }
+        .alert-error *{
+            color:white !important;
+        }
+        @keyframes shake{
+            0%, 100%{
+                transform:translateX(0);
+            }
+            25%{
+                transform:translateX(-10px);
+            }
+            75%{
+                transform:translateX(10px);
+            }
+        }
+        .alert-warning{
+            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%) !important;
+            color:white !important;
+            border:2px solid #e65100 !important;
+        }
+        .alert-warning::before{
+            background:#fff;
+        }
+        .alert-warning .alert-icon{
+            font-size:1.8em;
+            color:white !important;
+        }
+        .alert-warning .alert-content{
+            color:white !important;
+        }
+        .alert-warning *{
+            color:white !important;
+        }
+        .alert-icon{
+            font-size:1.5em;
+            flex-shrink:0;
+        }
+        .alert-content{
+            flex:1;
+            line-height:1.5;
+        }
+        .alert-close{
+            background: rgba(255,255,255,0.2);
+            border:2px solid rgba(255,255,255,0.3);
+            color:white;
+            width:28px;
+            height:28px;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:bold;
+            font-size:1.2em;
+            transition:all 0.3s ease;
+            flex-shrink:0;
+        }
+        .alert-close:hover{
+            background:rgba(255,255,255,0.4);
+            transform:scale(1.1);
+        }
         .info-banner {
             background: #e8f5e9;
             border-left: 4px solid #2e7d32;
@@ -179,28 +320,6 @@
             margin: 0;
             cursor: pointer;
             font-weight: 500;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95em;
-        }
-
-        .alert-error {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #c62828;
-        }
-
-        .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
         }
 
         .form-actions {
@@ -490,19 +609,28 @@
             </div>
         </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% else %}alert-success{% endif %}">
-                    {% if 'error' in message.tags %}
-                        ⚠️
-                    {% else %}
-                        ✓
-                    {% endif %}
-                    {{ message }}
+        <!-- Mensajes -->
+        {% if messages%}
+        <div class="messages-container">
+            {%for message in  messages%}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}
+                            ❌
+                        {% elif 'warning' in message.tags %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        {{ message }}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-            {% endfor %}
-        {% endif %}
-
+            {%endfor%}
+        </div>
+        {%endif%}
         <div class="form-card">
             <div class="metadata-section">
                 <h3>📊 Información Actual</h3>
@@ -644,6 +772,34 @@
     <footer>
         <p>© 2025 Servicio Nacional  de Aprendizaje (SENA)</p>
     </footer>
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
     {% include 'core/accessibility.html'%}
 </body>
 </html>
