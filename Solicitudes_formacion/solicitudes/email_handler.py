@@ -49,6 +49,35 @@ class EmailSolicitudHandler:
         
         return texto
     
+    def validar_nit(self, nit):
+        """
+        Valida y limpia el NIT segun las reglas de tu aplicacion.
+        Retorna el NIT limpio o None si no es valido.
+        """
+        if not nit: 
+            return None
+        
+        # Limpiar espacios, guiones y puntos (CORREGIDO: espacio vacío '')
+        nit_limpio = nit.replace(' ', '').replace('-', '').replace('.', '')
+        
+        # Validar que solo contenga digitos
+        if not nit_limpio.isdigit():
+            print(f"   ⚠️ NIT invalido (contiene caracteres no numericos): {nit}")
+            return None
+        
+        # Validar longitud minima (8 digitos - corregido de 9 a 8)
+        if len(nit_limpio) < 8:
+            print(f"   ⚠️ NIT invalido (menos de 8 digitos): {nit_limpio}")
+            return None
+        
+        # Validar longitud maxima (20 segun tu modelo)
+        if len(nit_limpio) > 20:
+            print(f"   ⚠️ NIT invalido (mas de 20 digitos): {nit_limpio}")
+            return None
+        
+        print(f"   ✅ NIT validado: {nit_limpio}")
+        return nit_limpio
+        
     def conectar_email(self):
         """Conecta al servidor IMAP para RECIBIR correos"""
         try:
@@ -174,6 +203,7 @@ class EmailSolicitudHandler:
             
             info = {
                 'nombre': None,
+                'nit': None,
                 'contacto': None,
                 'correo': None,
                 'telefono': None,
@@ -184,18 +214,28 @@ class EmailSolicitudHandler:
                 'observaciones': None,
             }
             
-            # ========== EXTRACCION DE NOMBRE DE EMPRESA ==========
-            print("\n   === BUSCANDO NOMBRE DE EMPRESA ===")
+            # ========== EXTRACCION DE NOMBRE DE EMPRESA Y NIT ==========
+            print("\n   === BUSCANDO NOMBRE DE EMPRESA Y NIT ===")
             
-            # METODO 1: Buscar "Nombre:" en seccion estructurada
-            nombre_match = re.search(r'Nombre:\s*([^\n]+)', cuerpo, re.IGNORECASE)
-            if nombre_match:
-                nombre = self.limpiar_texto(nombre_match.group(1))
+            # METODO 1: Buscar "Nombre:" seguido opcionalmente de "NIT:"
+            nombre_nit_match = re.search(
+                r'Nombre:\s*([^\n]+?)(?:\s*NIT:\s*([0-9\s\.\-]+))?(?:\n|$)',
+                cuerpo,
+                re.IGNORECASE
+            )
+            if nombre_nit_match:
+                nombre = self.limpiar_texto(nombre_nit_match.group(1))
                 if nombre:
-                    # Eliminar NIT si está presente
-                    nombre = re.sub(r'\s*NIT:.*', '', nombre, flags=re.IGNORECASE).strip()
                     info['nombre'] = nombre[:200]
                     print("   METODO 1 - Campo Nombre: " + info['nombre'])
+                
+                # Si encontró NIT en la misma línea
+                if nombre_nit_match.group(2):
+                    nit_candidato = nombre_nit_match.group(2).strip()
+                    nit_validado = self.validar_nit(nit_candidato)
+                    if nit_validado:
+                        info['nit'] = nit_validado
+                        print("   METODO 1 - NIT junto al nombre: " + info['nit'])
             
             # METODO 2: Buscar "la empresa NOMBRE" en el texto
             if not info['nombre']:
@@ -225,7 +265,53 @@ class EmailSolicitudHandler:
                         print("   METODO 3 - Mayusculas: " + info['nombre'])
             
             if not info['nombre']:
-                print("   NO SE ENCONTRO NOMBRE DE EMPRESA")
+                print("   ⚠️ NO SE ENCONTRO NOMBRE DE EMPRESA")
+            
+            # ========== EXTRACCION DE NIT (si no se encontró antes) ==========
+            print("\n   === BUSCANDO NIT ===")
+            
+            if not info['nit']:
+                # METODO 1: Campo "NIT:" explicito
+                nit_match = re.search(
+                    r'NIT:\s*([0-9\s\.\-]+)',
+                    cuerpo,
+                    re.IGNORECASE
+                )
+                if nit_match:
+                    nit_candidato = nit_match.group(1).strip()
+                    nit_validado = self.validar_nit(nit_candidato)
+                    if nit_validado:
+                        info['nit'] = nit_validado
+                        print("   METODO 1 - Campo NIT: " + info['nit'])
+            
+            if not info['nit']:
+                # METODO 2: Buscar "NIT" seguido de numeros (con formatos variados)
+                nit_match = re.search(
+                    r'NIT\s*[:\-]?\s*([0-9\s\.\-]{8,15})',
+                    cuerpo,
+                    re.IGNORECASE
+                )
+                if nit_match:
+                    nit_candidato = nit_match.group(1).strip()
+                    nit_validado = self.validar_nit(nit_candidato)
+                    if nit_validado:
+                        info['nit'] = nit_validado
+                        print("   METODO 2 - Texto con NIT: " + info['nit'])
+            
+            if not info['nit']:
+                # METODO 3: Buscar secuencia de 8-11 digitos (formato tipico del NIT colombiano)
+                nit_match = re.search(r'\b([0-9]{8,11})\b', cuerpo)
+                if nit_match:
+                    nit_candidato = nit_match.group(1)
+                    # Verificar que no sea un telefono (los telefonos moviles empiezan con 3)
+                    if not nit_candidato.startswith('3') or len(nit_candidato) != 10:
+                        nit_validado = self.validar_nit(nit_candidato)
+                        if nit_validado:
+                            info['nit'] = nit_validado
+                            print("   METODO 3 - Secuencia numerica: " + info['nit'])
+            
+            if not info['nit']:
+                print("   ⚠️ NO SE ENCONTRO NIT")
             
             # ========== EXTRACCION DE CONTACTO ==========
             contacto_match = re.search(
@@ -272,7 +358,7 @@ class EmailSolicitudHandler:
                     info['correo'] = email_match.group(1).strip().lower()
                     print("   Email (remitente): " + info['correo'])
             
-            # ========== EXTRACCION DE TELEFONO - MEJORADO ==========
+            # ========== EXTRACCION DE TELEFONO ==========
             print("\n   === BUSCANDO TELEFONO ===")
             
             # METODO 1: Campo "Telefono:" o "Tel:"
@@ -305,7 +391,7 @@ class EmailSolicitudHandler:
                     print("   Telefono (fijo): " + info['telefono'])
             
             if not info['telefono']:
-                print("   NO SE ENCONTRO TELEFONO")
+                print("   ⚠️ NO SE ENCONTRO TELEFONO")
             
             # ========== EXTRACCION DE MUNICIPIO ==========
             municipio_match = re.search(
@@ -321,7 +407,7 @@ class EmailSolicitudHandler:
                     info['municipio'] = municipio[:100]
                     print("   Municipio: " + info['municipio'])
             
-            # ========== EXTRACCION DE DIRECCION - NUEVO ==========
+            # ========== EXTRACCION DE DIRECCION ==========
             print("\n   === BUSCANDO DIRECCION ===")
             
             # METODO 1: Campo "Dirección:"
@@ -337,7 +423,7 @@ class EmailSolicitudHandler:
                     print("   Direccion encontrada: " + info['direccion'])
             
             if not info['direccion']:
-                print("   NO SE ENCONTRO DIRECCION")
+                print("   ⚠️ NO SE ENCONTRO DIRECCION")
             
             # ========== EXTRACCION DE TRABAJADORES ==========
             trab_match = re.search(
@@ -398,10 +484,11 @@ class EmailSolicitudHandler:
                         break
             
             if not info['programa_solicitado']:
-                print("   NO SE ENCONTRO PROGRAMA")
+                print("   ⚠️ NO SE ENCONTRO PROGRAMA")
             
             print("\n   === RESUMEN ===")
             print("   Empresa: " + (info['nombre'] or 'NO ENCONTRADA'))
+            print("   NIT: " + (info['nit'] or 'NO ENCONTRADO'))
             print("   Contacto: " + (info['contacto'] or 'NO ENCONTRADO'))
             print("   Telefono: " + (info['telefono'] or 'NO ENCONTRADO'))
             print("   Direccion: " + (info['direccion'] or 'NO ENCONTRADA'))
@@ -421,20 +508,67 @@ class EmailSolicitudHandler:
         try:
             nombre = info.get('nombre')
             correo = info.get('correo')
+            nit = info.get('nit')
             
             # Validar que al menos tengamos nombre o correo
             if not nombre and not correo:
-                print("   ERROR: No hay nombre ni correo para crear empresa")
+                print("   ❌ ERROR: No hay nombre ni correo para crear empresa")
                 return None, False
             
-            # Buscar por nombre exacto
+            # Busqueda Mejorada por NIT
+            if nit:
+                empresa = Empresa.objects.filter(nit=nit).first()
+                if empresa:
+                    print(f"   ✅ Empresa ENCONTRADA por NIT: {empresa.nombre} (NIT: {empresa.nit})")
+                    # Actualizar solo campos vacios o por defecto
+                    actualizado = False
+                    
+                    # Actualizar nombre si el actual esta vacio y tenemos uno nuevo
+                    if info.get('nombre') and (not empresa.nombre or empresa.nombre.startswith('Empresa')):
+                        empresa.nombre = info.get('nombre')[:200]
+                        actualizado = True
+                    
+                    if not empresa.contacto and info.get('contacto'):
+                        empresa.contacto = info.get('contacto')[:100]
+                        actualizado = True
+                        
+                    if not empresa.correo and info.get('correo'):
+                        empresa.correo = info.get('correo')
+                        actualizado = True
+                    
+                    if not empresa.telefono and info.get('telefono'):
+                        empresa.telefono = info.get('telefono')[:20]
+                        actualizado = True
+                    
+                    if not empresa.municipio and info.get('municipio'):
+                        empresa.municipio = info.get('municipio')[:100]
+                        actualizado = True
+                    
+                    if not empresa.direccion and info.get('direccion'):
+                        empresa.direccion = info.get('direccion')[:250]
+                        actualizado = True
+                    
+                    if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
+                        empresa.numero_trabajadores = info.get('numero_trabajadores')
+                        actualizado = True
+                        
+                    if actualizado:
+                        empresa.save()
+                        print("   📝 Empresa Actualizada con nuevos datos")
+                        
+                    return empresa, False
+            
+            # Buscar por nombre exacto si no se encontro por NIT
             if nombre:
                 empresa = Empresa.objects.filter(nombre__iexact=nombre).first()
                 if empresa:
-                    print("   Empresa ENCONTRADA: " + empresa.nombre)
-                    
-                    # Actualizar solo campos vacíos o por defecto
+                    print("   ✅ Empresa ENCONTRADA por nombre: " + empresa.nombre)
                     actualizado = False
+                    
+                    if nit and not empresa.nit:
+                        empresa.nit = nit
+                        actualizado = True
+                        print(f"   📝 NIT actualizado en empresa existente: {nit}")
                     
                     if not empresa.contacto and info.get('contacto'):
                         empresa.contacto = info.get('contacto')[:100]
@@ -462,15 +596,16 @@ class EmailSolicitudHandler:
                     
                     if actualizado:
                         empresa.save()
-                        print("   Empresa ACTUALIZADA con nuevos datos")
+                        print("   📝 Empresa ACTUALIZADA con nuevos datos")
                     
                     return empresa, False
             
             # Crear nueva empresa con validaciones
-            print("   Creando NUEVA empresa...")
+            print("   🆕 Creando NUEVA empresa...")
             
             # Preparar datos con valores por defecto solo si es necesario
             nombre_empresa = nombre if nombre else f"Empresa {correo.split('@')[0]}"
+            nit_empresa = nit if nit else ''
             contacto_empresa = info.get('contacto') if info.get('contacto') else 'Sin contacto'
             telefono_empresa = info.get('telefono') if info.get('telefono') else ''
             correo_empresa = correo if correo else f"sin-correo-{timezone.now().timestamp()}@ejemplo.com"
@@ -480,6 +615,7 @@ class EmailSolicitudHandler:
             
             empresa = Empresa.objects.create(
                 nombre=nombre_empresa[:200],
+                nit=nit_empresa[:20],
                 contacto=contacto_empresa[:100],
                 telefono=telefono_empresa[:20],
                 correo=correo_empresa,
@@ -488,14 +624,15 @@ class EmailSolicitudHandler:
                 numero_trabajadores=num_trabajadores
             )
             
-            print("   Empresa CREADA: " + empresa.nombre)
+            print("   ✅ Empresa CREADA: " + empresa.nombre)
+            print("   - NIT: " + (empresa.nit or 'NO REGISTRADO'))
             print("   - Telefono: " + (empresa.telefono or 'NO REGISTRADO'))
             print("   - Direccion: " + (empresa.direccion or 'NO REGISTRADA'))
             
             return empresa, True
             
         except Exception as e:
-            print("   Error creando empresa: " + str(e))
+            print("   ❌ Error creando empresa: " + str(e))
             import traceback
             traceback.print_exc()
             return None, False

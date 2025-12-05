@@ -1,9 +1,9 @@
 <!-- ========================= 
    MÓDULO DE ACCESIBILIDAD (Pegar justo antes de </body>)
-   Un solo archivo — todo incluido
+   Sin funcionalidad de cambio de idioma
    ========================= -->
 
-<!-- ======= ESTILOS (LOS MISMOS QUE TENÍAS) ======= -->
+<!-- ======= ESTILOS ======= -->
 <style>
 :root {
     --sena-green: #009640;
@@ -13,437 +13,390 @@
     --sidebar-width: 280px;
 }
 
-/* (--- INICIA: TU BLOQUE CSS ORIGINAL ---) */
-/* Copié tus estilos del módulo tal como me los enviaste — aquí va TODO tu CSS de accesibilidad */
-    /* ============================================
-       ESTILOS AISLADOS PARA NO INTERFERIR
-       ============================================ */
-    
-    /* BOTÓN FLOTANTE CIRCULAR */
-    .accessibility-button {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(135deg, #00b050 0%, #009640 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
+/* BOTÓN FLOTANTE CIRCULAR */
+.accessibility-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #00b050 0%, #009640 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
+    transition: all 0.3s ease;
+    z-index: 10001;
+    border: 3px solid #fff;
+}
+
+.accessibility-button:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(57, 169, 0, 0.6);
+}
+
+.accessibility-button svg {
+    width: 35px;
+    height: 35px;
+    fill: white;
+}
+
+/* Animación de pulso */
+@keyframes pulse-accessibility {
+    0% {
         box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-        transition: all 0.3s ease;
-        z-index: 10001;
-        border: 3px solid #fff;
     }
-    
-    .accessibility-button:hover {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 8px 25px rgba(57, 169, 0, 0.6);
+    50% {
+        box-shadow: 0 6px 30px rgba(57, 169, 0, 0.7);
     }
-    
-    .accessibility-button svg {
-        width: 35px;
-        height: 35px;
-        fill: white;
+    100% {
+        box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
     }
-    
-    /* Animación de pulso */
-    @keyframes pulse-accessibility {
-        0% {
-            box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-        }
-        50% {
-            box-shadow: 0 6px 30px rgba(57, 169, 0, 0.7);
-        }
-        100% {
-            box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-        }
-    }
-    
-    .accessibility-button.pulse {
-        animation: pulse-accessibility 2s infinite;
-    }
-    
-    /* MODAL/PANEL DE ACCESIBILIDAD - COMPACTO Y LATERAL */
+}
+
+.accessibility-button.pulse {
+    animation: pulse-accessibility 2s infinite;
+}
+
+/* MODAL/PANEL DE ACCESIBILIDAD - COMPACTO Y LATERAL */
+.access-container {
+    position: fixed;
+    bottom: 110px;
+    right: 30px;
+    transform: translateX(120%) scale(0.9);
+    width: 380px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: #ffffff;
+    padding: 25px 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+.access-container.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1);
+}
+
+/* Overlay oscuro */
+.accessibility-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+.accessibility-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.access-container h1 {
+    text-align: center;
+    color: #009640;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 1.4em;
+}
+
+.access-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.85em;
+}
+
+.access-section-title {
+    font-size: 1em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #222;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.access-option-group {
+    margin: 12px 0;
+    padding: 15px;
+    background: #f1f8f4;
+    border-radius: 12px;
+    border-left: 4px solid #009640;
+    transition: all 0.3s ease;
+}
+
+.access-option-group:hover {
+    box-shadow: 0 3px 10px rgba(57, 169, 0, 0.12);
+    transform: translateX(2px);
+}
+
+.access-option-group label {
+    font-size: 0.9em;
+    color: #333;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.access-container button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.85em;
+    transition: all 0.3s ease;
+    background: #009640;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.access-container button:hover {
+    background: #2d8600;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
+}
+
+.access-container button:active {
+    transform: translateY(0);
+}
+
+.access-button-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.access-preview-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #1b5e20;
+    color: #fff;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.access-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    z-index: 10002;
+}
+
+.access-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Contraste alto dinámico */
+body.high-contrast {
+    background: #000 !important;
+    color: #fff !important;
+}
+
+.high-contrast .sidebar {
+    background: #000 !important;
+    border-right: 2px solid #ffff00 !important;
+}
+
+.high-contrast .sidebar-menu a {
+    color: #ffff00 !important;
+    border-left-color: #ffff00 !important;
+}
+
+.high-contrast .sidebar-menu a:hover,
+.high-contrast .sidebar-menu a.active {
+    background: #222 !important;
+    color: #fff !important;
+}
+
+.high-contrast .topbar {
+    background: #000 !important;
+    border-bottom: 2px solid #ffff00 !important;
+}
+
+.high-contrast .menu-toggle {
+    background: #ffff00 !important;
+    color: #000 !important;
+}
+
+.high-contrast .topbar-user {
+    background: #000 !important;
+    color: #ffff00 !important;
+    border: 2px solid #ffff00 !important;
+}
+
+.high-contrast main {
+    background: #000 !important;
+    color: #fff !important;
+}
+
+.high-contrast .card,
+.high-contrast .stat-card {
+    background: #1a1a1a !important;
+    border: 2px solid #ffff00 !important;
+    color: #fff !important;
+}
+
+.high-contrast .stat-card-value,
+.high-contrast .section-title {
+    color: #ffff00 !important;
+}
+
+.high-contrast table.table {
+    background: #000 !important;
+}
+
+.high-contrast table.table th {
+    background: #222 !important;
+    color: #ffff00 !important;
+    border: 1px solid #ffff00 !important;
+}
+
+.high-contrast table.table td {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #444 !important;
+}
+
+.high-contrast table.table tbody tr:hover {
+    background: #333 !important;
+}
+
+.high-contrast footer {
+    background: #000 !important;
+    color: #ffff00 !important;
+    border-top: 2px solid #ffff00 !important;
+}
+
+.high-contrast .access-container {
+    background: #1a1a1a !important;
+    border: 2px solid #ffff00 !important;
+}
+
+.high-contrast h1,
+.high-contrast .access-section-title,
+.high-contrast label,
+.high-contrast .access-subtitle {
+    color: #ffff00 !important;
+}
+
+.high-contrast .access-option-group {
+    background: #000 !important;
+    border-color: #ffff00 !important;
+    color: #fff !important;
+}
+
+.high-contrast button {
+    background: #ffff00 !important;
+    color: #000 !important;
+    border: 2px solid #fff;
+}
+
+.high-contrast .access-preview-box {
+    background: #000 !important;
+    border: 2px solid #ffff00 !important;
+    color: #ffff00 !important;
+}
+
+.high-contrast .accessibility-button {
+    background: #ffff00 !important;
+    border-color: #000 !important;
+}
+
+.high-contrast .accessibility-button svg {
+    fill: #000 !important;
+}
+
+.high-contrast .btn-sena {
+    background: #ffff00 !important;
+    color: #000 !important;
+}
+
+/* Scrollbar personalizado para el panel */
+.access-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.access-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.access-container::-webkit-scrollbar-thumb {
+    background: #009640;
+    border-radius: 10px;
+}
+
+.access-container::-webkit-scrollbar-thumb:hover {
+    background: #00b050;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
     .access-container {
-        position: fixed;
-        bottom: 110px;
-        right: 30px;
-        transform: translateX(120%) scale(0.9);
-        width: 380px;
-        max-height: 75vh;
-        overflow-y: auto;
-        background: #ffffff;
-        padding: 25px 20px;
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        z-index: 10000;
-        /* Resetear estilos heredados */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-        line-height: 1.5;
-    }
-    
-    .access-container.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(0) scale(1);
-    }
-    
-    /* Overlay oscuro - MÁS SUTIL */
-    .accessibility-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.15);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 9999;
-        backdrop-filter: blur(2px);
-    }
-    
-    .accessibility-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    /* Botón cerrar - oculto (no se usa) */
-    .access-close-button{
-        display:none;
+        bottom: 100px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+        padding: 20px 15px;
     }
     
     .access-container h1 {
-        text-align: center;
-        color: #009640;
-        font-weight: 700;
-        margin-bottom: 8px;
-        font-size: 1.4em;
-    }
-    
-    .access-subtitle {
-        text-align: center;
-        color: #666;
-        margin-bottom: 20px;
-        font-size: 0.85em;
-    }
-    
-    .access-section-title {
-        font-size: 1em;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        color: #222;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .access-option-group {
-        margin: 12px 0;
-        padding: 15px;
-        background: #f1f8f4;
-        border-radius: 12px;
-        border-left: 4px solid #009640;
-        transition: all 0.3s ease;
-    }
-    
-    .access-option-group:hover {
-        box-shadow: 0 3px 10px rgba(57, 169, 0, 0.12);
-        transform: translateX(2px);
-    }
-    
-    .access-option-group label {
-        font-size: 0.9em;
-        color: #333;
-        font-weight: 600;
-        display: block;
-        margin-bottom: 8px;
-    }
-    
-    .access-container select,
-    .access-container button {
-        margin-top: 10px;
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 0.85em;
-        transition: all 0.3s ease;
-    }
-    
-    .access-container select {
-        background: white;
-        cursor: pointer;
-    }
-    
-    .access-container select:focus {
-        outline: none;
-        border-color: #009640;
-        box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
-    }
-    
-    .access-container button {
-        background: #009640;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .access-container button:hover {
-        background: #2d8600;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
-    }
-    
-    .access-container button:active {
-        transform: translateY(0);
+        font-size: 1.2em;
     }
     
     .access-button-group {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 8px;
+        grid-template-columns: 1fr;
     }
     
-    .access-preview-box {
-        margin-top: 20px;
-        padding: 15px;
-        background: #1b5e20;
-        color: #fff;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 0.9em;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .access-notification {
-        position: fixed;
-        top: 20px;
+    .accessibility-button {
+        width: 60px;
+        height: 60px;
+        bottom: 20px;
         right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        transform: translateX(400px);
-        transition: all 0.3s ease;
-        z-index: 10002;
     }
     
-    .access-notification.show {
-        opacity: 1;
-        transform: translateX(0);
+    .accessibility-button svg {
+        width: 30px;
+        height: 30px;
     }
-    
-    /* Contraste alto dinámico - CORREGIDO */
-    body.high-contrast {
-        background: #000 !important;
-        color: #fff !important;
-    }
-    
-    .high-contrast .sidebar {
-        background: #000 !important;
-        border-right: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast .sidebar-menu a {
-        color: #ffff00 !important;
-        border-left-color: #ffff00 !important;
-    }
-    
-    .high-contrast .sidebar-menu a:hover,
-    .high-contrast .sidebar-menu a.active {
-        background: #222 !important;
-        color: #fff !important;
-    }
-    
-    .high-contrast .topbar {
-        background: #000 !important;
-        border-bottom: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast .menu-toggle {
-        background: #ffff00 !important;
-        color: #000 !important;
-    }
-    
-    .high-contrast .topbar-user {
-        background: #000 !important;
-        color: #ffff00 !important;
-        border: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast main {
-        background: #000 !important;
-        color: #fff !important;
-    }
-    
-    .high-contrast .card,
-    .high-contrast .stat-card {
-        background: #1a1a1a !important;
-        border: 2px solid #ffff00 !important;
-        color: #fff !important;
-    }
-    
-    .high-contrast .stat-card-value,
-    .high-contrast .section-title {
-        color: #ffff00 !important;
-    }
-    
-    .high-contrast table.table {
-        background: #000 !important;
-    }
-    
-    .high-contrast table.table th {
-        background: #222 !important;
-        color: #ffff00 !important;
-        border: 1px solid #ffff00 !important;
-    }
-    
-    .high-contrast table.table td {
-        background: #1a1a1a !important;
-        color: #fff !important;
-        border: 1px solid #444 !important;
-    }
-    
-    .high-contrast table.table tbody tr:hover {
-        background: #333 !important;
-    }
-    
-    .high-contrast footer {
-        background: #000 !important;
-        color: #ffff00 !important;
-        border-top: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast .access-container {
-        background: #1a1a1a !important;
-        border: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast h1,
-    .high-contrast .access-section-title,
-    .high-contrast label,
-    .high-contrast .access-subtitle {
-        color: #ffff00 !important;
-    }
-    
-    .high-contrast .access-option-group {
-        background: #000 !important;
-        border-color: #ffff00 !important;
-        color: #fff !important;
-    }
-    
-    .high-contrast button {
-        background: #ffff00 !important;
-        color: #000 !important;
-        border: 2px solid #fff;
-    }
-    
-    .high-contrast select {
-        background: #000 !important;
-        color: #fff !important;
-        border: 2px solid #ffff00 !important;
-    }
-    
-    .high-contrast .access-preview-box {
-        background: #000 !important;
-        border: 2px solid #ffff00 !important;
-        color: #ffff00 !important;
-    }
-    
-    .high-contrast .accessibility-button {
-        background: #ffff00 !important;
-        border-color: #000 !important;
-    }
-    
-    .high-contrast .accessibility-button svg {
-        fill: #000 !important;
-    }
-    
-    .high-contrast .btn-sena {
-        background: #ffff00 !important;
-        color: #000 !important;
-    }
-    
-    /* Scrollbar personalizado para el panel */
-    .access-container::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .access-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-    
-    .access-container::-webkit-scrollbar-thumb {
-        background: #009640;
-        border-radius: 10px;
-    }
-    
-    .access-container::-webkit-scrollbar-thumb:hover {
-        background: #00b050;
-    }
-    
-    /* Responsive */
-    @media (max-width: 600px) {
-        .access-container {
-            bottom: 100px;
-            right: 15px;
-            left: 15px;
-            width: auto;
-            padding: 20px 15px;
-        }
-        
-        .access-container h1 {
-            font-size: 1.2em;
-        }
-        
-        .access-button-group {
-            grid-template-columns: 1fr;
-        }
-        
-        .accessibility-button {
-            width: 60px;
-            height: 60px;
-            bottom: 20px;
-            right: 20px;
-        }
-        
-        .accessibility-button svg {
-            width: 30px;
-            height: 30px;
-        }
-    }
-    
-    /* Animación de entrada desde la derecha */
-    @keyframes slideInFromRight {
-        from {
-            transform: translateX(120%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-/* (--- FIN: TU BLOQUE CSS ORIGINAL ---) */
+}
 </style>
 
-<!-- ======= HTML DEL MODULO (sin cambiar diseño) ======= -->
-<!-- Botón flotante (usa tu clase original) -->
+<!-- ======= HTML DEL MODULO ======= -->
+<!-- Botón flotante -->
 <div class="accessibility-button pulse" id="accessibilityToggle" title="Abrir Centro de Accesibilidad" aria-label="Accesibilidad">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2M21 9H15V22H13V16H11V22H9V9H3V7H21V9M12 8C12.8 8 13.5 8.7 13.5 9.5V11.5C13.5 12.3 12.8 13 12 13C11.2 13 10.5 12.3 10.5 11.5V9.5C10.5 8.7 11.2 8 12 8Z"/>
@@ -453,40 +406,26 @@
 <!-- Overlay -->
 <div class="accessibility-overlay" id="accessibilityOverlay" onclick="togglePanel()"></div>
 
-<!-- Panel (usa tu estructura original) -->
+<!-- Panel -->
 <div class="access-container" id="accessibilityPanel" role="dialog" aria-modal="true" aria-label="Panel de accesibilidad">
-    <!-- ya no mostramos botón de cerrar -->
-    <h1 data-translate="accessibility_title">Centro de Accesibilidad SENA</h1>
-    <p class="access-subtitle" data-translate="accessibility_subtitle">Personaliza tu experiencia de navegación</p>
-
-    <!-- IDIOMAS -->
-    <div class="access-section-title">🌍 <span data-translate="label_language">Cambiar Idioma</span></div>
-    <div class="access-option-group">
-        <label for="lang-select" data-translate="label_select_language">Seleccione un idioma:</label>
-        <select id="lang-select" aria-label="Seleccionar idioma">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-            <option value="fr">Français</option>
-            <option value="pt">Português</option>
-        </select>
-        <button id="applyLanguageBtn" type="button" data-translate="btn_apply_language">Aplicar idioma</button>
-    </div>
+    <h1>Centro de Accesibilidad SENA</h1>
+    <p class="access-subtitle">Personaliza tu experiencia de navegación</p>
 
     <!-- Tamaño de Texto -->
-    <div class="access-section-title">🔎 <span data-translate="label_text_size">Tamaño del Texto</span></div>
+    <div class="access-section-title">🔎 Tamaño del Texto</div>
     <div class="access-option-group">
-        <label data-translate="label_adjust_font">Ajustar tamaño de fuente:</label>
+        <label>Ajustar tamaño de fuente:</label>
         <div class="access-button-group">
-            <button id="increaseTextBtn">➕ <span data-translate="btn_increase">Aumentar</span></button>
-            <button id="decreaseTextBtn">➖ <span data-translate="btn_decrease">Disminuir</span></button>
-            <button id="resetTextBtn">🔄 <span data-translate="btn_reset">Restablecer</span></button>
+            <button id="increaseTextBtn">➕ Aumentar</button>
+            <button id="decreaseTextBtn">➖ Disminuir</button>
+            <button id="resetTextBtn">🔄 Restablecer</button>
         </div>
     </div>
 
     <!-- CONTRASTE -->
-    <div class="access-section-title">🌓 <span data-translate="label_contrast">Alto Contraste</span></div>
+    <div class="access-section-title">🌓 Alto Contraste</div>
     <div class="access-option-group">
-        <label data-translate="label_contrast_modes">Modos de contraste:</label>
+        <label>Modos de contraste:</label>
         <div class="access-button-group">
             <button id="enableContrastBtn">Activar contraste alto</button>
             <button id="disableContrastBtn">Desactivar contraste</button>
@@ -494,168 +433,31 @@
     </div>
 
     <!-- Lector de voz -->
-    <div class="access-section-title">🔊 <span data-translate="label_reader">Lector de Voz</span></div>
+    <div class="access-section-title">🔊 Lector de Voz</div>
     <div class="access-option-group">
-        <label data-translate="label_reader_desc">Lectura en voz alta:</label>
+        <label>Lectura en voz alta:</label>
         <div class="access-button-group">
-            <button id="readBtn">▶️ <span data-translate="btn_read">Leer página</span></button>
-            <button id="stopReadBtn">⏹️ <span data-translate="btn_stop">Detener lectura</span></button>
+            <button id="readBtn">▶️ Leer página</button>
+            <button id="stopReadBtn">⏹️ Detener lectura</button>
         </div>
     </div>
 
-    <div class="access-preview-box" id="preview" data-translate="preview_text">
+    <div class="access-preview-box" id="preview">
         👁️ Vista previa de Accesibilidad - ¡Prueba las funciones!
     </div>
 </div>
 
-<!-- Notificación estilo original -->
+<!-- Notificación -->
 <div class="access-notification" id="accessibilityNotification" role="status" aria-live="polite"></div>
 
-<!-- ======= SCRIPT (Lógica mejorada) ======= -->
+<!-- ======= SCRIPT ======= -->
 <script>
-/*
-  Lógica:
-  - Traducción: usa primero data-translate en elementos.
-  - Heurística: reemplaza textos que coincidan exactamente con cadenas en español definidas.
-  - Traduce atributos placeholder/title/alt cuando coinciden.
-  - Tamaño global se aplica a document.documentElement.
-  - Guarda preferencias en localStorage.
-*/
-
 (function() {
-    // ---------- Traducciones (por claves) ----------
-    const translations = {
-        es: {
-            accessibility_title: "Centro de Accesibilidad SENA",
-            accessibility_subtitle: "Personaliza tu experiencia de navegación",
-            label_language: "Cambiar Idioma",
-            label_select_language: "Seleccione un idioma:",
-            btn_apply_language: "Aplicar idioma",
-            label_text_size: "Tamaño del Texto",
-            label_adjust_font: "Ajustar tamaño de fuente:",
-            btn_increase: "Aumentar",
-            btn_decrease: "Disminuir",
-            btn_reset: "Restablecer",
-            label_contrast: "Alto Contraste",
-            label_contrast_modes: "Modos de contraste:",
-            label_reader: "Lector de Voz",
-            label_reader_desc: "Lectura en voz alta:",
-            btn_read: "Leer página",
-            btn_stop: "Detener lectura",
-            preview_text: "👁️ Vista previa de Accesibilidad - ¡Prueba las funciones!",
-            // añade aquí más claves que uses en otras plantillas si quieres
-            dashboard: "Panel de Control",
-            profile: "Mi Perfil",
-            instructors: "Instructores",
-            areas: "Areas de Formación",
-            programs: "Programas",
-            companies: "Empresas",
-            requests: "Solicitudes",
-            reports: "Reportes",
-            backups: "Backups",
-            logout: "Cerrar sesión",
-            welcome: "Bienvenido"
-        },
-        en: {
-            accessibility_title: "SENA Accessibility Center",
-            accessibility_subtitle: "Customize your browsing experience",
-            label_language: "Change Language",
-            label_select_language: "Select a language:",
-            btn_apply_language: "Apply language",
-            label_text_size: "Text Size",
-            label_adjust_font: "Adjust font size:",
-            btn_increase: "Increase",
-            btn_decrease: "Decrease",
-            btn_reset: "Reset",
-            label_contrast: "High Contrast",
-            label_contrast_modes: "Contrast modes:",
-            label_reader: "Voice Reader",
-            label_reader_desc: "Read aloud:",
-            btn_read: "Read page",
-            btn_stop: "Stop reading",
-            preview_text: "👁️ Accessibility preview - Try the functions!",
-            dashboard: "Dashboard",
-            profile: "My Profile",
-            instructors: "Instructors",
-            areas: "Training Areas",
-            programs: "Programs",
-            companies: "Companies",
-            requests: "Requests",
-            reports: "Reports",
-            backups: "Backups",
-            logout: "Logout",
-            welcome: "Welcome"
-        },
-        fr: {
-            accessibility_title: "Centre d'accessibilité SENA",
-            accessibility_subtitle: "Personnalisez votre expérience de navigation",
-            label_language: "Changer la langue",
-            label_select_language: "Sélectionnez une langue:",
-            btn_apply_language: "Appliquer la langue",
-            label_text_size: "Taille du texte",
-            label_adjust_font: "Ajuster la taille de la police:",
-            btn_increase: "Augmenter",
-            btn_decrease: "Diminuer",
-            btn_reset: "Réinitialiser",
-            label_contrast: "Contraste élevé",
-            label_contrast_modes: "Modes de contraste:",
-            label_reader: "Lecteur vocal",
-            label_reader_desc: "Lecture à haute voix:",
-            btn_read: "Lire la page",
-            btn_stop: "Arrêter la lecture",
-            preview_text: "👁️ Aperçu d'accessibilité - Essayez les fonctions!",
-            dashboard: "Tableau de bord",
-            profile: "Mon Profil",
-            instructors: "Instructeurs",
-            areas: "Zones de Formation",
-            programs: "Programmes",
-            companies: "Entreprises",
-            requests: "Demandes",
-            reports: "Rapports",
-            backups: "Sauvegardes",
-            logout: "Déconnexion",
-            welcome: "Bienvenue"
-        },
-        pt: {
-            accessibility_title: "Centro de Acessibilidade SENA",
-            accessibility_subtitle: "Personalize sua experiência de navegação",
-            label_language: "Alterar idioma",
-            label_select_language: "Selecione um idioma:",
-            btn_apply_language: "Aplicar idioma",
-            label_text_size: "Tamanho do texto",
-            label_adjust_font: "Ajustar tamanho da fonte:",
-            btn_increase: "Aumentar",
-            btn_decrease: "Diminuir",
-            btn_reset: "Redefinir",
-            label_contrast: "Alto Contraste",
-            label_contrast_modes: "Modos de contraste:",
-            label_reader: "Leitor de voz",
-            label_reader_desc: "Leitura em voz alta:",
-            btn_read: "Ler página",
-            btn_stop: "Parar leitura",
-            preview_text: "👁️ Visualização de acessibilidade - Experimente as funcionalidades!",
-            dashboard: "Painel de Controle",
-            profile: "Meu Perfil",
-            instructors: "Instrutores",
-            areas: "Áreas de Formação",
-            programs: "Programas",
-            companies: "Empresas",
-            requests: "Solicitações",
-            reports: "Relatórios",
-            backups: "Backups",
-            logout: "Sair",
-            welcome: "Bem-vindo"
-        }
-    };
-
     // ---------- Elementos UI ----------
     const toggleBtn = document.getElementById('accessibilityToggle');
     const panel = document.getElementById('accessibilityPanel');
     const overlay = document.getElementById('accessibilityOverlay');
     const notification = document.getElementById('accessibilityNotification');
-
-    const langSelect = document.getElementById('lang-select');
-    const applyLangBtn = document.getElementById('applyLanguageBtn');
 
     const increaseBtn = document.getElementById('increaseTextBtn');
     const decreaseBtn = document.getElementById('decreaseTextBtn');
@@ -670,7 +472,6 @@
     // ---------- Estado y localStorage ----------
     let accessibilityFontSize = parseInt(localStorage.getItem('accessibilityFontSize')) || 16;
     let accessibilityHighContrast = (localStorage.getItem('accessibilityHighContrast') === 'true');
-    let preferredLanguage = localStorage.getItem('preferredLanguage') || 'es';
 
     // Aplica tamaño guardado
     document.documentElement.style.fontSize = accessibilityFontSize + 'px';
@@ -680,15 +481,11 @@
         document.body.classList.add('high-contrast');
     }
 
-    // Aplica idioma guardado en control
-    if (langSelect) langSelect.value = preferredLanguage;
-
-    // ---------- Util: mostrar notificación (usa tu estilo) ----------
+    // ---------- Mostrar notificación ----------
     function showNotification(msg, type = 'success') {
         if (!notification) return;
         notification.textContent = msg;
         notification.classList.add('show');
-        // color según tipo
         notification.style.background = (type === 'warning') ? '#ffb74d' : '#4CAF50';
         setTimeout(() => notification.classList.remove('show'), 2000);
     }
@@ -701,11 +498,13 @@
         const btnEl = document.querySelector('.accessibility-button');
         if (btnEl) btnEl.classList.remove('pulse');
     }
+    
     function closePanel() {
         if (!panel || !overlay) return;
         panel.classList.remove('active');
         overlay.classList.remove('active');
     }
+    
     function togglePanel() {
         if (!panel) return;
         if (panel.classList.contains('active')) closePanel();
@@ -720,87 +519,7 @@
         if (e.key === 'Escape') closePanel();
     });
 
-    // ---------- Traducción: función principal ----------
-    function applyLanguage(lang) {
-        if (!translations[lang]) return;
-
-        preferredLanguage = lang;
-        localStorage.setItem('preferredLanguage', lang);
-
-        // 1) Traduce elementos con data-translate
-        document.querySelectorAll('[data-translate]').forEach(el => {
-            const key = el.getAttribute('data-translate');
-            if (key && translations[lang][key]) {
-                el.textContent = translations[lang][key];
-            }
-        });
-
-        // 2) Heurística: reemplazar textos EXACTOS en nodos de texto
-        // Construir mapa de textoOriginal(es) => key
-        const esMap = {};
-        Object.keys(translations.es).forEach(k => {
-            const esText = translations.es[k];
-            if (typeof esText === 'string' && esText.trim().length > 0) {
-                esMap[esText.trim()] = k;
-            }
-        });
-
-        // Recorre nodos de texto (excluye script, style, textarea, input)
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-            acceptNode: function(node) {
-                if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-                const parentTag = node.parentElement && node.parentElement.tagName.toLowerCase();
-                if (['script','style','textarea','input'].includes(parentTag)) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-            }
-        });
-
-        const nodesToReplace = [];
-        while (walker.nextNode()) {
-            nodesToReplace.push(walker.currentNode);
-        }
-
-        nodesToReplace.forEach(textNode => {
-            const original = textNode.nodeValue.trim();
-            // Si el texto coincide EXACTAMENTE con alguna cadena en español registrada, reemplazar
-            const key = esMap[original];
-            if (key && translations[lang][key]) {
-                // Mantener espacios alrededor originales (si existían)
-                const prefix = textNode.nodeValue.match(/^\s*/)[0] || '';
-                const suffix = textNode.nodeValue.match(/\s*$/)[0] || '';
-                textNode.nodeValue = prefix + translations[lang][key] + suffix;
-            }
-        });
-
-        // 3) Traduce atributos placeholder/title/alt/value si coinciden con texto en español
-        const attrList = ['placeholder','title','alt','value'];
-        attrList.forEach(attr => {
-            document.querySelectorAll('['+attr+']').forEach(el => {
-                const val = el.getAttribute(attr);
-                if (!val) return;
-                const key = esMap[val.trim()];
-                if (key && translations[lang][key]) el.setAttribute(attr, translations[lang][key]);
-            });
-        });
-
-        // 4) Cambiar atributo lang del html
-        document.documentElement.lang = lang;
-
-        showNotification((lang === 'es' ? 'Español' : lang.toUpperCase()) + ' aplicado ✓');
-    }
-
-    // ---------- Botón aplicar idioma (permite mantener el comportamiento anterior) ----------
-    if (applyLangBtn) applyLangBtn.addEventListener('click', () => {
-        const lang = langSelect ? langSelect.value || 'es' : 'es';
-        applyLanguage(lang);
-    });
-
-    // También aplica al cambiar el select directamente
-    if (langSelect) langSelect.addEventListener('change', (e) => {
-        applyLanguage(e.target.value);
-    });
-
-    // ---------- Tamaño de texto global (aplica a <html>) ----------
+    // ---------- Tamaño de texto global ----------
     function setFontSize(size) {
         accessibilityFontSize = Math.max(10, Math.min(30, size));
         document.documentElement.style.fontSize = accessibilityFontSize + 'px';
@@ -819,6 +538,7 @@
         localStorage.setItem('accessibilityHighContrast', 'true');
         showNotification('✓ Contraste alto activado');
     });
+    
     if (disableContrastBtn) disableContrastBtn.addEventListener('click', () => {
         document.body.classList.remove('high-contrast');
         accessibilityHighContrast = false;
@@ -837,12 +557,10 @@
         }
         const mainText = document.body.innerText;
         utterance = new SpeechSynthesisUtterance(mainText);
-        // intenta voz según idioma seleccionado
-        const lang = localStorage.getItem('preferredLanguage') || 'es';
-        utterance.lang = (lang === 'es') ? 'es-ES' : (lang + '-' + lang.toUpperCase());
+        utterance.lang = 'es-ES';
 
         const voices = speech.getVoices();
-        const v = voices.find(voice => voice.lang && voice.lang.startsWith((utterance.lang || '').slice(0,2)));
+        const v = voices.find(voice => voice.lang && voice.lang.startsWith('es'));
         if (v) utterance.voice = v;
 
         utterance.rate = 0.95;
@@ -866,22 +584,17 @@
     window.addEventListener('beforeunload', () => {
         localStorage.setItem('accessibilityFontSize', accessibilityFontSize);
         localStorage.setItem('accessibilityHighContrast', accessibilityHighContrast);
-        localStorage.setItem('preferredLanguage', preferredLanguage);
     });
 
     // ---------- Al cargar la página, restaura todo ----------
     window.addEventListener('load', () => {
-        // tamaño
         document.documentElement.style.fontSize = accessibilityFontSize + 'px';
-        // contraste
         if (accessibilityHighContrast) document.body.classList.add('high-contrast');
-        // idioma
-        applyLanguage(preferredLanguage);
     });
 
     // Si las voces cambian en el navegador
     if (speech.onvoiceschanged !== undefined) {
         speech.onvoiceschanged = () => speech.getVoices();
     }
-})(); // fin IIFE
+})();
 </script>

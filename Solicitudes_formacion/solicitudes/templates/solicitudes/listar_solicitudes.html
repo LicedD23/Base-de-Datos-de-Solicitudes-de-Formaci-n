@@ -69,13 +69,12 @@
         }
         .filters-row {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 15px;
             margin-bottom: 15px;
         }
         .search-box {
-            flex: 1;
-            min-width: 300px;
+            width: 100%;
             position: relative;
         }
         .search-box input {
@@ -85,6 +84,7 @@
             border-radius: 10px;
             font-size: 1em;
             transition: all 0.3s ease;
+            height: 48px;
         }
         .search-box input:focus {
             outline: none;
@@ -100,10 +100,11 @@
             font-size: 1.2em;
         }
         .filter-group {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 10px;
             align-items: center;
-            flex-wrap: wrap;
+            width: 100%;
         }
         .filter-group select {
             padding: 12px 20px;
@@ -113,11 +114,26 @@
             cursor: pointer;
             background: white;
             transition: all 0.3s ease;
-            min-width: 180px;
+            width: 100%;
+            height: 48px;
         }
         .filter-group select:focus {
             outline: none;
             border-color: #2e7d32;
+        }
+        .filter-group .btn-secondary {
+            width: 100%;
+            height: 48px;
+            justify-content: center;
+        }
+        /* ⭐ NUEVO: Estilo especial para el filtro de período */
+        .filter-group select[name="periodo"] {
+            border-color: #ff9800;
+            background: #fff8f0;
+        }
+        .filter-group select[name="periodo"]:focus {
+            border-color: #f57c00;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
         }
         .actions-row {
             display: flex;
@@ -377,6 +393,19 @@
             color: #999;
             margin-bottom: 20px;
         }
+        /* ⭐ NUEVO: Indicador de filtro activo */
+        .filter-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
         footer {
             flex-shrink: 0;
             background: linear-gradient(90deg, #1b5e20, #2e7d32);
@@ -407,18 +436,8 @@
             .header h1 {
                 font-size: 1.8em;
             }
-            .filters-row {
-                flex-direction: column;
-            }
-            .search-box {
-                width: 100%;
-            }
             .filter-group {
-                width: 100%;
-            }
-            .filter-group select {
-                flex: 1;
-                min-width: 0;
+                grid-template-columns: 1fr;
             }
             .solicitudes-grid {
                 grid-template-columns: 1fr;
@@ -446,6 +465,18 @@
         </div>
 
         <div class="controls-section">
+            <!-- ⭐ NUEVO: Indicador de filtro de período activo -->
+            {% if periodo_filter %}
+            <div class="filter-indicator">
+                ⏰ Mostrando solicitudes: 
+                {% if periodo_filter == 'hoy' %}de hoy
+                {% elif periodo_filter == 'semana' %}de la última semana
+                {% elif periodo_filter == 'mes' %}del último mes
+                {% elif periodo_filter == 'trimestre' %}del último trimestre
+                {% endif %}
+            </div>
+            {% endif %}
+
             <form method="get">
                 <div class="filters-row">
                     <div class="search-box">
@@ -478,19 +509,26 @@
                             {% endfor %}
                         </select>
 
+                        <!-- ⭐ CAMBIO 1: Nuevo filtro de período -->
+                        <select name="periodo" onchange="this.form.submit()">
+                            <option value="">📅 Todas las fechas</option>
+                            <option value="hoy" {% if periodo_filter == 'hoy' %}selected{% endif %}>📅 Hoy</option>
+                            <option value="semana" {% if periodo_filter == 'semana' %}selected{% endif %}>📆 Última semana</option>
+                            <option value="mes" {% if periodo_filter == 'mes' %}selected{% endif %}>📊 Último mes</option>
+                            <option value="trimestre" {% if periodo_filter == 'trimestre' %}selected{% endif %}>📈 Último trimestre</option>
+                        </select>
+
                         <button type="submit" class="btn btn-secondary">Filtrar</button>
                     </div>
                 </div>
 
                 <div class="actions-row">
-                    {% if search or estado_filter or programa_filter or empresa_filter %}
+                    <!-- ⭐ CAMBIO 2: Actualizada condición para incluir periodo_filter -->
+                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
                         <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary">🔄 Limpiar Filtros</a>
                     {% else %}
                         <div></div>
                     {% endif %}
-                    <a href="#" class="btn btn-primary">
-                        ➕ Nueva Solicitud
-                    </a>
                 </div>
             </form>
         </div>
@@ -581,7 +619,8 @@
                 <div class="empty-state-icon">📋</div>
                 <h3>No se encontraron solicitudes</h3>
                 <p>
-                    {% if search or estado_filter or programa_filter or empresa_filter %}
+                    <!-- ⭐ CAMBIO 3: Actualizada condición para incluir periodo_filter -->
+                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
                         No hay solicitudes que coincidan con los filtros aplicados
                     {% else %}
                         Aún no hay solicitudes registradas en el sistema

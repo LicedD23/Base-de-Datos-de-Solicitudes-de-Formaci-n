@@ -12,12 +12,14 @@ from empresas.models import Empresa
 from instructores.models import Instructor
 import re
 # Create your views here.
+
 def listar_solicitudes(request):
     """Vista para listar todas las solicitudes de formacion"""
     search = request.GET.get('search', '')
     estado = request.GET.get('estado', '')
     programa_id = request.GET.get('programa', '')
     empresa_id = request.GET.get('empresa', '')
+    periodo_filter = request.GET.get('periodo', '')  # ⭐ NUEVO: obtener filtro de período
     
     # Consulta base con relaciones
     solicitudes = Solicitud.objects.select_related(
@@ -32,7 +34,7 @@ def listar_solicitudes(request):
         solicitudes = solicitudes.filter(
             Q(empresa__nombre__icontains=search) |
             Q(programa__nombre__icontains=search) |
-            Q(instructor_asignado__nombre__icontains=search)  # ✅ CORREGIDO: faltaba "__"
+            Q(instructor_asignado__nombre__icontains=search)
         )
         
     if estado:
@@ -41,6 +43,22 @@ def listar_solicitudes(request):
         solicitudes = solicitudes.filter(programa_id=programa_id)
     if empresa_id:
         solicitudes = solicitudes.filter(empresa_id=empresa_id)
+    
+    # ⭐ NUEVO: Aplicar filtro de período
+    if periodo_filter:
+        hoy = timezone.now().date()
+        
+        if periodo_filter == 'hoy':
+            solicitudes = solicitudes.filter(fecha_recepcion=hoy)
+        elif periodo_filter == 'semana':
+            hace_semana = hoy - timedelta(days=7)
+            solicitudes = solicitudes.filter(fecha_recepcion__gte=hace_semana)
+        elif periodo_filter == 'mes':
+            hace_mes = hoy - timedelta(days=30)
+            solicitudes = solicitudes.filter(fecha_recepcion__gte=hace_mes)
+        elif periodo_filter == 'trimestre':
+            hace_trimestre = hoy - timedelta(days=90)
+            solicitudes = solicitudes.filter(fecha_recepcion__gte=hace_trimestre)
     
     # Ordenar por fecha de recepcion (mas recientes primero)
     solicitudes = solicitudes.order_by('-fecha_recepcion')
@@ -72,13 +90,14 @@ def listar_solicitudes(request):
         'estado_filter': estado,
         'programa_filter': programa_id,
         'empresa_filter': empresa_id,
+        'periodo_filter': periodo_filter,  # ⭐ NUEVO: pasar filtro al template
         'total_solicitudes': total_solicitudes,
         'solicitudes_recibidas': solicitudes_recibidas,
         'solicitudes_respondidas': solicitudes_respondidas,
         'solicitudes_atendidas': solicitudes_atendidas,
         'solicitudes_finalizadas': solicitudes_finalizadas,
         'stats_por_estado': stats_por_estado,
-        'ESTADO_CHOICES': Solicitud.ESTADO_CHOICES,     
+        'ESTADOS_CHOICES': Solicitud.ESTADO_CHOICES,  # ⭐ NOTA: Corregí el nombre
     }
     return render(request, 'solicitudes/listar_solicitudes.html', context)
 
