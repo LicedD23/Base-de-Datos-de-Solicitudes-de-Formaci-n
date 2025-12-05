@@ -29,7 +29,7 @@
             box-shadow:0 8px 20px rgba(46,125,50,0.3);
         }
         .header h1{
-            font-size.2.2em;
+            font-size:2.2em;
             margin-bottom:10px;
             font-weight:700;
         }
@@ -59,6 +59,121 @@
         }
         .breadcrumb span{
             color:#999;
+        }
+        /* Mensajes */
+        .message-container{
+            margin-bottom:25px;
+        }
+        .alert{
+            padding:18px 25px;
+            border-radius:12px;
+            margin-bottom:15px;
+            display:flex;
+            align-items:center;
+            gap:15px;
+            font-size:1em;
+            font-weight:500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation:slideInDown 0.4s ease-out;
+            position:relative;
+            overflow:hidden;
+        }
+        @keyframes slideInDown{
+            from{
+                transform:translateY(-20px);
+                opacity:0;
+            }
+            to{
+                transform:translateY(0);
+                opacity:1;
+            }
+        }
+        .alert::before{
+            content:'';
+            position:absolute;
+            left:0;
+            top:0;
+            bottom:0;
+            width:5px;
+        }
+        .alert-success{
+            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color:white;
+            border:2px solid #1b5e20;
+        }
+        .alert-success::before{
+            background:#fff;
+        }
+        .alert-success .alert-icon{
+            font-size:1.8em;
+            animation:scaleIn 0.5s ease-out;
+        }
+        @keyframes scaleIn{
+            0%{
+                transform:scale(0);
+            }
+            50%{
+                transform:scale(1.2);
+            }
+            100%{
+                transform:scale(1);
+            }
+        }
+        .alert-error{
+            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color:white;
+            border:2px solid #b71c1c;
+        }
+        .alert-error .alert-icon{
+            font-size:1.8em;
+            animation:shake 0.5s ease-out;
+        }
+        @keyframes shake{
+            0%, 100%{
+                transform:translateX(0);
+            }
+            25%{
+                transform:translateX(-10px);
+            }
+            75%{
+                transform:translateX(10px);
+            }
+        }
+        .alert-warning{
+            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color:white;
+            border:2px solid #e65100;
+        }
+        .alert-warning::before{
+            background: #fff;
+        }
+        .alert-icon{
+            font-size:1.5em;
+            flex-shrink:0;
+        }
+        .alert-content{
+            flex:1;
+            line-height:1.5;
+        }
+        .alert-close{
+            background:rgba(255,255,255,0.2);
+            border:2px solid rgba(255,255,255,0.3);
+            color:white;
+            width:28px;
+            height:28px;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:bold;
+            font-size:1.2em;
+            transition:all 0.3s ease;
+            flex-shrink:0;
+        }
+        .alert-close:hover{
+            background:rgba(255,255,255,0.4);
+            transform:scale(1.1);
         }
         .form-card{
             background:white;
@@ -90,8 +205,8 @@
         .form-group{
             margin-bottom:25px;
         }
-        .formgroup.full-width{
-            grid-column.1/-1;
+        .form-group.full-width{
+            grid-column:1/-1;
         }
         .form-group label{
             display:block;
@@ -213,7 +328,7 @@
             text-align:center;
             padding:1.5rem;
             font-size:0.9rem;
-            box-shadow: 0 -4 20px rgba(27,94,32,0.2);
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
             position:relative;
             margin-top:40px;
         }
@@ -228,7 +343,7 @@
         }
         footer p {
             margin:0;
-            font-weight.500;
+            font-weight:500;
             letter-spacing:0.5px;
         }
         @media(max-width:768px){
@@ -260,7 +375,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏢Crear Nueva Empresa</h1>
+            <h1>🏢 Crear Nueva Empresa</h1>
             <p>Completa el formulario para registrar una nueva empresa en el sistema</p>
         </div>
 
@@ -272,30 +387,43 @@
             <span>Crear Empresa</span>
         </div>
 
+        <!-- Mensajes-->
         {% if messages %}
+        <div class="messages-container">
             {% for message in messages %}
-                <div class="alert{%if 'error' in message.tags%}alert-error{%else%}alert-success{%endif%}">
-                    {% if 'error' in message.tags %}
-                    ⚠️
-                    {% else %}
-                    ✓
-                    {% endif %} 
-                    {{ message }}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}
+                            ❌
+                        {% elif 'warning' in message.tags %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        {{message}}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-            {% endfor %}
-        {% endif %}
+            {% endfor%}
+            </div>
+            {% endif%}
+
+
+
 
         <div class="form-card">
             <div class="required-note">
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
             </div>
 
-            <form method="POST" action="{%url 'empresas:crear_empresa'%}">
+            <form method="POST" action="{% url 'empresas:crear_empresa' %}">
                 {% csrf_token %}
 
-            <!--Informacion Basdica -->
+                <!-- Información Básica -->
                 <div class="form-section">
-                    <h3 class="form-section-title">📋 Información básica</h3>
+                    <h3 class="form-section-title">📋 Información Básica</h3>
 
                     <div class="form-group">
                         <label for="nombre" class="required">Nombre de la Empresa</label>
@@ -308,24 +436,25 @@
                             required
                             maxlength="200"
                         >
-                        <small>Nombre o razon social de la empresa (minimo 3 caracteres)</small>
+                        <small>Nombre o razón social de la empresa (mínimo 3 caracteres)</small>
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="contacto">Persona de Contacto</label>
+                            <label for="nit">NIT (Número de Identificación Tributaria)</label>
                             <input
                                 type="text"
-                                id="contacto"
-                                name="contacto"
-                                value="{{ contacto }}"
-                                placeholder="Nombre Completo"
-                                maxlength="100"
+                                id="nit"
+                                name="nit"
+                                value="{{ nit }}"
+                                placeholder="900123456 o 900123456-7"
+                                maxlength="20"
                             >
-                            <small>Nombre del  responsable o  contacto principal</small>
+                            <small>NIT de la empresa sin puntos (mínimo 9 dígitos)</small>
                         </div>
+
                         <div class="form-group">
-                            <label for="numero_trabajadores">Numero de Trabajadores</label>
+                            <label for="numero_trabajadores">Número de Trabajadores</label>
                             <input
                                 type="number"
                                 id="numero_trabajadores"
@@ -337,9 +466,22 @@
                             <small>Cantidad aproximada de empleados</small>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="contacto">Persona de Contacto</label>
+                        <input
+                            type="text"
+                            id="contacto"
+                            name="contacto"
+                            value="{{ contacto }}"
+                            placeholder="Nombre Completo"
+                            maxlength="100"
+                        >
+                        <small>Nombre del responsable o contacto principal</small>
+                    </div>
                 </div>
 
-                <!--Informacion de Contacto-->
+                <!-- Información de Contacto -->
                 <div class="form-section">
                     <h3 class="form-section-title">📞 Información de Contacto</h3>
 
@@ -351,7 +493,7 @@
                                 id="correo"
                                 name="correo"
                                 value="{{ correo }}"
-                                placeholder="ejemplo@ejemplo.com"
+                                placeholder="ejemplo@empresa.com"
                                 maxlength="100"
                             >
                             <small>Dirección de correo electrónico</small>
@@ -371,7 +513,7 @@
                     </div>
                 </div>
 
-                <!--Ubicacion-->
+                <!-- Ubicación -->
                 <div class="form-section">
                     <h3 class="form-section-title">📍 Ubicación</h3>
 
@@ -388,8 +530,22 @@
                         <small>Ciudad o municipio donde se ubica la empresa</small>
                     </div>
 
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="direccion"
+                            value="{{ direccion }}"
+                            placeholder="Calle 123 #45-67"
+                            maxlength="250"
+                        >
+                        <small>Dirección física de la empresa</small>
+                    </div>
+                </div>
+
                 <div class="form-actions">
-                    <a href ="{% url 'empresas:listar_empresas' %}" class="btn btn-secondary">
+                    <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-secondary">
                         ✕ Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">
@@ -401,12 +557,35 @@
     </div>
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>  
-    {% include 'core/accessibility.html'%}
+    </footer>
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
-
-
-
-
-

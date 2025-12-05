@@ -29,6 +29,7 @@
             <table class="table align-middle table-hover">
                 <thead>
                     <tr>
+                        <th>NIT</th>
                         <th>Empresa</th>
                         <th>Programa</th>
                         <th>Instructor</th>
@@ -38,6 +39,7 @@
                 <tbody>
                     {% for s in ultimas_solicitudes %}
                     <tr>
+                        <td><strong>{{ s.empresa.nit }}</strong></td>
                         <td><strong>{{ s.empresa }}</strong></td>
                         <td>{{ s.programa }}</td>
                         <td>

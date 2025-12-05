@@ -706,7 +706,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>NIT</th>
                                 <th>Empresa Solicitante</th>
                                 <th>Programa Solicitado</th>
                                 <th>Estado</th>
@@ -717,7 +717,7 @@
                         <tbody>
                             {% for solicitud in ultimas_solicitudes %}
                                 <tr>
-                                    <td><strong>#{{ solicitud.id }}</strong></td>
+                                    <td><strong>#{{ solicitud.empresa.nit }}</strong></td>
                                     <td>{{ solicitud.empresa.nombre }}</td>
                                     <td>{{ solicitud.programa.nombre }}</td>
                                     <td>
