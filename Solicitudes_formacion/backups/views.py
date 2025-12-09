@@ -11,7 +11,7 @@ import zipfile
 
 @staff_member_required
 def panel_backups(request):
-    """Panel de gestión de backups"""
+    """Panel de gestión de backups con filtros"""
     # ✅ CAMBIO: usar 'db_backups' en lugar de 'backups'
     backup_dir = os.path.join(settings.BASE_DIR, 'db_backups')
     
@@ -43,7 +43,30 @@ def panel_backups(request):
                 'tamaño': file_stats.st_size / (1024 * 1024),
                 'tamaño_legible': f"{file_stats.st_size / (1024 * 1024):.2f} MB"
             })
+    # Aplicar filtros
+    nombre_filtro = request.GET.get('nombre','').strip()
+    fecha_desde = request.GET.get('fecha_desde','').strip()
+    fecha_hasta = request.GET.get('fecha_hasta','').strip()
     
+    # Filtrar por nombre
+    if nombre_filtro:
+        backups=[b for b in backups if nombre_filtro.lower() in b['nombre'].lower()]
+    
+    #Filtrar por fecha desde
+    if fecha_desde:
+        try:
+            fecha_desde_dt = datetime.striptime(fecha_desde ,'%Y-%m-%d')
+            backups = [b for b in backups if b['fecha'].date() >= fecha_desde_dt.date()]
+        except ValueError:
+            pass
+    #Filtrar por fecha hasta
+    if fecha_hasta:
+        try:
+            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d')
+            backups = [b for b in backups if b['fecha'].date() <= fecha_hasta_dt.date()]
+        except ValueError:
+            pass
+        
     backups.sort(key=lambda x: x['fecha'], reverse=True)
     
     db_path = settings.DATABASES['default']['NAME']
@@ -59,6 +82,10 @@ def panel_backups(request):
         'db_size': db_size,
         'db_size_legible': f"{db_size:.2f} MB",
         'db_path': db_path,
+        #Filtros aplicados
+        'nombre_filtro': nombre_filtro,
+        'fecha_desde': fecha_desde,
+        'fecha_hasta': fecha_hasta,
     }
     
     return render(request, 'backups/panel_backups.html', context)

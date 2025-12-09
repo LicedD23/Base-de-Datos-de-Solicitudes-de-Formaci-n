@@ -109,6 +109,99 @@
             border-left: 4px solid #0288d1;
         }
 
+        /* Sección de filtros */
+        .filters-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .filters-section h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+            border: none;
+        }
+
+        .btn-filter.primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+        }
+
+        .btn-filter.secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .controls-section {
             background: white;
             padding: 25px;
@@ -498,6 +591,19 @@
                 flex-direction: column;
             }
 
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .btn-filter {
+                width: 100%;
+                justify-content: center;
+            }
+
             footer {
                 font-size: 0.85rem;
                 padding: 1.2rem;
@@ -528,6 +634,39 @@
             {% endfor %}
         </div>
         {% endif %}
+
+        <!-- Sección de Filtros -->
+        <div class="filters-section">
+            <h3>🔍 Filtros de Búsqueda</h3>
+            <form method="get" id="filtrosForm">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label>Nombre del Backup</label>
+                        <input type="text" name="nombre" id="filtro_nombre" 
+                               value="{{ nombre_filtro }}" 
+                               placeholder="Ej: backup_20250101">
+                    </div>
+                    <div class="filter-group">
+                        <label>Fecha Desde</label>
+                        <input type="date" name="fecha_desde" id="filtro_fecha_desde" 
+                               value="{{ fecha_desde }}">
+                    </div>
+                    <div class="filter-group">
+                        <label>Fecha Hasta</label>
+                        <input type="date" name="fecha_hasta" id="filtro_fecha_hasta" 
+                               value="{{ fecha_hasta }}">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
+                        🔄 Limpiar Filtros
+                    </button>
+                    <button type="submit" class="btn-filter primary">
+                        🔍 Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
 
         <!-- Controles -->
         <div class="controls-section">
@@ -637,12 +776,11 @@
         {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">💾</div>
-            <h3>No hay backups disponibles</h3>
-            <p>Aún no se han creado copias de seguridad de la base de datos</p>
-            <form method="post" action="{% url 'backups:crear_backup' %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">➕ Crear Primer Backup</button>
-            </form>
+            <h3>No se encontraron backups</h3>
+            <p>No hay copias de seguridad que coincidan con los filtros aplicados</p>
+            <button type="button" class="btn btn-primary" onclick="limpiarFiltros()">
+                🔄 Limpiar Filtros
+            </button>
         </div>
         {% endif %}
     </div>
@@ -708,6 +846,13 @@
         function closeModal() {
             document.getElementById('restoreModal').classList.remove('active');
             document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtro_nombre').value = '';
+            document.getElementById('filtro_fecha_desde').value = '';
+            document.getElementById('filtro_fecha_hasta').value = '';
+            document.getElementById('filtrosForm').submit();
         }
 
         // Cerrar modal al hacer clic fuera
