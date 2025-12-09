@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 from django.core.cache import cache
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, update_session_auth_hash
@@ -102,37 +103,42 @@ def login_view(request):
     
     return render(request, 'core/login.html')
 
-def register_view(request):
-    """Vista para registrar nuevos usuarios"""
+#REGISTRO DE ADMINISTRADORES
+@user_passes_test(lambda u: u.is_superuser)
+def register_admin_view(request):
+    """Vista para crear usuarios administradores o superusuarios"""
+    
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
         password2 = request.POST.get('password2', '')
+        is_superuser = request.POST.get('is_superuser') == 'on'
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         
         # Validaciones
         if not all([username, email, password, password2]):
-            messages.error(request, 'Todos los campos son obligatorios')
-            return render(request, 'core/register.html')
+            messages.error(request, 'Usuario, correo y contraseñas son obligatorios')
+            return render(request, 'core/register_admin.html')
         
         if password != password2:
             messages.error(request, 'Las contraseñas no coinciden')
-            return render(request, 'core/register.html')
+            return render(request, 'core/register_admin.html')
         
         if len(password) < 8:
             messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
-            return render(request, 'core/register.html')
+            return render(request, 'core/register_admin.html')
         
-        # Verificar si el usuario ya existe
+        # Validar que el username no exista
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'El nombre de usuario ya está en uso')
-            return render(request, 'core/register.html')
+            messages.error(request, 'El nombre de usuario ya existe')
+            return render(request, 'core/register_admin.html')
         
+        # Validar email duplicado
         if User.objects.filter(email=email).exists():
             messages.error(request, 'El correo electrónico ya está registrado')
-            return render(request, 'core/register.html')
+            return render(request, 'core/register_admin.html')
         
         try:
             # Crear el usuario
@@ -143,19 +149,24 @@ def register_view(request):
                 first_name=first_name,
                 last_name=last_name
             )
+            user.is_staff = True
+            user.is_superuser = is_superuser
+            user.save()
             
-            messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión')
-            return redirect('core:login')
-            
-        except IntegrityError:
-            messages.error(request, 'Error al crear el usuario. Intenta con otro nombre de usuario')
-            return render(request, 'core/register.html')
+            tipo = "superusuario" if is_superuser else "administrador"
+            messages.success(request, f'✅ {tipo.capitalize()} "{username}" creado exitosamente.')
+            return redirect('core:dashboard')
+        
         except Exception as e:
             messages.error(request, f'Error inesperado: {str(e)}')
-            return render(request, 'core/register.html')
+            return render(request, 'core/register_admin.html')
     
-    return render(request, 'core/register.html')
-
+    # Contexto para el template
+    context = {
+        'current_user': request.user,
+    }
+    return render(request, 'core/register_admin.html', context)
+        
 def logout_view(request):
     """vista para cerrar sesion"""
     nombre = request.user.get_full_name() or request.user.username
