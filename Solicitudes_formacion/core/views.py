@@ -9,6 +9,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+
+# ✅ AGREGAR ESTAS IMPORTACIONES PARA EL EMAIL
+from django.contrib.auth.views import PasswordResetView
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
 # imports directos de modelos (están en apps separadas)
 from area_formacion.models import Area
 from programas.models import Programa
@@ -275,3 +284,62 @@ def change_password(request):
 
 def accessibility(request):
     return render(request, 'core/accessibility.html')
+
+
+# ============================================
+# ✅ NUEVA CLASE PARA ENVIAR HTML EN EMAILS
+# ============================================
+class CustomPasswordResetView(PasswordResetView):
+    """
+    Vista personalizada para enviar correos HTML en el restablecimiento de contraseña.
+    """
+    
+    def form_valid(self, form):
+        """
+        Sobrescribe form_valid para personalizar el envío del email.
+        """
+        # Obtener los datos del formulario
+        opts = {
+            'use_https': self.request.is_secure(),
+            'token_generator': self.token_generator,
+            'from_email': self.from_email,
+            'email_template_name': self.email_template_name,
+            'subject_template_name': self.subject_template_name,
+            'request': self.request,
+            'html_email_template_name': self.html_email_template_name,
+            'extra_email_context': self.extra_email_context,
+        }
+        
+        # Obtener usuarios asociados al email
+        email = form.cleaned_data["email"]
+        for user in form.get_users(email):
+            # Construir el contexto del email
+            context = {
+                'email': user.email,
+                'domain': self.request.get_host(),
+                'site_name': self.request.get_host(),
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'user': user,
+                'token': self.token_generator.make_token(user),
+                'protocol': 'https' if self.request.is_secure() else 'http',
+            }
+            
+            # Renderizar asunto
+            subject = render_to_string(self.subject_template_name, context)
+            subject = ''.join(subject.splitlines())
+            
+            # Renderizar HTML
+            html_content = render_to_string(self.email_template_name, context)
+            
+            # Crear y enviar el email
+            email_message = EmailMultiAlternatives(
+                subject=subject,
+                body='Habilita HTML para ver este mensaje.',
+                from_email=opts['from_email'],
+                to=[user.email]
+            )
+            email_message.attach_alternative(html_content, "text/html")
+            email_message.send(fail_silently=False)
+        
+        # ✅ Redirigir manualmente sin llamar a super() para evitar envío duplicado
+        return HttpResponseRedirect(self.success_url)

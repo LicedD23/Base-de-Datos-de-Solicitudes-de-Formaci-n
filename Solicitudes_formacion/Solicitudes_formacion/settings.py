@@ -152,3 +152,5 @@ IMAP_PORT = 993
 IMAP_USER = 'mayorgaliced@gmail.com'
 IMAP_PASSWORD = 'rfhafcjadnjpgrbq'  # Sin espacios
 # Nota: IMAP usa SSL implícitamente en puerto 993, no requiere EMAIL_USE_SSL
+#CONFIGURACION DE RESTABLECIMIENTO  DE CONTRASEÑA
+PASSWORD_RESET_TIMEOUT = 3600
