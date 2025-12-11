@@ -131,6 +131,17 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
+        /* 🔴 CAMBIO 1: ESTILO PARA PLACEHOLDER DEL CAMPO NIT */
+        .filter-group input[type="text"]::placeholder {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .filter-group input[type="text"]::placeholder {
+            color: #999;
+            font-size: 0.9em;
+        }
+
         .filter-actions {
             display: flex;
             gap: 10px;
@@ -567,6 +578,10 @@
                         </select>
                     </div>
                     <div class="filter-group">
+                        <label>NIT Empresa</label>
+                        <input type="text" name="nit" id="filtro_nit" placeholder="Ej: 900123456-7" maxlength="15">
+                    </div>
+                    <div class="filter-group">
                         <label>Fecha Desde</label>
                         <input type="date" name="fecha_desde" id="filtro_fecha_desde">
                     </div>
@@ -578,6 +593,9 @@
                 <div class="filter-actions">
                     <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
                         🔄 Limpiar Filtros
+                    </button>
+                    <button type = "button" class="btn-filter primary" onclick="aplicarFiltros()">
+                        🔍 Buscar
                     </button>
                     <button type="button" class="btn-filter primary" onclick="descargarSolicitudesPDF()">
                         📄 Descargar PDF
@@ -721,12 +739,14 @@
             const estado = document.getElementById('filtro_estado').value;
             const programa = document.getElementById('filtro_programa').value;
             const empresa = document.getElementById('filtro_empresa').value;
+            const nit = document.getElementById('filtro_nit').value;
             const fechaDesde = document.getElementById('filtro_fecha_desde').value;
             const fechaHasta = document.getElementById('filtro_fecha_hasta').value;
             
             if (estado) params.append('estado', estado);
             if (programa) params.append('programa', programa);
             if (empresa) params.append('empresa', empresa);
+            if (nit) params.append('nit', nit.trim());
             if (fechaDesde) params.append('fecha_desde', fechaDesde);
             if (fechaHasta) params.append('fecha_hasta', fechaHasta);
             
@@ -749,6 +769,7 @@
             document.getElementById('filtro_estado').value = '';
             document.getElementById('filtro_programa').value = '';
             document.getElementById('filtro_empresa').value = '';
+            document.getElementById('filtro_nit').value = '';
             document.getElementById('filtro_fecha_desde').value = '';
             document.getElementById('filtro_fecha_hasta').value = '';
         }

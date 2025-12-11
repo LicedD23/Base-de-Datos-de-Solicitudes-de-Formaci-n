@@ -56,6 +56,7 @@ def generar_reporte_solicitudes_pdf(request):
     estado = request.GET.get('estado', '')
     programa_id = request.GET.get('programa', '')
     empresa_id = request.GET.get('empresa', '')
+    nit = request.GET.get('nit', '')  # ✅ CORREGIDO: GET en mayúsculas
     fecha_desde = request.GET.get('fecha_desde', '')
     fecha_hasta = request.GET.get('fecha_hasta', '')
     
@@ -86,6 +87,12 @@ def generar_reporte_solicitudes_pdf(request):
             filtros_texto.append(f"Empresa: {empresa.nombre}")
         except Empresa.DoesNotExist:
             pass
+    
+    # 🔴 FILTRO DE NIT
+    if nit:
+        nit_limpio = nit.strip()
+        solicitudes = solicitudes.filter(empresa__nit__icontains=nit_limpio)
+        filtros_texto.append(f"NIT: {nit_limpio}")
     
     if fecha_desde:
         solicitudes = solicitudes.filter(fecha_recepcion__gte=fecha_desde)
@@ -120,6 +127,7 @@ def generar_reporte_solicitudes_excel(request):
     estado = request.GET.get('estado', '')
     programa_id = request.GET.get('programa', '')
     empresa_id = request.GET.get('empresa', '')
+    nit = request.GET.get('nit', '')  # ✅ CORREGIDO
     fecha_desde = request.GET.get('fecha_desde', '')
     fecha_hasta = request.GET.get('fecha_hasta', '')
     
@@ -133,6 +141,12 @@ def generar_reporte_solicitudes_excel(request):
         solicitudes = solicitudes.filter(programa_id=programa_id)
     if empresa_id:
         solicitudes = solicitudes.filter(empresa_id=empresa_id)
+    
+    # 🔴 FILTRO DE NIT
+    if nit:
+        nit_limpio = nit.strip()
+        solicitudes = solicitudes.filter(empresa__nit__icontains=nit_limpio)
+    
     if fecha_desde:
         solicitudes = solicitudes.filter(fecha_recepcion__gte=fecha_desde)
     if fecha_hasta:
@@ -193,8 +207,6 @@ def generar_reporte_instructores_pdf(request):
     instructores = Instructor.objects.prefetch_related('especialidad').all().order_by('nombre')
     
     generator = PDFReportGenerator()
-    # Reutilizamos el método de empresas como base
-    # Puedes crear un método específico si necesitas formato diferente
     
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import letter
@@ -203,7 +215,15 @@ def generar_reporte_instructores_pdf(request):
     import io
     
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=80, bottomMargin=50)
+    doc = SimpleDocTemplate(
+        buffer, 
+        pagesize=letter, 
+        topMargin=80, 
+        bottomMargin=50,
+        title="Directorio de Instructores - SENA",
+        author="SENA - Sistema de Gestión",
+        subject="Instructores Activos"
+        )
     
     elements = []
     
@@ -301,7 +321,7 @@ def generar_reporte_instructores_excel(request):
             inst.solicitud_set.count()
         ])
     
-    # Ajustar anchos de forma robusta (evita errores con MergedCell)
+    # Ajustar anchos
     for idx, column in enumerate(ws.columns, start=1):
         max_length = 0
         column_letter = get_column_letter(idx)

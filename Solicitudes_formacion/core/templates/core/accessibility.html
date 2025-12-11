@@ -1,6 +1,6 @@
 <!-- ========================= 
-   MÓDULO DE ACCESIBILIDAD (Pegar justo antes de </body>)
-   Sin funcionalidad de cambio de idioma
+   MÓDULO DE ACCESIBILIDAD MEJORADO
+   Pegar justo antes de </body>
    ========================= -->
 
 <!-- ======= ESTILOS ======= -->
@@ -10,7 +10,6 @@
     --sena-dark: #004d26;
     --sena-light: #00b050;
     --sena-bg: #f0f8f4;
-    --sidebar-width: 280px;
 }
 
 /* BOTÓN FLOTANTE CIRCULAR */
@@ -43,43 +42,33 @@
     fill: white;
 }
 
-/* Animación de pulso */
 @keyframes pulse-accessibility {
-    0% {
-        box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-    }
-    50% {
-        box-shadow: 0 6px 30px rgba(57, 169, 0, 0.7);
-    }
-    100% {
-        box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-    }
+    0%, 100% { box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4); }
+    50% { box-shadow: 0 6px 30px rgba(57, 169, 0, 0.7); }
 }
 
 .accessibility-button.pulse {
     animation: pulse-accessibility 2s infinite;
 }
 
-/* MODAL/PANEL DE ACCESIBILIDAD - COMPACTO Y LATERAL */
+/* PANEL DE ACCESIBILIDAD */
 .access-container {
     position: fixed;
     bottom: 110px;
     right: 30px;
     transform: translateX(120%) scale(0.9);
-    width: 380px;
-    max-height: 75vh;
+    width: 420px;
+    max-height: 80vh;
     overflow-y: auto;
     background: #ffffff;
-    padding: 25px 20px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     z-index: 10000;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    line-height: 1.5;
 }
 
 .access-container.active {
@@ -88,19 +77,19 @@
     transform: translateX(0) scale(1);
 }
 
-/* Overlay oscuro */
+/* Overlay */
 .accessibility-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.2);
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
     z-index: 9999;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
 }
 
 .accessibility-overlay.active {
@@ -108,110 +97,177 @@
     visibility: visible;
 }
 
-.access-container h1 {
+/* Header del panel */
+.access-header {
     text-align: center;
-    color: #009640;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e8f5e9;
+}
+
+.access-header h1 {
+    color: var(--sena-green);
     font-weight: 700;
-    margin-bottom: 8px;
-    font-size: 1.4em;
+    margin-bottom: 5px;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .access-subtitle {
-    text-align: center;
     color: #666;
-    margin-bottom: 20px;
-    font-size: 0.85em;
+    font-size: 0.9em;
+}
+
+/* Sección de opciones */
+.access-section {
+    margin-bottom: 25px;
+}
+
+.access-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-radius: 12px;
+    border-left: 4px solid var(--sena-green);
+}
+
+.access-section-icon {
+    font-size: 1.5em;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .access-section-title {
-    font-size: 1em;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #222;
+    font-size: 1.05em;
     font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+/* Contenedor de botones */
+.access-controls {
+    display: grid;
+    gap: 10px;
+}
+
+/* Botones base */
+.access-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.access-option-group {
-    margin: 12px 0;
-    padding: 15px;
-    background: #f1f8f4;
-    border-radius: 12px;
-    border-left: 4px solid #009640;
-    transition: all 0.3s ease;
-}
-
-.access-option-group:hover {
-    box-shadow: 0 3px 10px rgba(57, 169, 0, 0.12);
-    transform: translateX(2px);
-}
-
-.access-option-group label {
-    font-size: 0.9em;
-    color: #333;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.access-container button {
-    margin-top: 10px;
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 0.85em;
-    transition: all 0.3s ease;
-    background: #009640;
-    color: #fff;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 20px;
     border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.access-container button:hover {
-    background: #2d8600;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
-}
-
-.access-container button:active {
-    transform: translateY(0);
-}
-
-.access-button-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 8px;
-}
-
-.access-preview-box {
-    margin-top: 20px;
-    padding: 15px;
-    background: #1b5e20;
-    color: #fff;
     border-radius: 12px;
-    text-align: center;
-    font-size: 0.9em;
+    font-size: 0.95em;
     font-weight: 600;
+    cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 150, 64, 0.15);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--sena-light) 0%, var(--sena-green) 100%);
+    color: white;
 }
 
+.access-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.access-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.access-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 150, 64, 0.3);
+}
+
+.access-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Variante secundaria (desactivar/detener) */
+.access-btn-secondary {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.access-btn-secondary:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Layouts específicos */
+.text-size-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.contrast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Iconos dentro de botones */
+.btn-icon {
+    font-size: 1.2em;
+}
+
+/* Preview box */
+.access-preview-box {
+    margin-top: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--sena-dark) 0%, var(--sena-green) 100%);
+    color: #fff;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 0.95em;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0, 150, 64, 0.25);
+}
+
+/* Notificación */
 .access-notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #4CAF50;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
     color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 16px 28px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     opacity: 0;
     transform: translateX(400px);
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     z-index: 10002;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .access-notification.show {
@@ -219,7 +275,11 @@
     transform: translateX(0);
 }
 
-/* Contraste alto dinámico */
+.access-notification.warning {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+/* Contraste alto */
 body.high-contrast {
     background: #000 !important;
     color: #fff !important;
@@ -232,13 +292,6 @@ body.high-contrast {
 
 .high-contrast .sidebar-menu a {
     color: #ffff00 !important;
-    border-left-color: #ffff00 !important;
-}
-
-.high-contrast .sidebar-menu a:hover,
-.high-contrast .sidebar-menu a.active {
-    background: #222 !important;
-    color: #fff !important;
 }
 
 .high-contrast .topbar {
@@ -246,82 +299,36 @@ body.high-contrast {
     border-bottom: 2px solid #ffff00 !important;
 }
 
-.high-contrast .menu-toggle {
-    background: #ffff00 !important;
-    color: #000 !important;
-}
-
-.high-contrast .topbar-user {
-    background: #000 !important;
-    color: #ffff00 !important;
-    border: 2px solid #ffff00 !important;
-}
-
 .high-contrast main {
     background: #000 !important;
     color: #fff !important;
 }
 
-.high-contrast .card,
-.high-contrast .stat-card {
+.high-contrast .card {
     background: #1a1a1a !important;
     border: 2px solid #ffff00 !important;
     color: #fff !important;
-}
-
-.high-contrast .stat-card-value,
-.high-contrast .section-title {
-    color: #ffff00 !important;
-}
-
-.high-contrast table.table {
-    background: #000 !important;
-}
-
-.high-contrast table.table th {
-    background: #222 !important;
-    color: #ffff00 !important;
-    border: 1px solid #ffff00 !important;
-}
-
-.high-contrast table.table td {
-    background: #1a1a1a !important;
-    color: #fff !important;
-    border: 1px solid #444 !important;
-}
-
-.high-contrast table.table tbody tr:hover {
-    background: #333 !important;
-}
-
-.high-contrast footer {
-    background: #000 !important;
-    color: #ffff00 !important;
-    border-top: 2px solid #ffff00 !important;
 }
 
 .high-contrast .access-container {
     background: #1a1a1a !important;
-    border: 2px solid #ffff00 !important;
+    border: 3px solid #ffff00 !important;
 }
 
-.high-contrast h1,
-.high-contrast .access-section-title,
-.high-contrast label,
-.high-contrast .access-subtitle {
+.high-contrast .access-header h1,
+.high-contrast .access-section-title {
     color: #ffff00 !important;
 }
 
-.high-contrast .access-option-group {
+.high-contrast .access-section-header {
     background: #000 !important;
     border-color: #ffff00 !important;
-    color: #fff !important;
 }
 
-.high-contrast button {
+.high-contrast .access-btn {
     background: #ffff00 !important;
     color: #000 !important;
-    border: 2px solid #fff;
+    border: 2px solid #fff !important;
 }
 
 .high-contrast .access-preview-box {
@@ -339,12 +346,7 @@ body.high-contrast {
     fill: #000 !important;
 }
 
-.high-contrast .btn-sena {
-    background: #ffff00 !important;
-    color: #000 !important;
-}
-
-/* Scrollbar personalizado para el panel */
+/* Scrollbar personalizado */
 .access-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -355,12 +357,12 @@ body.high-contrast {
 }
 
 .access-container::-webkit-scrollbar-thumb {
-    background: #009640;
+    background: var(--sena-green);
     border-radius: 10px;
 }
 
 .access-container::-webkit-scrollbar-thumb:hover {
-    background: #00b050;
+    background: var(--sena-light);
 }
 
 /* Responsive */
@@ -370,15 +372,15 @@ body.high-contrast {
         right: 15px;
         left: 15px;
         width: auto;
-        padding: 20px 15px;
+        padding: 25px 20px;
     }
     
-    .access-container h1 {
-        font-size: 1.2em;
+    .text-size-grid {
+        grid-template-columns: 1fr 1fr;
     }
     
-    .access-button-group {
-        grid-template-columns: 1fr;
+    .text-size-grid .access-btn:last-child {
+        grid-column: 1 / -1;
     }
     
     .accessibility-button {
@@ -395,7 +397,7 @@ body.high-contrast {
 }
 </style>
 
-<!-- ======= HTML DEL MODULO ======= -->
+<!-- ======= HTML DEL MÓDULO ======= -->
 <!-- Botón flotante -->
 <div class="accessibility-button pulse" id="accessibilityToggle" title="Abrir Centro de Accesibilidad" aria-label="Accesibilidad">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -404,46 +406,75 @@ body.high-contrast {
 </div>
 
 <!-- Overlay -->
-<div class="accessibility-overlay" id="accessibilityOverlay" onclick="togglePanel()"></div>
+<div class="accessibility-overlay" id="accessibilityOverlay"></div>
 
 <!-- Panel -->
 <div class="access-container" id="accessibilityPanel" role="dialog" aria-modal="true" aria-label="Panel de accesibilidad">
-    <h1>Centro de Accesibilidad SENA</h1>
-    <p class="access-subtitle">Personaliza tu experiencia de navegación</p>
+    <div class="access-header">
+        <h1>
+            <span>♿</span>
+            Centro de Accesibilidad SENA
+        </h1>
+        <p class="access-subtitle">Personaliza tu experiencia de navegación</p>
+    </div>
 
-    <!-- Tamaño de Texto -->
-    <div class="access-section-title">🔎 Tamaño del Texto</div>
-    <div class="access-option-group">
-        <label>Ajustar tamaño de fuente:</label>
-        <div class="access-button-group">
-            <button id="increaseTextBtn">➕ Aumentar</button>
-            <button id="decreaseTextBtn">➖ Disminuir</button>
-            <button id="resetTextBtn">🔄 Restablecer</button>
+    <!-- Sección: Tamaño de Texto -->
+    <div class="access-section">
+        <div class="access-section-header">
+            <span class="access-section-icon">🔎</span>
+            <h3 class="access-section-title">Tamaño del Texto</h3>
+        </div>
+        <div class="access-controls text-size-grid">
+            <button class="access-btn" id="increaseTextBtn">
+                <span class="btn-icon">A+</span>
+            </button>
+            <button class="access-btn" id="decreaseTextBtn">
+                <span class="btn-icon">A-</span>
+            </button>
+            <button class="access-btn" id="resetTextBtn">
+                <span class="btn-icon">🔄</span>
+            </button>
         </div>
     </div>
 
-    <!-- CONTRASTE -->
-    <div class="access-section-title">🌓 Alto Contraste</div>
-    <div class="access-option-group">
-        <label>Modos de contraste:</label>
-        <div class="access-button-group">
-            <button id="enableContrastBtn">Activar contraste alto</button>
-            <button id="disableContrastBtn">Desactivar contraste</button>
+    <!-- Sección: Contraste -->
+    <div class="access-section">
+        <div class="access-section-header">
+            <span class="access-section-icon">🌓</span>
+            <h3 class="access-section-title">Alto Contraste</h3>
+        </div>
+        <div class="access-controls contrast-grid">
+            <button class="access-btn" id="enableContrastBtn">
+                <span class="btn-icon">🌑</span>
+                <span>Activar</span>
+            </button>
+            <button class="access-btn access-btn-secondary" id="disableContrastBtn">
+                <span class="btn-icon">☀️</span>
+                <span>Desactivar</span>
+            </button>
         </div>
     </div>
 
-    <!-- Lector de voz -->
-    <div class="access-section-title">🔊 Lector de Voz</div>
-    <div class="access-option-group">
-        <label>Lectura en voz alta:</label>
-        <div class="access-button-group">
-            <button id="readBtn">▶️ Leer página</button>
-            <button id="stopReadBtn">⏹️ Detener lectura</button>
+    <!-- Sección: Lector de Voz -->
+    <div class="access-section">
+        <div class="access-section-header">
+            <span class="access-section-icon">🔊</span>
+            <h3 class="access-section-title">Lector de Voz</h3>
+        </div>
+        <div class="access-controls voice-grid">
+            <button class="access-btn" id="readBtn">
+                <span class="btn-icon">▶️</span>
+                <span>Leer</span>
+            </button>
+            <button class="access-btn access-btn-secondary" id="stopReadBtn">
+                <span class="btn-icon">⏹️</span>
+                <span>Detener</span>
+            </button>
         </div>
     </div>
 
-    <div class="access-preview-box" id="preview">
-        👁️ Vista previa de Accesibilidad - ¡Prueba las funciones!
+    <div class="access-preview-box">
+        <span style="font-size: 1.2em;">👁️</span> Vista previa de Accesibilidad - ¡Prueba las funciones!
     </div>
 </div>
 
@@ -453,7 +484,7 @@ body.high-contrast {
 <!-- ======= SCRIPT ======= -->
 <script>
 (function() {
-    // ---------- Elementos UI ----------
+    // Elementos UI
     const toggleBtn = document.getElementById('accessibilityToggle');
     const panel = document.getElementById('accessibilityPanel');
     const overlay = document.getElementById('accessibilityOverlay');
@@ -469,132 +500,162 @@ body.high-contrast {
     const readBtn = document.getElementById('readBtn');
     const stopReadBtn = document.getElementById('stopReadBtn');
 
-    // ---------- Estado y localStorage ----------
-    let accessibilityFontSize = parseInt(localStorage.getItem('accessibilityFontSize')) || 16;
-    let accessibilityHighContrast = (localStorage.getItem('accessibilityHighContrast') === 'true');
+    // Estado
+    let fontSize = parseInt(localStorage.getItem('accessibilityFontSize')) || 16;
+    let highContrast = (localStorage.getItem('accessibilityHighContrast') === 'true');
 
-    // Aplica tamaño guardado
-    document.documentElement.style.fontSize = accessibilityFontSize + 'px';
+    // Aplicar configuración guardada
+    document.documentElement.style.fontSize = fontSize + 'px';
+    if (highContrast) document.body.classList.add('high-contrast');
 
-    // Aplica contraste guardado
-    if (accessibilityHighContrast) {
-        document.body.classList.add('high-contrast');
-    }
-
-    // ---------- Mostrar notificación ----------
+    // Mostrar notificación
     function showNotification(msg, type = 'success') {
         if (!notification) return;
-        notification.textContent = msg;
+        
+        // Remover clases previas
+        notification.classList.remove('warning');
+        
+        notification.innerHTML = `<span>${type === 'success' ? '✓' : '⚠️'}</span> ${msg}`;
+        
+        if (type === 'warning') {
+            notification.classList.add('warning');
+        }
+        
         notification.classList.add('show');
-        notification.style.background = (type === 'warning') ? '#ffb74d' : '#4CAF50';
-        setTimeout(() => notification.classList.remove('show'), 2000);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 2500);
     }
 
-    // ---------- Abrir/Cerrar panel ----------
-    function openPanel() {
-        if (!panel || !overlay) return;
-        panel.classList.add('active');
-        overlay.classList.add('active');
-        const btnEl = document.querySelector('.accessibility-button');
-        if (btnEl) btnEl.classList.remove('pulse');
-    }
-    
-    function closePanel() {
-        if (!panel || !overlay) return;
-        panel.classList.remove('active');
-        overlay.classList.remove('active');
-    }
-    
+    // Abrir/Cerrar panel
     function togglePanel() {
         if (!panel) return;
-        if (panel.classList.contains('active')) closePanel();
-        else openPanel();
+        const isActive = panel.classList.contains('active');
+        if (isActive) {
+            panel.classList.remove('active');
+            overlay.classList.remove('active');
+        } else {
+            panel.classList.add('active');
+            overlay.classList.add('active');
+            if (toggleBtn) toggleBtn.classList.remove('pulse');
+        }
     }
 
     if (toggleBtn) toggleBtn.addEventListener('click', togglePanel);
-    if (overlay) overlay.addEventListener('click', closePanel);
+    if (overlay) overlay.addEventListener('click', togglePanel);
 
     // Cerrar con ESC
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closePanel();
+        if (e.key === 'Escape' && panel && panel.classList.contains('active')) {
+            togglePanel();
+        }
     });
 
-    // ---------- Tamaño de texto global ----------
+    // Tamaño de texto
     function setFontSize(size) {
-        accessibilityFontSize = Math.max(10, Math.min(30, size));
-        document.documentElement.style.fontSize = accessibilityFontSize + 'px';
-        localStorage.setItem('accessibilityFontSize', accessibilityFontSize);
-        showNotification('Tamaño de texto: ' + accessibilityFontSize + 'px');
+        fontSize = Math.max(10, Math.min(30, size));
+        document.documentElement.style.fontSize = fontSize + 'px';
+        localStorage.setItem('accessibilityFontSize', fontSize);
+        showNotification(`Tamaño: ${fontSize}px`);
     }
 
-    if (increaseBtn) increaseBtn.addEventListener('click', () => setFontSize(accessibilityFontSize + 2));
-    if (decreaseBtn) decreaseBtn.addEventListener('click', () => setFontSize(accessibilityFontSize - 2));
+    if (increaseBtn) increaseBtn.addEventListener('click', () => setFontSize(fontSize + 2));
+    if (decreaseBtn) decreaseBtn.addEventListener('click', () => setFontSize(fontSize - 2));
     if (resetBtn) resetBtn.addEventListener('click', () => setFontSize(16));
 
-    // ---------- Contraste ----------
+    // Contraste
     if (enableContrastBtn) enableContrastBtn.addEventListener('click', () => {
         document.body.classList.add('high-contrast');
-        accessibilityHighContrast = true;
+        highContrast = true;
         localStorage.setItem('accessibilityHighContrast', 'true');
-        showNotification('✓ Contraste alto activado');
+        showNotification('Contraste alto activado');
     });
     
     if (disableContrastBtn) disableContrastBtn.addEventListener('click', () => {
         document.body.classList.remove('high-contrast');
-        accessibilityHighContrast = false;
+        highContrast = false;
         localStorage.setItem('accessibilityHighContrast', 'false');
-        showNotification('✓ Contraste normal restaurado');
+        showNotification('Contraste desactivado');
     });
 
-    // ---------- Lector de voz ----------
+    // Lector de voz - CORREGIDO
     const speech = window.speechSynthesis;
-    let utterance = null;
+    let currentUtterance = null;
+    let isReading = false;
 
     if (readBtn) readBtn.addEventListener('click', () => {
-        if (speech.speaking) {
+        // Si ya está leyendo, no hacer nada
+        if (isReading || speech.speaking) {
             showNotification('Ya hay una lectura en curso', 'warning');
             return;
         }
-        const mainText = document.body.innerText;
-        utterance = new SpeechSynthesisUtterance(mainText);
-        utterance.lang = 'es-ES';
-
-        const voices = speech.getVoices();
-        const v = voices.find(voice => voice.lang && voice.lang.startsWith('es'));
-        if (v) utterance.voice = v;
-
-        utterance.rate = 0.95;
-        utterance.onstart = () => showNotification('🔊 Iniciando lectura...');
-        utterance.onend = () => showNotification('Lectura completada');
-        utterance.onerror = () => showNotification('Error en la lectura', 'warning');
-
-        speech.speak(utterance);
-    });
-
-    if (stopReadBtn) stopReadBtn.addEventListener('click', () => {
-        if (speech.speaking) {
-            speech.cancel();
-            showNotification('Lectura detenida');
-        } else {
-            showNotification('No hay lectura activa', 'warning');
+        
+        try {
+            const text = document.body.innerText;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'es-ES';
+            currentUtterance.rate = 0.95;
+            
+            const voices = speech.getVoices();
+            const voice = voices.find(v => v.lang && v.lang.startsWith('es'));
+            if (voice) currentUtterance.voice = voice;
+            
+            currentUtterance.onstart = () => {
+                isReading = true;
+                showNotification('Iniciando lectura...');
+            };
+            
+            currentUtterance.onend = () => {
+                isReading = false;
+                currentUtterance = null;
+                showNotification('Lectura completada');
+            };
+            
+            currentUtterance.onerror = (event) => {
+                isReading = false;
+                currentUtterance = null;
+                // Solo mostrar error si no fue cancelado manualmente
+                if (event.error !== 'canceled' && event.error !== 'interrupted') {
+                    showNotification('Error en la lectura', 'warning');
+                }
+            };
+            
+            speech.speak(currentUtterance);
+        } catch (error) {
+            isReading = false;
+            showNotification('Error al iniciar lectura', 'warning');
         }
     });
 
-    // ---------- Guardar antes de salir ----------
-    window.addEventListener('beforeunload', () => {
-        localStorage.setItem('accessibilityFontSize', accessibilityFontSize);
-        localStorage.setItem('accessibilityHighContrast', accessibilityHighContrast);
+    if (stopReadBtn) stopReadBtn.addEventListener('click', () => {
+        try {
+            if (speech.speaking || isReading) {
+                speech.cancel();
+                isReading = false;
+                currentUtterance = null;
+                showNotification('Lectura detenida');
+            } else {
+                showNotification('No hay lectura activa', 'warning');
+            }
+        } catch (error) {
+            isReading = false;
+            showNotification('Error al detener', 'warning');
+        }
     });
 
-    // ---------- Al cargar la página, restaura todo ----------
-    window.addEventListener('load', () => {
-        document.documentElement.style.fontSize = accessibilityFontSize + 'px';
-        if (accessibilityHighContrast) document.body.classList.add('high-contrast');
-    });
-
-    // Si las voces cambian en el navegador
+    // Actualizar voces cuando estén disponibles
     if (speech.onvoiceschanged !== undefined) {
-        speech.onvoiceschanged = () => speech.getVoices();
+        speech.onvoiceschanged = () => {
+            speech.getVoices();
+        };
     }
+
+    // Limpiar al salir de la página
+    window.addEventListener('beforeunload', () => {
+        if (speech.speaking) {
+            speech.cancel();
+        }
+    });
 })();
 </script>

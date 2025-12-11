@@ -97,41 +97,49 @@ class PDFReportGenerator:
         
         canvas.restoreState()
     
+    # ============================================================================
+# SOLO LA FUNCIÓN MODIFICADA - Reemplaza en tu generators.py
+# ============================================================================
+
     def generate_solicitudes_report(self, solicitudes, filtros=None):
-        """Genera reporte de solicitudes en PDF"""
+        """Genera reporte de solicitudes en PDF CON NIT"""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
             buffer,
             pagesize=letter,
             topMargin=80,
-            bottomMargin=50
+            bottomMargin=50,
+            title="Reporte de Solicitudes - SENA",  
+            author="SENA - Sistema de Gestión",     
+            subject="Solicitudes de Formación"
+            
         )
-    
+
         elements = []
-    
+
         # Título
         title = Paragraph("REPORTE DE SOLICITUDES DE FORMACIÓN", self.styles['CustomTitle'])
         elements.append(title)
         elements.append(Spacer(1, 0.2 * inch))
-    
+
         # Información de filtros
         if filtros:
             info_text = f"<b>Filtros aplicados:</b> {filtros}"
             elements.append(Paragraph(info_text, self.styles['Normal']))
             elements.append(Spacer(1, 0.2 * inch))
-    
+
         # Estadísticas resumidas
         total = solicitudes.count()
         recibidas = solicitudes.filter(estado='RECIBIDA').count()
         respondidas = solicitudes.filter(estado='RESPONDIDA').count()
         atendidas = solicitudes.filter(estado='ATENDIDA').count()
         finalizadas = solicitudes.filter(estado='FINALIZADA').count()
-    
+
         stats_data = [
             ['Total Solicitudes', 'Recibidas', 'Respondidas', 'Atendidas', 'Finalizadas'],
             [str(total), str(recibidas), str(respondidas), str(atendidas), str(finalizadas)]
         ]
-    
+
         stats_table = Table(stats_data, colWidths=[1.1*inch]*5)
         stats_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
@@ -144,30 +152,32 @@ class PDFReportGenerator:
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.grey)
         ]))
-    
+
         elements.append(stats_table)
         elements.append(Spacer(1, 0.3 * inch))
-    
+
         # Tabla de solicitudes
         elements.append(Paragraph("Detalle de Solicitudes", self.styles['SectionHeader']))
-    
-        # Preparar datos CON Paragraph y TableCell
-        data = [['ID', 'Empresa', 'Programa', 'Estado', 'Fecha Recepción', 'Instructor']]
-    
-        for sol in solicitudes[:50]:  # Limitar a 50 para no sobrecargar
+
+        # 🔴  NIT 
+        data = [['NIT Empresa', 'Empresa', 'Programa', 'Estado', 'Fecha Recepción', 'Instructor']]
+
+        for sol in solicitudes[:50]:
+            # 🔴 Obtener NIT de forma segura
+            nit_empresa = sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit else 'Sin NIT'
+        
             data.append([
-                Paragraph(f"#{sol.id}", self.styles['TableCell']),
+                Paragraph(nit_empresa, self.styles['TableCell']),
                 Paragraph(sol.empresa.nombre, self.styles['TableCell']),
                 Paragraph(sol.programa.nombre, self.styles['TableCell']),
                 Paragraph(sol.get_estado_display(), self.styles['TableCell']),
                 Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y'), self.styles['TableCell']),
                 Paragraph(sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar', self.styles['TableCell'])
             ])
-    
-        # Crear tabla con anchos ajustados
-        table = Table(data, colWidths=[0.5*inch, 2*inch, 2*inch, 1*inch, 1.2*inch, 1.5*inch]) 
+
+        # 🔴 AJUSTE: Ancho de columna para NIT (más grande que ID)
+        table = Table(data, colWidths=[1.2*inch, 1.8*inch, 2*inch, 1*inch, 1.2*inch, 1.5*inch]) 
         table.setStyle(TableStyle([
-            # Encabezado
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -179,8 +189,6 @@ class PDFReportGenerator:
             ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
             ('LEFTPADDING', (0, 0), (-1, -1), 5),
             ('RIGHTPADDING', (0, 0), (-1, -1), 5),
-        
-            # Cuerpo
             ('BACKGROUND', (0, 1), (-1, -1), colors.white),
             ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
@@ -188,9 +196,9 @@ class PDFReportGenerator:
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
-    
+
         elements.append(table)
-    
+
         if solicitudes.count() > 50:
             elements.append(Spacer(1, 0.2 * inch))
             note = Paragraph(
@@ -198,57 +206,74 @@ class PDFReportGenerator:
                 self.styles['Normal']
             )
             elements.append(note)
-    
+
         # Construir PDF
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
-    
+
         buffer.seek(0)
         return buffer
     
     def generate_empresas_report(self, empresas):
-        """Genera reporte de empresas en PDF"""
+        """Genera reporte de empresas en PDF CON NIT"""
         buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=80, bottomMargin=50)
-        
+        doc = SimpleDocTemplate(
+            buffer, 
+            pagesize=letter, 
+            topMargin=80, 
+            bottomMargin=50,
+            title="Directorio de Empresas - SENA",
+            author="SENA - Sistema de Gestión",
+            subject="Empresas Registradas"
+        )
         elements = []
-        
+    
         # Título
         title = Paragraph("DIRECTORIO DE EMPRESAS", self.styles['CustomTitle'])
         elements.append(title)
         elements.append(Spacer(1, 0.3 * inch))
-        
+    
         # Estadísticas
         total = empresas.count()
         elements.append(Paragraph(f"<b>Total de empresas:</b> {total}", self.styles['Normal']))
         elements.append(Spacer(1, 0.3 * inch))
-        
-        # Tabla
-        data = [['Empresa', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Trabajadores']]
-        
+    
+        # 🔴 TABLA CON NIT
+        data = [['NIT', 'Empresa', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Trabajadores']]
+    
         for emp in empresas[:50]:
-            data.append([
-                Paragraph(emp.nombre,self.styles['Normal']),
-                Paragraph(emp.contacto, self.styles['Normal']),
-                emp.telefono or 'N/A',
-                Paragraph(emp.correo, self.styles['Normal']),
-                emp.municipio if emp.municipio else 'N/A',
-                str(emp.numero_trabajadores) if emp.numero_trabajadores else '0'
-            ])
+            # Obtener NIT de forma segura
+            nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
         
-        table = Table(data, colWidths=[2*inch, 1.5*inch, 1*inch, 1.8*inch, 1.2*inch, 0.9*inch])
+            data.append([
+                Paragraph(nit_empresa, self.styles['TableCell']),  # 🔴 NUEVA COLUMNA NIT
+                Paragraph(emp.nombre, self.styles['TableCell']),
+                Paragraph(emp.contacto, self.styles['TableCell']),
+                Paragraph(emp.telefono or 'N/A', self.styles['TableCell']),
+                Paragraph(emp.correo, self.styles['TableCell']),
+                Paragraph(emp.municipio if emp.municipio else 'N/A', self.styles['TableCell']),
+                Paragraph(str(emp.numero_trabajadores) if emp.numero_trabajadores else '0', self.styles['TableCell'])
+            ])
+    
+        # 🔴 AJUSTE: Anchos de columna con NIT incluido
+        table = Table(data, colWidths=[1.1*inch, 1.8*inch, 1.2*inch, 0.9*inch, 1.5*inch, 1*inch, 0.8*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
-        
+    
         elements.append(table)
-        
+    
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
         buffer.seek(0)
         return buffer
@@ -256,7 +281,16 @@ class PDFReportGenerator:
     def generate_programas_report(self, programas):
         """Genera reporte de programas en PDF"""
         buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=80, bottomMargin=50)
+        doc = SimpleDocTemplate(
+            buffer, 
+            pagesize=letter, 
+            topMargin=80, 
+            bottomMargin=50,
+            title="Programas de formacion - SENA",
+            author="SENA - Sistema de Gestión",
+            subject="Programas de Formación"
+            
+            )
         
         elements = []
         
@@ -302,7 +336,10 @@ class PDFReportGenerator:
             topMargin=80,
             bottomMargin=50,
             leftMargin=50,
-            rightMargin=50
+            rightMargin=50,
+            title ="Reporte Consolidado -SENA",
+            author="SENA - Sistema de Gestión",
+            subject="Reporte Consolidado"
         )
     
         elements = []
@@ -402,17 +439,19 @@ class PDFReportGenerator:
         elements.append(Paragraph("Últimas 10 Solicitudes", self.styles['SectionHeader']))
         elements.append(Spacer(1, 0.1 * inch))
     
-        sol_data = [['ID', 'Empresa', 'Programa', 'Estado', 'Fecha']]
+        sol_data = [['NIT Empresa', 'Empresa', 'Programa', 'Estado', 'Fecha']]
         for sol in solicitudes[:10]:
+            #obtener nit de forma segura
+            nit_empresa = sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit else 'Sin NIT'
             sol_data.append([
-                Paragraph(f"#{sol.id}", self.styles['TableCell']),
+                Paragraph(nit_empresa, self.styles['TableCell']),
                 Paragraph(sol.empresa.nombre, self.styles['TableCell']),
                 Paragraph(sol.programa.nombre, self.styles['TableCell']),
                 Paragraph(sol.get_estado_display(), self.styles['TableCell']),
                 Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y'), self.styles['TableCell'])
             ])
     
-        sol_table = Table(sol_data, colWidths=[0.5*inch, 2.2*inch, 2.2*inch, 1*inch, 0.8*inch])
+        sol_table = Table(sol_data, colWidths=[1.2*inch, 2*inch, 2*inch, 1*inch, 0.8*inch])
         sol_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -443,9 +482,11 @@ class PDFReportGenerator:
         elements.append(Spacer(1, 0.2 * inch))
 
         # Top 15 empresas - MEJORADO CON TEXTO COMPLETO
-        emp_data = [['Empresa', 'Contacto', 'Teléfono', 'Municipio', 'Solicitudes']]
+        emp_data = [['NIT','Empresa', 'Contacto', 'Teléfono', 'Municipio', 'Solicitudes']]
         for emp in empresas[:15]:
+            nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
             emp_data.append([
+                Paragraph (nit_empresa, self.styles['TableCell']),
                 Paragraph(emp.nombre or 'Sin nombre', self.styles['TableCell']),
                 Paragraph(emp.contacto or 'Sin contacto', self.styles['TableCell']),
                 Paragraph(emp.telefono or 'N/A', self.styles['TableCell']),
@@ -454,7 +495,7 @@ class PDFReportGenerator:
         ])
 
         # Anchos optimizados - sin truncar texto
-        emp_table = Table(emp_data, colWidths=[2*inch, 1.4*inch, 0.9*inch, 1*inch, 1*inch])
+        emp_table = Table(emp_data, colWidths=[1.1*inch, 1.8*inch, 1.2*inch, 0.9*inch, 1*inch, 0.9*inch])
         emp_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -647,12 +688,12 @@ class ExcelReportGenerator:
         ws['A1'] = 'REPORTE DE SOLICITUDES DE FORMACIÓN'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
         ws['A1'].alignment = Alignment(horizontal='center')
-        ws.merge_cells('A1:H1')
+        ws.merge_cells('A1:I1')
         
         # Fecha de generación
         ws['A2'] = f'Generado: {timezone.now().strftime("%d/%m/%Y %H:%M")}'
         ws['A2'].font = Font(italic=True, size=10)
-        ws.merge_cells('A2:H2')
+        ws.merge_cells('A2:I2')
         
         # Estadísticas
         ws['A4'] = 'RESUMEN ESTADÍSTICO'
@@ -674,7 +715,7 @@ class ExcelReportGenerator:
                     cell.font = Font(bold=True)
         
         # Encabezados de tabla
-        headers = ['ID', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
+        headers = ['NIT Empresa', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
         ws.append([])  # Línea en blanco
         ws.append(headers)
         
@@ -682,8 +723,10 @@ class ExcelReportGenerator:
         
         # Datos
         for sol in solicitudes:
+            #obtener nit de forma segura
+            nit_empresa = sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit else 'Sin NIT'
             ws.append([
-                sol.id,
+                nit_empresa,
                 sol.empresa.nombre,
                 sol.programa.nombre,
                 sol.programa.area.nombre,
@@ -716,13 +759,13 @@ class ExcelReportGenerator:
         # Título
         ws['A1'] = 'DIRECTORIO DE EMPRESAS'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
-        ws.merge_cells('A1:G1')
+        ws.merge_cells('A1:I1')
         
         ws['A2'] = f'Total de empresas: {empresas.count()}'
         ws['A2'].font = Font(bold=True, size=11)
         
         # Encabezados
-        headers = ['ID', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores']
+        headers = ['NIT', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores']
         ws.append([])
         ws.append(headers)
         
@@ -730,8 +773,9 @@ class ExcelReportGenerator:
         
         # Datos
         for emp in empresas:
+            nit_empresa =emp.nit if hasattr(emp, 'nit')and emp.nit else 'Sin NIT'
             ws.append([
-                emp.id,
+                nit_empresa,
                 emp.nombre,
                 emp.contacto,
                 emp.telefono or 'N/A',
@@ -881,7 +925,7 @@ class ExcelReportGenerator:
         ws_sol['A10'] = 'LISTADO COMPLETO'
         ws_sol['A10'].font = Font(bold=True, size=12)
         
-        headers = ['ID', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
+        headers = ['NIT Empresa', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
         ws_sol.append([])
         ws_sol.append(headers)
         
@@ -892,8 +936,9 @@ class ExcelReportGenerator:
             cell.border = self.border
         
         for sol in solicitudes:
+            nit_empresa = sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit else 'Sin NIT'
             ws_sol.append([
-                sol.id,
+                nit_empresa,
                 sol.empresa.nombre,
                 sol.programa.nombre,
                 sol.programa.area.nombre,
@@ -915,9 +960,9 @@ class ExcelReportGenerator:
         
         ws_emp['A1'] = 'DIRECTORIO DE EMPRESAS'
         ws_emp['A1'].font = Font(bold=True, size=16, color="2e7d32")
-        ws_emp.merge_cells('A1:H1')
+        ws_emp.merge_cells('A1:I1')
         
-        emp_headers = ['ID', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores', 'Solicitudes']
+        emp_headers = ['NIT', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores', 'Solicitudes']
         ws_emp.append([])
         ws_emp.append(emp_headers)
         
@@ -927,8 +972,9 @@ class ExcelReportGenerator:
             cell.border = self.border
         
         for emp in empresas:
+            nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
             ws_emp.append([
-                emp.id,
+                nit_empresa,
                 emp.nombre,
                 emp.contacto,
                 emp.telefono or 'N/A',
