@@ -362,7 +362,9 @@
         .report-icon.empresas {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
         }
-
+        .report-icon.programas {
+            background:linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+        }
         .report-icon.instructores {
             background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
         }
@@ -679,7 +681,7 @@
                     </div>
                 </div>
                 
-                <!-- Empresas -->
+                <!-- Empresas Registradas en  el  Sistema -->
                 <div class="report-card">
                     <div class="report-card-header">
                         <div class="report-icon empresas">🏢</div>
@@ -700,8 +702,28 @@
                         </a>
                     </div>
                 </div>
-                
-                <!-- Instructores -->
+                <!--Programas de Formacion -->
+                <div class= "report-card">
+                    <div class="report-card-header">
+                        <div class="report-icon programas">📚</div>
+                        <div>
+                            <h3>Catalogo de Programas</h3>
+                        </div>
+                    </div>
+                    <p>
+                        Listado completo de programas de formacion activos con codigo, area, duracion y estado.
+                        <br><strong class="count">{{total_programas}} registros</strong>
+                    </p>
+                    <div class="btn-group">
+                        <a href="{% url 'reportes:reporte_programas_pdf'%}" class="btn btn-pdf">
+                            📄 PDF
+                        </a>
+                        <a href="{% url 'reportes:reporte_programas_excel'%}" class="btn btn-excel">
+                            📊 Excel
+                        </a>
+                    </div>
+                </div>
+                <!-- Instructores Activos en el  Sistema-->
                 <div class="report-card">
                     <div class="report-card-header">
                         <div class="report-icon instructores">👨‍🏫</div>
@@ -725,7 +747,7 @@
             </div>
         </div>
         
-        <!-- Footer -->
+        <!-- Footer de la Pagina Web-->
         <footer>
             <p>© 2025 Servicio Nacional de Aprendizaje (SENA) - Sistema de Gestión de Solicitudes</p>
         </footer>

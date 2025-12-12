@@ -221,6 +221,8 @@ class PDFReportGenerator:
             pagesize=letter, 
             topMargin=80, 
             bottomMargin=50,
+            leftMargin=40,
+            rightMargin=40,
             title="Directorio de Empresas - SENA",
             author="SENA - Sistema de Gestión",
             subject="Empresas Registradas"
@@ -238,7 +240,7 @@ class PDFReportGenerator:
         elements.append(Spacer(1, 0.3 * inch))
     
         # 🔴 TABLA CON NIT
-        data = [['NIT', 'Empresa', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Trabajadores']]
+        data = [['NIT', 'Empresa', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'N° Trab.']]
     
         for emp in empresas[:50]:
             # Obtener NIT de forma segura
@@ -255,19 +257,19 @@ class PDFReportGenerator:
             ])
     
         # 🔴 AJUSTE: Anchos de columna con NIT incluido
-        table = Table(data, colWidths=[1.1*inch, 1.8*inch, 1.2*inch, 0.9*inch, 1.5*inch, 1*inch, 0.8*inch])
+        table = Table(data, colWidths=[0.9*inch, 1.6*inch, 1.1*inch, 0.85*inch, 1.3*inch, 0.9*inch, 0.75*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('FONTSIZE', (0, 1), (-1, -1), 9),
-            ('TOPPADDING', (0, 0), (-1, -1), 8),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-            ('LEFTPADDING', (0, 0), (-1, -1), 5),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 3),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 3),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
@@ -293,36 +295,53 @@ class PDFReportGenerator:
             )
         
         elements = []
-        
+        #Titulo
         title = Paragraph("CATÁLOGO DE PROGRAMAS DE FORMACIÓN", self.styles['CustomTitle'])
         elements.append(title)
         elements.append(Spacer(1, 0.3 * inch))
         
+        #Estadisticas
+        total = programas.count()
+        elements.append(Paragraph(f"<b>Total de programas activos:</b> {total}", self.styles['Normal']))
+        elements.append(Spacer(1,0.3 * inch))
         data = [['Código', 'Nombre del Programa', 'Área', 'Duración', 'Estado']]
         
-        for prog in programas:
+        for prog in programas[:50]:
             data.append([
-                prog.codigo or 'N/A',
-                prog.nombre[:40],
-                prog.area.nombre[:30],
-                f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A',
-                'Activo' if prog.activo else 'Inactivo'
+                Paragraph(prog.codigo or 'N/A', self.styles['TableCell']),
+                Paragraph(prog.nombre, self.styles['TableCell']),
+                Paragraph(prog.area.nombre, self.styles['TableCell']),
+                Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A', self.styles['TableCell']),
+                Paragraph('Activo' if prog.activo else 'Inactivo', self.styles['TableCell'])
             ])
         
-        table = Table(data, colWidths=[0.8*inch, 2.5*inch, 1.5*inch, 0.8*inch, 0.8*inch])
+        table = Table(data, colWidths=[0.9*inch, 3*inch, 1.5*inch, 0.8*inch, 0.8*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN',(0,0), (-1,-1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('TOPPADDING', (0, 0),(-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0),(-1, -1), 8),
+            ('LEFTPADDING', (0 ,0), (-1, -1), 5),
+            ('RIGHTPADDING', (0, 0), (-1,-1), 5),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
         ]))
         
         elements.append(table)
-        
+        #Nota si  hay mas de 50  programas
+        if programas.count() > 50:
+            elements.append(Spacer(1,0.2 * inch))
+            note=Paragraph(
+                f"<i>Nota: Mostrando los primeros 50 programas de {programas.count()} totales</i>",
+                self.styles['Normal']
+            )
+            elements.append(note)
+            
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
         buffer.seek(0)
         return buffer
@@ -557,16 +576,17 @@ class PDFReportGenerator:
         elements.append(Paragraph("Programas Más Solicitados", self.styles['SectionHeader']))
         elements.append(Spacer(1, 0.1 * inch))
     
-        prog_data = [['Programa', 'Área', 'Duración', 'Solicitudes']]
+        prog_data = [['Codigo','Programa', 'Área', 'Duración', 'Solicitudes']]
         for prog in programas.annotate(num_sol=Count('solicitud')).order_by('-num_sol')[:15]:
             prog_data.append([
+                Paragraph(prog.codigo or 'N/A', self.styles['TableCell']),
                 Paragraph(prog.nombre, self.styles['TableCell']),
                 Paragraph(prog.area.nombre, self.styles['TableCell']),
                 Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A', self.styles['TableCell']),
                 Paragraph(str(prog.num_sol), self.styles['TableCell'])
             ])
     
-        prog_table = Table(prog_data, colWidths=[2.5*inch, 2*inch, 0.8*inch, 1*inch])
+        prog_table = Table(prog_data, colWidths=[0.9*inch, 2.2*inch, 1.6*inch, 0.8*inch, 1*inch])
         prog_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -755,26 +775,32 @@ class ExcelReportGenerator:
         wb = Workbook()
         ws = wb.active
         ws.title = "Empresas"
-        
+    
         # Título
         ws['A1'] = 'DIRECTORIO DE EMPRESAS'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
-        ws.merge_cells('A1:I1')
-        
+        ws.merge_cells('A1:H1')
+    
         ws['A2'] = f'Total de empresas: {empresas.count()}'
         ws['A2'].font = Font(bold=True, size=11)
-        
-        # Encabezados
+    
+        # Encabezados en fila 4
         headers = ['NIT', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores']
-        ws.append([])
-        ws.append(headers)
-        
-        self.apply_header_style(ws, row=4)
-        
-        # Datos
+    
+        for col_idx, header in enumerate(headers, start=1):
+            cell = ws.cell(row=4, column=col_idx, value=header)
+            cell.fill = self.header_fill
+            cell.font = self.header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = self.border
+    
+        # Datos desde fila 5
+        current_row = 5
         for emp in empresas:
-            nit_empresa =emp.nit if hasattr(emp, 'nit')and emp.nit else 'Sin NIT'
-            ws.append([
+            nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
+        
+            # Crear lista con los datos de esta empresa
+            datos_empresa = [
                 nit_empresa,
                 emp.nombre,
                 emp.contacto,
@@ -783,58 +809,138 @@ class ExcelReportGenerator:
                 emp.municipio or 'N/A',
                 emp.direccion or 'N/A',
                 emp.numero_trabajadores or 0
-            ])
+            ]
         
-        for row in ws.iter_rows(min_row=4, max_row=ws.max_row, max_col=8):
-            for cell in row:
+            # Escribir cada celda
+            for col_idx, value in enumerate(datos_empresa, start=1):
+                cell = ws.cell(row=current_row, column=col_idx, value=value)
                 cell.border = self.border
-                cell.alignment = Alignment(horizontal='center', vertical='center',wrap_text=True)
+                cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
         
+            current_row += 1
+    
         self.adjust_column_width(ws)
-        
+    
         buffer = io.BytesIO()
         wb.save(buffer)
         buffer.seek(0)
         return buffer
-    
     def generate_programas_report(self, programas):
         """Genera reporte de programas en Excel"""
         wb = Workbook()
         ws = wb.active
         ws.title = "Programas"
-        
+    
+        # Título
         ws['A1'] = 'CATÁLOGO DE PROGRAMAS DE FORMACIÓN'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
         ws.merge_cells('A1:F1')
-        
+    
+        # Encabezados en fila 3
         headers = ['ID', 'Código', 'Nombre', 'Área', 'Duración (horas)', 'Estado']
-        ws.append([])
-        ws.append(headers)
-        
-        self.apply_header_style(ws, row=3)
-        
+    
+        for col_idx, header in enumerate(headers, start=1):
+            cell = ws.cell(row=3, column=col_idx, value=header)
+            cell.fill = self.header_fill  # ✅ CORRECTO (sin "cell")
+            cell.font = self.header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = self.border
+    
+        # Datos desde fila 4
+        current_row = 4
         for prog in programas:
-            ws.append([
+            datos_programa = [
                 prog.id,
                 prog.codigo or 'N/A',
                 prog.nombre,
                 prog.area.nombre,
                 prog.duracion_horas or 0,
                 'Activo' if prog.activo else 'Inactivo'
-            ])
+            ]
         
-        for row in ws.iter_rows(min_row=3, max_row=ws.max_row, max_col=6):
-            for cell in row:
+            for col_idx, value in enumerate(datos_programa, start=1):
+                cell = ws.cell(row=current_row, column=col_idx, value=value)
                 cell.border = self.border
-                cell.alignment = Alignment(horizontal='center',vertical='center', wrap_text=True)
+                cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
         
-        self.adjust_column_width(ws)
-        
+            current_row += 1
+    
+        # Ajuste manual de anchos
+        ws.column_dimensions['A'].width = 8   # ID
+        ws.column_dimensions['B'].width = 15  # Código
+        ws.column_dimensions['C'].width = 45  # Nombre
+        ws.column_dimensions['D'].width = 25  # Área
+        ws.column_dimensions['E'].width = 18  # Duración
+        ws.column_dimensions['F'].width = 12  # Estado
+    
         buffer = io.BytesIO()
         wb.save(buffer)
         buffer.seek(0)
         return buffer
+    def generate_instructores_report(self, instructores):
+        """Genera reporte de instructores en Excel"""
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Instructores"
     
+        # Título
+        ws['A1'] = 'DIRECTORIO DE INSTRUCTORES'
+        ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
+        ws.merge_cells('A1:G1')
+        ws['A1'].alignment = Alignment(horizontal='center')
+    
+        # Subtítulo con totales
+        total = instructores.count()
+        activos = instructores.filter(activo=True).count()
+        ws['A2'] = f'Total: {total} | Activos: {activos}'
+        ws['A2'].font = Font(bold=True, size=11)
+        ws.merge_cells('A2:G2')
+    
+        # Encabezados en fila 4
+        headers = ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Especialidades', 'Solicitudes Asignadas']
+    
+        for col_idx, header in enumerate(headers, start=1):
+            cell = ws.cell(row=4, column=col_idx, value=header)
+            cell.fill = self.header_fill
+            cell.font = self.header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = self.border
+    
+        # Datos desde fila 5
+        current_row = 5
+        for inst in instructores:
+            datos_instructor = [
+                inst.id,
+                inst.nombre,
+                inst.correo,
+                inst.telefono or 'N/A',
+                'Activo' if inst.activo else 'Inactivo',
+                inst.especialidad.count(),
+                inst.solicitud_set.count()
+            ]
+        
+            for col_idx, value in enumerate(datos_instructor, start=1):
+                cell = ws.cell(row=current_row, column=col_idx, value=value)
+                cell.border = self.border  # ✅ CLAVE: Aplicar bordes
+                cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+        
+            current_row += 1
+    
+        # Ajuste manual de anchos
+        ws.column_dimensions['A'].width = 8   # ID
+        ws.column_dimensions['B'].width = 30  # Nombre
+        ws.column_dimensions['C'].width = 28  # Correo
+        ws.column_dimensions['D'].width = 15  # Teléfono
+        ws.column_dimensions['E'].width = 12  # Estado
+        ws.column_dimensions['F'].width = 18  # Especialidades
+        ws.column_dimensions['G'].width = 22  # Solicitudes
+    
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+        return buffer
+        
+        
     def generate_consolidated_report(self, solicitudes, empresas, programas, instructores):
         """Genera reporte consolidado en Excel con múltiples hojas"""
         wb = Workbook()

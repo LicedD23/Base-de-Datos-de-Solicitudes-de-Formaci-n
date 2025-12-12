@@ -194,9 +194,37 @@ def generar_reporte_empresas_excel(request):
     filename = f'empresas_{timezone.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
     return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
+# ============================================================================
+# REPORTES INDIVIDUALES - INSTRUCTORES
+# ============================================================================
+@login_required
+def generar_reporte_programas_pdf(request):
+    """Genera reporte PDF de programas de formacion"""
+    programas = Programa.objects.select_related('area').filter(activo=True).order_by('nombre')
+    
+    generator =PDFReportGenerator()
+    buffer = generator.generate_programas_report(programas)
+    response=HttpResponse(buffer, content_type='application/pdf')
+    filename = f'programas_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-
-
+    return response
+@login_required
+def generar_reporte_programas_excel(request):
+    """Genera reporte Excel de programas de formacion"""
+    programas = Programa.objects.select_related('area').filter(activo = True).order_by('nombre')
+    generator = ExcelReportGenerator()
+    buffer = generator.generate_programas_report(programas)
+    
+    buffer.seek(0)
+    filename = f'programas_{timezone.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+    return FileResponse(
+        buffer,
+        as_attachment=True,
+        filename=filename,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        
+    )
 # ============================================================================
 # REPORTES INDIVIDUALES - INSTRUCTORES
 # ============================================================================
@@ -280,65 +308,21 @@ def generar_reporte_instructores_pdf(request):
 
 @login_required
 def generar_reporte_instructores_excel(request):
-    """Genera reporte Excel de instructores"""
+    """Genera reporte Excel  de instructores"""
     instructores = Instructor.objects.prefetch_related('especialidad').all().order_by('nombre')
     
-    from openpyxl import Workbook
-    from openpyxl.styles import Font, PatternFill
-    import io
+    generator = ExcelReportGenerator()
+    buffer = generator.generate_instructores_report(instructores)
     
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Instructores"
-    
-    # Título
-    ws['A1'] = 'DIRECTORIO DE INSTRUCTORES'
-    ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
-    ws.merge_cells('A1:G1')
-    
-    ws['A2'] = f'Total: {instructores.count()} | Activos: {instructores.filter(activo=True).count()}'
-    ws['A2'].font = Font(bold=True, size=11)
-    
-    # Encabezados
-    headers = ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Especialidades', 'Solicitudes Asignadas']
-    ws.append([])
-    ws.append(headers)
-    
-    header_fill = PatternFill(start_color="2e7d32", end_color="2e7d32", fill_type="solid")
-    for cell in ws[4]:
-        cell.fill = header_fill
-        cell.font = Font(bold=True, color="FFFFFF")
-    
-    # Datos
-    for inst in instructores:
-        ws.append([
-            inst.id,
-            inst.nombre,
-            inst.correo,
-            inst.telefono,
-            'Activo' if inst.activo else 'Inactivo',
-            inst.especialidad.count(),
-            inst.solicitud_set.count()
-        ])
-    
-    # Ajustar anchos
-    for idx, column in enumerate(ws.columns, start=1):
-        max_length = 0
-        column_letter = get_column_letter(idx)
-        for cell in column:
-            try:
-                if cell.value is not None and len(str(cell.value)) > max_length:
-                    max_length = len(str(cell.value))
-            except Exception:
-                pass
-        ws.column_dimensions[column_letter].width = min(max_length + 2, 50)
-    
-    buffer = io.BytesIO()
-    wb.save(buffer)
     buffer.seek(0)
     filename = f'instructores_{timezone.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
-    return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
+    return FileResponse(
+        buffer,
+        as_attachment=True,
+        filename=filename,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    
 
 # ============================================================================
 # REPORTES CONSOLIDADOS - TODO EL SISTEMA

@@ -18,7 +18,9 @@ urlpatterns = [
     # Reportes de Empresas
     path('empresas/pdf/', views.generar_reporte_empresas_pdf, name='reporte_empresas_pdf'),
     path('empresas/excel/', views.generar_reporte_empresas_excel, name='reporte_empresas_excel'),
-    
+    #Reportes de Programas 
+    path('programas/pdf/', views.generar_reporte_programas_pdf, name='reporte_programas_pdf'),
+    path('programas/excel/', views.generar_reporte_programas_excel, name='reporte_programas_excel'),
     # Reportes de Instructores
     path('instructores/pdf/', views.generar_reporte_instructores_pdf, name='reporte_instructores_pdf'),
     path('instructores/excel/', views.generar_reporte_instructores_excel, name='reporte_instructores_excel'),
