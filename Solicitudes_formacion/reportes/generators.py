@@ -736,16 +736,22 @@ class ExcelReportGenerator:
         
         # Encabezados de tabla
         headers = ['NIT Empresa', 'Empresa', 'Programa', 'Área', 'Estado', 'Fecha Recepción', 'Instructor', 'Observaciones']
-        ws.append([])  # Línea en blanco
-        ws.append(headers)
         
-        self.apply_header_style(ws, row=7)
+        # Escribir encabezados en  fila 7
+        for col_idx, header in enumerate(headers, start=1):
+            cell= ws.cell(row=7, column=col_idx, value=header)
+            cell.fill = self.header_fill
+            cell.font = self.header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = self.border
+            
         
         # Datos
+        current_row = 8
         for sol in solicitudes:
             #obtener nit de forma segura
             nit_empresa = sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit else 'Sin NIT'
-            ws.append([
+            datos_solicitud = ([
                 nit_empresa,
                 sol.empresa.nombre,
                 sol.programa.nombre,
@@ -756,12 +762,13 @@ class ExcelReportGenerator:
                 sol.observaciones[:100] if sol.observaciones else 'N/A'
             ])
         
-        # Aplicar bordes a todas las celdas de datos
-        for row in ws.iter_rows(min_row=7, max_row=ws.max_row, max_col=8):
-            for cell in row:
+            # Aplicar bordes a todas las celdas de datos
+            for col_idx, value in enumerate(datos_solicitud, start=1):
+                cell = ws.cell(row=current_row,  column=col_idx, value=value)
                 cell.border = self.border
                 cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
         
+            current_row += 1
         self.adjust_column_width(ws)
         
         # Guardar en buffer
