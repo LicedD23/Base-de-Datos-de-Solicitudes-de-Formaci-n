@@ -3,343 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar Respuesta -Solicitud # {{solicitud.id}}</title>
+    <title>Enviar Respuesta - Solicitud #{{solicitud.id}}</title>
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body{
-            font-family:'Segoe UI', Tahoma,Geneva,Verdana,sans-serif;
-            background.linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-            min-height:100vh;
-            padding:20px;
-        }
-        .container{
-            max-width:900px;
-            margin:0 auto;
-        }
-        .header{
-            background:linear-gradient(135deg, #2e7d32 0% , #1b5e20 100%);
-            color:white;
-            padding:30px;
-            border-radius:15px;
-            margin-bottom:30px;
-            box-shadow 0 8px 20px rgba(46,125,50,0.3);
-        }
-        .header h1{
-            font-size:2.2em;
-            margin-bottom:10px;
-            font-width:700;
-        }
-        .header p{
-            font-size:1em;
-            opacity:0.95;
-        }
-        .breadcrumb{
-            background:white;
-            padding:15px 20px;
-            border-radius:10px;
-            margin-bottom.20px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.05);
-            display:flex;
-            align-items:center;
-            gap:10px;
-            font-size:0.95em;
-        }
-        .breadcrumb a{
-            color:#2e7d32;
-            text-decoration:none;
-            transition:color 0.3s ease;
-        }
-        .breadcrumb a:hover{
-            color:#1b5e20;
-            text-decoration:underline;
-        }
-        .breadcrumb span{
-            color:#999;
-        }
-        .info-banner{
-            background:#e3f2fd;
-            border-left:4px solid #2196f3;
-            padding:15px 20px;
-            border-radius:8px;
-            margin-bottom:20px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-        }
-        .info-banner-icon{
-            font-size:1.5em;
-        }
-        .info-banner-content{
-            flex:1;
-        }
-        .info-banner-content strong{
-            display:block;
-            color:#1976d2;
-            margin-bottom:5px;
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .info-banner-content p{
-            color:#666;
-            font-size:0.9em;
-            margin:0;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .form-card{
-            background:white;
-            padding:40px;
-            border-radius:15px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
-            border-top:4px solid #2e7d32;
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
-        .solicitud-info{
-            background:#f9f9f9;
-            padding:20px;
-            border-radius:8px;
-            margin-bottom:25px;
-            border-left:3px solid #2e7d32;
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
-        solicitud-info h3{
-            color:#2e7d32;
-            font-size:1.1em;
-            margin-bottom:15px;
-            display:flex;
-            align-items :center;
-            gap:8px;
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
         }
-        .info-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
-            gap:15px;
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
         }
-        info-item{
-            display:flex;
-            flex-direction:column;
-            gap:5px;
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
-        info-item label{
-            font-size:0.85em;
-            color:#666;
-            text-transform:uppercase;
-            letter-spacing:0.5px;
+
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
         }
-        info-item .value{
-            font-size:1.1em;
-            color:#333;
-            font-weight:600;
+
+        .breadcrumb span {
+            color: #999;
         }
-        .forrm-group{
-            margin-bottom:25px;
+
+        .info-banner {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .form-group label{
-            display:block;
-            font-weight:600;
-            color:#333;
-            margin-bottom:8px;
-            font-size:1em;
+
+        .info-banner-icon {
+            font-size: 1.5em;
         }
-        for-group label.required::after{
-            content:" *";
-            color:#c62828;
+
+        .info-banner-content {
+            flex: 1;
         }
+
+        .info-banner-content strong {
+            display: block;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .info-banner-content p {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        /* Mensajes mejorados */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
+        }
+
+        .alert-success::before {
+            background: #fff;
+        }
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
+        }
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
+        }
+
+        .alert-warning::before {
+            background: #fff;
+        }
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2e7d32;
+        }
+
+        .solicitud-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .solicitud-info h3 {
+            color: #2e7d32;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-item label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label.required::after {
+            content: " *";
+            color: #c62828;
+        }
+
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group select,
-        .form-group textarea{
-            width:100%;
-            padding:12px 15px;
-            border:2px solid #e0e0e0;
-            border-radius:8px;
-            font-size:1em;
-            font-family:inherit;
-            transition:all 0.3s ease;
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
+
         .form-group input:disabled,
-        .form-group textarea:disabled{
-            background:#f5f5f5;
-            cursor:not-allowed;
+        .form-group textarea:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #999;
         }
-        .form-group textarea{
-            min-height:250px;
-            resize:vertical;
-            line-height:1.6;
+
+        .form-group textarea {
+            min-height: 250px;
+            resize: vertical;
+            line-height: 1.6;
         }
+
         .form-group input:focus,
         .form-group select:focus,
-        .form-group textarea:focus{
-            outline:none;
-            border-color:#2e7d32;
-            box-shadow:0 0 0 0 3px rgba(46,125,50,0.1);
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+            background: white;
+            transform: translateY(-1px);
         }
-        .form-group small{
-            display:block;
-            color:#666;
-            margin-top:5px;
-            font-size:0.9em;
-        }
-        .alert{
-            padding:15px 20px;
-            border-radius:8px;
-            margin-bottom:20px;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            font-size:0.95em;
-        }
-        .alert-success{
-            background:#e8f5e9;
-            color:#2e7d32;
-            border-left:4px solid #2e7d32;
-        }
-        .alert-error{
-            background:#ffebee;
-            color:#c62828;
-            border-left:4px solid #c62828;
-        }
-        .alert-warning{
-            background:#fff3e0;
-            color:#ef6c00;
-            border-left:4px solid #ffa726;
-        }
-        .template-buttons{
-            display:flex;
-            gap:10px;
-            margin-bottom:15px;
-            flex-wrap:wrap;
-        }
-        .template-btn{
-            padding:8px 15px;
-            background:#e8f5e9;
-            color:#2e7d32;
-            border:2px solid #2e7d32;
-            border-radius:6px;
-            cursor:pointer;
-            font-size:0.9em;
-            font-weight:600;
-            transition:all 0.3s ease;
-        }
-        .template-btn:hover{
-            background:#2e7d32;
-            color:white;
-        }
-        .form-actions{
-            display:flex;
-            gap:15px;
-            margin-top:30px;
-            padding-top:20px;
-            border-top:2px solid #f0f0f0;
-        }
-        .btn{
-            padding:12px 30px;
-            border:none;
-            border-radius:8px;
-            font-size:1em;
-            font-weight:600;
-            cursor:pointer;
-            transition:all 0.3s ease;
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            text-decoration:none;
-            justify-content:center;
-        }
-        .btn-primary{
-            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color:white;
-            flex:1;
-            box-shadow:0 4px 12px rgba(46,125,50,0.3);
 
+        .form-group small {
+            display: block;
+            color: #888;
+            margin-top: 8px;
+            font-size: 0.88em;
+            font-style: italic;
+            padding-left: 5px;
         }
-        .btn-primary:hover{
-            transform:translateY(-2px);
-            box-shadow:0 6px 20px rgba(46,125,50,0.4);
+
+        .template-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
-        .btn-secondary{
-            background:white;
-            color:#666;
-            border:2px solid #e0e0e0;
-            flex:1;
+
+        .template-btn {
+            padding: 10px 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn-secondary:hover{
-            background:#f5f5f5;
-            border-color:#bdbdbd;
+
+        .template-btn:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
         }
-        .required-note{
-            background:#e8f5e9;
-            padding:12px 15px;
-            border-radius:8px;
-            margin-buttom:20px;
-            font-size:0.9em;
-            color:#2e7d32;
-            border-left:4px solid #2e7d32;
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
         }
-        .preview-box{
-            background:#f9f9f9;
-            border:2px dashed #bdbdbd;
-            padding:20px;
-            border-radius:8px;
-            margin-bottom:20px;
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
         }
-        .preview-box h4{
-            color:#666;
-            margin-bottom:10px;
-            font-size:0.9em;
-            text-transform:uppercase;
-            letter-spacing:1px;
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            flex: 1;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
         }
-        .preview-content{
-            background:white;
-            padding:15px;
-            border-radius:6px;
-            white-space:pre-wrap;
-            line-height:1.6;
-            color:#333;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
-        footer{
-            background:linear-gradient(90deg, #1b5e20, #2e7d32);
-            color:white;
-            text-align:center;
-            padding:1.5rem;
-            font-size:0.9rem;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
-            position:relative;
-            margin-top:40px;
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            flex: 1;
         }
-        footer::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:2px;
-            background:linear-gradient(90deg, transparent, #66bb6a, transparent); 
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #bdbdbd;
         }
-        footer p{
-            margin:0;
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        .required-note {
+            background: #e8f5e9;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
         }
-        @media (max-width:768px;){
-            .header h1{
-                font-size:1.8em;
+
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+        }
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
             }
-            .form-card{
-                padding:25px;
+
+            .form-card {
+                padding: 25px;
             }
-            .form-actions{
-                flex-direction:column;
+
+            .form-actions {
+                flex-direction: column;
             }
-            .btn{
-                width:100%;
+
+            .btn {
+                width: 100%;
             }
-            .template-buttons{
-                flex-direction:column;
+
+            .template-buttons {
+                flex-direction: column;
             }
-            footer{
-                font-size:0.85rem;
-                padding:1.2rem;
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                font-size: 0.85rem;
+                padding: 15px;
             }
         }
     </style>
@@ -348,46 +484,52 @@
     <div class="container">
         <div class="header">
             <h1>📧 Enviar Respuesta</h1>
-            <p> Responder a la solicitud de formacion #{{solicitud.id}}</p>
+            <p>Responder a la solicitud de formación #{{solicitud.id}}</p>
         </div>
 
         <div class="breadcrumb">
-            <a href="{% url 'core:dashboard'%}">🏠 Dashboard</a>
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes'%}">Solicitudes</a>
+            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
             <span>›</span>
             <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}">Solicitud #{{solicitud.id}}</a>
-
             <span>›</span>
             <span>Enviar Respuesta</span>
         </div>
 
-        <div class="info-bannner">
+        <div class="info-banner">
             <div class="info-banner-icon">ℹ️</div>
             <div class="info-banner-content">
-                <strong> Importante</strong>
-                <p> Al enviar esta respuesta, el  estado de la solicitud cambiara automaticamente a "RESPONDIDA" y se registrara la fecha de respuesta.</p>
+                <strong>Importante</strong>
+                <p>Al enviar esta respuesta, el estado de la solicitud cambiará automáticamente a "RESPONDIDA" y se registrará la fecha de respuesta.</p>
             </div>
         </div>
 
-        {% if messages%}
-            {%for message in messages%}
-                <div class="alert {% if 'error' in message.tags%}alert-error{% elif 'warning' in message.tags%}alert-warning{%else%}alert-success{%endif%}">
-                    {%if 'error' in message.tags%}
-                        ⚠️
-                    {%elif 'warning' in message.tags%}
-                        ⚠️
-                    {%else%}
-                        ✓
-                    {%endif%}
-                    {{message}}
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}
+                            ❌
+                        {% elif 'warning' in message.tags %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        {{ message }}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-            {%endfor%}
-        {%endif%}
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="form-card">
             <div class="solicitud-info">
-                <h3>📋 Informacion de la solicitud</h3>
+                <h3>📋 Información de la Solicitud</h3>
                 <div class="info-grid">
                     <div class="info-item">
                         <label>Empresa</label>
@@ -413,75 +555,74 @@
             </div>
 
             <form method="POST" action="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" id="emailForm">
-
-                {%csrf_token%}
+                {% csrf_token %}
 
                 <div class="form-group">
-                    <label for ="destinatario" class="required">Destinatario</label>
+                    <label for="destinatario" class="required">Destinatario</label>
                     <input 
-                    type="email"
-                    di="destinatario"
-                    name="destinatario"
-                    value="{{solicitud.empresa.correo}}"
-                    readonly
-                    disabled
+                        type="email"
+                        id="destinatario"
+                        name="destinatario"
+                        value="{{solicitud.empresa.correo}}"
+                        readonly
+                        disabled
                     >
                     <small>Correo de la empresa solicitante</small>
                 </div>
 
                 <div class="form-group">
-                    <label for ="asunto" class="required">Asunto del  correo</label>
+                    <label for="asunto" class="required">Asunto del Correo</label>
                     <input
                         type="text"
                         id="asunto"
                         name="asunto"
-                        value="Respuesta Solicitud de Formacion #{{solicitud.id}}- SENA"
+                        value="Respuesta Solicitud de Formación #{{solicitud.id}} - SENA"
                         required
                         maxlength="200"
                     >
-                    <small>Titulo del  correo electronico</small>
+                    <small>Título del correo electrónico</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="mesaje" class="required">Mensaje</label>
+                    <label for="mensaje" class="required">Mensaje</label>
                     <div class="template-buttons">
                         <button type="button" class="template-btn" onclick="cargarTemplate('aceptada')">
-                            ✓ Solicitud aceptada
+                            ✓ Solicitud Aceptada
                         </button>
                         <button type="button" class="template-btn" onclick="cargarTemplate('informacion')">
-                            📋 Solicitar Informacion
+                            📋 Solicitar Información
                         </button>
                         <button type="button" class="template-btn" onclick="cargarTemplate('rechazada')">
-                            ❌ Solicitud rechazada
+                            ❌ Solicitud Rechazada
                         </button>
                     </div>
-                    <br>
                     <textarea
                         id="mensaje"
                         name="mensaje"
                         required
-                        placeholder="Escribe aqui  el contenido del  correo..."
-                    >Estimados{{solicitud.empresa.nombre}},
-                    Recibimos su solicitud de formacion para el programa "{{solicitud.programa.nombre}}" (Solicitud #{{solicitud.id}}).
+                        placeholder="Escribe aquí el contenido del correo..."
+                    >Estimados {{solicitud.empresa.nombre}},
 
-                    Nos complace informarle que su  solicitud esta siendo procesada.A continuacion, le ñproporcionamos los detalles:
+Recibimos su solicitud de formación para el programa "{{solicitud.programa.nombre}}" (Solicitud #{{solicitud.id}}).
 
-                    -Programa:{{solicitud.programa.nombre}}
-                    -Area:{{solicitud.programa.area.nombre}}
-                    -Fecha de recepcion:{{solicitud.fecha_recepcion|date:"d/m/Y"}}
+Nos complace informarle que su solicitud está siendo procesada. A continuación, le proporcionamos los detalles:
 
-                    En breve nos pondremos en contacto  con ustedes para coordinar los siguientes pasos del  proceso de formacion.
-                    
-                    Quedamos atentos a cualquier consulta.
+- Programa: {{solicitud.programa.nombre}}
+- Área: {{solicitud.programa.area.nombre}}
+- Fecha de recepción: {{solicitud.fecha_recepcion|date:"d/m/Y"}}
 
-                    Cordialmente,
-                    Servicio Nacional de Aprendizaje(SENA)
-                    Coordinacion de Complementaria</textarea>
-                    <small>Contenido  del  correo  que se enviara a la empresa</small>
+En breve nos pondremos en contacto con ustedes para coordinar los siguientes pasos del proceso de formación.
+
+Quedamos atentos a cualquier consulta.
+
+Cordialmente,
+Servicio Nacional de Aprendizaje (SENA)
+Coordinación de Complementaria</textarea>
+                    <small>Contenido del correo que se enviará a la empresa</small>
                 </div>
 
                 <div class="form-actions">
-                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id%}" class="btn btn-secondary">
+                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
                         ✕ Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">
@@ -493,21 +634,49 @@
     </div>
 
     <footer>
-        <p>© 2025 Servicio Nacional  de Aprendizaje (SENA)</p>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
-    {% include 'core/accessibility.html'%}
+
+    {% include 'core/accessibility.html' %}
+
     <script>
-        function cargarTemplate(tipo){
-            const empresa="{{solicitud.empresa.nombre}}";
-            const programa="{{solicitud.programa.nombre}}";
-            const area="{{solicitud.programa.area.nombre}}";
-            const solicitudId="{{solicitud.id}}";
-            const fecha= "{{solicitud.fecha_recepcion|date:'d/m/Y'}}";
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
 
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
 
-            const templates={
-                'aceptada':`Estimados ${empresa},
-                
+        function cargarTemplate(tipo) {
+            const empresa = "{{solicitud.empresa.nombre}}";
+            const programa = "{{solicitud.programa.nombre}}";
+            const area = "{{solicitud.programa.area.nombre}}";
+            const solicitudId = "{{solicitud.id}}";
+            const fecha = "{{solicitud.fecha_recepcion|date:'d/m/Y'}}";
+
+            const templates = {
+                'aceptada': `Estimados ${empresa},
+
 Recibimos su solicitud de formación para el programa "${programa}" (Solicitud #${solicitudId}).
 
 ¡Excelentes noticias! Nos complace informarle que su solicitud ha sido ACEPTADA.
@@ -573,21 +742,9 @@ Cordialmente,
 Servicio Nacional de Aprendizaje (SENA)
 Coordinación de Complementaria`
             };
-            
+
             document.getElementById('mensaje').value = templates[tipo];
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-        
-
-
-

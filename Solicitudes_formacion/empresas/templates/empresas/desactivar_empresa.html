@@ -29,7 +29,7 @@
 
         /* Header de advertencia */
         .header {
-            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            background: linear-gradient(90deg, #1b5e20 , #2e7d32);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -268,19 +268,16 @@
 
         /* Form */
         .form-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: transparent;
+            padding: 0;
             margin-bottom: 30px;
         }
 
         .form-actions {
             display: flex;
             gap: 15px;
-            justify-content: flex-end;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
+            justify-content: center;
+            padding-top: 0;
         }
 
         .btn {
@@ -335,15 +332,12 @@
             .header h1 {
                 font-size: 1.8em;
             }
-
             .info-grid {
                 grid-template-columns: 1fr;
             }
-
             .form-actions {
                 flex-direction: column;
             }
-
             .btn {
                 width: 100%;
                 justify-content: center;
@@ -564,7 +558,10 @@
             </form>
         </div>
     </div>
-
+    <!-- FOOTER-->
+        <footer>
+            <p>© 2025 Servicio Nacional  de Aprendizaje (SENA)</p>
+        </footer>
     {% include 'core/accessibility.html' %}
 </body>
 </html>
