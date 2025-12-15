@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 import json
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -19,6 +20,50 @@ from instructores.models import Instructor
 class EmailSolicitudHandler:
     """Manejador de correos electronicos para solicitudes de formacion"""
     
+    # =========================================================================
+    # CONFIGURACIÓN DE FILTROS
+    # =========================================================================
+    
+    # Palabras clave que DEBEN aparecer en el asunto para considerarlo válido
+    PALABRAS_CLAVE_ASUNTO = [
+        'solicitud',
+        'formación',
+        'formacion',
+        'capacitación',
+        'capacitacion',
+        'programa',
+        'curso',
+        'entrenamiento',
+        'sena',
+    ]
+    
+    # Palabras clave en el cuerpo que indican que es una solicitud empresarial
+    PALABRAS_CLAVE_CUERPO = [
+        'empresa',
+        'nit',
+        'programa de formación',
+        'programa de formacion',
+        'solicito',
+        'solicitamos',
+        'requerimos',
+        'necesitamos capacitación',
+        'trabajadores',
+    ]
+    
+    # Dominios que definitivamente NO son solicitudes empresariales
+    DOMINIOS_EXCLUIDOS = [
+        'noreply',
+        'no-reply',
+        'mailer-daemon',
+        'postmaster',
+        'notification',
+        'marketing',
+        'newsletter',
+    ]
+    
+    # Mínimo de campos que debe tener el correo para ser considerado válido
+    CAMPOS_MINIMOS_REQUERIDOS = 2  # ej: nombre empresa + programa
+    
     def __init__(self):
         # Configuración IMAP para RECIBIR correos
         self.imap_server = getattr(settings, 'IMAP_HOST', 'imap.gmail.com')
@@ -26,58 +71,83 @@ class EmailSolicitudHandler:
         self.email_account = getattr(settings, 'IMAP_USER', settings.EMAIL_HOST_USER)
         self.email_password = getattr(settings, 'IMAP_PASSWORD', settings.EMAIL_HOST_PASSWORD)
         
+        # Estadísticas de procesamiento
+        self.stats = {
+            'total_correos': 0,
+            'correos_filtrados': 0,
+            'correos_procesados': 0,
+            'solicitudes_creadas': 0,
+            'errores': 0,
+        }
+        
         print(f"🔧 Configuración IMAP: {self.imap_server}:{self.imap_port}")
         print(f"📧 Cuenta: {self.email_account}")
     
-    def limpiar_texto(self, texto):
-        """Limpia asteriscos, espacios extras y caracteres no deseados"""
-        if not texto:
-            return None
-        
-        # Eliminar asteriscos
-        texto = texto.replace('*', '')
-        
-        # Eliminar espacios múltiples
-        texto = re.sub(r'\s+', ' ', texto)
-        
-        # Eliminar espacios al inicio y final
-        texto = texto.strip()
-        
-        # Si queda vacío, retornar None
-        if not texto or texto.lower() in ['sin especificar', 'no especificado', 'n/a', 'na']:
-            return None
-        
-        return texto
+    # =========================================================================
+    # MÉTODOS DE FILTRADO
+    # =========================================================================
     
-    def validar_nit(self, nit):
+    def es_correo_valido(self, correo_info):
         """
-        Valida y limpia el NIT segun las reglas de tu aplicacion.
-        Retorna el NIT limpio o None si no es valido.
+        Determina si un correo es una solicitud válida de formación.
+        Retorna (es_valido, razon)
         """
-        if not nit: 
-            return None
-        
-        # Limpiar espacios, guiones y puntos (CORREGIDO: espacio vacío '')
-        nit_limpio = nit.replace(' ', '').replace('-', '').replace('.', '')
-        
-        # Validar que solo contenga digitos
-        if not nit_limpio.isdigit():
-            print(f"   ⚠️ NIT invalido (contiene caracteres no numericos): {nit}")
-            return None
-        
-        # Validar longitud minima (8 digitos - corregido de 9 a 8)
-        if len(nit_limpio) < 8:
-            print(f"   ⚠️ NIT invalido (menos de 8 digitos): {nit_limpio}")
-            return None
-        
-        # Validar longitud maxima (20 segun tu modelo)
-        if len(nit_limpio) > 20:
-            print(f"   ⚠️ NIT invalido (mas de 20 digitos): {nit_limpio}")
-            return None
-        
-        print(f"   ✅ NIT validado: {nit_limpio}")
-        return nit_limpio
-        
+        try:
+            asunto = correo_info.get('asunto', '').lower()
+            cuerpo = correo_info.get('cuerpo', '').lower()
+            remitente = correo_info.get('remitente', '').lower()
+            
+            # FILTRO 1: Verificar dominios excluidos
+            for dominio in self.DOMINIOS_EXCLUIDOS:
+                if dominio in remitente:
+                    return False, f"Dominio excluido: {dominio}"
+            
+            # FILTRO 2: Verificar palabras clave en asunto
+            tiene_palabra_clave_asunto = any(
+                palabra in asunto 
+                for palabra in self.PALABRAS_CLAVE_ASUNTO
+            )
+            
+            if not tiene_palabra_clave_asunto:
+                return False, "No contiene palabras clave en asunto"
+            
+            # FILTRO 3: Verificar palabras clave en cuerpo
+            palabras_encontradas = sum(
+                1 for palabra in self.PALABRAS_CLAVE_CUERPO 
+                if palabra in cuerpo
+            )
+            
+            if palabras_encontradas < 2:
+                return False, f"Solo {palabras_encontradas} palabras clave en cuerpo (mínimo 2)"
+            
+            # FILTRO 4: Verificar longitud mínima del cuerpo
+            if len(cuerpo) < 100:
+                return False, f"Cuerpo muy corto ({len(cuerpo)} caracteres)"
+            
+            # FILTRO 5: Pre-validación de campos
+            info_extraida = self.extraer_informacion_con_ia(correo_info)
+            if not info_extraida:
+                return False, "No se pudo extraer información"
+            
+            campos_encontrados = sum([
+                1 if info_extraida.get('nombre') else 0,
+                1 if info_extraida.get('programa_solicitado') else 0,
+                1 if info_extraida.get('correo') else 0,
+                1 if info_extraida.get('telefono') else 0,
+            ])
+            
+            if campos_encontrados < self.CAMPOS_MINIMOS_REQUERIDOS:
+                return False, f"Campos insuficientes ({campos_encontrados}/{self.CAMPOS_MINIMOS_REQUERIDOS})"
+            
+            return True, "Correo válido"
+            
+        except Exception as e:
+            return False, f"Error en validación: {str(e)}"
+    
+    # =========================================================================
+    # MÉTODOS DE CONEXIÓN Y LECTURA
+    # =========================================================================
+    
     def conectar_email(self):
         """Conecta al servidor IMAP para RECIBIR correos"""
         try:
@@ -98,8 +168,13 @@ class EmailSolicitudHandler:
             traceback.print_exc()
             return None
     
-    def leer_correos_no_leidos(self):
-        """Lee correos no leidos de la bandeja de entrada"""
+    def leer_correos_no_leidos(self, limite=None):
+        """
+        Lee correos no leidos de la bandeja de entrada.
+        
+        Args:
+            limite (int): Número máximo de correos a leer. Si es None, lee todos.
+        """
         mail = self.conectar_email()
         if not mail:
             return []
@@ -116,15 +191,24 @@ class EmailSolicitudHandler:
                 return []
             
             email_ids = messages[0].split()
-            print("Correos no leidos encontrados: " + str(len(email_ids)))
+            self.stats['total_correos'] = len(email_ids)
+            
+            print(f"\n📬 Correos no leídos encontrados: {len(email_ids)}")
             
             if not email_ids:
                 return []
             
+            # Limitar si se especifica
+            if limite:
+                email_ids = email_ids[:limite]
+                print(f"📊 Procesando los primeros {limite} correos")
+            
             correos = []
             
             for idx, email_id in enumerate(email_ids, 1):
-                print("\nProcesando correo " + str(idx) + "/" + str(len(email_ids)))
+                print(f"\n{'='*60}")
+                print(f"📨 Leyendo correo {idx}/{len(email_ids)}")
+                print(f"{'='*60}")
                 
                 status, msg_data = mail.fetch(email_id, '(RFC822)')
                 
@@ -135,6 +219,8 @@ class EmailSolicitudHandler:
                 correo_info = self.parsear_correo(msg)
                 
                 if correo_info:
+                    # Agregar ID del correo para poder marcarlo después
+                    correo_info['email_id'] = email_id
                     correos.append(correo_info)
             
             mail.close()
@@ -143,7 +229,7 @@ class EmailSolicitudHandler:
             return correos
             
         except Exception as e:
-            print("Error leyendo correos: " + str(e))
+            print(f"❌ Error leyendo correos: {str(e)}")
             return []
     
     def parsear_correo(self, msg):
@@ -186,8 +272,62 @@ class EmailSolicitudHandler:
             }
             
         except Exception as e:
-            print("Error parseando correo: " + str(e))
+            print(f"❌ Error parseando correo: {str(e)}")
             return None
+    
+    def marcar_como_leido(self, email_id):
+        """Marca un correo específico como leído"""
+        try:
+            mail = self.conectar_email()
+            if mail:
+                mail.select('INBOX')
+                mail.store(email_id, '+FLAGS', '\\Seen')
+                mail.close()
+                mail.logout()
+                return True
+        except Exception as e:
+            print(f"⚠️ Error marcando correo como leído: {str(e)}")
+        return False
+    
+    # =========================================================================
+    # MÉTODOS DE EXTRACCIÓN (COMPLETADOS DESDE TU CÓDIGO ACTUAL)
+    # =========================================================================
+    
+    def limpiar_texto(self, texto):
+        """Limpia asteriscos, espacios extras y caracteres no deseados"""
+        if not texto:
+            return None
+        
+        texto = texto.replace('*', '')
+        texto = re.sub(r'\s+', ' ', texto)
+        texto = texto.strip()
+        
+        if not texto or texto.lower() in ['sin especificar', 'no especificado', 'n/a', 'na']:
+            return None
+        
+        return texto
+    
+    def validar_nit(self, nit):
+        """Valida y limpia el NIT según las reglas de tu aplicación"""
+        if not nit: 
+            return None
+        
+        nit_limpio = nit.replace(' ', '').replace('-', '').replace('.', '')
+        
+        if not nit_limpio.isdigit():
+            print(f"   ⚠️ NIT inválido (contiene caracteres no numéricos): {nit}")
+            return None
+        
+        if len(nit_limpio) < 8:
+            print(f"   ⚠️ NIT inválido (menos de 8 dígitos): {nit_limpio}")
+            return None
+        
+        if len(nit_limpio) > 20:
+            print(f"   ⚠️ NIT inválido (más de 20 dígitos): {nit_limpio}")
+            return None
+        
+        print(f"   ✅ NIT validado: {nit_limpio}")
+        return nit_limpio
     
     def extraer_informacion_con_ia(self, correo_info):
         """Extrae informacion del correo con multiples estrategias"""
@@ -638,7 +778,7 @@ class EmailSolicitudHandler:
             return None, False
     
     def normalizar_texto(self, texto):
-        """Normaliza texto"""
+        """Normaliza texto para comparaciones"""
         if not texto:
             return ""
         texto = texto.lower()
@@ -648,7 +788,7 @@ class EmailSolicitudHandler:
         return texto
     
     def buscar_programa(self, nombre_programa):
-        """Busca programa"""
+        """Busca programa en la base de datos"""
         try:
             if not nombre_programa:
                 return None
@@ -671,50 +811,171 @@ class EmailSolicitudHandler:
             print("   Error buscando programa: " + str(e))
             return None
     
-    def crear_solicitud(self, correo_info):
-        """Crea solicitud"""
+    # =========================================================================
+    # MÉTODO PRINCIPAL DE PROCESAMIENTO MEJORADO
+    # =========================================================================
+    
+    def procesar_correo_individual(self, correo_info):
+        """Procesa un solo correo con validaciones"""
         try:
-            print("\n" + "-" * 60)
-            print("Procesando: " + correo_info['asunto'][:50])
+            asunto_corto = correo_info['asunto'][:50]
             
+            print(f"\n{'='*60}")
+            print(f"📧 Procesando: {asunto_corto}")
+            print(f"{'='*60}")
+            
+            # PASO 1: Validar si es un correo relevante
+            es_valido, razon = self.es_correo_valido(correo_info)
+            
+            if not es_valido:
+                print(f"❌ CORREO FILTRADO: {razon}")
+                print(f"   Asunto: {asunto_corto}")
+                print(f"   Remitente: {correo_info['remitente'][:50]}")
+                self.stats['correos_filtrados'] += 1
+                return None
+            
+            print(f"✅ CORREO VÁLIDO: {razon}")
+            
+            # PASO 2: Extraer información
             info = self.extraer_informacion_con_ia(correo_info)
             if not info:
-                print("ERROR: No se pudo extraer informacion")
+                print("❌ ERROR: No se pudo extraer información")
+                self.stats['errores'] += 1
                 return None
             
+            # PASO 3: Buscar o crear empresa
             empresa, es_nueva = self.buscar_o_crear_empresa(info)
             if not empresa:
-                print("ERROR: No se pudo crear empresa")
+                print("❌ ERROR: No se pudo crear empresa")
+                self.stats['errores'] += 1
                 return None
             
+            # PASO 4: Buscar programa
             programa = None
             if info.get('programa_solicitado'):
                 programa = self.buscar_programa(info.get('programa_solicitado'))
             
             if not programa:
-                print("   ERROR: Programa no encontrado - No se puede crear solicitud")
+                print("❌ ERROR: Programa no encontrado - No se puede crear solicitud")
+                self.stats['errores'] += 1
                 return None
             
+            # PASO 5: Crear solicitud
             solicitud = Solicitud.objects.create(
                 empresa=empresa,
                 programa=programa,
                 estado='RECIBIDA',
                 fecha_recepcion=timezone.now(),
-                observaciones=''
+                observaciones=f"Creada automáticamente desde correo: {asunto_corto}"
             )
             
-            print("   Solicitud creada exitosamente: #" + str(solicitud.id))
+            print(f"✅ SOLICITUD CREADA: #{solicitud.id}")
+            self.stats['solicitudes_creadas'] += 1
+            
+            # PASO 6: Enviar respuesta automática
             self.enviar_respuesta_automatica(empresa, solicitud, correo_info)
+            
+            self.stats['correos_procesados'] += 1
             return solicitud
             
         except Exception as e:
-            print("Error creando solicitud: " + str(e))
+            print(f"❌ Error procesando correo: {str(e)}")
             import traceback
             traceback.print_exc()
+            self.stats['errores'] += 1
             return None
     
+    def procesar_correos(self, limite=None, procesar_en_paralelo=True, max_workers=5):
+        """
+        Procesa todos los correos no leídos con filtrado inteligente.
+        
+        Args:
+            limite (int): Máximo de correos a procesar. None = todos
+            procesar_en_paralelo (bool): Si True, procesa múltiples correos simultáneamente
+            max_workers (int): Número de hilos para procesamiento paralelo
+        
+        Returns:
+            list: Lista de solicitudes creadas
+        """
+        print("\n" + "="*60)
+        print("🚀 INICIANDO PROCESAMIENTO DE CORREOS")
+        print("="*60)
+        print(f"📋 Configuración:")
+        print(f"   - Límite: {limite if limite else 'Sin límite'}")
+        print(f"   - Paralelo: {'Sí' if procesar_en_paralelo else 'No'}")
+        print(f"   - Workers: {max_workers if procesar_en_paralelo else 1}")
+        print("="*60)
+        
+        # Reiniciar estadísticas
+        self.stats = {
+            'total_correos': 0,
+            'correos_filtrados': 0,
+            'correos_procesados': 0,
+            'solicitudes_creadas': 0,
+            'errores': 0,
+        }
+        
+        # Leer correos
+        correos = self.leer_correos_no_leidos(limite=limite)
+        
+        if not correos:
+            print("\n📭 No hay correos nuevos para procesar")
+            return []
+        
+        solicitudes_creadas = []
+        
+        if procesar_en_paralelo and len(correos) > 1:
+            # Procesamiento paralelo
+            print(f"\n⚡ Procesando {len(correos)} correos en paralelo...")
+            
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = {
+                    executor.submit(self.procesar_correo_individual, correo): correo 
+                    for correo in correos
+                }
+                
+                for future in as_completed(futures):
+                    solicitud = future.result()
+                    if solicitud:
+                        solicitudes_creadas.append(solicitud)
+        else:
+            # Procesamiento secuencial
+            print(f"\n📝 Procesando {len(correos)} correos secuencialmente...")
+            
+            for idx, correo in enumerate(correos, 1):
+                print(f"\n{'='*60}")
+                print(f"CORREO {idx}/{len(correos)}")
+                print(f"{'='*60}")
+                
+                solicitud = self.procesar_correo_individual(correo)
+                if solicitud:
+                    solicitudes_creadas.append(solicitud)
+        
+        # Mostrar resumen
+        self.mostrar_resumen()
+        
+        return solicitudes_creadas
+    
+    def mostrar_resumen(self):
+        """Muestra un resumen estadístico del procesamiento"""
+        print("\n" + "="*60)
+        print("📊 RESUMEN DE PROCESAMIENTO")
+        print("="*60)
+        print(f"📬 Total correos leídos:      {self.stats['total_correos']}")
+        print(f"🚫 Correos filtrados:         {self.stats['correos_filtrados']}")
+        print(f"✅ Correos procesados:        {self.stats['correos_procesados']}")
+        print(f"📝 Solicitudes creadas:       {self.stats['solicitudes_creadas']}")
+        print(f"❌ Errores:                   {self.stats['errores']}")
+        print("="*60)
+        
+        if self.stats['total_correos'] > 0:
+            tasa_exito = (self.stats['solicitudes_creadas'] / self.stats['total_correos']) * 100
+            print(f"📈 Tasa de éxito: {tasa_exito:.1f}%")
+        
+        print("="*60)
+    
     def enviar_respuesta_automatica(self, empresa, solicitud, correo_info):
-        """Envia respuesta automatica usando SMTP"""
+        """Envía respuesta automática usando SMTP"""
         try:
             asunto = "RE: " + correo_info['asunto']
             mensaje = f"""Estimado/a {empresa.contacto},
@@ -733,51 +994,22 @@ Cordialmente,
 Servicio Nacional de Aprendizaje (SENA)
 Coordinación de Formación Empresarial"""
             
-            # Extraer email del remitente
             email_match = re.search(r'[\w\.-]+@[\w\.-]+', correo_info['remitente'])
             destinatario = email_match.group(0) if email_match else empresa.correo
             
             if destinatario and '@ejemplo.com' not in destinatario:
-                # Usar send_mail de Django que usa la configuración SMTP
                 send_mail(
                     subject=asunto,
                     message=mensaje,
-                    from_email=settings.EMAIL_HOST_USER,  # ← Usa EMAIL_HOST_USER (SMTP)
+                    from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[destinatario],
                     fail_silently=False
                 )
-                print(f"   ✅ Respuesta automatica enviada a: {destinatario}")
+                print(f"   ✅ Respuesta automática enviada a: {destinatario}")
             else:
                 print(f"   ⚠️ Correo no válido, no se envió respuesta: {destinatario}")
                 
         except Exception as e:
-            print(f"   ❌ Error enviando respuesta automatica: {str(e)}")
+            print(f"   ❌ Error enviando respuesta automática: {str(e)}")
             import traceback
             traceback.print_exc()
-    
-    def procesar_correos(self):
-        """Procesa todos los correos no leídos"""
-        print("\n" + "=" * 60)
-        print("INICIANDO PROCESAMIENTO DE CORREOS")
-        print("=" * 60)
-        
-        correos = self.leer_correos_no_leidos()
-        if not correos:
-            print("\nNo hay correos nuevos para procesar")
-            return []
-        
-        solicitudes_creadas = []
-        for idx, correo in enumerate(correos, 1):
-            print("\n" + "=" * 60)
-            print(f"PROCESANDO CORREO {idx}/{len(correos)}")
-            print("=" * 60)
-            
-            solicitud = self.crear_solicitud(correo)
-            if solicitud:
-                solicitudes_creadas.append(solicitud)
-        
-        print("\n" + "=" * 60)
-        print(f"RESUMEN FINAL: {len(solicitudes_creadas)} solicitudes creadas de {len(correos)} correos")
-        print("=" * 60)
-        
-        return solicitudes_creadas

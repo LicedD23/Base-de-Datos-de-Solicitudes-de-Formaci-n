@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import timezone, datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Empresa
@@ -6,6 +6,60 @@ from django.db.models import Q, Count
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
+from django.utils import timezone as django_timezone
+
+
+def obtener_rango_fechas(rango_fecha):
+    """
+    Retorna las fechas de inicio y fin según el rango seleccionado
+    """
+    hoy = django_timezone.now()
+    inicio = None
+    fin = hoy
+    
+    if rango_fecha == 'hoy':
+        inicio = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    elif rango_fecha == 'ayer':
+        ayer = hoy - timedelta(days=1)
+        inicio = ayer.replace(hour=0, minute=0, second=0, microsecond=0)
+        fin = ayer.replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    elif rango_fecha == 'esta_semana':
+        # Lunes de esta semana
+        inicio = hoy - timedelta(days=hoy.weekday())
+        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    elif rango_fecha == 'semana_pasada':
+        # Lunes de la semana pasada
+        inicio = hoy - timedelta(days=hoy.weekday() + 7)
+        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+        # Domingo de la semana pasada
+        fin = inicio + timedelta(days=6)
+        fin = fin.replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    elif rango_fecha == 'este_mes':
+        inicio = hoy.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    elif rango_fecha == 'mes_pasado':
+        # Primer día del mes pasado
+        primer_dia_este_mes = hoy.replace(day=1)
+        ultimo_dia_mes_pasado = primer_dia_este_mes - timedelta(days=1)
+        inicio = ultimo_dia_mes_pasado.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        fin = ultimo_dia_mes_pasado.replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    elif rango_fecha == 'ultimos_7_dias':
+        inicio = hoy - timedelta(days=7)
+        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    elif rango_fecha == 'ultimos_30_dias':
+        inicio = hoy - timedelta(days=30)
+        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    elif rango_fecha == 'este_año':
+        inicio = hoy.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    return inicio, fin
 
 
 def listar_empresas(request):
@@ -13,6 +67,7 @@ def listar_empresas(request):
     search = request.GET.get('search', '')
     municipio = request.GET.get('municipio', '')
     min_trabajadores = request.GET.get('min_trabajadores', '')
+    rango_fecha = request.GET.get('rango_fecha', '')
     
     # Consulta base con anotaciones (contar solicitudes por empresa)
     empresas = Empresa.objects.annotate(
@@ -37,6 +92,14 @@ def listar_empresas(request):
         except ValueError:
             pass
     
+    # Filtro de rango de fechas
+    if rango_fecha:
+        fecha_inicio, fecha_fin = obtener_rango_fechas(rango_fecha)
+        if fecha_inicio:
+            empresas = empresas.filter(fecha_registro__gte=fecha_inicio)
+        if fecha_fin:
+            empresas = empresas.filter(fecha_registro__lte=fecha_fin)
+    
     # Ordenar por nombre
     empresas = empresas.order_by('nombre')
     
@@ -57,6 +120,7 @@ def listar_empresas(request):
         'search': search,
         'municipio_filter': municipio,
         'min_trabajadores_filter': min_trabajadores,
+        'rango_fecha': rango_fecha,
         'total_empresas': total_empresas,
         'total_solicitudes': total_solicitudes,
     }
@@ -84,36 +148,36 @@ def crear_empresa(request):
         
         # Validar nombre (obligatorio)
         if not nombre:
-            errores.append('⚠️ El nombre de la empresa es obligatorio')  # ✅ EMOJI
+            errores.append('⚠️ El nombre de la empresa es obligatorio')
         elif len(nombre) < 3:
-            errores.append('⚠️ El nombre debe tener al menos 3 caracteres')  # ✅ EMOJI
+            errores.append('⚠️ El nombre debe tener al menos 3 caracteres')
         elif Empresa.objects.filter(nombre__iexact=nombre).exists():
-            errores.append(f'❌ Ya existe una empresa con el nombre "{nombre}"')  # ✅ EMOJI
+            errores.append(f'❌ Ya existe una empresa con el nombre "{nombre}"')
         
         # Validar NIT (opcional, pero si se proporciona debe ser válido)
         if nit:
             nit_limpio = nit.replace(' ', '').replace('-', '')
             if not nit_limpio.isdigit():
-                errores.append('❌ El NIT solo debe contener números')  # ✅ EMOJI
+                errores.append('❌ El NIT solo debe contener números')
             elif len(nit_limpio) < 9:
-                errores.append('❌ El NIT debe tener al menos 9 dígitos')  # ✅ EMOJI
+                errores.append('❌ El NIT debe tener al menos 9 dígitos')
             elif Empresa.objects.filter(nit=nit_limpio).exists():
-                errores.append(f'❌ Ya existe una empresa con el NIT "{nit}"')  # ✅ EMOJI
+                errores.append(f'❌ Ya existe una empresa con el NIT "{nit}"')
             else:
                 nit = nit_limpio
         
         # Validar correo (opcional, pero si se proporciona debe ser válido)
         if correo:
             if '@' not in correo or '.' not in correo:
-                errores.append('❌ El correo electrónico no es válido')  # ✅ EMOJI
+                errores.append('❌ El correo electrónico no es válido')
         
         # Validar teléfono (opcional, pero si se proporciona debe ser válido)
         if telefono:
             telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
             if not telefono_limpio.isdigit():
-                errores.append('❌ El teléfono solo debe contener números')  # ✅ EMOJI
+                errores.append('❌ El teléfono solo debe contener números')
             elif len(telefono_limpio) < 7:
-                errores.append('❌ El teléfono debe tener al menos 7 dígitos')  # ✅ EMOJI
+                errores.append('❌ El teléfono debe tener al menos 7 dígitos')
             else:
                 telefono = telefono_limpio
         
@@ -122,9 +186,9 @@ def crear_empresa(request):
             try:
                 num_trabajadores = int(numero_trabajadores)
                 if num_trabajadores < 1:
-                    errores.append('❌ El número de trabajadores debe ser mayor a 0')  # ✅ EMOJI
+                    errores.append('❌ El número de trabajadores debe ser mayor a 0')
             except ValueError:
-                errores.append('❌ El número de trabajadores debe ser un número válido')  # ✅ EMOJI
+                errores.append('❌ El número de trabajadores debe ser un número válido')
         
         # Si hay errores, mostrarlos y devolver el formulario
         if errores:
@@ -157,15 +221,14 @@ def crear_empresa(request):
                     numero_trabajadores=int(numero_trabajadores) if numero_trabajadores else 0,
                 )
             
-            # ✅ MENSAJE MEJORADO:
             messages.success(
                 request, 
                 f'✅ ¡Empresa "{empresa.nombre}" creada exitosamente! Ya está disponible en el sistema.'
             )
-            return redirect('empresas:listar_empresas')  # 👈 Redirige al listado
+            return redirect('empresas:listar_empresas')
             
         except Exception as e:
-            messages.error(request, f'❌ Error al crear la empresa: {str(e)}')  # ✅ EMOJI
+            messages.error(request, f'❌ Error al crear la empresa: {str(e)}')
             
             context = {
                 'nombre': nombre,
@@ -204,36 +267,36 @@ def editar_empresa(request, empresa_id):
         
         # Validar nombre (obligatorio)
         if not nombre:
-            errores.append('⚠️ El nombre de la empresa es obligatorio')  # ✅ EMOJI
+            errores.append('⚠️ El nombre de la empresa es obligatorio')
         elif len(nombre) < 3:
-            errores.append('⚠️ El nombre debe tener al menos 3 caracteres')  # ✅ EMOJI
+            errores.append('⚠️ El nombre debe tener al menos 3 caracteres')
         elif Empresa.objects.filter(nombre__iexact=nombre).exclude(id=empresa_id).exists():
-            errores.append(f'❌ Ya existe otra empresa con el nombre "{nombre}"')  # ✅ EMOJI
+            errores.append(f'❌ Ya existe otra empresa con el nombre "{nombre}"')
         
         # Validar NIT (opcional, pero si se proporciona debe ser válido)
         if nit:
             nit_limpio = nit.replace(' ', '').replace('-', '')
             if not nit_limpio.isdigit():
-                errores.append('❌ El NIT solo debe contener números')  # ✅ EMOJI
+                errores.append('❌ El NIT solo debe contener números')
             elif len(nit_limpio) < 9:
-                errores.append('❌ El NIT debe tener al menos 9 dígitos')  # ✅ EMOJI
+                errores.append('❌ El NIT debe tener al menos 9 dígitos')
             elif Empresa.objects.filter(nit=nit_limpio).exclude(id=empresa_id).exists():
-                errores.append(f'❌ Ya existe otra empresa con el NIT "{nit}"')  # ✅ EMOJI
+                errores.append(f'❌ Ya existe otra empresa con el NIT "{nit}"')
             else:
                 nit = nit_limpio
         
         # Validar correo (opcional, pero si se proporciona debe ser válido)
         if correo:
             if '@' not in correo or '.' not in correo:
-                errores.append('❌ El correo electrónico no es válido')  # ✅ EMOJI
+                errores.append('❌ El correo electrónico no es válido')
         
         # Validar teléfono (opcional, pero si se proporciona debe ser válido)
         if telefono:
             telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
             if not telefono_limpio.isdigit():
-                errores.append('❌ El teléfono solo debe contener números')  # ✅ EMOJI
+                errores.append('❌ El teléfono solo debe contener números')
             elif len(telefono_limpio) < 7:
-                errores.append('❌ El teléfono debe tener al menos 7 dígitos')  # ✅ EMOJI
+                errores.append('❌ El teléfono debe tener al menos 7 dígitos')
             else:
                 telefono = telefono_limpio
         
@@ -242,9 +305,9 @@ def editar_empresa(request, empresa_id):
             try:
                 num_trabajadores = int(numero_trabajadores)
                 if num_trabajadores < 1:
-                    errores.append('❌ El número de trabajadores debe ser mayor a 0')  # ✅ EMOJI
+                    errores.append('❌ El número de trabajadores debe ser mayor a 0')
             except ValueError:
-                errores.append('❌ El número de trabajadores debe ser un número válido')  # ✅ EMOJI
+                errores.append('❌ El número de trabajadores debe ser un número válido')
         
         # Si hay errores, mostrarlos
         if errores:
@@ -266,7 +329,6 @@ def editar_empresa(request, empresa_id):
                 empresa.activo = activo
                 empresa.save()
             
-            # ✅ MENSAJE MEJORADO:
             messages.success(
                 request, 
                 f'✅ ¡Empresa "{empresa.nombre}" actualizada exitosamente! Los cambios ya están disponibles en el sistema.'
@@ -274,10 +336,11 @@ def editar_empresa(request, empresa_id):
             return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
             
         except Exception as e:
-            messages.error(request, f'❌ Error al actualizar la empresa: {str(e)}')  # ✅ EMOJI
+            messages.error(request, f'❌ Error al actualizar la empresa: {str(e)}')
             return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
     
     return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+
 
 def detalle_empresa(request, empresa_id):
     """Vista para el detalle de una empresa"""
@@ -298,11 +361,6 @@ def detalle_empresa(request, empresa_id):
     solicitudes_activas = solicitudes.exclude(estado='FINALIZADA')
     solicitudes_finalizadas = solicitudes.filter(estado='FINALIZADA')
 
-    # Imprimir conteos para depuración
-    print("Total de solicitudes:", solicitudes.count())
-    print("Solicitudes activas:", solicitudes_activas.count())
-    print("Solicitudes finalizadas:", solicitudes_finalizadas.count())
-
     context = {
         'empresa': empresa,
         'solicitudes_activas': solicitudes_activas,
@@ -310,6 +368,8 @@ def detalle_empresa(request, empresa_id):
         'total_solicitudes': solicitudes.count(),
     }
     return render(request, 'empresas/detalle_empresa.html', context)
+
+
 @login_required
 @permission_required('empresas.delete_empresa', raise_exception=True)
 @require_http_methods(["GET", "POST"])
@@ -320,7 +380,7 @@ def desactivar_empresa(request, empresa_id):
     if request.method == 'POST':
         # Verificar si ya está desactivada
         if not empresa.activo:
-            messages.warning(request, f'⚠️ La empresa "{empresa.nombre}" ya está desactivada')  # ✅ EMOJI
+            messages.warning(request, f'⚠️ La empresa "{empresa.nombre}" ya está desactivada')
             return redirect('empresas:listar_empresas')
         
         # Usar transacción para garantizar atomicidad
@@ -328,7 +388,6 @@ def desactivar_empresa(request, empresa_id):
             empresa.activo = False
             empresa.save()
         
-        # ✅ MENSAJE MEJORADO:
         messages.success(request, f'✅ Empresa "{empresa.nombre}" desactivada exitosamente')
         return redirect('empresas:listar_empresas')
     

@@ -69,122 +69,140 @@
         .breadcrumb span {
             color: #999;
         }
-        /* Mensajes*/
-        .message-container{
-            margin-bottom:25px;
+
+        /* ===== MENSAJES ===== */
+        .messages-container {
+            margin-bottom: 25px;
         }
-        .alert{
-            padding:18px 25px;
-            border-radius:12px;
-            margin-bottom:15px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-            font-size:1em;
-            font-weight:500;
-            box-shadow:0 4px 15px rgba(0,0,0,0.1);
-            animation:slideInDown 0.4s ease-out;
-            position:relative;
-            overflow:hidden;
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes slideInDown{
-            from{
-                transform:translateY(-20px);
-                opacity:0;
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
             }
-            to{
-                transform:translateY(0);
-                opacity:1;
-            }
-        }
-        .alert::before{
-            content:'';
-            position:absolute;
-            left:0;
-            top:0;
-            bottom:0;
-            width:5px;
-        }
-        .alert-success{
-            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color:white;
-            border:2px solid #1b5e20;
-        }
-        .alert-success::before{
-            background:#fff;
-        }
-        .alert-success .alert-icon{
-            font-size:1.8em;
-            animation:scaleIn 0.5s ease-out;
-        }
-        @keyframes scaleIn{
-            0%{
-                transform:scale(0);
-            }
-            50%{
-                transform:scale(1.2);
-            }
-            100%{
-                transform:scale(1);
+            to {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
-        .alert-error{
-            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color:white;
-            border:2px solid #b71c1c;
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
         }
-        .alert-error .alert-icon{
-            font-size:1.8em;
-            animation:shake 0.5s ease-out;
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
-        @keyframes shake{
-            0%, 100%{
-                transform:translateX(0);
+
+        .alert-success::before {
+            background: #fff;
+        }
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
             }
-            25%{
-                transform:translateX(-10px);
+            50% {
+                transform: scale(1.2);
             }
-            75%{
-                transform:translateX(10px);
+            100% {
+                transform: scale(1);
             }
-            
         }
-        .alert-warning{
-            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color:white;
-            border:2px solid #e65100;
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
         }
-        .alert-warning::before{
-            background:#fff;
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
         }
-        .alert-icon{
-            font-size:1.5em;
-            flex-shrink:0;
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
         }
-        .alert-content{
-            flex:1;
-            line-height:1.5;
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
         }
-        .alert-close{
-            background: rgba(255,255,255,0.2);
-            border:2px solid rgba(255,255,255,0.3);
-            color:white;
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:bold;
-            font-size:1.2em;
-            transition:all 0.3s ease;
-            flex-shrink:0;
+
+        .alert-warning::before {
+            background: #fff;
         }
-        .alert-close:hover{
-            background:rgba(255,255,255,0.4);
-            transform:scale(1.1);
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
         }
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* ===== CONTROLES Y FILTROS ===== */
         .controls-section {
             background: white;
             padding: 25px;
@@ -196,23 +214,26 @@
         .filters-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: flex-end;
         }
 
+        /* ===== BÚSQUEDA ===== */
         .search-box {
-            flex: 1;
-            min-width: 300px;
+            flex: 1 1 280px;
+            min-width: 280px;
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 15px 20px 15px 50px;
+            padding: 13px 20px 13px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            font-size: 1em;
+            font-size: 0.95em;
             transition: all 0.3s ease;
+            height: 46px;
         }
 
         .search-box input:focus {
@@ -224,55 +245,98 @@
         .search-box::before {
             content: "🔍";
             position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2em;
+            left: 15px;
+            top: 13px;
+            font-size: 1.1em;
         }
 
         .search-hint {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 5px;
-            padding-left: 50px;
+            font-size: 0.7em;
+            color: #999;
+            margin-top: 4px;
+            padding-left: 2px;
         }
 
+        /* ===== GRUPOS DE FILTROS ===== */
         .filter-group {
             display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-group select,
-        .filter-group input[type="number"] {
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            cursor: pointer;
-            background: white;
-            transition: all 0.3s ease;
-            min-width: 180px;
-        }
-
-        .filter-group input[type="number"] {
+            flex-direction: column;
+            gap: 6px;
+            flex: 0 0 auto;
             min-width: 150px;
         }
 
-        .filter-group select:focus,
-        .filter-group input[type="number"]:focus {
-            outline: none;
-            border-color: #2e7d32;
+        .filter-group label {
+            font-size: 0.72em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
 
+        .filter-group select,
+        .filter-group input[type="date"],
+        .filter-group input[type="number"] {
+            width: 100%;
+            padding: 12px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 46px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .filter-group input::placeholder {
+            color: #bbb;
+            font-size: 0.9em;
+        }
+
+        /* Botón Filtrar */
+        .filter-group .btn-filter {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .filter-group .btn-filter:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* ===== FILA DE ACCIONES ===== */
         .actions-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
         }
 
+        /* ===== BOTONES ===== */
         .btn {
             padding: 12px 25px;
             border: none;
@@ -285,6 +349,7 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -309,6 +374,7 @@
             color: white;
         }
 
+        /* ===== ESTADÍSTICAS ===== */
         .stats-bar {
             display: flex;
             gap: 20px;
@@ -340,6 +406,7 @@
             font-weight: 700;
         }
 
+        /* ===== GRID DE EMPRESAS ===== */
         .empresas-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -526,6 +593,7 @@
             color: white;
         }
 
+        /* ===== ESTADO VACÍO ===== */
         .empty-state {
             background: white;
             padding: 60px 40px;
@@ -551,18 +619,37 @@
             margin-bottom: 20px;
         }
 
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba (27,94,32,0.2);
+        /* ===== FOOTER ===== */
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .filters-row {
+                gap: 10px;
+            }
+
+            .search-box {
+                flex: 1 1 100%;
+                min-width: 100%;
+            }
+
+            .filter-group {
+                flex: 1 1 calc(50% - 5px);
+                min-width: 140px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -570,35 +657,48 @@
                 font-size: 1.8em;
             }
 
+            .controls-section {
+                padding: 15px;
+            }
+
             .filters-row {
-                flex-direction: column;
+                gap: 12px;
             }
 
-            .search-box {
-                width: 100%;
-            }
-
+            .search-box,
             .filter-group {
-                width: 100%;
+                flex: 1 1 100%;
+                min-width: 100%;
             }
 
-            .filter-group select,
-            .filter-group input[type="number"] {
-                flex: 1;
-                min-width: 0;
+            .actions-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
 
             .empresas-grid {
                 grid-template-columns: 1fr;
             }
 
-            .page-wrapper {
-                padding: 15px;
-            }
-
             footer {
                 font-size: 0.85rem;
                 padding: 15px;
+            }
+        }
+
+        @keyframes slideOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
             }
         }
     </style>
@@ -616,13 +716,14 @@
             <a href="{% url 'empresas:listar_empresas' %}">Empresas</a>
             <span>›</span>
         </div>
-        <!--mensajes-->
+
+        <!-- MENSAJES -->
         {% if messages %}
         <div class="messages-container">
-            {% for message in messages%}
+            {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
-                        {% if 'error' in message.tags%}
+                        {% if 'error' in message.tags %}
                             ❌
                         {% elif 'warning' in message.tags %}
                             ⚠️
@@ -631,38 +732,87 @@
                         {% endif %}
                     </div>
                     <div class="alert-content">
-                        {{message}}
+                        {{ message }}
                     </div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
+
+        <!-- CONTROLES Y FILTROS -->
         <div class="controls-section">
             <form method="get">
                 <div class="filters-row">
+                    <!-- Búsqueda -->
                     <div class="search-box">
-                        <input type="text" name="search" placeholder="Buscar por nombre, NIT, contacto o correo..." value="{{ search }}">
-                        <div class="search-hint">💡 Puedes buscar por nombre de empresa, NIT, persona de contacto o correo electrónico</div>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Buscar por nombre, NIT, contacto o correo..." 
+                            value="{{ search|default:'' }}"
+                        >
+                        <div class="search-hint">💡 Busca por nombre, NIT, contacto o correo</div>
                     </div>
 
+                    <!-- Municipio -->
                     <div class="filter-group">
-                        <select name="municipio" onchange="this.form.submit()">
-                            <option value="">Todos los municipios</option>
+                        <label for="filtro_municipio">MUNICIPIO</label>
+                        <select name="municipio" id="filtro_municipio">
+                            <option value="">Todos</option>
                             {% for muni in municipios %}
-                                <option value="{{ muni }}" {% if municipio_filter == muni %}selected{% endif %}>{{ muni }}</option>
+                                <option value="{{ muni }}" {% if municipio_filter == muni %}selected{% endif %}>
+                                    {{ muni }}
+                                </option>
                             {% endfor %}
                         </select>
+                    </div>
 
-                        <input type="number" name="min_trabajadores" placeholder="Min. trabajadores" value="{{ min_trabajadores_filter }}" min="0">
+                    <!-- Rango de Fechas -->
+                    <div class="filter-group">
+                        <label for="filtro_rango_fecha">📅 PERÍODO</label>
+                        <select name="rango_fecha" id="filtro_rango_fecha">
+                            <option value="">Todas las fechas</option>
+                            <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                            <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                            <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                            <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                            <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                            <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                            <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                            <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                        </select>
+                    </div>
 
-                        <button type="submit" class="btn btn-secondary">Filtrar</button>
+                    <!-- Mínimo Trabajadores -->
+                    <div class="filter-group">
+                        <label for="filtro_min_trabajadores">MIN. TRABAJADORES</label>
+                        <input 
+                            type="number" 
+                            name="min_trabajadores" 
+                            id="filtro_min_trabajadores"
+                            placeholder="Ej: 10" 
+                            value="{{ min_trabajadores_filter|default:'' }}" 
+                            min="0"
+                        >
+                    </div>
+
+                    <!-- Botón Filtrar -->
+                    <div class="filter-group">
+                        <label style="opacity: 0; user-select: none;">ACCIÓN</label>
+                        <button type="submit" class="btn-filter">
+                            🔍 Filtrar
+                        </button>
                     </div>
                 </div>
 
+                <!-- Fila de Acciones -->
                 <div class="actions-row">
-                    {% if search or municipio_filter or min_trabajadores_filter %}
-                        <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-secondary">🔄 Limpiar Filtros</a>
+                    {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
+                        <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-secondary">
+                            🔄 Limpiar Filtros
+                        </a>
                     {% else %}
                         <div></div>
                     {% endif %}
@@ -673,6 +823,7 @@
             </form>
         </div>
 
+        <!-- ESTADÍSTICAS -->
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total de Empresas</h3>
@@ -688,6 +839,7 @@
             </div>
         </div>
 
+        <!-- GRID DE EMPRESAS -->
         {% if empresas %}
         <div class="empresas-grid">
             {% for empresa in empresas %}
@@ -765,9 +917,11 @@
         </div>
         {% endif %}
     </div>
+
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
     <script>
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
@@ -779,23 +933,7 @@
                 }, 8000);
             });
         });
-
-        // Animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
-    {% include 'core/accessibility.html'%}
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
