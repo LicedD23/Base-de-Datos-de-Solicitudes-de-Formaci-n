@@ -131,12 +131,6 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        /* 🔴 CAMBIO 1: ESTILO PARA PLACEHOLDER DEL CAMPO NIT */
-        .filter-group input[type="text"]::placeholder {
-            color: #999;
-            font-size: 0.9em;
-        }
-
         .filter-group input[type="text"]::placeholder {
             color: #999;
             font-size: 0.9em;
@@ -557,7 +551,9 @@
                         <select name="estado" id="filtro_estado">
                             <option value="">Todos los estados</option>
                             {% for codigo, nombre in estados %}
-                                <option value="{{ codigo }}">{{ nombre }}</option>
+                                <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>
+                                    {{ nombre }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -566,7 +562,9 @@
                         <select name="programa" id="filtro_programa">
                             <option value="">Todos los programas</option>
                             {% for programa in programas %}
-                                <option value="{{ programa.id }}">{{ programa.nombre }}</option>
+                                <option value="{{ programa.id }}" {% if programa_filter == programa.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ programa.nombre }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -575,29 +573,35 @@
                         <select name="empresa" id="filtro_empresa">
                             <option value="">Todas las empresas</option>
                             {% for empresa in empresas %}
-                                <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                                <option value="{{ empresa.id }}" {% if empresa_filter == empresa.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ empresa.nombre }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="filter-group">
                         <label>NIT Empresa</label>
-                        <input type="text" name="nit" id="filtro_nit" placeholder="Ej: 900123456-7" maxlength="15">
+                        <input type="text" name="nit" id="filtro_nit" placeholder="Ej: 900123456-7" maxlength="15" value="{{ nit_filter }}">
                     </div>
                     <div class="filter-group">
-                        <label>Fecha Desde</label>
-                        <input type="date" name="fecha_desde" id="filtro_fecha_desde">
-                    </div>
-                    <div class="filter-group">
-                        <label>Fecha Hasta</label>
-                        <input type="date" name="fecha_hasta" id="filtro_fecha_hasta">
+                        <label>📅 PERÍODO</label>
+                        <select name="rango_fecha" id="filtro_rango_fecha">
+                            <option value="">Todas las fechas</option>
+                            <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                            <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                            <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                            <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                            <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                            <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                            <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                            <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                        </select>
                     </div>
                 </div>
                 <div class="filter-actions">
                     <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
                         🔄 Limpiar Filtros
-                    </button>
-                    <button type = "button" class="btn-filter primary" onclick="aplicarFiltros()">
-                        🔍 Buscar
                     </button>
                     <button type="button" class="btn-filter primary" onclick="descargarSolicitudesPDF()">
                         📄 Descargar PDF
@@ -681,7 +685,7 @@
                     </div>
                 </div>
                 
-                <!-- Empresas Registradas en  el  Sistema -->
+                <!-- Empresas Registradas en el Sistema -->
                 <div class="report-card">
                     <div class="report-card-header">
                         <div class="report-icon empresas">🏢</div>
@@ -702,28 +706,28 @@
                         </a>
                     </div>
                 </div>
-                <!--Programas de Formacion -->
-                <div class= "report-card">
+                <!--Programas de Formación -->
+                <div class="report-card">
                     <div class="report-card-header">
                         <div class="report-icon programas">📚</div>
                         <div>
-                            <h3>Catalogo de Programas</h3>
+                            <h3>Catálogo de Programas</h3>
                         </div>
                     </div>
                     <p>
-                        Listado completo de programas de formacion activos con codigo, area, duracion y estado.
-                        <br><strong class="count">{{total_programas}} registros</strong>
+                        Listado completo de programas de formación activos con código, área, duración y estado.
+                        <br><strong class="count">{{ total_programas }} registros</strong>
                     </p>
                     <div class="btn-group">
-                        <a href="{% url 'reportes:reporte_programas_pdf'%}" class="btn btn-pdf">
+                        <a href="{% url 'reportes:reporte_programas_pdf' %}" class="btn btn-pdf">
                             📄 PDF
                         </a>
-                        <a href="{% url 'reportes:reporte_programas_excel'%}" class="btn btn-excel">
+                        <a href="{% url 'reportes:reporte_programas_excel' %}" class="btn btn-excel">
                             📊 Excel
                         </a>
                     </div>
                 </div>
-                <!-- Instructores Activos en el  Sistema-->
+                <!-- Instructores Activos en el Sistema-->
                 <div class="report-card">
                     <div class="report-card-header">
                         <div class="report-icon instructores">👨‍🏫</div>
@@ -747,11 +751,11 @@
             </div>
         </div>
         
-        <!-- Footer de la Pagina Web-->
+        <!-- Footer de la Página Web-->
         <footer>
             <p>© 2025 Servicio Nacional de Aprendizaje (SENA) - Sistema de Gestión de Solicitudes</p>
         </footer>
-        {% include 'core/accessibility.html'%}
+        {% include 'core/accessibility.html' %}
     </div>
     
     <script>
@@ -762,15 +766,13 @@
             const programa = document.getElementById('filtro_programa').value;
             const empresa = document.getElementById('filtro_empresa').value;
             const nit = document.getElementById('filtro_nit').value;
-            const fechaDesde = document.getElementById('filtro_fecha_desde').value;
-            const fechaHasta = document.getElementById('filtro_fecha_hasta').value;
+            const rangoFecha = document.getElementById('filtro_rango_fecha').value;
             
             if (estado) params.append('estado', estado);
             if (programa) params.append('programa', programa);
             if (empresa) params.append('empresa', empresa);
             if (nit) params.append('nit', nit.trim());
-            if (fechaDesde) params.append('fecha_desde', fechaDesde);
-            if (fechaHasta) params.append('fecha_hasta', fechaHasta);
+            if (rangoFecha) params.append('rango_fecha', rangoFecha);
             
             return params.toString();
         }
@@ -792,8 +794,7 @@
             document.getElementById('filtro_programa').value = '';
             document.getElementById('filtro_empresa').value = '';
             document.getElementById('filtro_nit').value = '';
-            document.getElementById('filtro_fecha_desde').value = '';
-            document.getElementById('filtro_fecha_hasta').value = '';
+            document.getElementById('filtro_rango_fecha').value = '';
         }
     </script>
 </body>

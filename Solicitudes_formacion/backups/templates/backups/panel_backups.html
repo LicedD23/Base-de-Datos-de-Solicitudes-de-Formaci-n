@@ -145,7 +145,8 @@
             letter-spacing: 0.5px;
         }
 
-        .filter-group input {
+        .filter-group input,
+        .filter-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -156,7 +157,8 @@
             background: white;
         }
 
-        .filter-group input:focus {
+        .filter-group input:focus,
+        .filter-group select:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
@@ -634,14 +636,19 @@
                                 placeholder="Ej: backup_20250101">
                     </div>
                     <div class="filter-group">
-                        <label>Fecha Desde</label>
-                        <input type="date" name="fecha_desde" id="filtro_fecha_desde" 
-                                value="{{ fecha_desde }}">
-                    </div>
-                    <div class="filter-group">
-                        <label>Fecha Hasta</label>
-                        <input type="date" name="fecha_hasta" id="filtro_fecha_hasta" 
-                                value="{{ fecha_hasta }}">
+                        <label>📅 Período</label>
+                        <select name="rango_fecha" id="filtro_rango_fecha">
+                            <option value="">Todas las fechas</option>
+                            <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                            <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                            <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                            <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                            <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                            <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                            <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                            <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                        </select>
                     </div>
                 </div>
                 <div class="filter-actions">
@@ -837,8 +844,7 @@
 
         function limpiarFiltros() {
             document.getElementById('filtro_nombre').value = '';
-            document.getElementById('filtro_fecha_desde').value = '';
-            document.getElementById('filtro_fecha_hasta').value = '';
+            document.getElementById('filtro_rango_fecha').value = '';
             document.getElementById('filtrosForm').submit();
         }
 
