@@ -212,17 +212,33 @@
         }
 
         .filters-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 15px;
             margin-bottom: 20px;
-            align-items: flex-end;
+            align-items: end;
         }
 
         /* ===== BÚSQUEDA ===== */
         .search-box {
-            flex: 1 1 280px;
-            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .search-label {
+            font-size: 0.72em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            height: 16px;
+            line-height: 16px;
+            opacity: 0;
+            user-select: none;
+        }
+
+        .search-input-wrapper {
             position: relative;
         }
 
@@ -242,7 +258,7 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        .search-box::before {
+        .search-input-wrapper::before {
             content: "🔍";
             position: absolute;
             left: 15px;
@@ -255,6 +271,8 @@
             color: #999;
             margin-top: 4px;
             padding-left: 2px;
+            height: 16px;
+            line-height: 16px;
         }
 
         /* ===== GRUPOS DE FILTROS ===== */
@@ -262,8 +280,6 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            flex: 0 0 auto;
-            min-width: 150px;
         }
 
         .filter-group label {
@@ -273,6 +289,8 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
             white-space: nowrap;
+            height: 16px;
+            line-height: 16px;
         }
 
         .filter-group select,
@@ -301,8 +319,22 @@
             font-size: 0.9em;
         }
 
+        .filter-group .filter-spacer {
+            height: 22px;
+        }
+
         /* Botón Filtrar */
-        .filter-group .btn-filter {
+        .btn-filter-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-filter-wrapper .filter-spacer {
+            height: 22px;
+        }
+
+        .btn-filter {
             background: white;
             color: #2e7d32;
             border: 2px solid #2e7d32;
@@ -320,7 +352,7 @@
             gap: 6px;
         }
 
-        .filter-group .btn-filter:hover {
+        .btn-filter:hover {
             background: #2e7d32;
             color: white;
             transform: translateY(-1px);
@@ -638,17 +670,16 @@
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1200px) {
             .filters-row {
-                gap: 10px;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
             }
 
             .search-box {
-                flex: 1 1 100%;
-                min-width: 100%;
+                grid-column: 1 / -1;
             }
 
-            .filter-group {
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
+            .btn-filter-wrapper {
+                grid-column: 1 / -1;
             }
         }
 
@@ -662,13 +693,14 @@
             }
 
             .filters-row {
+                grid-template-columns: 1fr;
                 gap: 12px;
             }
 
             .search-box,
-            .filter-group {
-                flex: 1 1 100%;
-                min-width: 100%;
+            .filter-group,
+            .btn-filter-wrapper {
+                grid-column: 1;
             }
 
             .actions-row {
@@ -746,12 +778,15 @@
                 <div class="filters-row">
                     <!-- Búsqueda -->
                     <div class="search-box">
-                        <input 
-                            type="text" 
-                            name="search" 
-                            placeholder="Buscar por nombre, NIT, contacto o correo..." 
-                            value="{{ search|default:'' }}"
-                        >
+                        <label class="search-label">BÚSQUEDA</label>
+                        <div class="search-input-wrapper">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                placeholder="Buscar por nombre, NIT, contacto o correo..." 
+                                value="{{ search|default:'' }}"
+                            >
+                        </div>
                         <div class="search-hint">💡 Busca por nombre, NIT, contacto o correo</div>
                     </div>
 
@@ -766,6 +801,7 @@
                                 </option>
                             {% endfor %}
                         </select>
+                        <div class="filter-spacer"></div>
                     </div>
 
                     <!-- Rango de Fechas -->
@@ -783,6 +819,7 @@
                             <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
                             <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
                         </select>
+                        <div class="filter-spacer"></div>
                     </div>
 
                     <!-- Mínimo Trabajadores -->
@@ -796,14 +833,16 @@
                             value="{{ min_trabajadores_filter|default:'' }}" 
                             min="0"
                         >
+                        <div class="filter-spacer"></div>
                     </div>
 
                     <!-- Botón Filtrar -->
-                    <div class="filter-group">
-                        <label style="opacity: 0; user-select: none;">ACCIÓN</label>
+                    <div class="btn-filter-wrapper">
+                        <div class="filter-spacer"></div>
                         <button type="submit" class="btn-filter">
                             🔍 Filtrar
                         </button>
+                        <div class="filter-spacer"></div>
                     </div>
                 </div>
 

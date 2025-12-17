@@ -105,6 +105,7 @@ def panel_reportes(request):
         # Datos para los filtros
         'programas': Programa.objects.filter(activo=True).order_by('nombre'),
         'empresas': Empresa.objects.all().order_by('nombre'),
+        'instructores': Instructor.objects.filter(activo=True).order_by('nombre'),
         'estados': Solicitud.ESTADO_CHOICES,
         
         # Mantener valores de filtros seleccionados
@@ -112,6 +113,7 @@ def panel_reportes(request):
         'programa_filter': request.GET.get('programa', ''),
         'empresa_filter': request.GET.get('empresa', ''),
         'nit_filter': request.GET.get('nit', ''),
+        'instructor_filter':request.GET.get('instructor',''),
         'rango_fecha': request.GET.get('rango_fecha', ''),
     }
     
@@ -131,6 +133,7 @@ def generar_reporte_solicitudes_pdf(request):
     programa_id = request.GET.get('programa', '')
     empresa_id = request.GET.get('empresa', '')
     nit = request.GET.get('nit', '')
+    instructor_id = request.GET.get('instructor','')
     rango_fecha = request.GET.get('rango_fecha', '')
     
     # Consulta base con relaciones optimizadas
@@ -170,7 +173,13 @@ def generar_reporte_solicitudes_pdf(request):
         nit_limpio = nit.strip()
         solicitudes = solicitudes.filter(empresa__nit__icontains=nit_limpio)
         filtros_texto.append(f"NIT: {nit_limpio}")
-    
+    if instructor_id:
+        solicitudes = solicitudes.filter(instructor_asignado_id = instructor_id)
+        try:
+            instructor = Instructor.objects.get(id=instructor_id)
+            filtros_texto.append(f"Instructor:{instructor.nombre}")
+        except Instructor.DoesNotExist:
+            pass
     # Filtro de Rango de Fecha
     if rango_fecha:
         fecha_inicio, fecha_fin = calcular_rango_fechas(rango_fecha)
@@ -230,6 +239,7 @@ def generar_reporte_solicitudes_excel(request):
     programa_id = request.GET.get('programa', '')
     empresa_id = request.GET.get('empresa', '')
     nit = request.GET.get('nit', '')
+    instructor_id = request.GET.get('instructor','')
     rango_fecha = request.GET.get('rango_fecha', '')
     
     # Consulta base
@@ -251,6 +261,8 @@ def generar_reporte_solicitudes_excel(request):
         nit_limpio = nit.strip()
         solicitudes = solicitudes.filter(empresa__nit__icontains=nit_limpio)
     
+    if instructor_id:
+        solicitudes = solicitudes.filter(instructor_asignado_id = instructor_id)
     # Filtro de Rango de Fecha
     if rango_fecha:
         fecha_inicio, fecha_fin = calcular_rango_fechas(rango_fecha)

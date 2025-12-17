@@ -584,6 +584,17 @@
                         <input type="text" name="nit" id="filtro_nit" placeholder="Ej: 900123456-7" maxlength="15" value="{{ nit_filter }}">
                     </div>
                     <div class="filter-group">
+                        <label>Instructor</label>
+                        <select name ="instructor" id="filtro_instructor">
+                            <option value ="">Todos los instructores</option>
+                            {% for instructor in instructores%}
+                                <option value ="{{instructor.id}}"{% if instructor_filter == instructor_filter == instructor.id|stringformat:"s"%}selected{%endif%}>
+                                    {{instructor.nombre}}
+                                </option>
+                            {%endfor%}
+                        </select>
+                    </div>
+                    <div class="filter-group">
                         <label>📅 PERÍODO</label>
                         <select name="rango_fecha" id="filtro_rango_fecha">
                             <option value="">Todas las fechas</option>
@@ -766,12 +777,14 @@
             const programa = document.getElementById('filtro_programa').value;
             const empresa = document.getElementById('filtro_empresa').value;
             const nit = document.getElementById('filtro_nit').value;
+            const instructor = document.getElementById('filtro_instructor').value;
             const rangoFecha = document.getElementById('filtro_rango_fecha').value;
             
             if (estado) params.append('estado', estado);
             if (programa) params.append('programa', programa);
             if (empresa) params.append('empresa', empresa);
             if (nit) params.append('nit', nit.trim());
+            if (instructor) params.append('instructor', instructor);
             if (rangoFecha) params.append('rango_fecha', rangoFecha);
             
             return params.toString();
@@ -794,6 +807,7 @@
             document.getElementById('filtro_programa').value = '';
             document.getElementById('filtro_empresa').value = '';
             document.getElementById('filtro_nit').value = '';
+            document.getElementById('filtro_instructor').value = '';
             document.getElementById('filtro_rango_fecha').value = '';
         }
     </script>
