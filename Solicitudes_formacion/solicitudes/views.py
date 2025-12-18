@@ -203,15 +203,10 @@ def detalle_solicitud(request, solicitud_id):
         id=solicitud_id
     )
     
-    # Obtener instructores disponibles para asignación
-    instructores_disponibles = Instructor.objects.filter(
-        activo=True,
-        especialidad=solicitud.programa
-    ).order_by('nombre')
+    
     
     context = {
         'solicitud': solicitud,
-        'instructores_disponibles': instructores_disponibles,
     }
     
     return render(request, 'solicitudes/detalle_solicitud.html', context)
@@ -230,45 +225,87 @@ def editar_solicitud(request, solicitud_id):
     
     if request.method == 'POST':
         try:
-            #Obtener datos del formulario
-            estado=request.POST.get('estado')
-            instructor_id=request.POST.get('instructor_asignado')
-            observaciones= request.POST.get('observaciones')
-            numero_aprendices=request.POST.get('numero_aprendices')
+            # Obtener datos del formulario
+            estado = request.POST.get('estado')
+            instructor_id = request.POST.get('instructor_asignado')
+            observaciones = request.POST.get('observaciones')
+            numero_aprendices = request.POST.get('numero_aprendices')
             
-            #Validar campos requeridos
+            # Validar campos requeridos
             if not estado:
-                messages.error(request,'❌ El estado es obligatorio')
-                return redirect('solicitudes:editar_solicitud',solicitud_id=solicitud_id)
+                messages.error(request, '❌ El estado es obligatorio')
+                return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
             
-            #Actualiza campos basicos
-            solicitud.estado=estado
-            solicitud.observaciones=observaciones
+            # 🔥 NUEVA VALIDACIÓN: Verificar flujo de estados
+            if estado != solicitud.estado:
+                if not solicitud.puede_cambiar_a_estado(estado):
+                    messages.error(
+                        request,
+                        f'❌ No puedes cambiar de "{solicitud.get_estado_display()}" a "{dict(Solicitud.ESTADO_CHOICES)[estado]}"'
+                    )
+                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
             
-            #Actualizar numero de aprendices si  se proporciono
+            # 🔥 VALIDACIÓN: ATENDIDA requiere instructor
+            if estado == 'ATENDIDA' and not instructor_id and not solicitud.instructor_asignado:
+                messages.error(request, '❌ Debes asignar un instructor para marcar como ATENDIDA')
+                return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+            
+            # 🔥 VALIDACIÓN: FINALIZADA requiere que haya estado ATENDIDA
+            if estado == 'FINALIZADA' and not solicitud.fecha_atencion:
+                messages.error(request, '❌ La solicitud debe estar ATENDIDA antes de finalizarla')
+                return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+            
+            # Actualizar campos básicos
+            solicitud.estado = estado
+            solicitud.observaciones = observaciones
+            
+            # Actualizar número de aprendices si se proporcionó
             if numero_aprendices:
                 try:
-                    solicitud.numero_aprendices=int(numero_aprendices)
+                    solicitud.numero_aprendices = int(numero_aprendices)
                 except ValueError:
-                    messages.warning(request, '⚠️ Numero  de Aprendices no valido, se mantuvo el  valor anterior')
-            #Actualizar instructor asignado
+                    messages.warning(request, '⚠️ Número de Aprendices no válido, se mantuvo el valor anterior')
+            
+            # 🔥 LÓGICA PRINCIPAL: Asignar instructor y cambiar a ATENDIDA automáticamente
+            instructor_anterior = solicitud.instructor_asignado
+            
             if instructor_id:
                 try:
-                    instructor= Instructor.objects.get(id=instructor_id, activo= True)
-                    solicitud.instructor_asignado= instructor
-                except Instructor.DoesNotExist:
-                    messages.warning(request,'⚠️ Instructor no  encontrado')
-            else:
-                solicitud.instructor_asignado=None
-            #Actualizar fechas segun el  estado
-            now= timezone.now()
-            
-            if estado=='RESPONDIDA' and not solicitud.fecha_respuesta:
-                solicitud.fecha_respuesta = now
-            if estado=='ATENDIDA' and not solicitud.fecha_atencion:
-                solicitud.fecha_atencion=now
+                    instructor = Instructor.objects.get(id=instructor_id, activo=True)
+                    solicitud.instructor_asignado = instructor
+                    
                 
-            #Guardar cambios
+                    if solicitud.estado != 'FINALIZADA':
+                        solicitud.estado = 'ATENDIDA'
+                        if not solicitud.fecha_atencion:
+                            solicitud.fecha_atencion = timezone.now()
+                        
+                        messages.success(
+                            request,
+                            f'✅ Instructor "{instructor.nombre}" asignado. Estado cambiado automáticamente a ATENDIDA'
+                        )
+                    
+                except Instructor.DoesNotExist:
+                    messages.warning(request, '⚠️ Instructor no encontrado')
+            else:
+                # Si se quita el instructor
+                solicitud.instructor_asignado = None
+                if instructor_anterior:
+                    messages.info(request, f'ℹ️ Instructor "{instructor_anterior.nombre}" removido')
+            
+            # Actualizar fechas según el estado
+            now = timezone.now()
+            
+            if estado == 'RESPONDIDA' and not solicitud.fecha_respuesta:
+                solicitud.fecha_respuesta = now
+            
+            if estado == 'ATENDIDA' and not solicitud.fecha_atencion:
+                solicitud.fecha_atencion = now
+            
+            if estado == 'FINALIZADA' and not solicitud.fecha_finalizacion:
+                solicitud.fecha_finalizacion = now
+            
+            # Guardar cambios
             solicitud.save()
             
             messages.success(
@@ -276,86 +313,98 @@ def editar_solicitud(request, solicitud_id):
                 f'✅ Solicitud #{solicitud.id} actualizada exitosamente'
             )
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
+            
         except Exception as e:
             messages.error(
                 request,
-                f'❌ Error al  actualizar la solicitud:{str(e)}'
+                f'❌ Error al actualizar la solicitud: {str(e)}'
             )
             return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-        
-    #GET request - mostrar formulario
-    #Obtener todos los instructores activos para el  dropdown
-    instructores = Instructor.objects.filter(activo=True)
     
-    #Obtener instructores especializados en  el programa de la solicitud
+    # GET request - mostrar formulario
+    # Obtener todos los instructores activos para el dropdown
+    instructores = Instructor.objects.filter(activo=True).order_by('nombre')
+    
+    # Obtener instructores especializados en el programa de la solicitud
     instructores_especializados = instructores.filter(
         especialidad=solicitud.programa
     )
-    #Obtener todos los programas activos(por si  se quiere cambiar)
+    
+    # Obtener todos los programas activos (por si se quiere cambiar)
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
     
-    context={
-        'solicitud':solicitud,
+    context = {
+        'solicitud': solicitud,
         'instructores': instructores,
-        'instructores_especializados':instructores_especializados,
-        'programas':programas,
-        'ESTADO_CHOICES':solicitud.ESTADO_CHOICES,  
+        'instructores_especializados': instructores_especializados,
+        'programas': programas,
+        'ESTADO_CHOICES': Solicitud.ESTADO_CHOICES,
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
-                
-def enviar_respuesta(request, solicitud_id):
-        """Vista para enviar correo  de respuesta y cambiar estado a RESPONDIDA"""
-        solicitud = get_object_or_404(
-            Solicitud.objects.select_related(
-                'empresa',
-                'programa',
-                'programa__area'
-            ),
-            id=solicitud_id    
-        )
-        if request.method == 'POST':
-            try:
-                asunto=request.POST.get('asunto')
-                mensaje=request.POST.get('mensaje')
-                
-                #Validad campos
-                if not asunto  or not mensaje:
-                    messages.error(request, '❌ El asunto  y el mensaje son obligatorios')
-                    return redirect('solicitudes:enviar_respuesta',solicitud_id=solicitud_id)
-                #Enviar correo
-                from django.core.mail import send_mail 
-                from django.conf import settings
-                
-                send_mail(
-                    subject=asunto,
-                    message=mensaje,
-                    from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[solicitud.empresa.correo],
-                    fail_silently=False,
-                )
-                #Actualizar estado a RESPONDIDA
-                solicitud.estado="RESPONDIDA"
-                solicitud.fecha_respuesta=timezone.now()
-                solicitud.save()
-                
-                messages.success(request, f'✅ Correo enviado  exitosamente a {solicitud.empresa.correo}.'f'Estado actualizado  a RESPONDIDA')
-                
-                return redirect('solicitudes:detalle_solicitud',solicitud_id=solicitud.id)
-            
-            except Exception as e:
-                messages.error(request, f'❌ Error al  enviar el  cooreo:{str(e)}')
-                
-                return redirect ('solicitudes:enviar_respuesta',solicitud_id=solicitud_id)
-            
-            #GET request - mostrar formulaerio 
-        context={
-            'solicitud':solicitud,
-            }
-        return render (request, 'solicitudes/enviar_respuesta.html', context)
                     
         
             
-
+def enviar_respuesta(request, solicitud_id):
+    """Vista para enviar correo de respuesta y cambiar estado a RESPONDIDA"""
+    solicitud = get_object_or_404(
+        Solicitud.objects.select_related(
+            'empresa',
+            'programa',
+            'programa__area'
+        ),
+        id=solicitud_id    
+    )
+    
+    if request.method == 'POST':
+        try:
+            asunto = request.POST.get('asunto')
+            mensaje = request.POST.get('mensaje')
+            
+            # Validar campos
+            if not asunto or not mensaje:
+                messages.error(request, '❌ El asunto y el mensaje son obligatorios')
+                return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
+            
+            # Enviar correo
+            from django.core.mail import send_mail 
+            from django.conf import settings
+            
+            send_mail(
+                subject=asunto,
+                message=mensaje,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[solicitud.empresa.correo],
+                fail_silently=False,
+            )
+            
+            # 🔥 MEJORA: Solo cambiar a RESPONDIDA si está en RECIBIDA
+            if solicitud.estado == 'RECIBIDA':
+                solicitud.estado = "RESPONDIDA"
+                solicitud.fecha_respuesta = timezone.now()
+                solicitud.save()
+                
+                messages.success(
+                    request,
+                    f'✅ Correo enviado exitosamente a {solicitud.empresa.correo}. Estado actualizado a RESPONDIDA'
+                )
+            else:
+                # Si ya estaba RESPONDIDA, ATENDIDA o FINALIZADA, solo enviar correo
+                messages.success(
+                    request,
+                    f'✅ Correo enviado exitosamente a {solicitud.empresa.correo}'
+                )
+            
+            return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
+        
+        except Exception as e:
+            messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
+            return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
+    
+    # GET request - mostrar formulario 
+    context = {
+        'solicitud': solicitud,
+    }
+    return render(request, 'solicitudes/enviar_respuesta.html', context)
 @login_required
 @user_passes_test(es_admin)
 def procesar_correos_ajax(request):

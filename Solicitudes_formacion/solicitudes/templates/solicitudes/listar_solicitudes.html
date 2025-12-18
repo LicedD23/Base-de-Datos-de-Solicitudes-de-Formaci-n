@@ -490,7 +490,6 @@
                                 <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>{{ nombre }}</option>
                             {% endfor %}
                         </select>
-
                         <select name="programa" onchange="this.form.submit()">
                             <option value="">Todos los programas</option>
                             {% for programa in programas %}
@@ -517,8 +516,6 @@
                             <option value="mes" {% if periodo_filter == 'mes' %}selected{% endif %}>📊 Último mes</option>
                             <option value="trimestre" {% if periodo_filter == 'trimestre' %}selected{% endif %}>📈 Último trimestre</option>
                         </select>
-
-                        <button type="submit" class="btn btn-secondary">Filtrar</button>
                     </div>
                 </div>
 

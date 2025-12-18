@@ -69,122 +69,139 @@
         .breadcrumb span {
             color: #999;
         }
+
         /* Mensajes*/
-        .messages-container{
-            margin-bottom:
-            
+        .messages-container {
+            margin-bottom: 25px;
         }
-        .alert{
-            padding:18px 25px;
-            border-radius:12px;
-            margin-bottom:15px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-            font-size:1em;
-            font-weight:500;
-            box-shadow:0 4px 15px rgba(0,0,0,0.1);
-            animation:slideInDown 0.4s ease-out;
-            position:relative;
-            overflow:hidden;
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes slideInDown{
-            from{
-                transport:translateY(-20px);
-                opacity:0;
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
             }
-            to{
-                transform:translateY(0);
-                opacity:1;
+            to {
+                transform: translateY(0);
+                opacity: 1;
             }  
         }
-        .alert::before{
-            content:'';
-            position:absolute;
-            left:0;
-            top:0;
-            bottom:0;
-            width:5px;
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
         }
-        .alert-success{
-            background.linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color:white;
-            border:2px solid #1b5e20;
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
-        .alert-success::before{
-            background:#fff;
+
+        .alert-success::before {
+            background: #fff;
         }
-        .alert-success .alert-icon{
-            font-size:1.8em;
-            animation:scaleIn 0.5s ease-out;
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
         }
-        @keyframes scaleIn{
-            0%{
-                transform:scale(0);
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
             }
-            50%{
-                transform:scale(1.2);
+            50% {
+                transform: scale(1.2);
             }
-            100%{
-                transform:scale(1);
-            }
-        }
-        .alert-error{
-            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color:white;
-            border:2px solid #b71c1c;
-        }
-        .alert-error .alert-icon{
-            font-size:1.8em;
-            animation:shake 0.5s ease-out;
-        }
-        @keyframes shake{
-            0%, 100%{
-                transform:translateX(0);
-            }
-            25%{
-                transform:translateX(-10px);
-            }
-            75%{
-                transform:translateX(10px);
+            100% {
+                transform: scale(1);
             }
         }
-        .alert-warning{
-            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color:white;
-            border:2px solid #e65100;
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
         }
-        .alert-warning::before{
-            background:#fff;
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
         }
-        .alert-icon{
-            font-size:1.5em;
-            flex-shrink:0;
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
         }
-        .alert-content{
-            flex:1;
-            line-height:1.5;
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
         }
-        .alert-close{
-            background:rgba(255,255,255,0.2);
+
+        .alert-warning::before {
+            background: #fff;
+        }
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .alert-close {
+            background: rgba(255,255,255,0.2);
             border: 2px solid rgba(255,255,255,0.3);
-            color:white;
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:bold;
-            font-size:1.2em;
-            transition:all 0.3s ease;
-            flex-shrink:0;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
-        .alert-close:hover{
-            background:rgba(255,255,255,0.4);
-            transform:scale(1.1);
+
+        .alert-close:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
         }
+
         .info-banner {
             background: #e8f5e9;
             border-left: 4px solid #2e7d32;
@@ -274,34 +291,6 @@
             color: #666;
             margin-top: 5px;
             font-size: 0.9em;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95em;
-        }
-
-        .alert-error {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #c62828;
-        }
-
-        .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
-        }
-
-        .alert-warning {
-            background: #fff3e0;
-            color: #ef6c00;
-            border-left: 4px solid #ffa726;
         }
 
         .form-actions {
@@ -465,18 +454,19 @@
         }
 
         /*FOOTER STYLES*/
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         @media (max-width: 768px) {
@@ -500,13 +490,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .page-wrapper{
-                padding:15px;
+            .page-wrapper {
+                padding: 15px;
             }
             
-            footer{
-                font-size:0.85rem;
-                padding:1.2rem;
+            footer {
+                font-size: 0.85rem;
+                padding: 1.2rem;
             }
         }
     </style>
@@ -551,14 +541,13 @@
                         {% endif %}
                     </div>
                     <div class="alert-content">
-                        {{message}}
+                        {{ message }}
                     </div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-            {% endfor%}
+            {% endfor %}
         </div>
-        {% endif%}
-
+        {% endif %}
 
         <div class="form-card">
             <div class="metadata-section">
@@ -594,6 +583,18 @@
                         <div class="value">{{ solicitud.instructor_asignado.nombre }}</div>
                     </div>
                     {% endif %}
+                </div>
+            </div>
+
+            <!-- 🔥 INFO BOX NARANJA - ASIGNACIÓN AUTOMÁTICA -->
+            <div class="info-box" style="background: #fff3e0; border: 2px solid #ff9800;">
+                <div class="info-box-icon">⚡</div>
+                <div class="info-box-content">
+                    <strong style="color: #ef6c00;">Asignación Automática de Estado</strong>
+                    <p style="color: #666; margin: 5px 0 0 0;">
+                        Al asignar un instructor, la solicitud cambiará automáticamente a estado 
+                        <strong style="color: #ef6c00;">ATENDIDA</strong> y se registrará la fecha de atención.
+                    </p>
                 </div>
             </div>
 
@@ -698,6 +699,7 @@
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
     <script>
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
@@ -726,6 +728,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    {% include 'core/accessibility.html'%}
+    {% include 'core/accessibility.html' %}
 </body>
 </html>

@@ -10,6 +10,7 @@ def listar_programas(request):
     search = request.GET.get('search', '')
     area_id = request.GET.get('area', '')
     activo = request.GET.get('activo', '')
+    programa_id = request.GET.get('programa', '')
     
     # Consultar base con anotaciones (contar solicitudes solicitadas)
     programas = Programa.objects.select_related('area').annotate(
@@ -27,13 +28,17 @@ def listar_programas(request):
         programas = programas.filter(area_id=area_id)
     if activo:
         programas = programas.filter(activo=activo =='true')
-    
+    #filtro por programa especifico
+    if programa_id:
+        programas = programas.filter(id=programa_id)
     # Ordenar por area y nombre
     programas = programas.order_by('area__nombre','nombre')
     
     # Obtener todas las areas para el filtro
     areas = Area.objects.filter(activo=True).order_by('nombre')
     
+    #obtener todos los programas para el  desplegable de filtro
+    todos_programas = Programa.objects.all().order_by('nombre')
     # Calcular estadísticas
     total_programas = Programa.objects.count()
     programas_activos = Programa.objects.filter(activo=True).count()
@@ -42,6 +47,7 @@ def listar_programas(request):
     context = {
         'programas': programas,
         'areas': areas,
+        'todos_programas': todos_programas,
         'search': search,
         'area_filter': area_id,
         'activo_filter': activo,

@@ -11,7 +11,10 @@ def listar_areas(request):
     """Vista para listar todas las áreas"""
     search = request.GET.get('search', '')
     activo = request.GET.get('activo', '')
-
+    area_id = request.GET.get('area_id','')
+    
+    # Obtener TODAS las areas para el desplegable(sin filtrar)
+    todas_areas = Area.objects.all().order_by('nombre')
     # Consulta base con anotaciones
     areas = Area.objects.annotate(
         total_programas=Count('programas')
@@ -23,6 +26,8 @@ def listar_areas(request):
             Q(nombre__icontains=search) |
             Q(descripcion__icontains=search)
         )
+    if area_id:
+        areas = areas.filter(id=area_id)
     if activo:
         areas = areas.filter(activo=(activo == 'true'))
 
@@ -36,11 +41,21 @@ def listar_areas(request):
     
     # O si quieres contar solo los programas de las áreas filtradas:
     total_programas = Programa.objects.filter(area__in=areas).count()
+    #Obtener el  area seleccionada para mostrar en  el  badge
+    area_seleccionada =None
+    if area_id:
+        try:
+            area_seleccionada = Area.objects.get(id=area_id)
+        except Area.DoesNotExist:
+            pass
 
     context = {
         'areas': areas,
+        'todas_areas':todas_areas,
         'search': search,
         'activo_filter': activo,
+        'area_filter': area_id,
+        'area_seleccionada': area_seleccionada,
         'total_areas': total_areas,
         'areas_activas': areas_activas,
         'total_programas': total_programas,

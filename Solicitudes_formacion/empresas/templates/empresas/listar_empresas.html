@@ -126,15 +126,9 @@
         }
 
         @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .alert-error {
@@ -149,15 +143,9 @@
         }
 
         @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
 
         .alert-warning {
@@ -202,7 +190,7 @@
             transform: scale(1.1);
         }
 
-        /* ===== CONTROLES Y FILTROS ===== */
+        /* 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS MEJORADA */
         .controls-section {
             background: white;
             padding: 25px;
@@ -211,45 +199,32 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .filters-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: end;
-        }
-
-        /* ===== BÚSQUEDA ===== */
-        .search-box {
+        .search-form {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .search-label {
-            font-size: 0.72em;
-            color: #666;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            height: 16px;
-            line-height: 16px;
-            opacity: 0;
-            user-select: none;
+            gap: 15px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
 
         .search-input-wrapper {
+            flex: 1;
+            min-width: 280px;
             position: relative;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
         }
 
         .search-box input {
             width: 100%;
-            padding: 13px 20px 13px 45px;
+            padding: 15px 20px 15px 50px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            font-size: 0.95em;
+            font-size: 1em;
             transition: all 0.3s ease;
-            height: 46px;
         }
 
         .search-box input:focus {
@@ -258,119 +233,88 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        .search-input-wrapper::before {
+        .search-box::before {
             content: "🔍";
             position: absolute;
-            left: 15px;
-            top: 13px;
-            font-size: 1.1em;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            z-index: 1;
         }
 
-        .search-hint {
-            font-size: 0.7em;
-            color: #999;
-            margin-top: 4px;
-            padding-left: 2px;
-            height: 16px;
-            line-height: 16px;
-        }
-
-        /* ===== GRUPOS DE FILTROS ===== */
-        .filter-group {
+        /* 🎯 FILTROS DESPLEGABLES */
+        .filters-wrapper {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .filter-group label {
-            font-size: 0.72em;
-            color: #666;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            height: 16px;
-            line-height: 16px;
+        .filter-dropdown {
+            position: relative;
         }
 
-        .filter-group select,
-        .filter-group input[type="date"],
-        .filter-group input[type="number"] {
-            width: 100%;
-            padding: 12px 12px;
+        .filter-dropdown select,
+        .filter-dropdown input[type="number"] {
+            padding: 15px 40px 15px 20px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            font-size: 0.9em;
-            background: white;
+            font-size: 1em;
             cursor: pointer;
+            background: white;
             transition: all 0.3s ease;
-            height: 46px;
+            appearance: none;
+            min-width: 160px;
+            font-weight: 500;
         }
 
-        .filter-group select:focus,
-        .filter-group input:focus {
+        .filter-dropdown input[type="number"] {
+            cursor: text;
+            padding-right: 20px;
+        }
+
+        .filter-dropdown select:focus,
+        .filter-dropdown input:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        .filter-group input::placeholder {
-            color: #bbb;
-            font-size: 0.9em;
-        }
-
-        .filter-group .filter-spacer {
-            height: 22px;
-        }
-
-        /* Botón Filtrar */
-        .btn-filter-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .btn-filter-wrapper .filter-spacer {
-            height: 22px;
-        }
-
-        .btn-filter {
-            background: white;
+        .filter-dropdown.has-select::after {
+            content: "▼";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
             color: #2e7d32;
-            border: 2px solid #2e7d32;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 0.95em;
+            font-size: 0.8em;
+        }
+
+        .filter-dropdown select option {
+            padding: 10px;
+        }
+
+        /* Indicador de filtro activo */
+        .filter-dropdown.active select,
+        .filter-dropdown.active input {
+            border-color: #2e7d32;
+            background: #e8f5e9;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
         }
 
-        .btn-filter:hover {
-            background: #2e7d32;
-            color: white;
-            transform: translateY(-1px);
+        .filter-dropdown.active.has-select::after {
+            color: #1b5e20;
         }
 
-        /* ===== FILA DE ACCIONES ===== */
-        .actions-row {
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             gap: 10px;
-            padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
         }
 
-        /* ===== BOTONES ===== */
         .btn {
-            padding: 12px 25px;
+            padding: 15px 25px;
             border: none;
             border-radius: 10px;
             font-size: 1em;
@@ -404,6 +348,57 @@
         .btn-secondary:hover {
             background: #2e7d32;
             color: white;
+        }
+
+        .btn-clear {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-clear:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        /* Badge de filtros activos */
+        .active-filters {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .filter-badge-remove {
+            background: none;
+            border: none;
+            color: #1b5e20;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .filter-badge-remove:hover {
+            background: #c8e6c9;
         }
 
         /* ===== ESTADÍSTICAS ===== */
@@ -668,49 +663,24 @@
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 1200px) {
-            .filters-row {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-
-            .search-box {
-                grid-column: 1 / -1;
-            }
-
-            .btn-filter-wrapper {
-                grid-column: 1 / -1;
-            }
-        }
-
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
             }
 
-            .controls-section {
-                padding: 15px;
-            }
-
-            .filters-row {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .search-box,
-            .filter-group,
-            .btn-filter-wrapper {
-                grid-column: 1;
-            }
-
-            .actions-row {
+            .search-form {
                 flex-direction: column;
-                align-items: stretch;
             }
 
-            .btn {
+            .search-input-wrapper,
+            .filters-wrapper,
+            .action-buttons {
                 width: 100%;
-                justify-content: center;
+            }
+
+            .filter-dropdown select,
+            .filter-dropdown input {
+                width: 100%;
             }
 
             .empresas-grid {
@@ -772,43 +742,36 @@
         </div>
         {% endif %}
 
-        <!-- CONTROLES Y FILTROS -->
+        <!-- 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS MEJORADA -->
         <div class="controls-section">
-            <form method="get">
-                <div class="filters-row">
-                    <!-- Búsqueda -->
+            <form method="get" class="search-form" id="filterForm">
+                <div class="search-input-wrapper">
                     <div class="search-box">
-                        <label class="search-label">BÚSQUEDA</label>
-                        <div class="search-input-wrapper">
-                            <input 
-                                type="text" 
-                                name="search" 
-                                placeholder="Buscar por nombre, NIT, contacto o correo..." 
-                                value="{{ search|default:'' }}"
-                            >
-                        </div>
-                        <div class="search-hint">💡 Busca por nombre, NIT, contacto o correo</div>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Buscar por nombre, NIT, contacto o correo..." 
+                            value="{{ search|default:'' }}"
+                            id="searchInput"
+                        >
                     </div>
-
-                    <!-- Municipio -->
-                    <div class="filter-group">
-                        <label for="filtro_municipio">MUNICIPIO</label>
-                        <select name="municipio" id="filtro_municipio">
-                            <option value="">Todos</option>
+                </div>
+                
+                <div class="filters-wrapper">
+                    <div class="filter-dropdown has-select {% if municipio_filter %}active{% endif %}">
+                        <select name="municipio" id="municipioFilter">
+                            <option value="">🏙️ Todos los municipios</option>
                             {% for muni in municipios %}
                                 <option value="{{ muni }}" {% if municipio_filter == muni %}selected{% endif %}>
                                     {{ muni }}
                                 </option>
                             {% endfor %}
                         </select>
-                        <div class="filter-spacer"></div>
                     </div>
 
-                    <!-- Rango de Fechas -->
-                    <div class="filter-group">
-                        <label for="filtro_rango_fecha">📅 PERÍODO</label>
-                        <select name="rango_fecha" id="filtro_rango_fecha">
-                            <option value="">Todas las fechas</option>
+                    <div class="filter-dropdown has-select {% if rango_fecha %}active{% endif %}">
+                        <select name="rango_fecha" id="rangoFechaFilter">
+                            <option value="">📅 Todas las fechas</option>
                             <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
                             <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
                             <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
@@ -819,47 +782,79 @@
                             <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
                             <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
                         </select>
-                        <div class="filter-spacer"></div>
                     </div>
 
-                    <!-- Mínimo Trabajadores -->
-                    <div class="filter-group">
-                        <label for="filtro_min_trabajadores">MIN. TRABAJADORES</label>
+                    <div class="filter-dropdown {% if min_trabajadores_filter %}active{% endif %}">
                         <input 
                             type="number" 
                             name="min_trabajadores" 
-                            id="filtro_min_trabajadores"
-                            placeholder="Ej: 10" 
+                            id="minTrabajadoresFilter"
+                            placeholder="👥 Min. trabajadores" 
                             value="{{ min_trabajadores_filter|default:'' }}" 
                             min="0"
                         >
-                        <div class="filter-spacer"></div>
                     </div>
-
-                    <!-- Botón Filtrar -->
-                    <div class="btn-filter-wrapper">
-                        <div class="filter-spacer"></div>
-                        <button type="submit" class="btn-filter">
-                            🔍 Filtrar
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-secondary">
+                            🔍 Buscar
                         </button>
-                        <div class="filter-spacer"></div>
-                    </div>
-                </div>
-
-                <!-- Fila de Acciones -->
-                <div class="actions-row">
-                    {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
-                        <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-secondary">
-                            🔄 Limpiar Filtros
+                        
+                        {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
+                        <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-clear">
+                            🔄 Limpiar
                         </a>
-                    {% else %}
-                        <div></div>
-                    {% endif %}
-                    <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary">
-                        ➕ Nueva Empresa
-                    </a>
+                        {% endif %}
+                    </div>
                 </div>
             </form>
+            
+            <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary">
+                ➕ Nueva Empresa
+            </a>
+
+            <!-- 🏷️ BADGES DE FILTROS ACTIVOS -->
+            {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
+            <div class="active-filters">
+                {% if search %}
+                <div class="filter-badge">
+                    🔍 Búsqueda: "{{ search }}"
+                    <button type="button" class="filter-badge-remove" onclick="removeFilter('search')">×</button>
+                </div>
+                {% endif %}
+                
+                {% if municipio_filter %}
+                <div class="filter-badge">
+                    🏙️ Municipio: "{{ municipio_filter }}"
+                    <button type="button" class="filter-badge-remove" onclick="removeFilter('municipio')">×</button>
+                </div>
+                {% endif %}
+                
+                {% if min_trabajadores_filter %}
+                <div class="filter-badge">
+                    👥 Mínimo: {{ min_trabajadores_filter }} trabajadores
+                    <button type="button" class="filter-badge-remove" onclick="removeFilter('min_trabajadores')">×</button>
+                </div>
+                {% endif %}
+
+                {% if rango_fecha %}
+                <div class="filter-badge">
+                    📅 Período: 
+                    {% if rango_fecha == 'hoy' %}Hoy
+                    {% elif rango_fecha == 'ayer' %}Ayer
+                    {% elif rango_fecha == 'esta_semana' %}Esta semana
+                    {% elif rango_fecha == 'semana_pasada' %}Semana pasada
+                    {% elif rango_fecha == 'este_mes' %}Este mes
+                    {% elif rango_fecha == 'mes_pasado' %}Mes pasado
+                    {% elif rango_fecha == 'ultimos_7_dias' %}Últimos 7 días
+                    {% elif rango_fecha == 'ultimos_30_dias' %}Últimos 30 días
+                    {% elif rango_fecha == 'este_año' %}Este año
+                    {% endif %}
+                    <button type="button" class="filter-badge-remove" onclick="removeFilter('rango_fecha')">×</button>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
 
         <!-- ESTADÍSTICAS -->
@@ -946,7 +941,7 @@
             <div class="empty-state-icon">🏢</div>
             <h3>No se encontraron empresas</h3>
             <p>
-                {% if search or municipio_filter or min_trabajadores_filter %}
+                {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
                     No hay empresas que coincidan con los filtros aplicados
                 {% else %}
                     Aún no hay empresas registradas en el sistema
@@ -972,7 +967,22 @@
                 }, 8000);
             });
         });
+
+        // Función para remover filtros individuales
+        function removeFilter(filterName) {
+            const form = document.getElementById('filterForm');
+            const input = form.querySelector(`[name="${filterName}"]`);
+            if (input) {
+                if (input.type === 'text' || input.type === 'number') {
+                    input.value = '';
+                } else {
+                    input.value = '';
+                }
+                form.submit();
+            }
+        }
     </script>
+
     {% include 'core/accessibility.html' %}
 </body>
 </html>

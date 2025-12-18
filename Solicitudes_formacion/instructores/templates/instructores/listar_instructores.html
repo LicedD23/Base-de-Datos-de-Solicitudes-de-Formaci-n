@@ -184,57 +184,84 @@
             border-radius:15px;
             margin-bottom:25px;
             box-shadow :0 4px 15px rgba(0,0,0,0.08);
-            display:flex;
-            flex-wrap:wrap;
-            gap:15px;
-            align-items:center;
-            justify-content:space-between;
+            display:grid;
+            grid-template-columns:1fr auto;
+            gap:25px;
+            align-items:end;
         }
+        /*BUSCADOR ARREGLADO*/
         .search-box{
-            flex:1;
-            min-width:300px;
+            width:100%;
             position:relative;
         }
         .search-box input{
             width:100%;
-            padding:15px 20px 15px 50px;
+            height:48px;
+            padding:0 18px 0 48px;
             border:2px solid #e0e0e0;
-            border-radius:10px;
+            border-radius:12px;
             font-size:1em;
-            transition:all 0.3s ease;
+            background:white;
         }
-        .search-box input:focus{
-            outline:none;
-            border-color:#2e7d32;
-            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
-        }
+        /*Icono lupa*/
         .search-box::before{
             content:"🔍";
             position:absolute;
-            left:18px;
+            left:16px;
             top:50%;
             transform:translateY(-50%);
-            font-size:1.2em;
+            font-size:1.1em;
+            opacity:0.7;
         }
-        .filter-group{
-            display:flex;
-            gap:10px;
-            align-items.center;
-            flex-wrap:wrap;
+        .search-box input:focus{
+            outline:none;
+            border-color:@2e7d32;
+            box-shadow:0 0 0 3px rgba(46,125,50,0.12);
         }
-        .filter-group select{
-            padding:12px 20px;
+        /* FORMULARIO*/
+        .filters-layout{
+            display:grid;
+            grid-template-columns:1fr 260px 220px 140px;
+            gap:15px;
+            align-items:center;
+        }
+        /*SELECTS*/
+        .filter-select{
+            width:100%;
+            padding:14px 18px;
             border:2px solid #e0e0e0;
             border-radius:10px;
             font-size:1em;
-            cursor:pointer;
             background:white;
-            transition:all 0.3s ease;
+            cursor:pointer;
         }
-
-        .filter-group select:focus{
+        .filter-select:focus{
             outline:none;
             border-color:#2e7d32;
+            box-shadow:0 0 0 3px rgba(46,125,50,0.1);
+        }
+        /*BOTON FILTRAR*/
+        .filter-btn{
+            height:48px;
+            justify-content:center;
+        }
+        /* BOTON CREAR*/
+        .btn-create{
+            height:48px;
+            white-space:nowrap;
+        }
+        /*====== RESPONSIVE ======*/
+        @media (max-width:992px){
+            .controls-section{
+                grid-template-columns:1fr;
+            }
+            .filters-layout{
+                grid-template-columns:1fr;
+            }
+            .btn-create{
+                width:100%;
+                text-align:center;
+            }
         }
         .btn{
             padding:12px 25px;
@@ -540,36 +567,47 @@
             {% endfor %}
         </div>
         {% endif %}
+        
         <div class="controls-section">
-            <form method="get" style="display:flex; flex:1; gap: 15px; flex-wrap: wrap;">
+            <form method="get" class="filters-layout">
+
+                <!-- Buscador -->
                 <div class="search-box">
-                    <input type="text" name="search" placeholder="Buscar por nombre, correo o  telefono..." value="{{search}}">
+                    <input type="text"
+                        name="search"
+                        placeholder="Buscar por nombre, correo o teléfono..."
+                        value="{{ search }}">
                 </div>
 
-                <div class="filter-group">
-                    <select name="especialidad" onchange="this.form.submit()">
-                        <option value="">Todos los especialidades</option>
-                        {% for especialidad in especialidades %}
-                            <option value="{{ especialidad.id }}" {% if especialidad_filter == especialidad.id|stringformat:"s" %}selected{% endif %}>
+                <!-- Especialidad -->
+                <select name="especialidad" class="filter-select">
+                    <option value="">Todas las especialidades</option>
+                    {% for especialidad in especialidades %}
+                        <option value="{{ especialidad.id }}"
+                            {% if especialidad_filter == especialidad.id|stringformat:"s" %}selected{% endif %}>
                             {{ especialidad.nombre }}
                         </option>
-                        {% endfor %}
-                    </select>
-                    <select name="activo" onchange="this-form.submit()">
-                        <option value="">Todos los estados</option>
-                        <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>Activos</option>
-                        <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
-                    </select>
+                    {% endfor %}
+                </select>
 
-                    <button type ="submit" class="btn btn-secondary">Filtrar</button>
-                </div>
+                <!-- Estado -->
+                <select name="activo" class="filter-select">
+                    <option value="">Todos los estados</option>
+                    <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>Activos</option>
+                    <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
+                </select>
+
+                <!-- Botón filtrar -->
+                <button type="submit" class="btn btn-secondary filter-btn">
+                    🔍 Filtrar
+                </button>
             </form>
 
-            <a href="{%url 'instructores:crear_instructor'%}" class="btn btn-primary">
-                ➕ Nuevo Instructor
+            <!-- Acción principal -->
+            <a href="{% url 'instructores:crear_instructor' %}" class="btn btn-primary btn-create">
+                ➕ Nuevo instructor
             </a>
         </div>
-
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total de Instructores</h3>

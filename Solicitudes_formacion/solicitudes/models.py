@@ -18,8 +18,10 @@ class Solicitud(models.Model):
     instructor_asignado = models.ForeignKey(Instructor, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_respuesta = models.DateTimeField(null=True, blank=True)
     fecha_atencion = models.DateTimeField(null=True, blank=True)
+    fecha_finalizacion  = models.DateTimeField(null=True, blank=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='RECIBIDA')
     observaciones = models.TextField(blank=True)
+    numero_aprendices = models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Solicitudes"
@@ -27,3 +29,15 @@ class Solicitud(models.Model):
 
     def __str__(self):
         return f"{self.empresa.nombre} - {self.programa.nombre}"
+    
+    def puede_cambiar_a_estado(self, nuevo_estado):
+        """Valida si es posible cambiar al nuevo estado segun el  flujo logico"""
+        flujo_valido = {
+            'RECIBIDA': ['RESPONDIDA'],
+            'RESPONDIDA': ['ATENDIDA', 'FINALIZADA'],
+            'ATENDIDA': ['FINALIZADA', 'RESPONDIDA'],
+            'FINALIZADA': []
+        }
+        estados_permitidos = flujo_valido.get(self.estado,[])
+        return nuevo_estado in estados_permitidos
+        

@@ -119,123 +119,138 @@
             color: #999;
         }
 
-        /* Mensajes*/
-        .message-container{
-            margin-bottom:25px;
-        }
-        .alert{
-            padding:18px 25px;
-            border-radius:12px;
-            margin-bottom:15px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-            font-size:1em;
-            font-weight:500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            animation:slideInDown 0.4s ease-out;
-            position:relative;
-            overflow:hidden;
-        }
-        @keyframes slideInDown{
-            from{
-                transform:translateY(-20px);
-                opacity:0;
-            }
-            to{
-                transform:translateY(0);
-                opacity:1
-            }
-        }
-        .alert::before{
-            content:'';
-            position:absolute;
-            left:0;
-            top:0;
-            bottom:0;
-            width:5px;
-        }
-        .alert-success{
-            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color:white;
-            border:2px solid #1b5e20;
-        }
-        .alert-success::before{
-            background:#fff;
-        }
-        .alert-success .alert-icon{
-            font-size:1.8em;
-            animation:scaleIn 0.5s ease-out;
-        }
-        @keyframes scaleIn {
-            0%{
-                transform:scale(0);
-            }
-            50%{
-                transform:scale(1.2);
-            }
-            100%{
-                transform:scale(1);
-            }
-        }
-        alert-error{
-            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color:white;
-            border:2px solid #b71c1c;
-        }
-        .alert-error .alert-icon{
-            font-size:1.8em;
-            animation:shake 0.5s ease-out;
-        }
-        @keyframes shake{
-            0%, 100%{
-                transform:translateX(0);
-            }
-            25%{
-                transform:translateX(-10px);
-            }
-            75%{
-                transform:translateX(10px);
-            }
-        }
-        .alert-warning{
-            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color:white,
-            border:2px solid #e65100;
-        }
-        .alert-warning::before{
-            baclground:#fff;
+        /* Mensajes */
+        .message-container {
+            margin-bottom: 25px;
         }
 
-        .alert-icon{
-            font-size:1.5em;
-            flex.shrink:0;
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        .alert-content{
-            flex:1;
-            line-height:1.5;
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        .alert-close{
-            background:rgba(255,255,255,0.2);
-            border:2px solid rgba(255,255,255,0.3);
-            color:white;
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:bold;
-            font-size:1.2em;
-            transition:all 0.3s ease;
-            flex-shrink:0;
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
         }
-        .alert-close:hover{
-            background:rgba(255,255,255,0.4);
-            transform:scale(1.1);
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
-        
+
+        .alert-success::before {
+            background: #fff;
+        }
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
+        }
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
+        }
+
+        .alert-warning::before {
+            background: #fff;
+        }
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -420,38 +435,6 @@
             font-size: 0.95em;
         }
 
-        .asignar-instructor-section {
-            background: #f0f4f8;
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px dashed #1976d2;
-            margin-top: 20px;
-        }
-
-        .asignar-instructor-section h3 {
-            color: #1976d2;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-
-        .instructor-select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .instructor-select:focus {
-            outline: none;
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-        }
-
         .timeline {
             position: relative;
             padding-left: 40px;
@@ -595,19 +578,19 @@
         }
 
         /* FOOTER STYLES */
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
-
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
@@ -658,8 +641,8 @@
             <span>Solicitud #{{ solicitud.id }}</span>
         </div>
 
-        <!-- Mensajes-->
-        {% if messages%}
+        <!-- Mensajes -->
+        {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
@@ -673,13 +656,14 @@
                         {% endif %}
                     </div>
                     <div class="alert-content">
-                        {{message}}
+                        {{ message }}
                     </div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-                {% endfor %}
-                </div>
-                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <br>
         <div class="action-buttons">
             <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-back">
@@ -694,6 +678,7 @@
         </div>
         <br>
         <br>
+
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Fecha de Recepción</h3>
@@ -760,75 +745,51 @@
                     <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
                 </div>
                 {% endif %}
+                {% if solicitud.fecha_finalizacion %}
+                <div class="info-item">
+                    <label>Finalización</label>
+                    <div class="value">{{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
+        <!-- SECCIÓN DE INSTRUCTOR: SOLO INFORMACIÓN, SIN FORMULARIO DE ASIGNACIÓN -->
+        {% if solicitud.instructor_asignado %}
         <div class="section">
             <h2>👨‍🏫 Instructor Asignado</h2>
-            
-            {% if solicitud.instructor_asignado %}
-                <div class="instructor-card">
-                    <div class="instructor-header">
-                        <div class="instructor-avatar">
-                            {{ solicitud.instructor_asignado.nombre.0|upper }}
-                        </div>
-                        <div>
-                            <div class="instructor-name">{{ solicitud.instructor_asignado.nombre }}</div>
-                            <div class="instructor-info">Instructor Especializado</div>
-                        </div>
+            <div class="instructor-card">
+                <div class="instructor-header">
+                    <div class="instructor-avatar">
+                        {{ solicitud.instructor_asignado.nombre.0|upper }}
                     </div>
-                    <div class="instructor-details">
-                        <div class="instructor-detail-item">
-                            <span>📧</span>
-                            <span>{{ solicitud.instructor_asignado.correo }}</span>
-                        </div>
-                        <div class="instructor-detail-item">
-                            <span>📞</span>
-                            <span>{{ solicitud.instructor_asignado.telefono }}</span>
-                        </div>
-                        <div class="instructor-detail-item">
-                            <span>📚</span>
-                            <span>{{ solicitud.instructor_asignado.especialidad.count }} especialidades</span>
-                        </div>
-                    </div>
-                    <div class="action-buttons" style="margin-top: 20px;">
-                        <a href="{% url 'instructores:detalle_instructor' solicitud.instructor_asignado.id %}" class="btn btn-info">
-                            👁️ Ver Perfil Completo
-                        </a>
+                    <div>
+                        <div class="instructor-name">{{ solicitud.instructor_asignado.nombre }}</div>
+                        <div class="instructor-info">Instructor Especializado</div>
                     </div>
                 </div>
-            {% else %}
-                <div class="asignar-instructor-section">
-                    <h3>📌 Asignar Instructor</h3>
-                    <p style="color: #666; margin-bottom: 15px;">
-                        Esta solicitud aún no tiene instructor asignado. Selecciona uno de los instructores disponibles para este programa.
-                    </p>
-                    {% if instructores_disponibles %}
-                        <form method="post" action="#">
-                            {% csrf_token %}
-                            <select name="instructor_id" class="instructor-select" required>
-                                <option value="">-- Seleccionar Instructor --</option>
-                                {% for instructor in instructores_disponibles %}
-                                    <option value="{{ instructor.id }}">
-                                        {{ instructor.nombre }} - {{ instructor.correo }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <div class="action-buttons" style="margin-top: 15px; justify-content: flex-start;">
-                                <button type="submit" class="btn btn-primary">
-                                    ✓ Asignar Instructor
-                                </button>
-                            </div>
-                        </form>
-                    {% else %}
-                        <div class="empty-state">
-                            <div class="empty-state-icon">⚠️</div>
-                            <p>No hay instructores disponibles para este programa</p>
-                        </div>
-                    {% endif %}
+                <div class="instructor-details">
+                    <div class="instructor-detail-item">
+                        <span>📧</span>
+                        <span>{{ solicitud.instructor_asignado.correo }}</span>
+                    </div>
+                    <div class="instructor-detail-item">
+                        <span>📞</span>
+                        <span>{{ solicitud.instructor_asignado.telefono }}</span>
+                    </div>
+                    <div class="instructor-detail-item">
+                        <span>📚</span>
+                        <span>{{ solicitud.instructor_asignado.especialidad.count }} especialidades</span>
+                    </div>
                 </div>
-            {% endif %}
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <a href="{% url 'instructores:detalle_instructor' solicitud.instructor_asignado.id %}" class="btn btn-info">
+                        👁️ Ver Perfil Completo
+                    </a>
+                </div>
+            </div>
         </div>
+        {% endif %}
 
         <div class="section">
             <h2>🕒 Historial de Estados</h2>
@@ -894,6 +855,7 @@
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
     <script>
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
@@ -922,6 +884,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    {% include 'core/accessibility.html'%}
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
