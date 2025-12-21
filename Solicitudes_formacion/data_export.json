@@ -1,0 +1,2086 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$CeZduHabtPv2EFl0fDgD4e$ddWDjRK+QWRxsshvnq/7RLtTqCvsucYOv0Ltdvjrj2A=",
+        "last_login": "2025-12-19T13:02:18.766Z",
+        "is_superuser": true,
+        "username": "LicedD",
+        "first_name": "Liced Dayana",
+        "last_name": "Diaz Mayorga",
+        "email": "dayadiz.23@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-10-23T20:00:39.613Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$DtM0ZwlzEcqUXytyGBdYBP$htgs7Q90tp1RDtULAlRLYPSi8I/LiJQzME/eESVOXnA=",
+        "last_login": "2025-12-10T19:48:16.467Z",
+        "is_superuser": false,
+        "username": "DayanaDM",
+        "first_name": "Dayana",
+        "last_name": "Diaz",
+        "email": "dayadi2006@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-11-25T16:56:45.810Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$cRE2MMk1Uq7rLOtkuDVUbu$/5I6944cP6Aa5k4nFXDHXTlWirt2fQzwwz8XVkiKxBs=",
+        "last_login": "2025-12-16T15:52:42.897Z",
+        "is_superuser": true,
+        "username": "Martha",
+        "first_name": "Martha Elena",
+        "last_name": "Mayorga Palacios",
+        "email": "liceddiaz.08@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-12-09T20:08:11.600Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$gM78z1XgzTgEUA6yGlQZVd$0e6q/nZCNGQjVOKyXTWevaYa2z+489QQ6g8OTbays/E=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "Hector",
+        "first_name": "",
+        "last_name": "",
+        "email": "marthaE@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-12-11T16:31:17.855Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "13ffq7t2gyn3afdq1wesgrv079vwlzqs",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAoUIpL956BzDCDVA0kpV0Z765NutDtf-_9l4iwrSVunZc4kzgLLU6_G0J6cN0B3aHemkytrsuMclfkQbu8NuLn5XD_Dgr08q0zOAwQTM4pgQNi7zENLo1qYoWWOJCzmtCzydp47ycE4Iw4Kh0Ga8T7AybbOSE:1vHNto:dsCXMWAftW9tWhNQV4wF-KbAhVpiaDfKpSCeSEyco5Q",
+        "expire_date": "2025-11-21T14:57:12.395Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "eqmrevjp2sieoodz8y0mc9hazd0pc70d",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAoUIpL956BzDCDVA0kpV0Z765NutDtf-_9l4iwrSVunZc4kzgLLU6_G0J6cN0B3aHemkytrsuMclfkQbu8NuLn5XD_Dgr08q0zOAwQTM4pgQNi7zENLo1qYoWWOJCzmtCzydp47ycE4Iw4Kh0Ga8T7AybbOSE:1vWa7e:VwvnWNxRUBKDGwWEzk_g3GDq7fUikl-LrQk4b04PMOM",
+        "expire_date": "2026-01-02T13:02:18.785Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "h2m8lzi8cgqb5yeg0hpynpul3m3utm9c",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAoUIpL956BzDCDVA0kpV0Z765NutDtf-_9l4iwrSVunZc4kzgLLU6_G0J6cN0B3aHemkytrsuMclfkQbu8NuLn5XD_Dgr08q0zOAwQTM4pgQNi7zENLo1qYoWWOJCzmtCzydp47ycE4Iw4Kh0Ga8T7AybbOSE:1vQphE:yRu7RQvr6YasZck1jUYhVJgCNWCiNWLayA3rAQnQkI4",
+        "expire_date": "2025-12-17T16:27:16.737Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "onk70coa16qoarlyhcbuhqlt3jifwk0y",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAoUIpL956BzDCDVA0kpV0Z765NutDtf-_9l4iwrSVunZc4kzgLLU6_G0J6cN0B3aHemkytrsuMclfkQbu8NuLn5XD_Dgr08q0zOAwQTM4pgQNi7zENLo1qYoWWOJCzmtCzydp47ycE4Iw4Kh0Ga8T7AybbOSE:1vSzEO:7nT-7NNfnZBj5faQed0LjsVjhavS2EQPBXJN5LIDK8E",
+        "expire_date": "2025-12-23T15:02:24.765Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "onsz7oeuukh5kzuywrl0apywmd1ubyv3",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAoUIpL956BzDCDVA0kpV0Z765NutDtf-_9l4iwrSVunZc4kzgLLU6_G0J6cN0B3aHemkytrsuMclfkQbu8NuLn5XD_Dgr08q0zOAwQTM4pgQNi7zENLo1qYoWWOJCzmtCzydp47ycE4Iw4Kh0Ga8T7AybbOSE:1vCGXL:FMeQQyoTX6EUlORzsShMmtM7Gkmm9c4stCTsVuGjkE4",
+        "expire_date": "2025-11-07T12:04:51.328Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 1,
+    "fields": {
+        "nombre": "Maquinaria",
+        "descripcion": "Es una formacion en operacion y mantenimiento  de maquinaria pesada, enfocada en  el  desarrrollo de habilidades para operar de forma segura y eficiente equipos como excavadoras, cargadores frontales y retroexcavadoras",
+        "activo": true,
+        "fecha_creacion": "2025-10-23T20:12:56.469Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 2,
+    "fields": {
+        "nombre": " Desarrollo de Software",
+        "descripcion": "es una formación tecnológica de 27 meses enfocada en la creación de soluciones de software para empresas, desde la elaboración de propuestas técnicas hasta la implementación y el mantenimiento de aplicaciones web y de escritorio",
+        "activo": true,
+        "fecha_creacion": "2025-10-27T20:46:10.599Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 3,
+    "fields": {
+        "nombre": "Topografia",
+        "descripcion": "se enfoca en formar tecnólogos en Levantamientos Topográficos y Georreferenciación, una carrera que prepara a los aprendices para realizar mediciones precisas del terreno, interpretar planos y desarrollar el modelamiento digital del relieve y otras características del suelo.",
+        "activo": true,
+        "fecha_creacion": "2025-10-27T20:47:55.663Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 4,
+    "fields": {
+        "nombre": "Química Aplicada",
+        "descripcion": "se enfoca en la formación de tecnólogos y técnicos con habilidades para aplicar conocimientos químicos en procesos industriales. ",
+        "activo": true,
+        "fecha_creacion": "2025-10-27T20:51:04.912Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 5,
+    "fields": {
+        "nombre": "Salud",
+        "descripcion": "busca formar técnicos y tecnólogos con habilidades prácticas para apoyar en promoción, prevención y asistencia de la salud, a través de programas en áreas como salud pública, salud ocupacional, atención básica, bioseguridad y primeros auxilios.",
+        "activo": true,
+        "fecha_creacion": "2025-12-03T15:47:42.703Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 6,
+    "fields": {
+        "nombre": "Administración",
+        "descripcion": " Tecnólogo en Contabilidad y Finanzas, Tecnólogo en Gestión Financiera y de Tesorería, y cursos más cortos como Contabilidad para no contadores y Gestión de Tesorería.",
+        "activo": true,
+        "fecha_creacion": "2025-12-03T18:28:28.866Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 7,
+    "fields": {
+        "nombre": "Agricola",
+        "descripcion": "agricultura y el  campo",
+        "activo": true,
+        "fecha_creacion": "2025-12-03T20:24:03.124Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 8,
+    "fields": {
+        "nombre": "Ganadera",
+        "descripcion": "Vacas",
+        "activo": true,
+        "fecha_creacion": "2025-12-03T20:26:28.754Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 9,
+    "fields": {
+        "nombre": "Amasijos",
+        "descripcion": " regañonas  con arepas de trigo",
+        "activo": true,
+        "fecha_creacion": "2025-12-03T20:29:09.551Z"
+    }
+},
+{
+    "model": "area_formacion.area",
+    "pk": 10,
+    "fields": {
+        "nombre": "Contrucciones",
+        "descripcion": "yuhyhbnnyyhgbgbnn",
+        "activo": true,
+        "fecha_creacion": "2025-12-04T12:12:24.823Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 1,
+    "fields": {
+        "area": 1,
+        "nombre": "operador de excavadora",
+        "codigo": "",
+        "descripcion": "Un operador de excavadora en el SENA es una persona que se forma para operar maquinaria pesada de manera segura y eficiente, realizando tareas como la excavación, carga, nivelación y transporte de materiales en proyectos de construcción, minería y obras civiles.",
+        "duracion_horas": 140,
+        "activo": true,
+        "fecha_creacion": "2025-10-23T20:12:56.472Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 2,
+    "fields": {
+        "area": 2,
+        "nombre": "Ciberseguridad",
+        "codigo": "2347568",
+        "descripcion": "La ciberseguridad es la práctica de proteger sistemas informáticos, redes, dispositivos y datos de ataques digitales maliciosos, acceso no autorizado o daños. Se enfoca en salvaguardar la información digital, ya sea personal, de negocios o gubernamental, para mantener la integridad, confidencialidad y disponibilidad de los sistemas y datos. ",
+        "duracion_horas": 50,
+        "activo": false,
+        "fecha_creacion": "2025-11-11T19:10:17.077Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 3,
+    "fields": {
+        "area": 3,
+        "nombre": "Georreferenciación",
+        "codigo": "",
+        "descripcion": "La georreferenciación en la topografía del SENA es la técnica para asignar coordenadas geográficas (latitud, longitud, altura) a puntos, características o planos de un terreno, con el fin de ubicar elementos de forma precisa en la superficie terrestre.",
+        "duracion_horas": 48,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T13:11:45.564Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 4,
+    "fields": {
+        "area": 4,
+        "nombre": "Tecnólogo en Procesos de la Industria Química",
+        "codigo": "",
+        "descripcion": "El programa Tecnólogo en Procesos de la Industria Química del SENA es una formación técnica que prepara profesionales para supervisar, controlar y operar procesos en diversas industrias, desde la fabricación de productos químicos hasta el tratamiento de aguas y alimentos. ",
+        "duracion_horas": 40,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T13:23:32.718Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 5,
+    "fields": {
+        "area": 1,
+        "nombre": "Operador de Retrocargador",
+        "codigo": "",
+        "descripcion": " Un operador de retrocargador es un profesional capacitado para manejar maquinaria pesada como la retroexcavadora, realizando tareas de excavación, carga y nivelación de terrenos para construcción.",
+        "duracion_horas": 40,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T18:45:04.277Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 6,
+    "fields": {
+        "area": 1,
+        "nombre": "Explotación de obras civiles y mineras de acuerdo  con el manual  del  equipo",
+        "codigo": "",
+        "descripcion": "La explotación de obras civiles y mineras, según el manual del equipo del Sena, se refiere al uso adecuado de maquinaria y procedimientos para excavar, extraer y procesar recursos minerales y construir infraestructura. Esto se rige por la aplicación de técnicas de perforación, voladura, sostenimiento y seguridad, además del uso de software especializado, como parte integral de los programas de formación del SENA. ",
+        "duracion_horas": 40,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T18:48:15.855Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 7,
+    "fields": {
+        "area": 1,
+        "nombre": "Operador de Minicargador",
+        "codigo": "",
+        "descripcion": "Es un profesional que ha recibido formación técnica para manejar de forma segura y eficiente estos equipos compactos, que se utilizan para cargar, descargar, nivelar y desplazar materiales en diversas industrias como la construcción, la minería y la agricultura.",
+        "duracion_horas": 40,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T18:51:09.568Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 8,
+    "fields": {
+        "area": 1,
+        "nombre": "Operador de Montacargas",
+        "codigo": "",
+        "descripcion": "Un operador de montacargas es una persona que ha recibido capacitación para manipular estos equipos de manera segura y eficiente en almacenes, fábricas y otros entornos logísticos. La formación cubre desde la operación básica hasta el mantenimiento preventivo y la normativa de seguridad, permitiendo el traslado de mercancías y la optimización de procesos. ",
+        "duracion_horas": 50,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T18:53:10.033Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 9,
+    "fields": {
+        "area": 1,
+        "nombre": "Sistemas Hidráulicos en  Maquinaria Pesada",
+        "codigo": "",
+        "descripcion": "Los Sistemas Hidráulicos en Maquinaria Pesada se refieren a un programa de formación que enseña a los aprendices cómo funcionan, se operan y se mantienen los sistemas que usan fluidos a presión para realizar trabajos pesados. La formación se centra en los componentes clave como bombas, cilindros y válvulas, y su aplicación práctica en equipos como excavadoras, grúas y volquetes. ",
+        "duracion_horas": 40,
+        "activo": true,
+        "fecha_creacion": "2025-11-12T18:55:55.581Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 10,
+    "fields": {
+        "area": 2,
+        "nombre": "Análisis Exploratorio de Datos en Python",
+        "codigo": "4567895",
+        "descripcion": "El Análisis Exploratorio de Datos (EDA) en Python, según la oferta del SENA, es una formación que enseña a usar herramientas de programación (Python) y estadísticas para comprender datos masivos. ",
+        "duracion_horas": 45,
+        "activo": true,
+        "fecha_creacion": "2025-11-13T12:14:17.954Z"
+    }
+},
+{
+    "model": "programas.programa",
+    "pk": 15,
+    "fields": {
+        "area": 2,
+        "nombre": "Análisis de datos",
+        "codigo": "3456784",
+        "descripcion": "msñdgfgbfdvfdbngr",
+        "duracion_horas": 67,
+        "activo": false,
+        "fecha_creacion": "2025-12-03T16:23:03.056Z"
+    }
+},
+{
+    "model": "instructores.instructor",
+    "pk": 1,
+    "fields": {
+        "nombre": "Norberto Romero  Gutiérrez Perez",
+        "telefono": "3142460488",
+        "correo": "norberto@sena.edu.com",
+        "activo": true,
+        "especialidad": [
+            8,
+            1
+        ]
+    }
+},
+{
+    "model": "instructores.instructor",
+    "pk": 2,
+    "fields": {
+        "nombre": "Marcos Ferney Suarez Martinez",
+        "telefono": "3225764312",
+        "correo": "suares45@sena.edu.co",
+        "activo": true,
+        "especialidad": [
+            7,
+            8,
+            5
+        ]
+    }
+},
+{
+    "model": "instructores.instructor",
+    "pk": 5,
+    "fields": {
+        "nombre": "Martha Elena Mayorga",
+        "telefono": "3214567898",
+        "correo": "an@gmail.com",
+        "activo": false,
+        "especialidad": [
+            3
+        ]
+    }
+},
+{
+    "model": "instructores.instructor",
+    "pk": 6,
+    "fields": {
+        "nombre": "Carlos Mateus Gonzales gomez ",
+        "telefono": "312475678",
+        "correo": "carlo@sena.edu.com",
+        "activo": true,
+        "especialidad": [
+            6,
+            8,
+            9,
+            4
+        ]
+    }
+},
+{
+    "model": "instructores.instructor",
+    "pk": 7,
+    "fields": {
+        "nombre": "Miguel Diaz",
+        "telefono": "313456798",
+        "correo": "migue@sena.edu.co",
+        "activo": false,
+        "especialidad": [
+            7
+        ]
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 1,
+    "fields": {
+        "nombre": "ALTARA INGENIERIA SAS",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Laura Gómez",
+        "telefono": "3104567890",
+        "correo": "contacto@altarasolutions.com",
+        "numero_trabajadores": 45,
+        "municipio": "Medellín",
+        "fecha_registro": "2025-10-23T20:24:38.809Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 2,
+    "fields": {
+        "nombre": "Constructora FYT S.A.S",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Martha Mayorga",
+        "telefono": "3114532122",
+        "correo": "constructora@fyt.com",
+        "numero_trabajadores": 25,
+        "municipio": "Sogamoso",
+        "fecha_registro": "2025-11-05T12:46:47.926Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 3,
+    "fields": {
+        "nombre": "construcción de obras civiles",
+        "nit": null,
+        "direccion": "",
+        "contacto": "María Rodríguez",
+        "telefono": "310-555-1234   -",
+        "correo": "maria.rodriguez@construccionesabc.com",
+        "numero_trabajadores": 15,
+        "municipio": "Bogotá",
+        "fecha_registro": "2025-11-11T18:41:10.495Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 4,
+    "fields": {
+        "nombre": "TECNOLOGÍAS INNOVATEC S.A.S",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Sin contacto especificado",
+        "telefono": "320-456-7890",
+        "correo": "laura.martinez@innovatec.com",
+        "numero_trabajadores": 0,
+        "municipio": "No especificado",
+        "fecha_registro": "2025-11-12T13:01:44.166Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 5,
+    "fields": {
+        "nombre": "TOPOGRAFÍA Y GEODATOS S.A.S",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Sin contacto especificado",
+        "telefono": "Sin teléfono",
+        "correo": "carlos.ramirez@geodatos.com",
+        "numero_trabajadores": 0,
+        "municipio": "No especificado",
+        "fecha_registro": "2025-11-12T13:15:07.505Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 6,
+    "fields": {
+        "nombre": "QUIMIPROCESOS S.A.S",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Sin contacto especificado",
+        "telefono": "Sin teléfono",
+        "correo": "maria.gomez@quimiprocesos.com",
+        "numero_trabajadores": 0,
+        "municipio": "No especificado",
+        "fecha_registro": "2025-11-12T13:37:10.228Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 18,
+    "fields": {
+        "nombre": "Empresa sin nombre",
+        "nit": null,
+        "direccion": "",
+        "contacto": "* Laura Marcela Torres",
+        "telefono": "Sin telefono",
+        "correo": "ltorres@maquinariasdelpacifico.co",
+        "numero_trabajadores": 0,
+        "municipio": "* Palmira – Valle del Cauca",
+        "fecha_registro": "2025-11-14T18:38:28.420Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 19,
+    "fields": {
+        "nombre": "* MAQUINARIAS DEL PACÍFICO S.A.S",
+        "nit": "9002769621",
+        "direccion": "",
+        "contacto": "* Laura Marcela Torres",
+        "telefono": "2315678564",
+        "correo": "ltorres@maquinariasdelpacifico.co",
+        "numero_trabajadores": 33,
+        "municipio": "Palmira",
+        "fecha_registro": "2025-11-14T18:47:58.867Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 20,
+    "fields": {
+        "nombre": "CONSTRUCCIONES EFICACES S.A.S",
+        "nit": null,
+        "direccion": "Calle 15 # 34-56, Barrio El Trapiche",
+        "contacto": "Juan Carlos Martínez",
+        "telefono": "3104567890",
+        "correo": "jmartinez@construccioneseficaces.co",
+        "numero_trabajadores": 45,
+        "municipio": "Cali",
+        "fecha_registro": "2025-11-18T13:41:55.774Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 22,
+    "fields": {
+        "nombre": "CONSTRUCCIONES ORIENTE S.A.S",
+        "nit": null,
+        "direccion": "Calle 16 # 34-56",
+        "contacto": "Liced Maria Diaz",
+        "telefono": "3194563490",
+        "correo": "maez@construccionoriente.co",
+        "numero_trabajadores": 45,
+        "municipio": "Sogamoso",
+        "fecha_registro": "2025-11-18T13:57:24.829Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 24,
+    "fields": {
+        "nombre": "MEDIO ORIENTE S.A.S",
+        "nit": null,
+        "direccion": "Calle 19 # 34-56",
+        "contacto": "Tatiana Dayan Oviedo",
+        "telefono": "3142460488",
+        "correo": "dayadiz.23@gmail.com",
+        "numero_trabajadores": 35,
+        "municipio": "Sogamoso",
+        "fecha_registro": "2025-11-19T18:45:05.666Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 25,
+    "fields": {
+        "nombre": "CONSTRUOBRAS & EQUIPOS S.A.S",
+        "nit": null,
+        "direccion": "Carrera 54 # 32-118, Parque Industrial Guayabal",
+        "contacto": "Andrés Felipe Molina",
+        "telefono": "3217079852",
+        "correo": "af.molina@construobrasyequipos.com",
+        "numero_trabajadores": 38,
+        "municipio": "Medellín",
+        "fecha_registro": "2025-11-27T16:01:38.894Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 26,
+    "fields": {
+        "nombre": "SERVIMAQ INDUSTRIAL S.A.S",
+        "nit": null,
+        "direccion": "Avenida Quebradaseca # 23-41, Parque Empresarial La Ceiba",
+        "contacto": "Diego Alejandro Robles",
+        "telefono": "3124459068",
+        "correo": "d.robles@servimaqindustrial.com",
+        "numero_trabajadores": 42,
+        "municipio": "",
+        "fecha_registro": "2025-11-27T16:13:24.627Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 27,
+    "fields": {
+        "nombre": "LOGISTIWARE COLOMBIA S.A.S",
+        "nit": "9004805691",
+        "direccion": "Calle 44 # 18-52, Zona Industrial Acopi Yumbo",
+        "contacto": "María Fernanda Cárdenas",
+        "telefono": "3145628974",
+        "correo": "mf.cardenas@logistiware.com",
+        "numero_trabajadores": 72,
+        "municipio": "Cali",
+        "fecha_registro": "2025-11-27T18:28:34.640Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 28,
+    "fields": {
+        "nombre": "Minería S.A.S",
+        "nit": null,
+        "direccion": "",
+        "contacto": "Yalith Jimenez",
+        "telefono": "3124567345",
+        "correo": "yadi.3456@gmail.com",
+        "numero_trabajadores": 14,
+        "municipio": "Palmira",
+        "fecha_registro": "2025-12-04T19:33:24.472Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 29,
+    "fields": {
+        "nombre": "Topógrafos unidos S.A.S",
+        "nit": "8909035112",
+        "direccion": "carrera 9 #34-89",
+        "contacto": "Wilson Aguilar Jiménez",
+        "telefono": "3234675431",
+        "correo": "wilson34@sena.edu.com",
+        "numero_trabajadores": 34,
+        "municipio": "Duitama",
+        "fecha_registro": "2025-12-05T12:11:18.606Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 30,
+    "fields": {
+        "nombre": "Contruboy S.A.S",
+        "nit": "9002745621",
+        "direccion": "calle 4 #25-78 vereda el  fical",
+        "contacto": "Marcelo Antonio Palacios",
+        "telefono": "31245678756",
+        "correo": "quityuli@gmail.com",
+        "numero_trabajadores": 56,
+        "municipio": "Palermo",
+        "fecha_registro": "2025-12-05T12:24:36.639Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 31,
+    "fields": {
+        "nombre": "Contrucciones el Condor S.A",
+        "nit": "8909224474",
+        "direccion": "Carrera 25 3 45 PISO 3, Medellín, Antioquia",
+        "contacto": "Mariana Campos",
+        "telefono": "3236574321",
+        "correo": "MarianaCA@sena.edu.co",
+        "numero_trabajadores": 30,
+        "municipio": "Medellín",
+        "fecha_registro": "2025-12-05T13:13:57.474Z",
+        "activo": false
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 32,
+    "fields": {
+        "nombre": "mnmnjkmnhgbv",
+        "nit": "5674805691",
+        "direccion": "Carrera 3 #12-56 la floresta",
+        "contacto": "5gtyhhjujkuibh",
+        "telefono": "3154675432",
+        "correo": "carlqwe@sena.edu.com",
+        "numero_trabajadores": 56,
+        "municipio": "Duitama",
+        "fecha_registro": "2025-12-05T13:25:44.409Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 33,
+    "fields": {
+        "nombre": "GEODATA SOLUTIONS S.A.S",
+        "nit": "902345678",
+        "direccion": "Calle 48 # 65-12, Oficina 304",
+        "contacto": "Andrés Camacho",
+        "telefono": "3137854420",
+        "correo": "andres.camacho@geodatasolutions.com",
+        "numero_trabajadores": 0,
+        "municipio": "Medellín",
+        "fecha_registro": "2025-12-10T12:17:04.261Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 34,
+    "fields": {
+        "nombre": "MAQUINARIAS DEL PACÍFICO S.A.S",
+        "nit": "901678234",
+        "direccion": "Carrera 5 # 21-44, Bodega 7",
+        "contacto": "Carolina Ríos",
+        "telefono": "",
+        "correo": "carolina.rios@maquinariaspacifico.com",
+        "numero_trabajadores": 0,
+        "municipio": "Buenaventura",
+        "fecha_registro": "2025-12-10T12:24:46.098Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 35,
+    "fields": {
+        "nombre": "CONSTRUCCIONES Y MOVIMIENTOS DEL NORTE S.A.S",
+        "nit": "900734589",
+        "direccion": "Avenida Circunvalar # 34-92, Oficina 204",
+        "contacto": "Laura Marcela Pineda",
+        "telefono": "3116824507",
+        "correo": "laura.pineda@movimientosnorte.com",
+        "numero_trabajadores": 0,
+        "municipio": "Montería",
+        "fecha_registro": "2025-12-15T19:20:36.513Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 36,
+    "fields": {
+        "nombre": "LOGÍSTICA INDUSTRIAL ANDINA S.A.S",
+        "nit": "901845672",
+        "direccion": "Calle 12 # 18-60, Parque Industrial Zona Norte",
+        "contacto": "Andrés Felipe Muñoz",
+        "telefono": "3204579931",
+        "correo": "andres.munoz@logisticaandina.com",
+        "numero_trabajadores": 0,
+        "municipio": "Yumbo",
+        "fecha_registro": "2025-12-15T19:20:36.512Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 37,
+    "fields": {
+        "nombre": "LOGÍSTICA Y SERVICIOS INDUSTRIALES DEL CARIBE S.A.S",
+        "nit": "901245678",
+        "direccion": "Calle 72 # 45-18, Bodega 6",
+        "contacto": "Carlos Andrés Mejía",
+        "telefono": "3004587921",
+        "correo": "carlos.mejia@logisticacaribe.com",
+        "numero_trabajadores": 0,
+        "municipio": "Barranquilla",
+        "fecha_registro": "2025-12-19T12:38:37.135Z",
+        "activo": true
+    }
+},
+{
+    "model": "empresas.empresa",
+    "pk": 38,
+    "fields": {
+        "nombre": "SERVICIOS LOGÍSTICOS Y TRANSPORTE INDUSTRIAL S.A.S",
+        "nit": "900987654",
+        "direccion": "Calle 30 # 65-120, Bodega 12",
+        "contacto": "Juan Sebastián Ríos",
+        "telefono": "3147769032",
+        "correo": "juan.rios@servilogisticaindustrial.com",
+        "numero_trabajadores": 0,
+        "municipio": "Medellín",
+        "fecha_registro": "2025-12-19T13:06:50.951Z",
+        "activo": true
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 35,
+    "fields": {
+        "empresa": 25,
+        "programa": 7,
+        "fecha_recepcion": "2025-11-27T16:01:38.930Z",
+        "instructor_asignado": null,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 36,
+    "fields": {
+        "empresa": 26,
+        "programa": 7,
+        "fecha_recepcion": "2025-11-27T16:13:24.697Z",
+        "instructor_asignado": null,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 37,
+    "fields": {
+        "empresa": 27,
+        "programa": 8,
+        "fecha_recepcion": "2025-11-27T18:28:34.680Z",
+        "instructor_asignado": 2,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 38,
+    "fields": {
+        "empresa": 34,
+        "programa": 7,
+        "fecha_recepcion": "2025-12-10T12:24:46.123Z",
+        "instructor_asignado": null,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 39,
+    "fields": {
+        "empresa": 36,
+        "programa": 8,
+        "fecha_recepcion": "2025-12-15T19:20:36.562Z",
+        "instructor_asignado": 6,
+        "fecha_respuesta": "2025-12-17T15:46:31.103Z",
+        "fecha_atencion": "2025-12-17T19:32:46.545Z",
+        "fecha_finalizacion": "2025-12-17T19:40:49.916Z",
+        "estado": "FINALIZADA",
+        "observaciones": "Creada automáticamente desde correo: Solicitud programa operador de montacargas",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 40,
+    "fields": {
+        "empresa": 35,
+        "programa": 7,
+        "fecha_recepcion": "2025-12-15T19:20:36.545Z",
+        "instructor_asignado": 2,
+        "fecha_respuesta": "2025-12-17T18:23:36.781Z",
+        "fecha_atencion": "2025-12-17T19:57:25.634Z",
+        "fecha_finalizacion": "2025-12-17T19:59:44.813Z",
+        "estado": "FINALIZADA",
+        "observaciones": "Creada automáticamente desde correo: Solicitud programa operador de minicargador",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 41,
+    "fields": {
+        "empresa": 37,
+        "programa": 8,
+        "fecha_recepcion": "2025-12-19T12:38:37.168Z",
+        "instructor_asignado": null,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "Creada automáticamente desde correo: Solicitud programa operador de montacargas",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "solicitudes.solicitud",
+    "pk": 42,
+    "fields": {
+        "empresa": 38,
+        "programa": 8,
+        "fecha_recepcion": "2025-12-19T13:06:50.990Z",
+        "instructor_asignado": null,
+        "fecha_respuesta": null,
+        "fecha_atencion": null,
+        "fecha_finalizacion": null,
+        "estado": "RECIBIDA",
+        "observaciones": "Creada automáticamente desde correo: Solicitud programa de formación operador de montac",
+        "numero_aprendices": null
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+        "action_time": "2025-10-23T20:12:56.474Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "area_formacion",
+            "area"
+        ],
+        "object_id": "1",
+        "object_repr": "Maquinaria",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"programa\", \"object\": \"Maquinaria - operador de excavadora\"}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+        "action_time": "2025-10-23T20:24:38.812Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "1",
+        "object_repr": "ALTARA INGENIERIA SAS",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+        "action_time": "2025-10-23T20:30:30.712Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "instructores",
+            "instructor"
+        ],
+        "object_id": "1",
+        "object_repr": "Norberto Romero  Gutiérrez",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+        "action_time": "2025-10-23T20:32:03.623Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "1",
+        "object_repr": "ALTARA INGENIERIA SAS - operador de excavadora",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+        "action_time": "2025-12-03T16:29:00.080Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "14",
+        "object_repr": "Análisis y Desarrollo de Software - Análisis y Desarrollo  de Software ",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+        "action_time": "2025-12-03T16:29:00.080Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "13",
+        "object_repr": "Salud -  primeros auxilios.",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+        "action_time": "2025-12-03T16:29:00.080Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "11",
+        "object_repr": "Salud - Técnico  en  Enfermería",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+        "action_time": "2025-12-03T16:29:00.080Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "12",
+        "object_repr": "Salud - Técnico en Atención Integral a la Primera Infancia",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+        "action_time": "2025-12-09T20:09:09.923Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "auth",
+            "user"
+        ],
+        "object_id": "3",
+        "object_repr": "Luismi",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+        "action_time": "2025-12-19T12:20:38.104Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "16",
+        "object_repr": "Agricola - Siembra de plántulas en invernadero",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+        "action_time": "2025-12-19T12:20:38.105Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "20",
+        "object_repr": "Agricola - fhghgnhjhgnjj",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+        "action_time": "2025-12-19T12:20:38.105Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "19",
+        "object_repr": "Agricola - hbhjnyjgbvvvf",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+        "action_time": "2025-12-19T12:20:38.105Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "18",
+        "object_repr": "Agricola - njjuynn",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+        "action_time": "2025-12-19T12:20:38.105Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "programas",
+            "programa"
+        ],
+        "object_id": "17",
+        "object_repr": "Agricola - yyhhn",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "action_time": "2025-12-19T12:47:26.282Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "instructores",
+            "instructor"
+        ],
+        "object_id": "4",
+        "object_repr": "Hector Heli Diaz",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+        "action_time": "2025-12-19T12:47:26.282Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "instructores",
+            "instructor"
+        ],
+        "object_id": "3",
+        "object_repr": "Héctor Heli Diaz Diaz",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.838Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "34",
+        "object_repr": "MEDIO ORIENTE S.A.S - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "33",
+        "object_repr": "CONSTRUCCIONES ORIENTE S.A.S - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "32",
+        "object_repr": "Empresa aperez - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "31",
+        "object_repr": "CONSTRUCCIONES EFICACES S.A.S - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "30",
+        "object_repr": "* MAQUINARIAS DEL PACÍFICO S.A.S - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 22,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "29",
+        "object_repr": "Empresa sin nombre - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 23,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "28",
+        "object_repr": "*CONSTRUTIERRAS DEL SUR S.A.S* - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 24,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "27",
+        "object_repr": "*ALMACENES Y DISTRIBUCIONES DEL ORIENTE S.A.S* - Operador de Montacargas",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 25,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "26",
+        "object_repr": "*GEODATOS Y CARTOGRAFÍA URBANA S.A.S* - Georreferenciación",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 26,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "25",
+        "object_repr": "*INGEOBRAS DEL MAGDALENA S.A.S* - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 27,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "24",
+        "object_repr": "*LOGÍSTICA INTEGRAL DEL OCCIDENTE S.A.S* - Operador de Montacargas",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 28,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "23",
+        "object_repr": "DATATECH SOLUTIONS S.A.S - Análisis Exploratorio de Datos en Python",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 29,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "22",
+        "object_repr": "INGENIERÍA Y CONSTRUCCIONES DEL CARIBE S.A.S - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 30,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "21",
+        "object_repr": "*OBRAS Y TERRAMOVIMIENTOS DEL NORTE S.A.S* - Operador de Retrocargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 31,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "20",
+        "object_repr": "*MAQUICONSTRUCCIONES DEL CENTRO S.A.S* - Operador de Retrocargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 32,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "19",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Tecnólogo en Procesos de la Industria Química",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 33,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "18",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Georreferenciación",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 34,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "17",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Explotación de obras civiles y mineras de acuerdo  con el manual  del  equipo",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 35,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "16",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 36,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "15",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 37,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "14",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 38,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "13",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 39,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "12",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 40,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "11",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Operador de Minicargador",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 41,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "10",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S - Operador de Montacargas",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 42,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "9",
+        "object_repr": "QUIMIPROCESOS S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 43,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "8",
+        "object_repr": "QUIMIPROCESOS S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 44,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "7",
+        "object_repr": "QUIMIPROCESOS S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 45,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "6",
+        "object_repr": "QUIMIPROCESOS S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 46,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "5",
+        "object_repr": "TOPOGRAFÍA Y GEODATOS S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 47,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.839Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "4",
+        "object_repr": "TECNOLOGÍAS INNOVATEC S.A.S - Ciberseguridad",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 48,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.840Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "3",
+        "object_repr": "construcción de obras civiles - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 49,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.840Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "2",
+        "object_repr": "construcción de obras civiles - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 50,
+    "fields": {
+        "action_time": "2025-12-19T13:44:16.840Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "solicitudes",
+            "solicitud"
+        ],
+        "object_id": "1",
+        "object_repr": "ALTARA INGENIERIA SAS - operador de excavadora",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 51,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "23",
+        "object_repr": "Empresa maez",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 52,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "21",
+        "object_repr": "Empresa aperez",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 53,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "17",
+        "object_repr": "Empresa sin nombre",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 54,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "16",
+        "object_repr": "*CONSTRUTIERRAS DEL SUR S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 55,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "15",
+        "object_repr": "*ALMACENES Y DISTRIBUCIONES DEL ORIENTE S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 56,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "14",
+        "object_repr": "*GEODATOS Y CARTOGRAFÍA URBANA S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 57,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "13",
+        "object_repr": "*INGEOBRAS DEL MAGDALENA S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 58,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.630Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "12",
+        "object_repr": "*LOGÍSTICA INTEGRAL DEL OCCIDENTE S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 59,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.631Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "11",
+        "object_repr": "DATATECH SOLUTIONS S.A.S",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 60,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.631Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "10",
+        "object_repr": "INGENIERÍA Y CONSTRUCCIONES DEL CARIBE S.A.S",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 61,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.631Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "9",
+        "object_repr": "*OBRAS Y TERRAMOVIMIENTOS DEL NORTE S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 62,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.631Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "8",
+        "object_repr": "*MAQUICONSTRUCCIONES DEL CENTRO S.A.S*",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 63,
+    "fields": {
+        "action_time": "2025-12-19T13:45:54.631Z",
+        "user": [
+            "LicedD"
+        ],
+        "content_type": [
+            "empresas",
+            "empresa"
+        ],
+        "object_id": "7",
+        "object_repr": "INDUSTRIAS METALMECÁNICAS ANDINA S.A.S",
+        "action_flag": 3,
+        "change_message": ""
+    }
+}
+]

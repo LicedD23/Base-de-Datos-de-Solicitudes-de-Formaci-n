@@ -1,10 +1,10 @@
 import os
+import subprocess
 from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.http import FileResponse, Http404
 from django.conf import settings
-from django.core.management import call_command
 from django.utils import timezone
 from datetime import datetime, timedelta
 import zipfile
@@ -74,6 +74,20 @@ def calcular_rango_fechas(rango_fecha):
 
 
 # ============================================================================
+# FUNCIÓN AUXILIAR: DETECTAR TIPO DE BASE DE DATOS
+# ============================================================================
+
+def get_database_type():
+    """Detecta si se está usando MySQL o SQLite"""
+    db_engine = settings.DATABASES['default']['ENGINE']
+    if 'mysql' in db_engine:
+        return 'mysql'
+    elif 'sqlite' in db_engine:
+        return 'sqlite'
+    return None
+
+
+# ============================================================================
 # PANEL DE BACKUPS CON FILTROS
 # ============================================================================
 
@@ -90,7 +104,7 @@ def panel_backups(request):
     backups = []
     
     for filename in os.listdir(backup_dir):
-        if filename.startswith("backup_") and filename.endswith(".zip"):
+        if filename.startswith("backup_") and (filename.endswith(".zip") or filename.endswith(".sql")):
             filepath = os.path.join(backup_dir, filename)
             
             if not os.path.exists(filepath):
@@ -99,7 +113,11 @@ def panel_backups(request):
             file_stats = os.stat(filepath)
             
             try:
-                date_str = filename.replace('backup_', '').replace('.zip', '')
+                # Extraer fecha del nombre del archivo
+                if filename.endswith('.zip'):
+                    date_str = filename.replace('backup_', '').replace('.zip', '')
+                else:
+                    date_str = filename.replace('backup_', '').replace('.sql', '')
                 fecha = datetime.strptime(date_str, '%Y%m%d_%H%M%S')
             except ValueError:
                 fecha = datetime.fromtimestamp(file_stats.st_mtime)
@@ -138,10 +156,18 @@ def panel_backups(request):
     backups.sort(key=lambda x: x['fecha'], reverse=True)
     
     # Información de la base de datos
-    db_path = settings.DATABASES['default']['NAME']
-    db_size = 0
-    if os.path.exists(db_path):
-        db_size = os.path.getsize(db_path) / (1024 * 1024)
+    db_type = get_database_type()
+    db_config = settings.DATABASES['default']
+    
+    if db_type == 'mysql':
+        db_info = f"MySQL: {db_config['NAME']} @ {db_config['HOST']}"
+        db_size = 0  # MySQL no tiene tamaño de archivo directo
+    else:
+        db_path = db_config['NAME']
+        db_info = str(db_path)
+        db_size = 0
+        if os.path.exists(db_path):
+            db_size = os.path.getsize(db_path) / (1024 * 1024)
     
     # Contexto para el template
     context = {
@@ -150,8 +176,9 @@ def panel_backups(request):
         'espacio_usado': sum(b['tamaño'] for b in backups),
         'espacio_usado_legible': f"{sum(b['tamaño'] for b in backups):.2f} MB",
         'db_size': db_size,
-        'db_size_legible': f"{db_size:.2f} MB",
-        'db_path': db_path,
+        'db_size_legible': f"{db_size:.2f} MB" if db_size > 0 else "N/A",
+        'db_info': db_info,
+        'db_type': db_type,
         # Filtros aplicados
         'nombre_filtro': nombre_filtro,
         'rango_fecha': rango_fecha,
@@ -161,23 +188,101 @@ def panel_backups(request):
 
 
 # ============================================================================
-# CREAR NUEVO BACKUP
+# CREAR NUEVO BACKUP - MYSQL
 # ============================================================================
 
 @staff_member_required
 def crear_backup(request):
-    """Crear un nuevo backup"""
-    if request.method == 'POST':
-        try:
-            call_command('backup_db')
-            messages.success(
-                request,
-                '✅ Backup creado exitosamente. El archivo se guardó en la carpeta "db_backups".'
-            )
-        except Exception as e:
-            messages.error(request, f'❌ Error al crear backup: {str(e)}')
-    else:
+    """Crear un nuevo backup de MySQL"""
+    if request.method != 'POST':
         messages.warning(request, '⚠️ Método no permitido. Use POST para crear backups.')
+        return redirect('backups:panel_backups')
+    
+    db_type = get_database_type()
+    
+    if db_type == 'mysql':
+        return crear_backup_mysql(request)
+    elif db_type == 'sqlite':
+        messages.error(request, '❌ El sistema está configurado para SQLite. Actualice el código.')
+        return redirect('backups:panel_backups')
+    else:
+        messages.error(request, '❌ Tipo de base de datos no soportado.')
+        return redirect('backups:panel_backups')
+
+
+def crear_backup_mysql(request):
+    """Crear backup de MySQL usando mysqldump"""
+    try:
+        # Configuración de la base de datos
+        db_config = settings.DATABASES['default']
+        db_name = db_config['NAME']
+        db_user = db_config['USER']
+        db_password = db_config['PASSWORD']
+        db_host = db_config.get('HOST', 'localhost')
+        db_port = db_config.get('PORT', '3306')
+        
+        # Crear directorio de backups
+        backup_dir = os.path.join(settings.BASE_DIR, 'db_backups')
+        os.makedirs(backup_dir, exist_ok=True)
+        
+        # Nombre del archivo
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        backup_filename = f"backup_{timestamp}.sql"
+        backup_path = os.path.join(backup_dir, backup_filename)
+        
+        # Comando mysqldump
+        command = [
+            'mysqldump',
+            f'--host={db_host}',
+            f'--port={db_port}',
+            f'--user={db_user}',
+            f'--password={db_password}',
+            '--single-transaction',
+            '--routines',
+            '--triggers',
+            '--events',
+            db_name
+        ]
+        
+        # Ejecutar mysqldump
+        with open(backup_path, 'w', encoding='utf8') as f:
+            result = subprocess.run(
+                command,
+                stdout=f,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+        
+        if result.returncode != 0:
+            error_msg = result.stderr
+            os.remove(backup_path) if os.path.exists(backup_path) else None
+            messages.error(request, f'❌ Error al crear backup: {error_msg}')
+            return redirect('backups:panel_backups')
+        
+        # Comprimir el archivo SQL
+        zip_filename = f"backup_{timestamp}.zip"
+        zip_path = os.path.join(backup_dir, zip_filename)
+        
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.write(backup_path, backup_filename)
+        
+        # Eliminar el archivo SQL sin comprimir
+        os.remove(backup_path)
+        
+        file_size = os.path.getsize(zip_path) / (1024 * 1024)
+        messages.success(
+            request,
+            f'✅ Backup creado exitosamente: {zip_filename} ({file_size:.2f} MB)'
+        )
+        
+    except FileNotFoundError:
+        messages.error(
+            request,
+            '❌ mysqldump no encontrado. Asegúrate de que MySQL esté instalado '
+            'y que mysqldump esté en el PATH del sistema.'
+        )
+    except Exception as e:
+        messages.error(request, f'❌ Error al crear backup: {str(e)}')
     
     return redirect('backups:panel_backups')
 
@@ -199,15 +304,16 @@ def descargar_backup(request, filename):
     if not os.path.abspath(filepath).startswith(os.path.abspath(backup_dir)):
         raise Http404("Ruta no válida")
     
-    if not (filename.startswith('backup_') and filename.endswith('.zip')):
+    if not (filename.startswith('backup_') and (filename.endswith('.zip') or filename.endswith('.sql'))):
         raise Http404("Archivo no válido")
     
     try:
+        content_type = 'application/zip' if filename.endswith('.zip') else 'application/sql'
         response = FileResponse(
             open(filepath, 'rb'),
             as_attachment=True,
             filename=filename,
-            content_type='application/zip'
+            content_type=content_type
         )
         return response
     except Exception as e:
@@ -238,7 +344,7 @@ def eliminar_backup(request, filename):
         messages.error(request, '❌ Ruta no válida')
         return redirect('backups:panel_backups')
     
-    if not (filename.startswith('backup_') and filename.endswith('.zip')):
+    if not (filename.startswith('backup_') and (filename.endswith('.zip') or filename.endswith('.sql'))):
         messages.error(request, '❌ Archivo no válido')
         return redirect('backups:panel_backups')
     
@@ -267,7 +373,7 @@ def limpiar_backups_antiguos(request):
     
     # Listar todos los backups con su fecha de modificación
     for filename in os.listdir(backup_dir):
-        if filename.startswith("backup_") and filename.endswith(".zip"):
+        if filename.startswith("backup_") and (filename.endswith(".zip") or filename.endswith(".sql")):
             filepath = os.path.join(backup_dir, filename)
             if os.path.exists(filepath):
                 backups.append((filepath, os.path.getmtime(filepath)))
@@ -293,14 +399,20 @@ def limpiar_backups_antiguos(request):
 
 
 # ============================================================================
-# RESTAURAR BACKUP
+# RESTAURAR BACKUP - MYSQL
 # ============================================================================
 
 @staff_member_required
 def restaurar_backup(request, filename):
-    """Restaurar un backup"""
+    """Restaurar un backup de MySQL"""
     if request.method != 'POST':
         messages.warning(request, '⚠️ Método no permitido. Use POST para restaurar.')
+        return redirect('backups:panel_backups')
+    
+    db_type = get_database_type()
+    
+    if db_type != 'mysql':
+        messages.error(request, '❌ La restauración solo está disponible para MySQL.')
         return redirect('backups:panel_backups')
     
     backup_dir = os.path.join(settings.BASE_DIR, 'db_backups')
@@ -322,49 +434,77 @@ def restaurar_backup(request, filename):
     try:
         # Crear backup de seguridad antes de restaurar
         messages.info(request, '🔄 Creando backup de seguridad antes de restaurar...')
-        call_command('backup_db')
+        crear_backup_mysql(request)
         
-        # Obtener ruta de la base de datos
+        # Configuración de la base de datos
         db_config = settings.DATABASES['default']
-        db_path = db_config['NAME']
+        db_name = db_config['NAME']
+        db_user = db_config['USER']
+        db_password = db_config['PASSWORD']
+        db_host = db_config.get('HOST', 'localhost')
+        db_port = db_config.get('PORT', '3306')
         
-        # Extraer el archivo .sqlite3 del ZIP
+        # Extraer el archivo SQL del ZIP
+        temp_sql = os.path.join(backup_dir, 'temp_restore.sql')
+        
         with zipfile.ZipFile(backup_path, 'r') as zip_ref:
-            sqlite_files = [f for f in zip_ref.namelist() if f.endswith('.sqlite3')]
+            sql_files = [f for f in zip_ref.namelist() if f.endswith('.sql')]
             
-            if not sqlite_files:
-                messages.error(request, '❌ No se encontró archivo .sqlite3 en el backup')
+            if not sql_files:
+                messages.error(request, '❌ No se encontró archivo .sql en el backup')
                 return redirect('backups:panel_backups')
             
-            sqlite_file = sqlite_files[0]
-            
-            # Extraer a archivo temporal
-            temp_db = os.path.join(backup_dir, 'temp_restore.sqlite3')
-            with zip_ref.open(sqlite_file) as source, open(temp_db, 'wb') as target:
+            sql_file = sql_files[0]
+            with zip_ref.open(sql_file) as source, open(temp_sql, 'wb') as target:
                 target.write(source.read())
-            
-            # Cerrar todas las conexiones a la base de datos
-            from django.db import connections
-            connections.close_all()
-            
-            # Reemplazar la base de datos actual
-            import shutil
-            shutil.move(temp_db, db_path)
+        
+        # Restaurar usando mysql command
+        command = [
+            'mysql',
+            f'--host={db_host}',
+            f'--port={db_port}',
+            f'--user={db_user}',
+            f'--password={db_password}',
+            db_name
+        ]
+        
+        with open(temp_sql, 'r', encoding='utf8') as f:
+            result = subprocess.run(
+                command,
+                stdin=f,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+        
+        # Limpiar archivo temporal
+        if os.path.exists(temp_sql):
+            os.remove(temp_sql)
+        
+        if result.returncode != 0:
+            error_msg = result.stderr
+            messages.error(request, f'❌ Error al restaurar: {error_msg}')
+            return redirect('backups:panel_backups')
         
         messages.success(
-            request, 
+            request,
             f'✅ Backup "{filename}" restaurado exitosamente. '
-            'Por favor, reinicie el servidor para aplicar los cambios.'
+            'Recarga la página para ver los cambios.'
         )
         
+    except FileNotFoundError:
+        messages.error(
+            request,
+            '❌ mysql no encontrado. Asegúrate de que MySQL esté instalado '
+            'y que mysql esté en el PATH del sistema.'
+        )
     except Exception as e:
         messages.error(request, f'❌ Error al restaurar backup: {str(e)}')
         
         # Limpiar archivo temporal si existe
-        temp_db = os.path.join(backup_dir, 'temp_restore.sqlite3')
-        if os.path.exists(temp_db):
+        temp_sql = os.path.join(backup_dir, 'temp_restore.sql')
+        if os.path.exists(temp_sql):
             try:
-                os.remove(temp_db)
+                os.remove(temp_sql)
             except:
                 pass
     
