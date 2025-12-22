@@ -5,10 +5,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.http import FileResponse, Http404
 from django.conf import settings
+from django.db import connection
 from django.utils import timezone
 from datetime import datetime, timedelta
 import zipfile
-
 
 # ============================================================================
 # FUNCIÓN AUXILIAR PARA RANGOS DE FECHA
@@ -79,14 +79,85 @@ def calcular_rango_fechas(rango_fecha):
 
 def get_database_type():
     """Detecta si se está usando MySQL o SQLite"""
-    db_engine = settings.DATABASES['default']['ENGINE']
-    if 'mysql' in db_engine:
-        return 'mysql'
-    elif 'sqlite' in db_engine:
-        return 'sqlite'
-    return None
+    try:
+        from django.conf import settings
+        
+        #Verificar que settings este configurado
+        if not hasattr(settings, 'DATABASES'):
+            return None
+        
+        db_config = settings.DATABASES.get('default', {})
+        db_engine = db_config.get('ENGINE', '')
+        
+        if 'mysql' in db_engine:
+            return 'mysql'
+        elif 'sqlite' in db_engine:
+            return 'sqlite'
+        
+        return None
+    except Exception  as e:
+        print(f"Error al  detectar tipo  de BD:{e}")
+        return None
 
-
+def get_database_size():
+    """
+    Otiene el  tamaño  de la base de datos en  MB
+    Retorna el  tamaño  en  MB o 0 si  no  se puede obtener
+    """
+    try: 
+        from django.conf import settings
+        from django.db import connection
+        
+        #Verificar que settings este configurado
+        if not hasattr(settings, 'DATABASES'):
+            return 0
+        db_type = get_database_type()
+        if not db_type:
+            return 0
+        
+        db_config = settings.DATABASES.get ('default', {})
+        
+        if db_type == 'mysql':
+            try:
+                db_name = db_config.get('NAME', '')
+                if not db_name:
+                    return 0
+                #Consulta para obtener el tamaño  de la base de datos MySQL
+                with connection.cursor() as cursor:
+                    query = """
+                        SELECT
+                        ROUND(SUM(data_length + index_length) / 1024 / 1024, 2)as size_mb
+                    FROM information_schema.TABLES
+                    WHERE  table_schema = %s
+                    """
+                    cursor.execute(query, [db_name])
+                    result = cursor.fetchone()
+                    
+                    if result and result[0]:
+                        return float(result[0])
+                    return 0
+                
+            except Exception as e:
+                print(f"Error al obtener tamaño  sde MySQL:{e}")
+                return 0
+            
+        elif db_type == 'sqlite':
+            try:
+                db_path = db_config.get('NAME', '')
+                if db_path and os.path.exists(db_path):
+                    size_bytes=os.path.getsize(db_path)
+                    return round(size_bytes / (1024 * 1024), 2)
+                return 0
+            except Exception as e:
+                print(f"Error al obtener tamaño  de SQLite:{e}")
+                return 0
+            
+        return 0
+    
+    except Exception as e:
+        print(f"error general  al obtener tamaño de BD:{e}")
+        return 0
+    
 # ============================================================================
 # PANEL DE BACKUPS CON FILTROS
 # ============================================================================
@@ -94,6 +165,8 @@ def get_database_type():
 @staff_member_required
 def panel_backups(request):
     """Panel de gestión de backups con filtros de nombre y período"""
+    from django.conf import settings
+    
     # Directorio de backups
     backup_dir = os.path.join(settings.BASE_DIR, 'db_backups')
     
@@ -155,19 +228,38 @@ def panel_backups(request):
     # Ordenar por fecha más reciente
     backups.sort(key=lambda x: x['fecha'], reverse=True)
     
-    # Información de la base de datos
-    db_type = get_database_type()
-    db_config = settings.DATABASES['default']
+    # ============================================================================
+    # INFORMACIÓN DE LA BASE DE DATOS (CON MANEJO DE ERRORES)
+    # ============================================================================
     
-    if db_type == 'mysql':
-        db_info = f"MySQL: {db_config['NAME']} @ {db_config['HOST']}"
-        db_size = 0  # MySQL no tiene tamaño de archivo directo
-    else:
-        db_path = db_config['NAME']
-        db_info = str(db_path)
-        db_size = 0
-        if os.path.exists(db_path):
-            db_size = os.path.getsize(db_path) / (1024 * 1024)
+    db_type = get_database_type()
+    db_path = "No configurado"
+    db_info = "No disponible"
+    db_size = 0
+    
+    try:
+        if hasattr(settings, 'DATABASES'):
+            db_config = settings.DATABASES.get('default', {})
+            
+            # Obtener el tamaño de la base de datos
+            db_size = get_database_size()
+            
+            # Construir la información de la ruta/conexión
+            if db_type == 'mysql':
+                db_name = db_config.get('NAME', 'unknown')
+                db_host = db_config.get('HOST', 'localhost')
+                db_path = f"MySQL: {db_name} @ {db_host}"
+                db_info = db_path
+            elif db_type == 'sqlite':
+                db_path = db_config.get('NAME', 'No configurado')
+                db_info = str(db_path)
+            else:
+                db_path = "Tipo de BD no soportado"
+                db_info = db_path
+    except Exception as e:
+        print(f"Error al obtener info de BD: {e}")
+        db_path = "Error al obtener información"
+        db_info = str(e)
     
     # Contexto para el template
     context = {
@@ -178,6 +270,7 @@ def panel_backups(request):
         'db_size': db_size,
         'db_size_legible': f"{db_size:.2f} MB" if db_size > 0 else "N/A",
         'db_info': db_info,
+        'db_path': db_path,
         'db_type': db_type,
         # Filtros aplicados
         'nombre_filtro': nombre_filtro,
@@ -185,8 +278,6 @@ def panel_backups(request):
     }
     
     return render(request, 'backups/panel_backups.html', context)
-
-
 # ============================================================================
 # CREAR NUEVO BACKUP - MYSQL
 # ============================================================================

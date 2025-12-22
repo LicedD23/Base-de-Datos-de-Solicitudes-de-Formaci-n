@@ -109,7 +109,7 @@
             border-left: 4px solid #0288d1;
         }
 
-        /* Sección de filtros */
+        /* Sección de filtros - MEJORADA */
         .filters-section {
             background: white;
             padding: 25px;
@@ -128,11 +128,23 @@
             font-weight: 700;
         }
 
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .filters-container {
+            display: flex;
+            align-items: flex-end;
             gap: 15px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filters-grid {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
         }
 
         .filter-group label {
@@ -155,6 +167,7 @@
             font-family: 'Segoe UI', sans-serif;
             transition: all 0.3s ease;
             background: white;
+            height: 48px;
         }
 
         .filter-group input:focus,
@@ -167,10 +180,7 @@
         .filter-actions {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
-            flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .btn-filter {
@@ -186,11 +196,14 @@
             text-decoration: none;
             font-family: 'Segoe UI', sans-serif;
             border: none;
+            height: 48px;
+            white-space: nowrap;
         }
 
         .btn-filter.primary {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
         }
 
         .btn-filter.secondary {
@@ -202,6 +215,10 @@
         .btn-filter:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-filter.primary:hover {
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
 
         .controls-section {
@@ -320,19 +337,27 @@
             background: #f5f5f5;
             padding: 12px 15px;
             border-radius: 8px;
-            overflow:hidden;
-            min-width:0;
+            overflow: hidden;
+            min-width: 0;
         }
-        .db-info-item .info-icon{
-            flex-shrink:0;
-            font-size:1.1em;
-            min-width:20px;
+
+        .db-info-item .info-icon {
+            flex-shrink: 0;
+            font-size: 1.1em;
+            min-width: 20px;
         }
 
         .db-info-item strong {
             color: #333;
             min-width: 100px;
-            flex-shrink:0;
+            flex-shrink: 0;
+        }
+
+        .db-info-item > span:last-child {
+            word-break: break-all;
+            overflow-wrap: break-word;
+            flex: 1;
+            min-width: 0;
         }
 
         .backups-grid {
@@ -340,12 +365,6 @@
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
-        }
-        .db-info-item > span:last-child{
-            word-break:break-all;
-            overflow-wrap:break-word;
-            flex:1;
-            min-width:0;
         }
 
         .backup-card {
@@ -549,19 +568,19 @@
 
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
-        
-        
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -580,11 +599,21 @@
                 flex-direction: column;
             }
 
+            .filters-container {
+                flex-direction: column;
+            }
+
             .filters-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .filter-group {
+                min-width: 100%;
             }
 
             .filter-actions {
+                width: 100%;
                 flex-direction: column;
             }
 
@@ -624,40 +653,42 @@
         </div>
         {% endif %}
 
-        <!-- Sección de Filtros -->
+        <!-- Sección de Filtros MEJORADA -->
         <div class="filters-section">
             <h3>🔍 Filtros de Búsqueda</h3>
             <form method="get" id="filtrosForm">
-                <div class="filters-grid">
-                    <div class="filter-group">
-                        <label>Nombre del Backup</label>
-                        <input type="text" name="nombre" id="filtro_nombre" 
-                                value="{{ nombre_filtro }}" 
-                                placeholder="Ej: backup_20250101">
+                <div class="filters-container">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label>Nombre del Backup</label>
+                            <input type="text" name="nombre" id="filtro_nombre" 
+                                    value="{{ nombre_filtro }}" 
+                                    placeholder="Ej: backup_20250101">
+                        </div>
+                        <div class="filter-group">
+                            <label>📅 Período</label>
+                            <select name="rango_fecha" id="filtro_rango_fecha">
+                                <option value="">Todas las fechas</option>
+                                <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                                <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                                <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                                <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                                <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                                <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                                <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                                <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                                <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label>📅 Período</label>
-                        <select name="rango_fecha" id="filtro_rango_fecha">
-                            <option value="">Todas las fechas</option>
-                            <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
-                            <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
-                            <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
-                            <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
-                            <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
-                            <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
-                            <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
-                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
-                            <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
-                        </select>
+                    <div class="filter-actions">
+                        <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
+                            🔄 Limpiar
+                        </button>
+                        <button type="submit" class="btn-filter primary">
+                            🔍 Buscar
+                        </button>
                     </div>
-                </div>
-                <div class="filter-actions">
-                    <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
-                        🔄 Limpiar Filtros
-                    </button>
-                    <button type="submit" class="btn-filter primary">
-                        🔍 Buscar
-                    </button>
                 </div>
             </form>
         </div>
@@ -860,6 +891,6 @@
             }
         }
     </script>
-    {% include 'core/accessibility.html'%}
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
