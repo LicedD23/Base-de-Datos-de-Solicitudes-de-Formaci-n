@@ -95,165 +95,185 @@
         }
 
         /* CONTROLS SECTION MEJORADA */
-        .controls-section{
+        .controls-section {
             background: white;
-            padding:20px 25px;
-            border-radius:15px;
-            margin-bottom:25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        .filters-form-horizontal{
-            display:flex;
-            flex-direction:column;
-            gap:12px;
-        }
-        /*Fila horizontal con TODOS los controles*/
-        .filters-horizontal{
-            display:flex;
-            gap:12px;
-            align-items:center;
-            width:100%;
-        }
-        /*Input de busqueda -Mas Compacto*/
-        .search-input{
-            flex: 0 1 280px;
-            min-width:200px;
 
+        .filters-form-horizontal {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .search-input input{
-            width:100%;
-            padding:11px 16px;
-            border:2px solid #e0e0e0;
-            border-radius:10px;
-            font-size:0.95em,
-            transition:all 0.3s ease;
+
+        /* Fila horizontal con TODOS los controles */
+        .filters-horizontal {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
         }
-        .search-input input:focus{
-            outline:none;
-            border-color:#2e7d32;
-            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+
+        /* Input de búsqueda - Más Compacto */
+        .search-input {
+            flex: 0 1 280px;
+            min-width: 200px;
         }
-        .search-input input::placeholder{
-            color:#999;
+
+        .search-input input {
+            width: 100%;
+            padding: 11px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
         }
-        /*Selects de filtros*/
-        .filter-select{
-            flex:1;
-            min-width:160px;
-            max-width:220px;
-            padding:11px 35px 11px 14px;
-            border:2px solid #e0e0e0;
-            border-radius:10px;
-            font-size:0.95em;
-            cursor:pointer;
-            background:white;
-            transition:all 0.3s ease;
-            appearance:none;
-            background-image:url ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+
+        .search-input input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .search-input input::placeholder {
+            color: #999;
+        }
+
+        /* Selects de filtros */
+        .filter-select {
+            flex: 1;
+            min-width: 160px;
+            max-width: 220px;
+            padding: 11px 35px 11px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
         }
-        .filter-select:focus{
-            outline:none;
-            border-color:#2e7d32;
-            box-shadow:0 0 0 3px rgba(46,125,50,0.1);
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
-        /*Boton Filtrar*/
-        .btn-filter{
-            padding:11px 22px;
-            background:white;
-            color:#2e7d32;
-            border:2px solid #2e7d32;
-            border-radius:10px;
-            font-size:0.95em;
-            font-weight:600;
-            cursor:pointer;
+
+        /* Botón Filtrar */
+        .btn-filter {
+            padding: 11px 22px;
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
-            white-space:nowrap;
+            white-space: nowrap;
         }
-        .btn-filter:hover{
+
+        .btn-filter:hover {
             background: #2e7d32;
-            color:white;
-            transform:translateY(-1px);
-            box-shadow: 0 4px 12px rgbsa(46,125,50,0.3);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
         }
-        /*Boton Nuevo Programa*/
-        .btn-new{
-            padding:11px 22px;
-            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color:white;
-            border:none;
-            border-radius:10px;
-            font-size:0.95em;
-            font-weight:600;
-            cursor:pointer;
-            text-decoration:none;
+
+        /* Botón Nuevo Programa */
+        .btn-new {
+            padding: 11px 22px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
-            white-space:nowrap;
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        btn-new:hover{
-            transform:translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46,125,0.4); 
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
-        /*Enlace para limpiar filtros*/
-        .clear-filters{
-            text-align:center;
-            padding-top:8px;
+
+        /* Enlace para limpiar filtros */
+        .clear-filters {
+            text-align: center;
+            padding-top: 8px;
         }
-        .link-claer{
-            color:#666;
-            font-size:0.9em;
-            text-decoration:none;
-            transition:color 0.3s ease;
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
+
+        .link-clear {
+            color: #666;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .link-clear:hover{
-            color:#3e7d32;
-            text-decoration:underline;
+
+        .link-clear:hover {
+            color: #2e7d32;
+            text-decoration: underline;
         }
-        /* ========================================
-        RESPONSIVE - TABLETS Y MÓVILES
-        ======================================== */
-        @media (max-width:1200px){
-            .filters-horizontal{
-                flex-wrap:wrap;
+
+        /* RESPONSIVE - TABLETS Y MÓVILES */
+        @media (max-width: 1200px) {
+            .filters-horizontal {
+                flex-wrap: wrap;
             }
-            .search-input{
+
+            .search-input {
                 flex: 1 1 100%;
-                max-width:100%;
+                max-width: 100%;
             }
-            .filter-select{
-                flex: 1 1 calc(33.333% -12px);
-                min-width:150px;
+
+            .filter-select {
+                flex: 1 1 calc(33.333% - 12px);
+                min-width: 150px;
             }
+
             .btn-filter,
-            .btn-new{
-                flex: 1 1 calc(50% -6px);
+            .btn-new {
+                flex: 1 1 calc(50% - 6px);
             }
         }
-        @media(max-width:768px){
-            .controls-section{
-                padding:15px;
+
+        @media (max-width: 768px) {
+            .controls-section {
+                padding: 15px;
             }
-            .filters-horizontal{
-                flex-direction:column;
-                gap:10px;
+
+            .filters-horizontal {
+                flex-direction: column;
+                gap: 10px;
             }
+
             .search-input,
             .filter-select,
             .btn-filter,
-            .btn-new{
-                width:100%;
-                max-width:100%;
+            .btn-new {
+                width: 100%;
+                max-width: 100%;
                 flex: 1 1 100%;
             }
         }
+
         .stats-bar {
             display: flex;
             gap: 20px;
@@ -385,6 +405,82 @@
             font-size: 1.2em;
         }
 
+        /* BOTONES DE ACCIÓN - ESTILO INSTRUCTORES */
+        .programa-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-view {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-view:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .btn-edit:hover {
+            background: #ef6c00;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-delete:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
@@ -400,33 +496,9 @@
             letter-spacing: 0.5px;
         }
 
-        @media (max-width: 1024px) {
-            .filters-row {
-                flex-direction: column;
-            }
-
-            .filter-item {
-                width: 100%;
-            }
-
-            .action-buttons {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
-            }
-
-            .search-row {
-                flex-direction: column;
             }
 
             .programas-grid {
@@ -457,17 +529,17 @@
         <!-- SECCIÓN DE CONTROLES MEJORADA -->
         <div class="controls-section">
             <form method="get" class="filters-form-horizontal">
-                <!-- FILA UNICA CON TODOS LOS CONTROLES-->
+                <!-- FILA ÚNICA CON TODOS LOS CONTROLES -->
                 <div class="filters-horizontal">
-                    <!--Buscador-->
+                    <!-- Buscador -->
                     <div class="search-input">
-                        <input type ="text"
-                        name="search"
-                        placeholder="🔍Buscar por nombre, codigo..."
-                        value="{{search}}">
+                        <input type="text"
+                               name="search"
+                               placeholder="🔍 Buscar por nombre, código..."
+                               value="{{ search }}">
                     </div>
 
-                    <!--Filtro Programa-->
+                    <!-- Filtro Programa -->
                     <select name="programa" class="filter-select">
                         <option value="">Todos los programas</option>
                         {% for prog in todos_programas %}
@@ -476,42 +548,45 @@
                         </option>
                         {% endfor %}
                     </select>
-                    <!-- Filtro Area-->
+
+                    <!-- Filtro Área -->
                     <select name="area" class="filter-select">
-                        <option value="">Todas las areas</option>
-                        {%for area in areas%}
-                        <option value="{{area.id}}" {%if area_filter == area.id|stringformat:"s" %}selected{%endif%}>
-                            {{area.nombre}}
+                        <option value="">Todas las áreas</option>
+                        {% for area in areas %}
+                        <option value="{{ area.id }}" {% if area_filter == area.id|stringformat:"s" %}selected{% endif %}>
+                            {{ area.nombre }}
                         </option>
-                        {% endfor%}
+                        {% endfor %}
                     </select>
                     
                     <!-- Filtro Estado -->
                     <select name="activo" class="filter-select">
                         <option value="">Todos los estados</option>
-                        <option value="true" {% if activo_filter == 'true' %}selected{%endif%}>Activos</option>
-                        <option value ="false"{% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
+                        <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>Activos</option>
+                        <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
                     </select>
 
-                    <!--Botenes-->
-                    <button type ="submit"  class="btn-filter">
+                    <!-- Botones -->
+                    <button type="submit" class="btn-filter">
                         🔍 Filtrar
                     </button>
 
-                    <a href="{% url 'programas:crear_programa'%}" class="btn-new">
-                        ➕ Nuevo instructor
+                    <a href="{% url 'programas:crear_programa' %}" class="btn-new">
+                        ➕ Nuevo Programa
                     </a>
                 </div>
-                <!--Enlace para limpiar (opcional, debajo de los filtros)-->
-                {% if search  or programa_filter or area_filter or activo_filter%}
-                <div class="claer-filters">
-                    <a href="{% url 'programas:listar_programas'%}" class="link-crear">
+
+                <!-- Enlace para limpiar (opcional, debajo de los filtros) -->
+                {% if search or programa_filter or area_filter or activo_filter %}
+                <div class="clear-filters">
+                    <a href="{% url 'programas:listar_programas' %}" class="link-clear">
                         🔄 Limpiar todos los Filtros
                     </a>
                 </div>
                 {% endif %}
             </form>
         </div>
+
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total de Programas</h3>
@@ -560,14 +635,23 @@
                         📝 <strong>{{ programa.total_solicitudes }}</strong> solicitudes
                     </div>
                 </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="programa-actions">
+                    <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    <a href="{% url 'programas:editar_programa' programa.id %}" class="btn-action btn-edit">✏️ Editar</a>
+                    <a href="{% url 'programas:desactivar_programa' programa.id %}" 
+                        class="btn-action btn-delete" 
+                        onclick="return confirm('¿Estás seguro de desactivar este programa?')">🚫 Desactivar</a>
+                </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div style="background: white; padding: 60px 40px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
-            <div style="font-size: 5em; margin-bottom: 20px; opacity: 0.3;">📚</div>
-            <h3 style="color: #666; font-size: 1.5em; margin-bottom: 10px;">No se encontraron programas</h3>
-            <p style="color: #999; margin-bottom: 20px;">
+        <div class="empty-state">
+            <div class="empty-state-icon">📚</div>
+            <h3>No se encontraron programas</h3>
+            <p>
                 {% if search %}
                     No hay programas que coincidan con tu búsqueda "{{ search }}"
                 {% elif area_filter %}
@@ -576,7 +660,7 @@
                     Aún no hay programas registrados en el sistema
                 {% endif %}
             </p>
-            <a href="{% url 'programas:crear_programa' %}" class="btn btn-primary">➕ Crear Primer Programa</a>
+            <a href="{% url 'programas:crear_programa' %}" class="btn-new">➕ Crear Primer Programa</a>
         </div>
         {% endif %}
     </div>
@@ -586,5 +670,19 @@
     </footer>
 
     {% include 'core/accessibility.html' %}
+
+    <script>
+        // Auto-cerrar mensajes después de 5 segundos
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(function(message) {
+                message.style.transition = 'opacity 0.5s ease';
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
 </body>
 </html>
