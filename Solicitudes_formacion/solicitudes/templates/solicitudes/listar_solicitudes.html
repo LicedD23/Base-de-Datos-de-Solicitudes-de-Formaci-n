@@ -330,12 +330,14 @@
         }
         .solicitud-actions {
             display: flex;
+            grid-direction:row;
             gap: 10px;
             margin-top: 15px;
+            align-items:stretch;
         }
         .btn-action {
-            flex: 1;
-            padding: 10px;
+            flex:1;
+            padding:12px 10px;
             border: none;
             border-radius: 8px;
             font-size: 0.9em;
@@ -344,7 +346,11 @@
             transition: all 0.3s ease;
             text-decoration: none;
             text-align: center;
-            display: block;
+            display: flex;
+            align-items:center;
+            justify-content:center;
+            gap:5px;
+            white-space: nowrap;
         }
         .btn-view {
             background: #e8f5e9;
@@ -605,6 +611,7 @@
                         </div>
 
                         <div class="solicitud-actions">
+                            <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn action btn-action btn-view">📧 Enviar Correo</a>
                             <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
                             <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn-action btn-edit">✏️ Editar</a>
                         </div>

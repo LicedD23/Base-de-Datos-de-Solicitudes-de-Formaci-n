@@ -6,72 +6,66 @@ from datetime import datetime
 import json
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
 
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from django.db import IntegrityError, transaction
 
 from .models import Solicitud
 from empresas.models import Empresa
 from programas.models import Programa
 from instructores.models import Instructor
 
+# Configurar logging
+logger = logging.getLogger(__name__)
+
 
 class EmailSolicitudHandler:
-    """Manejador de correos electronicos para solicitudes de formacion"""
+    """Manejador de correos electronicos para solicitudes de formacion - VERSIÓN MEJORADA"""
     
     # =========================================================================
     # CONFIGURACIÓN DE FILTROS
     # =========================================================================
     
-    # Palabras clave que DEBEN aparecer en el asunto para considerarlo válido
     PALABRAS_CLAVE_ASUNTO = [
-        'solicitud',
-        'formación',
-        'formacion',
-        'capacitación',
-        'capacitacion',
-        'programa',
-        'curso',
-        'entrenamiento',
-        'sena',
+        'solicitud', 'formación', 'formacion', 'capacitación', 'capacitacion',
+        'programa', 'curso', 'entrenamiento', 'sena',
     ]
     
-    # Palabras clave en el cuerpo que indican que es una solicitud empresarial
     PALABRAS_CLAVE_CUERPO = [
-        'empresa',
-        'nit',
-        'programa de formación',
-        'programa de formacion',
-        'solicito',
-        'solicitamos',
-        'requerimos',
-        'necesitamos capacitación',
+        'empresa', 'nit', 'programa de formación', 'programa de formacion',
+        'solicito', 'solicitamos', 'requerimos', 'necesitamos capacitación',
         'trabajadores',
     ]
     
-    # Dominios que definitivamente NO son solicitudes empresariales
     DOMINIOS_EXCLUIDOS = [
-        'noreply',
-        'no-reply',
-        'mailer-daemon',
-        'postmaster',
-        'notification',
-        'marketing',
-        'newsletter',
+        'noreply', 'no-reply', 'mailer-daemon', 'postmaster',
+        'notification', 'marketing', 'newsletter',
     ]
     
-    # Mínimo de campos que debe tener el correo para ser considerado válido
-    CAMPOS_MINIMOS_REQUERIDOS = 2  # ej: nombre empresa + programa
+    CAMPOS_MINIMOS_REQUERIDOS = 2
+    
+    # Keywords para programas (fácil de expandir)
+    KEYWORDS_PROGRAMAS = {
+        'minicargador': 'Operador de Minicargador',
+        'mini cargador': 'Operador de Minicargador',
+        'montacargas': 'Operador de Montacargas',
+        'excavadora': 'Operador de Excavadora',
+        'retrocargador': 'Operador de Retrocargador',
+        'interpretacion de planos': 'Interpretación de planos para maquinaria industrial',
+        'interpretación de planos': 'Interpretación de planos para maquinaria industrial',
+        'planos maquinaria': 'Interpretación de planos para maquinaria industrial',
+        'lectura de planos': 'Interpretación de planos para maquinaria industrial',
+    }
     
     def __init__(self):
-        # Configuración IMAP para RECIBIR correos
         self.imap_server = getattr(settings, 'IMAP_HOST', 'imap.gmail.com')
         self.imap_port = getattr(settings, 'IMAP_PORT', 993)
         self.email_account = getattr(settings, 'IMAP_USER', settings.EMAIL_HOST_USER)
         self.email_password = getattr(settings, 'IMAP_PASSWORD', settings.EMAIL_HOST_PASSWORD)
         
-        # Estadísticas de procesamiento
         self.stats = {
             'total_correos': 0,
             'correos_filtrados': 0,
@@ -84,77 +78,17 @@ class EmailSolicitudHandler:
         print(f"📧 Cuenta: {self.email_account}")
     
     # =========================================================================
-    # MÉTODOS DE FILTRADO
-    # =========================================================================
-    
-    def es_correo_valido(self, correo_info):
-        """
-        Determina si un correo es una solicitud válida de formación.
-        Retorna (es_valido, razon)
-        """
-        try:
-            asunto = correo_info.get('asunto', '').lower()
-            cuerpo = correo_info.get('cuerpo', '').lower()
-            remitente = correo_info.get('remitente', '').lower()
-            
-            # FILTRO 1: Verificar dominios excluidos
-            for dominio in self.DOMINIOS_EXCLUIDOS:
-                if dominio in remitente:
-                    return False, f"Dominio excluido: {dominio}"
-            
-            # FILTRO 2: Verificar palabras clave en asunto
-            tiene_palabra_clave_asunto = any(
-                palabra in asunto 
-                for palabra in self.PALABRAS_CLAVE_ASUNTO
-            )
-            
-            if not tiene_palabra_clave_asunto:
-                return False, "No contiene palabras clave en asunto"
-            
-            # FILTRO 3: Verificar palabras clave en cuerpo
-            palabras_encontradas = sum(
-                1 for palabra in self.PALABRAS_CLAVE_CUERPO 
-                if palabra in cuerpo
-            )
-            
-            if palabras_encontradas < 2:
-                return False, f"Solo {palabras_encontradas} palabras clave en cuerpo (mínimo 2)"
-            
-            # FILTRO 4: Verificar longitud mínima del cuerpo
-            if len(cuerpo) < 100:
-                return False, f"Cuerpo muy corto ({len(cuerpo)} caracteres)"
-            
-            # FILTRO 5: Pre-validación de campos
-            info_extraida = self.extraer_informacion_con_ia(correo_info)
-            if not info_extraida:
-                return False, "No se pudo extraer información"
-            
-            campos_encontrados = sum([
-                1 if info_extraida.get('nombre') else 0,
-                1 if info_extraida.get('programa_solicitado') else 0,
-                1 if info_extraida.get('correo') else 0,
-                1 if info_extraida.get('telefono') else 0,
-            ])
-            
-            if campos_encontrados < self.CAMPOS_MINIMOS_REQUERIDOS:
-                return False, f"Campos insuficientes ({campos_encontrados}/{self.CAMPOS_MINIMOS_REQUERIDOS})"
-            
-            return True, "Correo válido"
-            
-        except Exception as e:
-            return False, f"Error en validación: {str(e)}"
-    
-    # =========================================================================
-    # MÉTODOS DE CONEXIÓN Y LECTURA
+    # MÉTODOS DE CONEXIÓN (MEJORADOS CON MANEJO DE ERRORES)
     # =========================================================================
     
     def conectar_email(self):
-        """Conecta al servidor IMAP para RECIBIR correos"""
+        """Conecta al servidor IMAP con manejo robusto de errores"""
         try:
             if not self.email_account or not self.email_password:
+                logger.error("Credenciales IMAP no configuradas")
                 print("❌ ERROR: EMAIL_HOST_USER o EMAIL_HOST_PASSWORD no configurados")
                 return None
-                
+            
             print(f"🔌 Intentando conectar a {self.imap_server}:{self.imap_port}")
             
             mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
@@ -162,18 +96,24 @@ class EmailSolicitudHandler:
             print(f"✅ Conectado exitosamente a {self.email_account} (IMAP)")
             return mail
             
+        except imaplib.IMAP4.error as e:
+            logger.error(f"Error de autenticación IMAP: {str(e)}")
+            print(f"❌ Error de autenticación: {str(e)}")
+            print("💡 Verifica las credenciales y permisos de la cuenta")
+            return None
         except Exception as e:
+            logger.error(f"Error conectando IMAP: {str(e)}")
             print(f"❌ Error conectando al correo IMAP: {str(e)}")
             import traceback
             traceback.print_exc()
             return None
     
-    def leer_correos_no_leidos(self, limite=None):
+    def leer_correos_no_leidos(self, limite=20):
         """
         Lee correos no leidos de la bandeja de entrada.
         
         Args:
-            limite (int): Número máximo de correos a leer. Si es None, lee todos.
+            limite (int): Número máximo de correos a leer. Por defecto 20 (seguro).
         """
         mail = self.conectar_email()
         if not mail:
@@ -198,30 +138,35 @@ class EmailSolicitudHandler:
             if not email_ids:
                 return []
             
-            # Limitar si se especifica
-            if limite:
+            # Aplicar límite de seguridad
+            if limite and len(email_ids) > limite:
+                print(f"⚠️ LÍMITE DE SEGURIDAD: Procesando {limite} de {len(email_ids)} correos")
+                print(f"💡 Para procesar más: handler.procesar_correos(limite=N)")
                 email_ids = email_ids[:limite]
-                print(f"📊 Procesando los primeros {limite} correos")
             
             correos = []
             
             for idx, email_id in enumerate(email_ids, 1):
-                print(f"\n{'='*60}")
-                print(f"📨 Leyendo correo {idx}/{len(email_ids)}")
-                print(f"{'='*60}")
-                
-                status, msg_data = mail.fetch(email_id, '(RFC822)')
-                
-                if status != "OK":
+                try:
+                    print(f"\n{'='*60}")
+                    print(f"📨 Leyendo correo {idx}/{len(email_ids)}")
+                    print(f"{'='*60}")
+                    
+                    status, msg_data = mail.fetch(email_id, '(RFC822)')
+                    
+                    if status != "OK":
+                        continue
+                    
+                    msg = email.message_from_bytes(msg_data[0][1])
+                    correo_info = self.parsear_correo(msg)
+                    
+                    if correo_info:
+                        correo_info['email_id'] = email_id
+                        correos.append(correo_info)
+                except Exception as e:
+                    logger.error(f"Error leyendo correo {idx}: {str(e)}")
+                    print(f"⚠️ Error leyendo correo {idx}, continuando...")
                     continue
-                
-                msg = email.message_from_bytes(msg_data[0][1])
-                correo_info = self.parsear_correo(msg)
-                
-                if correo_info:
-                    # Agregar ID del correo para poder marcarlo después
-                    correo_info['email_id'] = email_id
-                    correos.append(correo_info)
             
             mail.close()
             mail.logout()
@@ -275,22 +220,61 @@ class EmailSolicitudHandler:
             print(f"❌ Error parseando correo: {str(e)}")
             return None
     
-    def marcar_como_leido(self, email_id):
-        """Marca un correo específico como leído"""
+    # =========================================================================
+    # MÉTODOS DE FILTRADO
+    # =========================================================================
+    
+    def es_correo_valido(self, correo_info):
+        """Determina si un correo es una solicitud válida"""
         try:
-            mail = self.conectar_email()
-            if mail:
-                mail.select('INBOX')
-                mail.store(email_id, '+FLAGS', '\\Seen')
-                mail.close()
-                mail.logout()
-                return True
+            asunto = correo_info.get('asunto', '').lower()
+            cuerpo = correo_info.get('cuerpo', '').lower()
+            remitente = correo_info.get('remitente', '').lower()
+            
+            for dominio in self.DOMINIOS_EXCLUIDOS:
+                if dominio in remitente:
+                    return False, f"Dominio excluido: {dominio}"
+            
+            tiene_palabra_clave_asunto = any(
+                palabra in asunto 
+                for palabra in self.PALABRAS_CLAVE_ASUNTO
+            )
+            
+            if not tiene_palabra_clave_asunto:
+                return False, "No contiene palabras clave en asunto"
+            
+            palabras_encontradas = sum(
+                1 for palabra in self.PALABRAS_CLAVE_CUERPO 
+                if palabra in cuerpo
+            )
+            
+            if palabras_encontradas < 2:
+                return False, f"Solo {palabras_encontradas} palabras clave en cuerpo (mínimo 2)"
+            
+            if len(cuerpo) < 100:
+                return False, f"Cuerpo muy corto ({len(cuerpo)} caracteres)"
+            
+            info_extraida = self.extraer_informacion_con_ia(correo_info)
+            if not info_extraida:
+                return False, "No se pudo extraer información"
+            
+            campos_encontrados = sum([
+                1 if info_extraida.get('nombre') else 0,
+                1 if info_extraida.get('programa_solicitado') else 0,
+                1 if info_extraida.get('correo') else 0,
+                1 if info_extraida.get('telefono') else 0,
+            ])
+            
+            if campos_encontrados < self.CAMPOS_MINIMOS_REQUERIDOS:
+                return False, f"Campos insuficientes ({campos_encontrados}/{self.CAMPOS_MINIMOS_REQUERIDOS})"
+            
+            return True, "Correo válido"
+            
         except Exception as e:
-            print(f"⚠️ Error marcando correo como leído: {str(e)}")
-        return False
+            return False, f"Error en validación: {str(e)}"
     
     # =========================================================================
-    # MÉTODOS DE EXTRACCIÓN (COMPLETADOS DESDE TU CÓDIGO ACTUAL)
+    # MÉTODOS DE EXTRACCIÓN (MEJORADOS)
     # =========================================================================
     
     def limpiar_texto(self, texto):
@@ -308,7 +292,10 @@ class EmailSolicitudHandler:
         return texto
     
     def validar_nit(self, nit):
-        """Valida y limpia el NIT según las reglas de tu aplicación"""
+        """
+        Valida y limpia el NIT - MEJORADO
+        Formato colombiano: 9-10 dígitos + dígito verificación
+        """
         if not nit: 
             return None
         
@@ -322,8 +309,13 @@ class EmailSolicitudHandler:
             print(f"   ⚠️ NIT inválido (menos de 8 dígitos): {nit_limpio}")
             return None
         
-        if len(nit_limpio) > 20:
-            print(f"   ⚠️ NIT inválido (más de 20 dígitos): {nit_limpio}")
+        if len(nit_limpio) > 12:
+            print(f"   ⚠️ NIT inválido (más de 12 dígitos): {nit_limpio}")
+            return None
+        
+        # CORREGIDO: Descartar si es celular (empieza con 3 Y tiene 10 dígitos)
+        if nit_limpio.startswith('3') and len(nit_limpio) == 10:
+            print(f"   ⚠️ Posible teléfono celular, no NIT: {nit_limpio}")
             return None
         
         print(f"   ✅ NIT validado: {nit_limpio}")
@@ -354,10 +346,9 @@ class EmailSolicitudHandler:
                 'observaciones': None,
             }
             
-            # ========== EXTRACCION DE NOMBRE DE EMPRESA Y NIT ==========
-            print("\n   === BUSCANDO NOMBRE DE EMPRESA Y NIT ===")
+            # ========== NOMBRE DE EMPRESA ==========
+            print("\n   === BUSCANDO NOMBRE DE EMPRESA ===")
             
-            # METODO 1: Buscar "Nombre:" seguido opcionalmente de "NIT:"
             nombre_nit_match = re.search(
                 r'Nombre:\s*([^\n]+?)(?:\s*NIT:\s*([0-9\s\.\-]+))?(?:\n|$)',
                 cuerpo,
@@ -369,7 +360,6 @@ class EmailSolicitudHandler:
                     info['nombre'] = nombre[:200]
                     print("   METODO 1 - Campo Nombre: " + info['nombre'])
                 
-                # Si encontró NIT en la misma línea
                 if nombre_nit_match.group(2):
                     nit_candidato = nombre_nit_match.group(2).strip()
                     nit_validado = self.validar_nit(nit_candidato)
@@ -377,7 +367,6 @@ class EmailSolicitudHandler:
                         info['nit'] = nit_validado
                         print("   METODO 1 - NIT junto al nombre: " + info['nit'])
             
-            # METODO 2: Buscar "la empresa NOMBRE" en el texto
             if not info['nombre']:
                 empresa_match = re.search(
                     r'(?:la\s+empresa|empresa)\s+([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s&\.]+?(?:S\.A\.S|S\.A|LTDA|SAS|SA))',
@@ -390,7 +379,6 @@ class EmailSolicitudHandler:
                         info['nombre'] = nombre[:200]
                         print("   METODO 2 - Texto narrativo: " + info['nombre'])
             
-            # METODO 3: Buscar empresas en mayusculas al inicio del correo
             if not info['nombre']:
                 primeras_lineas = '\n'.join(cuerpo.split('\n')[:10])
                 empresa_match = re.search(
@@ -399,7 +387,6 @@ class EmailSolicitudHandler:
                 )
                 if empresa_match:
                     nombre_candidato = self.limpiar_texto(empresa_match.group(1))
-                    # Excluir si es muy corto o parece firma
                     if nombre_candidato and len(nombre_candidato) > 8 and 'SENA' not in nombre_candidato.upper():
                         info['nombre'] = nombre_candidato[:200]
                         print("   METODO 3 - Mayusculas: " + info['nombre'])
@@ -407,11 +394,10 @@ class EmailSolicitudHandler:
             if not info['nombre']:
                 print("   ⚠️ NO SE ENCONTRO NOMBRE DE EMPRESA")
             
-            # ========== EXTRACCION DE NIT (si no se encontró antes) ==========
+            # ========== NIT ==========
             print("\n   === BUSCANDO NIT ===")
             
             if not info['nit']:
-                # METODO 1: Campo "NIT:" explicito
                 nit_match = re.search(
                     r'NIT:\s*([0-9\s\.\-]+)',
                     cuerpo,
@@ -425,7 +411,6 @@ class EmailSolicitudHandler:
                         print("   METODO 1 - Campo NIT: " + info['nit'])
             
             if not info['nit']:
-                # METODO 2: Buscar "NIT" seguido de numeros (con formatos variados)
                 nit_match = re.search(
                     r'NIT\s*[:\-]?\s*([0-9\s\.\-]{8,15})',
                     cuerpo,
@@ -439,21 +424,18 @@ class EmailSolicitudHandler:
                         print("   METODO 2 - Texto con NIT: " + info['nit'])
             
             if not info['nit']:
-                # METODO 3: Buscar secuencia de 8-11 digitos (formato tipico del NIT colombiano)
                 nit_match = re.search(r'\b([0-9]{8,11})\b', cuerpo)
                 if nit_match:
                     nit_candidato = nit_match.group(1)
-                    # Verificar que no sea un telefono (los telefonos moviles empiezan con 3)
-                    if not nit_candidato.startswith('3') or len(nit_candidato) != 10:
-                        nit_validado = self.validar_nit(nit_candidato)
-                        if nit_validado:
-                            info['nit'] = nit_validado
-                            print("   METODO 3 - Secuencia numerica: " + info['nit'])
+                    nit_validado = self.validar_nit(nit_candidato)
+                    if nit_validado:
+                        info['nit'] = nit_validado
+                        print("   METODO 3 - Secuencia numerica: " + info['nit'])
             
             if not info['nit']:
                 print("   ⚠️ NO SE ENCONTRO NIT")
             
-            # ========== EXTRACCION DE CONTACTO ==========
+            # ========== CONTACTO ==========
             contacto_match = re.search(
                 r'(?:Contacto|Representante\s+de\s+contacto):\s*([^\n]+)',
                 cuerpo,
@@ -462,13 +444,11 @@ class EmailSolicitudHandler:
             if contacto_match:
                 contacto = self.limpiar_texto(contacto_match.group(1))
                 if contacto:
-                    # Limpiar si viene con "Nombre:" o similar
                     contacto = re.sub(r'^Nombre:\s*', '', contacto, flags=re.IGNORECASE).strip()
                     info['contacto'] = contacto[:100]
                     print("   Contacto: " + info['contacto'])
             
-            # ========== EXTRACCION DE EMAIL ==========
-            # METODO 1: Campo "Correo:" o "Email:"
+            # ========== EMAIL ==========
             email_match = re.search(
                 r'(?:Correo|Email):\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})',
                 cuerpo,
@@ -478,7 +458,6 @@ class EmailSolicitudHandler:
                 info['correo'] = email_match.group(1).strip().lower()
                 print("   Email (campo): " + info['correo'])
             
-            # METODO 2: Cualquier email en el texto
             if not info['correo']:
                 email_match = re.search(
                     r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})',
@@ -488,20 +467,20 @@ class EmailSolicitudHandler:
                     info['correo'] = email_match.group(1).strip().lower()
                     print("   Email (texto): " + info['correo'])
             
-            # METODO 3: Email del remitente
             if not info['correo']:
                 email_match = re.search(
                     r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})',
                     remitente
                 )
                 if email_match:
-                    info['correo'] = email_match.group(1).strip().lower()
-                    print("   Email (remitente): " + info['correo'])
+                    email_extraido = email_match.group(1).strip().lower()
+                    if not any(dom in email_extraido for dom in self.DOMINIOS_EXCLUIDOS):
+                        info['correo'] = email_extraido
+                        print("   Email (remitente): " + info['correo'])
             
-            # ========== EXTRACCION DE TELEFONO ==========
+            # ========== TELEFONO ==========
             print("\n   === BUSCANDO TELEFONO ===")
             
-            # METODO 1: Campo "Telefono:" o "Tel:"
             tel_match = re.search(
                 r'(?:Tel[eéÉ]fono|Tel|Celular|Móvil|Movil):\s*([0-9\s\-\(\)+]+)',
                 cuerpo,
@@ -509,21 +488,17 @@ class EmailSolicitudHandler:
             )
             if tel_match:
                 telefono = tel_match.group(1).strip()
-                # Limpiar espacios, guiones y paréntesis
                 telefono_limpio = re.sub(r'[\s\-\(\)]', '', telefono)
-                # Validar que tenga al menos 7 dígitos
                 if len(telefono_limpio) >= 7 and telefono_limpio.isdigit():
                     info['telefono'] = telefono_limpio[:20]
                     print("   Telefono encontrado: " + info['telefono'])
             
-            # METODO 2: Buscar números de 10 dígitos (celular colombiano)
             if not info['telefono']:
                 tel_match = re.search(r'\b(3\d{9})\b', cuerpo)
                 if tel_match:
                     info['telefono'] = tel_match.group(1)
                     print("   Telefono (celular): " + info['telefono'])
             
-            # METODO 3: Buscar números de 7 dígitos (fijo)
             if not info['telefono']:
                 tel_match = re.search(r'\b([2-8]\d{6})\b', cuerpo)
                 if tel_match:
@@ -533,7 +508,7 @@ class EmailSolicitudHandler:
             if not info['telefono']:
                 print("   ⚠️ NO SE ENCONTRO TELEFONO")
             
-            # ========== EXTRACCION DE MUNICIPIO ==========
+            # ========== MUNICIPIO ==========
             municipio_match = re.search(
                 r'Municipio:\s*([^\n]+)',
                 cuerpo,
@@ -542,15 +517,13 @@ class EmailSolicitudHandler:
             if municipio_match:
                 municipio = self.limpiar_texto(municipio_match.group(1))
                 if municipio:
-                    # Limpiar si viene con guion o más texto
                     municipio = re.split(r'\s*[-–]\s*', municipio)[0]
                     info['municipio'] = municipio[:100]
                     print("   Municipio: " + info['municipio'])
             
-            # ========== EXTRACCION DE DIRECCION ==========
+            # ========== DIRECCION ==========
             print("\n   === BUSCANDO DIRECCION ===")
             
-            # METODO 1: Campo "Dirección:"
             dir_match = re.search(
                 r'(?:Direcci[oó]n|Direccion):\s*([^\n]+)',
                 cuerpo,
@@ -565,7 +538,7 @@ class EmailSolicitudHandler:
             if not info['direccion']:
                 print("   ⚠️ NO SE ENCONTRO DIRECCION")
             
-            # ========== EXTRACCION DE TRABAJADORES ==========
+            # ========== TRABAJADORES ==========
             trab_match = re.search(
                 r'N[uúÚ]mero\s+de\s+trabajadores:\s*([0-9]+)',
                 cuerpo,
@@ -577,10 +550,9 @@ class EmailSolicitudHandler:
                     info['numero_trabajadores'] = num_trab
                     print("   Trabajadores: " + str(info['numero_trabajadores']))
             
-            # ========== EXTRACCION DE PROGRAMA ==========
+            # ========== PROGRAMA (MEJORADO CON KEYWORDS) ==========
             print("\n   === BUSCANDO PROGRAMA ===")
             
-            # METODO 1: En el asunto del correo
             prog_match = re.search(
                 r'(?:programa|formaci[oó]n|curso)\s+(?:de\s+)?([a-záéíóúñ\s]+)',
                 asunto.lower()
@@ -588,12 +560,10 @@ class EmailSolicitudHandler:
             if prog_match:
                 programa = self.limpiar_texto(prog_match.group(1))
                 if programa:
-                    # Limpiar palabras comunes
                     programa = re.sub(r'\s+en\s+.*$', '', programa, flags=re.IGNORECASE)
                     info['programa_solicitado'] = programa
                     print("   METODO 1 - Asunto: " + info['programa_solicitado'])
             
-            # METODO 2: Buscar "programa de formacion NOMBRE"
             if not info['programa_solicitado']:
                 prog_match = re.search(
                     r'programa\s+de\s+formaci[oó]n\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?:\s+para|,|\.|\n)',
@@ -606,21 +576,12 @@ class EmailSolicitudHandler:
                         info['programa_solicitado'] = programa
                         print("   METODO 2 - Texto: " + info['programa_solicitado'])
             
-            # METODO 3: Palabras clave de operadores
             if not info['programa_solicitado']:
-                keywords = {
-                    'minicargador': 'Operador de Minicargador',
-                    'mini cargador': 'Operador de Minicargador',
-                    'montacargas': 'Operador de Montacargas',
-                    'excavadora': 'Operador de Excavadora',
-                    'retrocargador': 'Operador de Retrocargador',
-                }
-                
                 cuerpo_lower = cuerpo.lower()
-                for keyword, programa_nombre in keywords.items():
+                for keyword, programa_nombre in self.KEYWORDS_PROGRAMAS.items():
                     if keyword in cuerpo_lower:
                         info['programa_solicitado'] = programa_nombre
-                        print("   METODO 3 - Keyword: " + programa_nombre)
+                        print(f"   METODO 3 - Keyword '{keyword}': {programa_nombre}")
                         break
             
             if not info['programa_solicitado']:
@@ -643,139 +604,175 @@ class EmailSolicitudHandler:
             traceback.print_exc()
             return None
     
+    # =========================================================================
+    # BUSCAR/CREAR EMPRESA (MEJORADO CON TRANSACCIONES)
+    # =========================================================================
+    
+    @transaction.atomic
     def buscar_o_crear_empresa(self, info):
-        """Busca o crea empresa con validaciones mejoradas"""
+        """
+        Busca o crea empresa con manejo de duplicados MEJORADO
+        """
         try:
             nombre = info.get('nombre')
             correo = info.get('correo')
             nit = info.get('nit')
             
-            # Validar que al menos tengamos nombre o correo
             if not nombre and not correo:
                 print("   ❌ ERROR: No hay nombre ni correo para crear empresa")
                 return None, False
             
-            # Busqueda Mejorada por NIT
+            # ESTRATEGIA 1: Búsqueda por NIT
             if nit:
-                empresa = Empresa.objects.filter(nit=nit).first()
-                if empresa:
-                    print(f"   ✅ Empresa ENCONTRADA por NIT: {empresa.nombre} (NIT: {empresa.nit})")
-                    # Actualizar solo campos vacios o por defecto
-                    actualizado = False
-                    
-                    # Actualizar nombre si el actual esta vacio y tenemos uno nuevo
-                    if info.get('nombre') and (not empresa.nombre or empresa.nombre.startswith('Empresa')):
-                        empresa.nombre = info.get('nombre')[:200]
-                        actualizado = True
-                    
-                    if not empresa.contacto and info.get('contacto'):
-                        empresa.contacto = info.get('contacto')[:100]
-                        actualizado = True
+                try:
+                    empresa = Empresa.objects.filter(nit=nit).first()
+                    if empresa:
+                        print(f"   ✅ Empresa ENCONTRADA por NIT: {empresa.nombre} (NIT: {empresa.nit})")
                         
-                    if not empresa.correo and info.get('correo'):
-                        empresa.correo = info.get('correo')
-                        actualizado = True
-                    
-                    if not empresa.telefono and info.get('telefono'):
-                        empresa.telefono = info.get('telefono')[:20]
-                        actualizado = True
-                    
-                    if not empresa.municipio and info.get('municipio'):
-                        empresa.municipio = info.get('municipio')[:100]
-                        actualizado = True
-                    
-                    if not empresa.direccion and info.get('direccion'):
-                        empresa.direccion = info.get('direccion')[:250]
-                        actualizado = True
-                    
-                    if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
-                        empresa.numero_trabajadores = info.get('numero_trabajadores')
-                        actualizado = True
+                        actualizado = False
                         
-                    if actualizado:
-                        empresa.save()
-                        print("   📝 Empresa Actualizada con nuevos datos")
+                        if info.get('nombre') and (not empresa.nombre or empresa.nombre.startswith('Empresa')):
+                            empresa.nombre = info.get('nombre')[:200]
+                            actualizado = True
+                            print(f"   📝 Nombre actualizado: {empresa.nombre}")
                         
-                    return empresa, False
+                        if not empresa.contacto and info.get('contacto'):
+                            empresa.contacto = info.get('contacto')[:100]
+                            actualizado = True
+                        
+                        if not empresa.correo and info.get('correo'):
+                            empresa.correo = info.get('correo')
+                            actualizado = True
+                        
+                        if not empresa.telefono and info.get('telefono'):
+                            empresa.telefono = info.get('telefono')[:20]
+                            actualizado = True
+                        
+                        if not empresa.municipio and info.get('municipio'):
+                            empresa.municipio = info.get('municipio')[:100]
+                            actualizado = True
+                        
+                        if not empresa.direccion and info.get('direccion'):
+                            empresa.direccion = info.get('direccion')[:250]
+                            actualizado = True
+                        
+                        if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
+                            empresa.numero_trabajadores = info.get('numero_trabajadores')
+                            actualizado = True
+                        
+                        if actualizado:
+                            empresa.save()
+                            print("   📝 Empresa actualizada con nuevos datos")
+                        
+                        return empresa, False
+                        
+                except Exception as e:
+                    logger.error(f"Error buscando empresa por NIT: {str(e)}")
             
-            # Buscar por nombre exacto si no se encontro por NIT
+            # ESTRATEGIA 2: Búsqueda por nombre
             if nombre:
-                empresa = Empresa.objects.filter(nombre__iexact=nombre).first()
-                if empresa:
-                    print("   ✅ Empresa ENCONTRADA por nombre: " + empresa.nombre)
-                    actualizado = False
-                    
-                    if nit and not empresa.nit:
-                        empresa.nit = nit
-                        actualizado = True
-                        print(f"   📝 NIT actualizado en empresa existente: {nit}")
-                    
-                    if not empresa.contacto and info.get('contacto'):
-                        empresa.contacto = info.get('contacto')[:100]
-                        actualizado = True
-                    
-                    if not empresa.correo and info.get('correo'):
-                        empresa.correo = info.get('correo')
-                        actualizado = True
-                    
-                    if not empresa.telefono and info.get('telefono'):
-                        empresa.telefono = info.get('telefono')[:20]
-                        actualizado = True
-                    
-                    if not empresa.municipio and info.get('municipio'):
-                        empresa.municipio = info.get('municipio')[:100]
-                        actualizado = True
-                    
-                    if not empresa.direccion and info.get('direccion'):
-                        empresa.direccion = info.get('direccion')[:250]
-                        actualizado = True
-                    
-                    if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
-                        empresa.numero_trabajadores = info.get('numero_trabajadores')
-                        actualizado = True
-                    
-                    if actualizado:
-                        empresa.save()
-                        print("   📝 Empresa ACTUALIZADA con nuevos datos")
-                    
-                    return empresa, False
+                empresas_mismo_nombre = Empresa.objects.filter(nombre__iexact=nombre)
+                
+                if empresas_mismo_nombre.exists():
+                    if nit:
+                        empresa = empresas_mismo_nombre.filter(nit=nit).first()
+                        if empresa:
+                            print(f"   ✅ Empresa ENCONTRADA por nombre + NIT: {empresa.nombre}")
+                            return empresa, False
+                        else:
+                            print(f"   ⚠️ ALERTA: Ya existe empresa '{nombre}' pero con NIT diferente")
+                            print(f"   🆕 Creando NUEVA empresa (mismo nombre, NIT diferente)")
+                    else:
+                        empresa = empresas_mismo_nombre.first()
+                        print(f"   ✅ Empresa ENCONTRADA por nombre (sin NIT): {empresa.nombre}")
+                        
+                        actualizado = False
+                        
+                        if not empresa.contacto and info.get('contacto'):
+                            empresa.contacto = info.get('contacto')[:100]
+                            actualizado = True
+                        
+                        if not empresa.correo and info.get('correo'):
+                            empresa.correo = info.get('correo')
+                            actualizado = True
+                        
+                        if not empresa.telefono and info.get('telefono'):
+                            empresa.telefono = info.get('telefono')[:20]
+                            actualizado = True
+                        
+                        if not empresa.municipio and info.get('municipio'):
+                            empresa.municipio = info.get('municipio')[:100]
+                            actualizado = True
+                        
+                        if not empresa.direccion and info.get('direccion'):
+                            empresa.direccion = info.get('direccion')[:250]
+                            actualizado = True
+                        
+                        if (not empresa.numero_trabajadores or empresa.numero_trabajadores == 0) and info.get('numero_trabajadores'):
+                            empresa.numero_trabajadores = info.get('numero_trabajadores')
+                            actualizado = True
+                        
+                        if actualizado:
+                            empresa.save()
+                            print("   📝 Empresa actualizada con nuevos datos")
+                        
+                        return empresa, False
             
-            # Crear nueva empresa con validaciones
+            # ESTRATEGIA 3: Crear nueva empresa
             print("   🆕 Creando NUEVA empresa...")
             
-            # Preparar datos con valores por defecto solo si es necesario
             nombre_empresa = nombre if nombre else f"Empresa {correo.split('@')[0]}"
-            nit_empresa = nit if nit else ''
+            nit_empresa = nit if nit else None
             contacto_empresa = info.get('contacto') if info.get('contacto') else 'Sin contacto'
-            telefono_empresa = info.get('telefono') if info.get('telefono') else ''
+            telefono_empresa = info.get('telefono', '')
             correo_empresa = correo if correo else f"sin-correo-{timezone.now().timestamp()}@ejemplo.com"
-            municipio_empresa = info.get('municipio') if info.get('municipio') else ''
-            direccion_empresa = info.get('direccion') if info.get('direccion') else ''
-            num_trabajadores = info.get('numero_trabajadores') if info.get('numero_trabajadores') else 0
+            municipio_empresa = info.get('municipio', '')
+            direccion_empresa = info.get('direccion', '')
+            num_trabajadores = info.get('numero_trabajadores', 0)
             
-            empresa = Empresa.objects.create(
-                nombre=nombre_empresa[:200],
-                nit=nit_empresa[:20],
-                contacto=contacto_empresa[:100],
-                telefono=telefono_empresa[:20],
-                correo=correo_empresa,
-                municipio=municipio_empresa[:100],
-                direccion=direccion_empresa[:250],
-                numero_trabajadores=num_trabajadores
-            )
+            if nombre and Empresa.objects.filter(nombre__iexact=nombre_empresa).exists():
+                timestamp = timezone.now().strftime('%Y%m%d-%H%M%S')
+                nombre_empresa = f"{nombre_empresa} ({timestamp})"
+                print(f"   ⚠️ Nombre duplicado detectado, usando: {nombre_empresa}")
             
-            print("   ✅ Empresa CREADA: " + empresa.nombre)
-            print("   - NIT: " + (empresa.nit or 'NO REGISTRADO'))
-            print("   - Telefono: " + (empresa.telefono or 'NO REGISTRADO'))
-            print("   - Direccion: " + (empresa.direccion or 'NO REGISTRADA'))
-            
-            return empresa, True
-            
+            try:
+                empresa = Empresa.objects.create(
+                    nombre=nombre_empresa[:200],
+                    nit=nit_empresa,
+                    contacto=contacto_empresa[:100],
+                    telefono=telefono_empresa[:20],
+                    correo=correo_empresa,
+                    municipio=municipio_empresa[:100],
+                    direccion=direccion_empresa[:250],
+                    numero_trabajadores=num_trabajadores
+                )
+                
+                print("   ✅ Empresa CREADA: " + empresa.nombre)
+                print("   - NIT: " + (empresa.nit or 'NO REGISTRADO'))
+                print("   - Contacto: " + empresa.contacto)
+                print("   - Teléfono: " + (empresa.telefono or 'NO REGISTRADO'))
+                print("   - Dirección: " + (empresa.direccion or 'NO REGISTRADA'))
+                
+                return empresa, True
+                
+            except IntegrityError as e:
+                print(f"   ❌ Error de integridad al crear empresa: {str(e)}")
+                if nit:
+                    print(f"   🔄 Recuperando empresa existente con NIT {nit}")
+                    empresa = Empresa.objects.filter(nit=nit).first()
+                    if empresa:
+                        return empresa, False
+                raise
+                
         except Exception as e:
-            print("   ❌ Error creando empresa: " + str(e))
+            print("   ❌ Error en buscar_o_crear_empresa: " + str(e))
             import traceback
             traceback.print_exc()
             return None, False
+    
+    # =========================================================================
+    # BÚSQUEDA DE PROGRAMA (MEJORADO)
+    # =========================================================================
     
     def normalizar_texto(self, texto):
         """Normaliza texto para comparaciones"""
@@ -788,21 +785,44 @@ class EmailSolicitudHandler:
         return texto
     
     def buscar_programa(self, nombre_programa):
-        """Busca programa en la base de datos"""
+        """
+        Busca programa con scoring de similitud MEJORADO
+        """
         try:
             if not nombre_programa:
                 return None
             
             print("   Buscando programa: " + nombre_programa)
             nombre_norm = self.normalizar_texto(nombre_programa)
+            tokens_busqueda = set(nombre_norm.split())
             
             programas = Programa.objects.filter(activo=True)
             
+            mejor_match = None
+            mejor_score = 0
+            
             for programa in programas:
                 prog_norm = self.normalizar_texto(programa.nombre)
-                if prog_norm == nombre_norm or nombre_norm in prog_norm or prog_norm in nombre_norm:
-                    print("   Programa encontrado: " + programa.nombre)
-                    return programa
+                tokens_programa = set(prog_norm.split())
+                
+                score = 0
+                
+                if prog_norm == nombre_norm:
+                    score = 100
+                elif nombre_norm in prog_norm or prog_norm in nombre_norm:
+                    score = 80
+                else:
+                    tokens_comunes = tokens_busqueda.intersection(tokens_programa)
+                    if tokens_comunes:
+                        score = (len(tokens_comunes) / max(len(tokens_busqueda), len(tokens_programa))) * 60
+                
+                if score > mejor_score:
+                    mejor_score = score
+                    mejor_match = programa
+            
+            if mejor_match and mejor_score >= 40:
+                print(f"   ✅ Programa encontrado: {mejor_match.nombre} (similitud: {mejor_score:.0f}%)")
+                return mejor_match
             
             print("   Programa NO encontrado en BD")
             return None
@@ -812,11 +832,11 @@ class EmailSolicitudHandler:
             return None
     
     # =========================================================================
-    # MÉTODO PRINCIPAL DE PROCESAMIENTO MEJORADO
+    # PROCESAMIENTO INDIVIDUAL (LIMPIO - TU LÓGICA)
     # =========================================================================
     
     def procesar_correo_individual(self, correo_info):
-        """Procesa un solo correo con validaciones"""
+        """Procesa un solo correo - MANTIENE TU LÓGICA ORIGINAL"""
         try:
             asunto_corto = correo_info['asunto'][:50]
             
@@ -824,7 +844,7 @@ class EmailSolicitudHandler:
             print(f"📧 Procesando: {asunto_corto}")
             print(f"{'='*60}")
             
-            # PASO 1: Validar si es un correo relevante
+            # PASO 1: Validar
             es_valido, razon = self.es_correo_valido(correo_info)
             
             if not es_valido:
@@ -855,18 +875,21 @@ class EmailSolicitudHandler:
             if info.get('programa_solicitado'):
                 programa = self.buscar_programa(info.get('programa_solicitado'))
             
+            # TU LÓGICA: Si no hay programa, NO se crea solicitud
             if not programa:
                 print("❌ ERROR: Programa no encontrado - No se puede crear solicitud")
+                print(f"   Programa solicitado: {info.get('programa_solicitado')}")
                 self.stats['errores'] += 1
                 return None
             
-            # PASO 5: Crear solicitud
+            # PASO 5: Crear solicitud (TU ESTRUCTURA)
             solicitud = Solicitud.objects.create(
                 empresa=empresa,
                 programa=programa,
                 estado='RECIBIDA',
                 fecha_recepcion=timezone.now(),
-                observaciones=f"Creada automáticamente desde correo: {asunto_corto}"
+                observaciones=f"Creada automáticamente desde correo: {asunto_corto}",
+                numero_aprendices=info.get('numero_trabajadores')
             )
             
             print(f"✅ SOLICITUD CREADA: #{solicitud.id}")
@@ -885,28 +908,29 @@ class EmailSolicitudHandler:
             self.stats['errores'] += 1
             return None
     
-    def procesar_correos(self, limite=None, procesar_en_paralelo=True, max_workers=5):
+    # =========================================================================
+    # PROCESAMIENTO MASIVO (SEGURO POR DEFECTO)
+    # =========================================================================
+    
+    def procesar_correos(self, limite=20, procesar_en_paralelo=False, max_workers=3):
         """
-        Procesa todos los correos no leídos con filtrado inteligente.
+        Procesa correos - CONFIGURACIÓN SEGURA POR DEFECTO
         
         Args:
-            limite (int): Máximo de correos a procesar. None = todos
-            procesar_en_paralelo (bool): Si True, procesa múltiples correos simultáneamente
-            max_workers (int): Número de hilos para procesamiento paralelo
-        
-        Returns:
-            list: Lista de solicitudes creadas
+            limite: Máximo de correos (20 por defecto = SEGURO)
+            procesar_en_paralelo: False por defecto (SEGURO)
+            max_workers: 3 workers máximo (SEGURO)
         """
         print("\n" + "="*60)
         print("🚀 INICIANDO PROCESAMIENTO DE CORREOS")
         print("="*60)
         print(f"📋 Configuración:")
         print(f"   - Límite: {limite if limite else 'Sin límite'}")
-        print(f"   - Paralelo: {'Sí' if procesar_en_paralelo else 'No'}")
-        print(f"   - Workers: {max_workers if procesar_en_paralelo else 1}")
+        print(f"   - Paralelo: {'Sí' if procesar_en_paralelo else 'No (más seguro)'}")
+        if procesar_en_paralelo:
+            print(f"   - Workers: {max_workers}")
         print("="*60)
         
-        # Reiniciar estadísticas
         self.stats = {
             'total_correos': 0,
             'correos_filtrados': 0,
@@ -915,7 +939,6 @@ class EmailSolicitudHandler:
             'errores': 0,
         }
         
-        # Leer correos
         correos = self.leer_correos_no_leidos(limite=limite)
         
         if not correos:
@@ -925,7 +948,6 @@ class EmailSolicitudHandler:
         solicitudes_creadas = []
         
         if procesar_en_paralelo and len(correos) > 1:
-            # Procesamiento paralelo
             print(f"\n⚡ Procesando {len(correos)} correos en paralelo...")
             
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -935,11 +957,13 @@ class EmailSolicitudHandler:
                 }
                 
                 for future in as_completed(futures):
-                    solicitud = future.result()
-                    if solicitud:
-                        solicitudes_creadas.append(solicitud)
+                    try:
+                        solicitud = future.result()
+                        if solicitud:
+                            solicitudes_creadas.append(solicitud)
+                    except Exception as e:
+                        logger.error(f"Error en paralelo: {str(e)}")
         else:
-            # Procesamiento secuencial
             print(f"\n📝 Procesando {len(correos)} correos secuencialmente...")
             
             for idx, correo in enumerate(correos, 1):
@@ -951,7 +975,6 @@ class EmailSolicitudHandler:
                 if solicitud:
                     solicitudes_creadas.append(solicitud)
         
-        # Mostrar resumen
         self.mostrar_resumen()
         
         return solicitudes_creadas
@@ -1013,3 +1036,17 @@ Coordinación de Formación Empresarial"""
             print(f"   ❌ Error enviando respuesta automática: {str(e)}")
             import traceback
             traceback.print_exc()
+    
+    def marcar_como_leido(self, email_id):
+        """Marca un correo específico como leído"""
+        try:
+            mail = self.conectar_email()
+            if mail:
+                mail.select('INBOX')
+                mail.store(email_id, '+FLAGS', '\\Seen')
+                mail.close()
+                mail.logout()
+                return True
+        except Exception as e:
+            print(f"⚠️ Error marcando correo como leído: {str(e)}")
+        return False
