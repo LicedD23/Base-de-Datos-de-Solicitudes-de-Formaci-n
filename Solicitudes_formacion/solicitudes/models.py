@@ -22,7 +22,14 @@ class Solicitud(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='RECIBIDA')
     observaciones = models.TextField(blank=True)
     numero_aprendices = models.IntegerField(null=True, blank=True)
-
+    
+    correo_remitente = models.EmailField(
+    max_length=255,
+    blank=True,
+    null=True,
+    verbose_name="Correo del Remitente",
+    help_text="Email desde donde se envió la solicitud original"
+)
     class Meta:
         verbose_name_plural = "Solicitudes"
         ordering = ['-fecha_recepcion']

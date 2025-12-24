@@ -563,26 +563,19 @@
                         type="email"
                         id="destinatario"
                         name="destinatario"
-                        value="{{solicitud.empresa.correo}}"
+                        value="{% if solicitud.correo_remitente %}{{solicitud.correo_remitente}}{% else %}{{solicitud.empresa.correo}}{% endif %}"
                         readonly
                         disabled
                     >
-                    <small>Correo de la empresa solicitante</small>
+                    <small>
+                        📧 Respuesta enviada a: 
+                        {% if solicitud.correo_remitente %}
+                            <strong>{{solicitud.correo_remitente}}</strong> (remitente original)
+                        {% else %}
+                            <strong>{{solicitud.empresa.correo}}</strong> (correo registrado)
+                        {% endif %}
+                    </small>
                 </div>
-
-                <div class="form-group">
-                    <label for="asunto" class="required">Asunto del Correo</label>
-                    <input
-                        type="text"
-                        id="asunto"
-                        name="asunto"
-                        value="Respuesta Solicitud de Formación #{{solicitud.id}} - SENA"
-                        required
-                        maxlength="200"
-                    >
-                    <small>Título del correo electrónico</small>
-                </div>
-
                 <div class="form-group">
                     <label for="mensaje" class="required">Mensaje</label>
                     <div class="template-buttons">

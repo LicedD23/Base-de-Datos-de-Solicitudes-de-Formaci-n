@@ -889,14 +889,15 @@ class EmailSolicitudHandler:
                 estado='RECIBIDA',
                 fecha_recepcion=timezone.now(),
                 observaciones=f"Creada automáticamente desde correo: {asunto_corto}",
-                numero_aprendices=info.get('numero_trabajadores')
+                numero_aprendices=info.get('numero_trabajadores'),
+                correo_remitente=self._extraer_email_limpio(correo_info['remitente'])
             )
             
             print(f"✅ SOLICITUD CREADA: #{solicitud.id}")
             self.stats['solicitudes_creadas'] += 1
             
             # PASO 6: Enviar respuesta automática
-            self.enviar_respuesta_automatica(empresa, solicitud, correo_info)
+            #self.enviar_respuesta_automatica(empresa, solicitud, correo_info)
             
             self.stats['correos_procesados'] += 1
             return solicitud
@@ -1050,3 +1051,13 @@ Coordinación de Formación Empresarial"""
         except Exception as e:
             print(f"⚠️ Error marcando correo como leído: {str(e)}")
         return False
+    def _extraer_email_limpio(self, remitente):
+        """Extrae solo el email del remitente (sin nombre)"""
+        try:
+            # Formato: "Nombre Apellido <email@ejemplo.com>" o solo "email@ejemplo.com"
+            email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', remitente)
+            if email_match:
+                return email_match.group(0).lower()
+            return None
+        except:
+            return None

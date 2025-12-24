@@ -357,15 +357,26 @@ def enviar_respuesta(request, solicitud_id):
     
     if request.method == 'POST':
         try:
-            asunto = request.POST.get('asunto')
+            # 🔥 CORRECCIÓN: Generar asunto automáticamente
+            asunto = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
             mensaje = request.POST.get('mensaje')
             
-            # Validar campos
-            if not asunto or not mensaje:
-                messages.error(request, '❌ El asunto y el mensaje son obligatorios')
+            if not mensaje:
+                messages.error(request, '❌ El mensaje es obligatorio')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
             
-            # Enviar correo
+            # 🔥 SOLO AL REMITENTE (prioriza correo_remitente)
+            correo_destino = solicitud.correo_remitente or solicitud.empresa.correo
+            
+            if not correo_destino:
+                messages.error(request, '❌ No hay correo de destino disponible')
+                return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
+            
+            # Validar que no sea un correo de ejemplo
+            if '@ejemplo.com' in correo_destino.lower():
+                messages.error(request, '❌ No se puede enviar correo a una dirección de ejemplo')
+                return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
+            
             from django.core.mail import send_mail 
             from django.conf import settings
             
@@ -373,11 +384,11 @@ def enviar_respuesta(request, solicitud_id):
                 subject=asunto,
                 message=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[solicitud.empresa.correo],
+                recipient_list=[correo_destino],
                 fail_silently=False,
             )
             
-            # 🔥 MEJORA: Solo cambiar a RESPONDIDA si está en RECIBIDA
+            # Actualizar estado solo si está en RECIBIDA
             if solicitud.estado == 'RECIBIDA':
                 solicitud.estado = "RESPONDIDA"
                 solicitud.fecha_respuesta = timezone.now()
@@ -385,13 +396,12 @@ def enviar_respuesta(request, solicitud_id):
                 
                 messages.success(
                     request,
-                    f'✅ Correo enviado exitosamente a {solicitud.empresa.correo}. Estado actualizado a RESPONDIDA'
+                    f'✅ Correo enviado exitosamente a {correo_destino}. Estado actualizado a RESPONDIDA'
                 )
             else:
-                # Si ya estaba RESPONDIDA, ATENDIDA o FINALIZADA, solo enviar correo
                 messages.success(
                     request,
-                    f'✅ Correo enviado exitosamente a {solicitud.empresa.correo}'
+                    f'✅ Correo enviado exitosamente a {correo_destino}'
                 )
             
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
@@ -400,9 +410,10 @@ def enviar_respuesta(request, solicitud_id):
             messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
             return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
     
-    # GET request - mostrar formulario 
+    # 🔥 GET REQUEST: Pasar información completa al template
     context = {
         'solicitud': solicitud,
+        'destinatario_email': solicitud.correo_remitente or solicitud.empresa.correo,
     }
     return render(request, 'solicitudes/enviar_respuesta.html', context)
 @login_required
