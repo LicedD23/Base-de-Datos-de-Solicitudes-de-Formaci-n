@@ -786,47 +786,77 @@ class EmailSolicitudHandler:
     
     def buscar_programa(self, nombre_programa):
         """
-        Busca programa con scoring de similitud MEJORADO
+        Busca programa con scoring de similitud MEJORADO v2
         """
         try:
             if not nombre_programa:
                 return None
-            
+        
             print("   Buscando programa: " + nombre_programa)
             nombre_norm = self.normalizar_texto(nombre_programa)
             tokens_busqueda = set(nombre_norm.split())
-            
+        
             programas = Programa.objects.filter(activo=True)
-            
+        
             mejor_match = None
             mejor_score = 0
-            
+        
             for programa in programas:
                 prog_norm = self.normalizar_texto(programa.nombre)
                 tokens_programa = set(prog_norm.split())
-                
+            
                 score = 0
-                
+            
+                # NIVEL 1: Coincidencia exacta (100%)
                 if prog_norm == nombre_norm:
                     score = 100
+            
+                # NIVEL 2: Contención completa (90%)
                 elif nombre_norm in prog_norm or prog_norm in nombre_norm:
-                    score = 80
+                    score = 90
+            
+                # NIVEL 3: Coincidencia de palabras clave importantes (70-85%)
                 else:
                     tokens_comunes = tokens_busqueda.intersection(tokens_programa)
-                    if tokens_comunes:
-                        score = (len(tokens_comunes) / max(len(tokens_busqueda), len(tokens_programa))) * 60
                 
+                    if tokens_comunes:
+                        # Calcular score basado en tokens comunes
+                        cobertura_busqueda = len(tokens_comunes) / len(tokens_busqueda) if len(tokens_busqueda) > 0 else 0
+                        cobertura_programa = len(tokens_comunes) / len(tokens_programa) if len(tokens_programa) > 0 else 0
+                    
+                        # Promedio de coberturas
+                        score = ((cobertura_busqueda + cobertura_programa) / 2) * 85
+                    
+                        # BONUS: Si contiene palabras clave importantes (hidráulico, sistemas, maquinaria, etc.)
+                        palabras_importantes = {'sistemas', 'hidraulicos', 'maquinaria', 'pesada', 
+                                                'operador', 'excavadora', 'retrocargador', 'montacargas',
+                                                'minicargador', 'interpretacion', 'planos'}
+                    
+                        tokens_importantes_busqueda = tokens_busqueda.intersection(palabras_importantes)
+                        tokens_importantes_programa = tokens_programa.intersection(palabras_importantes)
+                        tokens_importantes_comunes = tokens_importantes_busqueda.intersection(tokens_importantes_programa)
+                    
+                        if tokens_importantes_comunes:
+                            bonus = (len(tokens_importantes_comunes) / len(tokens_importantes_busqueda)) * 15 if len(tokens_importantes_busqueda) > 0 else 0
+                            score = min(score + bonus, 95)  # Máximo 95% para evitar superar exacta
+            
+                # DEBUG: Mostrar scoring
+                if score > 30:
+                    print(f"   Candidato: {programa.nombre} (score: {score:.0f}%)")
+            
                 if score > mejor_score:
                     mejor_score = score
                     mejor_match = programa
-            
-            if mejor_match and mejor_score >= 40:
+        
+            # UMBRAL: Reducir de 40% a 35% para ser más permisivo
+            if mejor_match and mejor_score >= 35:
                 print(f"   ✅ Programa encontrado: {mejor_match.nombre} (similitud: {mejor_score:.0f}%)")
                 return mejor_match
-            
-            print("   Programa NO encontrado en BD")
+        
+            print(f"   ❌ Programa NO encontrado en BD (mejor score: {mejor_score:.0f}%)")
+            print(f"   💡 Tokens buscados: {tokens_busqueda}")
             return None
-            
+        
         except Exception as e:
             print("   Error buscando programa: " + str(e))
             return None
