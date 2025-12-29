@@ -9,5 +9,5 @@ urlpatterns = [
     path('areas/<int:area_id>/', views.detalle_area, name='detalle_area'),
     path('areas/<int:area_id>/editar/', views.editar_area, name='editar_area'),
     path('areas/<int:area_id>/desactivar/', views.desactivar_area, name='desactivar_area'),
-    
+    path('areas/<int:area_id>/eliminar/', views.eliminar_area, name='eliminar_area'),
 ]

@@ -533,13 +533,13 @@
         }
 
         .area-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 15px;
         }
 
         .btn-action {
-            flex: 1;
             padding: 10px;
             border: none;
             border-radius: 8px;
@@ -573,11 +573,21 @@
         }
 
         .btn-delete {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .btn-delete:hover {
+            background: #f57c00;
+            color: white;
+        }
+
+        .btn-eliminate {
             background: #ffebee;
             color: #c62828;
         }
 
-        .btn-delete:hover {
+        .btn-eliminate:hover {
             background: #c62828;
             color: white;
         }
@@ -822,6 +832,7 @@
                     <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta área?')">🚫 Desactivar</a>
+                    <a href="{% url 'area_formacion:eliminar_area' area.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Estás seguro de eliminar permanentemente esta área?')">🗑️ Eliminar</a>
                 </div>
             </div>
             {% endfor %}

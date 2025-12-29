@@ -193,3 +193,62 @@ def desactivar_area(request, area_id):
         'programas_activos': programas_activos
     }
     return render(request, 'area_formacion/desactivar_area.html', context)
+
+def eliminar_area(request, area_id):
+    """Vista para eliminar permanentemente un area"""
+    area = get_object_or_404(Area, id=area_id)
+    
+    # Contar programas relacionados
+    total_programas = area.programas.count()
+    
+    if request.method == 'POST':
+        #Verificar si  tiene programas asociados
+        if total_programas > 0:
+            #Verificar que hacer con los programas 
+            accion_programas = request.POST.get('accion_programas')
+        
+            if accion_programas == 'eliminar':
+                #Eliminar tambien los programas 
+                nombre_area = area.nombre
+                programas_eliminados = total_programas
+                area.programas.all().delete()
+                area.delete()
+            
+                messages.success(
+                    request,
+                    f'✅ Area "{nombre_area}" y sus {programas_eliminados} programas eliminados permanentemente'
+                )
+        
+            elif accion_programas == 'cancelar':
+                #Cancelar la eliminacion
+                messages.warning(
+                    request,
+                    f'⚠️ Eliminacion cancelada. El  area "{area.nombre}" no se elimino'
+                )
+                return redirect('area_formacion:detalle_area', area_id=area.id)
+            else:
+                #No se selecciono ninguna opcion
+                messages.error(
+                    request,
+                    '❌ Debes seleccionar que hacer con los programas asociados'    
+                )
+                return render(request, 'area_formacion/eliminar_area.html', {
+                    'area': area,
+                    'total_programas': total_programas
+                })
+        else:
+            #No tiene programas, eliminar directamente
+            nombre_area = area.nombre
+            area.delete()
+            messages.success(
+                request,
+                f'✅ Area "{nombre_area}" eliminada exitosamente'
+            )
+    
+        return redirect('area_formacion:listar_areas')
+
+    context={
+        'area': area,
+        'total_programas': total_programas,  
+    }
+    return render(request, 'area_formacion/eliminar_area.html', context)
