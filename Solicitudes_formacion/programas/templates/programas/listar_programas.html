@@ -407,8 +407,9 @@
 
         /* BOTONES DE ACCIÓN - ESTILO INSTRUCTORES */
         .programa-actions {
-            display: flex;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap:10px;
             margin-top: 15px;
         }
 
@@ -447,13 +448,21 @@
         }
 
         .btn-delete {
-            background: #ffebee;
-            color: #c62828;
+            background: #fff3e0;
+            color: #f57c00;
         }
 
         .btn-delete:hover {
-            background: #c62828;
+            background: #f57c00;
             color: white;
+        }
+        .btn-eliminate{
+            background:#ffebee;
+            color:#c62828;
+        }
+        .btn-eliminate:hover{
+            background:#c62828;
+            color:white;
         }
 
         .empty-state {
@@ -643,6 +652,7 @@
                     <a href="{% url 'programas:desactivar_programa' programa.id %}" 
                         class="btn-action btn-delete" 
                         onclick="return confirm('¿Estás seguro de desactivar este programa?')">🚫 Desactivar</a>
+                    <a href="{% url 'programas:eliminar_programa' programa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente este programa?')">🗑️ Eliminar</a>
                 </div>
             </div>
             {% endfor %}

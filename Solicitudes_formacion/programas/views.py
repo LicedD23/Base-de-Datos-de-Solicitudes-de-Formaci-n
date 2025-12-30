@@ -215,3 +215,63 @@ def desactivar_programa(request, programa_id):
         'solicitudes_activas': solicitudes_activas,
     }
     return render(request, 'programas/desactivar_programa.html', context)
+
+def eliminar_programa(request, programa_id):
+    """Vista para eliminar permanentemente un programa"""
+    programa = get_object_or_404(Programa, id=programa_id)
+    
+    # Contar solicitudes relacionadas
+    total_solicitudes = programa.solicitud_set.count()
+    
+    if request.method == 'POST':
+        #verificar si  tiene solicitudes asociadas 
+        if total_solicitudes > 0:
+            #Verificar que hacer con las solicitudes
+            accion_solicitudes = request.POST.get('accion_solicitudes')
+            
+            if accion_solicitudes == 'eliminar':
+                #Eliminar tambien las solicitudes
+                nombre_programa = programa.nombre
+                solicitudes_eliminadas = total_solicitudes
+                programa.solicitud_set.all().delete()
+                programa.delete()
+                
+                messages.success(
+                    request,
+                    f'✅ Programa "{nombre_programa}" y sus {solicitudes_eliminadas} solicitud(es) eliminados permanentemente'
+                )
+            elif accion_solicitudes == 'cancelar':
+                #Cancelar la eliminacion
+                messages.warning(
+                    request,
+                    f'⚠️ Eliminacion cancelada. El programa"{programa.nombre}" no se elimino'
+                )
+                return redirect('programas:detalle_programa', programa_id=programa.id)
+            else:
+                #No se selecciono ninguna opcion
+                messages.error(
+                    request,
+                    '❌ Debes seleccionar que hacer con las solicitudes asociadas'
+                )
+                return render(request, 'programas/eliminar_programa.html', {
+                    'programa':programa,
+                    'total_solicitudes': total_solicitudes
+                })
+        else:
+            #No tiene solicitudes, eliminar directamente
+            nombre_programa = programa.nombre
+            programa.delete()
+            messages.success(
+                request,
+                f'✅ Programa "{nombre_programa}" eliminado exitosamente'
+            )
+        
+        return redirect('programas:listar_programas')
+    
+    context = {
+        'programa':programa,
+        'total_solicitudes': total_solicitudes,
+        
+    }
+    return render(request, 'programas/eliminar_programa.html', context)
+        
