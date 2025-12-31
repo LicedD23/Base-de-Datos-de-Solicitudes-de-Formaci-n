@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:instructor_id>/',views.detalle_instructor, name='detalle_instructor'),
     path('<int:instructor_id>/editar/',views.editar_instructor, name='editar_instructor'),
     path('<int:instructor_id>/desactivar/',views.desactivar_instructor, name='desactivar_instructor'),
+    path('<int:instructor_id>/eliminar/', views.eliminar_instructor, name='eliminar_instructor'),
 ]
 

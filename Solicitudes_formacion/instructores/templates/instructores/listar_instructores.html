@@ -3,554 +3,562 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instructores -SENA</title>
+    <title>Instructores - SENA</title>
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body{
-            font-family:'Segoe UI',Tahoma,Geneva, Verdana, sans-serif;
-            background:linear-gradient(135deg,#e8f5e9 0%, ·f1f8e9 100%);
-            min-height:100vh;
-            padding:20px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .container{
-            max-width:1400px;
-            margin:0 auto;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .header{
-            background: linear-gradient(135deg,#2e7d32 0%, #1b5e20 100%);
-            color:white;
-            padding:30px;
-            border-radius:15px;
-            margin-bottom:30px;
-            box-shadow:0 8px 20px rgba(46,125,50,0.3);
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
-        .header h1{
-            font-size:2.5em;
-            margin-bottom:10px;
-            font-weight:700;
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
-        .header p{
-            font-size:1.1em;
-            opacity:0.95;
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
         }
-        .breadcrumb{
-            background:white;
-            padding:15px 20px;
-            border-radius:10px;
-            margin-bottom:20px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.05);
-            display:flex;
-            align-items:center;
-            gap:10px;
-            font-size:0.95em;
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
         }
-        .breadcrumb a{
-            color:#2e7d32;
-            text-decoration:none;
-            transition:color 0.3s ease;
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
-        .breadcrumb a:hover{
-            color:#1b5e20;
-            text-decoration:underline;
+        .breadcrumb a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
         }
-        .breadcrumb span{
-            color:#999;
+        .breadcrumb span {
+            color: #999;
         }
-        /* Mensajes */
-        .messages-container{
-            margin-bottom:25px;
+        /* 🎨 MENSAJES */
+        .messages-container {
+            margin-bottom: 25px;
         }
-        .alert{
-            padding:18px 25px;
-            border-radius:12px;
-            margin-bottom:15px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-            font-size:1em;
-            font-weight:500;
-            box-shadow:0 4px 15px rgba(0,0,0,0.1);
-            animation:slideInDown 0.4s ease-out;
-            position:relative;
-            overflow:hidden;
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes slideInDown{
-            from{
-                transform:translateY(-20%);
-                opacity:0; 
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
             }
-            to{
-                transform:translateY(0);
-                opacity:1;
-            }
-        }
-        .alert::before{
-            content:'';
-            position:absolute;
-            left:0;
-            top:0;
-            bottom:0;
-            width:5px;
-        }
-        .alert-success{
-            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color:white;
-            border:2px solid #1b5e20;
-        }
-        .alert-success::before{
-            background:#fff;
-        }
-        .alert-success .alert-icon{
-            font-size:1.8em;
-            animation:scaleIn 0.5s ease-out;
-        }
-        @keyframes scaleIn{
-            0%{
-                transform:scale(0);
-            }
-            50%{
-                transform:scale(1.2);
-            }
-            100%{
-                transform:scale(1);
+            to {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
-        .alert-error{
-            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color:white;
-            border:2px solid #b71c1c;
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
         }
-        .alert-error::before{
-            background:#fff;
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
-        .alert-error .alert-icon{
-            font-size:1.8em;
-            animation:shake 0.5s ease-out;
+        .alert-success::before {
+            background: #fff;
         }
-        @keyframes shake{
-            0%, 100%{
-                transform:translateX(0);
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
             }
-            25%{
-                transform:translateX(-10px);
+            50% {
+                transform: scale(1.2);
             }
-            75%{
-                transform:translateX(10px);
-            }
-        }
-        .alert-warning{
-            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color:white;
-            border:2px solid #e65100;
-        }
-        .alert-warning::before{
-            background:#fff;
-        }
-        alert-icon{
-            font-size:1.5em;
-            flex-shrink:0;
-        }
-        .alert-content{
-            flex:1;
-            line-height:1.5;
-        }
-        .alert-close{
-            background:rgba(255,255,255,0.2);
-            border:2px solid rgba(255,255,255,0.3);
-            color:white;
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:bold;
-            font-size:1.2em;
-            transition:all 0.3s ease;
-            flex-shrink:0;
-        }
-        alert-close:hover{
-            background:rgba(255,255,255,0.4);
-            transform:scale(1.1);
-        }
-        .controls-section{
-            background:white;
-            padding:25px;
-            border-radius:15px;
-            margin-bottom:25px;
-            box-shadow :0 4px 15px rgba(0,0,0,0.08);
-            display:grid;
-            grid-template-columns:1fr auto;
-            gap:25px;
-            align-items:end;
-        }
-        /*BUSCADOR ARREGLADO*/
-        .search-box{
-            width:100%;
-            position:relative;
-        }
-        .search-box input{
-            width:100%;
-            height:48px;
-            padding:0 18px 0 48px;
-            border:2px solid #e0e0e0;
-            border-radius:12px;
-            font-size:1em;
-            background:white;
-        }
-        /*Icono lupa*/
-        .search-box::before{
-            content:"🔍";
-            position:absolute;
-            left:16px;
-            top:50%;
-            transform:translateY(-50%);
-            font-size:1.1em;
-            opacity:0.7;
-        }
-        .search-box input:focus{
-            outline:none;
-            border-color:@2e7d32;
-            box-shadow:0 0 0 3px rgba(46,125,50,0.12);
-        }
-        /* FORMULARIO*/
-        .filters-layout{
-            display:grid;
-            grid-template-columns:1fr 260px 220px 140px;
-            gap:15px;
-            align-items:center;
-        }
-        /*SELECTS*/
-        .filter-select{
-            width:100%;
-            padding:14px 18px;
-            border:2px solid #e0e0e0;
-            border-radius:10px;
-            font-size:1em;
-            background:white;
-            cursor:pointer;
-        }
-        .filter-select:focus{
-            outline:none;
-            border-color:#2e7d32;
-            box-shadow:0 0 0 3px rgba(46,125,50,0.1);
-        }
-        /*BOTON FILTRAR*/
-        .filter-btn{
-            height:48px;
-            justify-content:center;
-        }
-        /* BOTON CREAR*/
-        .btn-create{
-            height:48px;
-            white-space:nowrap;
-        }
-        /*====== RESPONSIVE ======*/
-        @media (max-width:992px){
-            .controls-section{
-                grid-template-columns:1fr;
-            }
-            .filters-layout{
-                grid-template-columns:1fr;
-            }
-            .btn-create{
-                width:100%;
-                text-align:center;
+            100% {
+                transform: scale(1);
             }
         }
-        .btn{
-            padding:12px 25px;
-            border:none;
-            border-radius:10px;
-            font-size:1em;
-            font-weight:600;
-            cursor:pointer;
-            transition:all 0.3s ease;
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            text-decoration:none;
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
         }
-        .btn-primary{
-            background:linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color:white;
-            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        .alert-error::before {
+            background: #fff;
         }
-        .btn-primary:hover{
-            transform:translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46,125,50,0.4);
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
         }
-        .btn-secondary{
-            background:white;
-            color:#2e7d32;
-            border:2px solid #2e7d32;
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
         }
-        .btn-secondary:hover{
-            background:#2e7d32;
-            color:white;
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
         }
-        .stats-bar{
-            display:flex;
-            gap:20px;
-            margin-bottom.25px;
-            flex-wrap:wrap;
+        .alert-warning::before {
+            background: #fff;
         }
-        .stat-card{
-            flex:1;
-            min-width:200px;
-            background:white;
-            padding:20px;
-            border-radius:12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border-left:4px solid #2e7d32;
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
         }
-        .stat-card h3{
-            color:#666;
-            font-size:0.9em;
-            margin-bottom:8px;
-            text-transform:uppercase;
-            letter-spacing:1px;
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
         }
-        .stat-card .number{
-            color:#2e7d32;
-            font-size;2em;
-            font-weight:700;
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
-        .instructores-grid{
-            display:grid;
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        /* CONTROLES DE BÚSQUEDA Y FILTROS */
+        .controls-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 25px;
+            align-items: end;
+        }
+        /* BUSCADOR */
+        .search-box {
+            width: 100%;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            height: 48px;
+            padding: 0 18px 0 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        /* Icono lupa */
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            opacity: 0.7;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+        }
+        /* FORMULARIO DE FILTROS */
+        .filters-layout {
+            display: grid;
+            grid-template-columns: 1fr 260px 220px 140px;
+            gap: 15px;
+            align-items: center;
+        }
+        /* SELECTS */
+        .filter-select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        /* BOTÓN FILTRAR */
+        .filter-btn {
+            height: 48px;
+            justify-content: center;
+        }
+        /* BOTÓN CREAR */
+        .btn-create {
+            height: 48px;
+            white-space: nowrap;
+        }
+        /* BOTONES */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+        .btn-secondary {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+        .btn-secondary:hover {
+            background: #2e7d32;
+            color: white;
+        }
+        /* ESTADÍSTICAS */
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2e7d32;
+        }
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-card .number {
+            color: #2e7d32;
+            font-size: 2em;
+            font-weight: 700;
+        }
+        /* GRID DE INSTRUCTORES */
+        .instructores-grid {
+            display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap:25px;
-            margin-bottom:30px;
+            gap: 25px;
+            margin-bottom: 30px;
         }
-        .instructor-card{
-            background:white;
-            border-radius:15px;
-            padding:25px;
-            box-shadow:0 4px 15px rgba(0,0,0,0.08);
-            transition:all 0.3s ease;
-            border-top:4px solid #2e7d32;
-            position:relative;
-            overflow:hidden;
+        .instructor-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid #2e7d32;
+            position: relative;
+            overflow: hidden;
         }
-        .instructor-card::before{
-            content:"";
-            position:absolute;
-            top:0;
-            left:0;
-            width:100%;
-            height:4px;
-            background:linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%);
+        .instructor-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%);
         }
-        .instructor-card:hover{
-            transform:translateY(-5px);
-            box-shadow:0 8px 25px rgba(46,125,50,0.2);
+        .instructor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
         }
-        .instructor-header{
-            display.flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            margin-bottom:15px;
+        .instructor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
         }
-        .instructor-title{
-            font-size:1.5em;
-            color:#2e7d32;
-            font-weight:700;
-            margin-bottom:5px;
+        .instructor-title {
+            font-size: 1.5em;
+            color: #2e7d32;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
-        .status-badge{
-            padding:6px 14px;
-            border-radius:20px;
-            font-size:0.85em;
-            font-weight:600;
-            text-transform:uppercase;
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
         }
-        .status-active{
-            background:#c8e6c9;
-            color:#1b5e20;
+        .status-active {
+            background: #c8e6c9;
+            color: #1b5e20;
         }
-        .status-inactive{
-            background:#ffcdd2;
-            color:#c62828;
+        .status-inactive {
+            background: #ffcdd2;
+            color: #c62828;
         }
-        .instructor-contact{
-            color:#666;
-            line-height:1.8;
-            margin-bottom:15px;
+        .instructor-contact {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 15px;
         }
-        .contact-item{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            margin-bottom:8px;
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }
-        .instructor-specialties{
-            margin-bottom.15px;
-            padding-top:15px;
-            border-top:1px solid #e0e0e0;
+        .instructor-specialties {
+            margin-bottom: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
         }
-        .specialties-title{
-            font-weight:600;
-            color:#666;
-            font-size:0.9em;
-            margin-bottom:10px;
-            text-transform:uppercase;
+        .specialties-title {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
-        .specialty-tags{
-            display:flex;
-            flex-wrap:wrap;
-            gap:8px;
+        .specialty-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        .specialty-tag{
-            background:#c8e6c9;
-            color:#1b5e20;
-            padding:5px 12px;
-            border-radius:15px;
-            font-size:0.85em;
-            font-weight:500;
+        .specialty-tag {
+            background: #c8e6c9;
+            color: #1b5e20;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
         }
-        .instructor-meta{
-            display:flex;
-            gap:20px;
-            margin-bottom:15px;
-            padding-top:15px;
-            border-top:1px solid #e0e0e0;
+        .instructor-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
         }
-        .meta-item{
-            display:flex;
-            align-items:center;
-            gap:8px;
-            color:#666;
-            font-size:0.95em;
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.95em;
         }
-        .meta-item strong{
-            color:#2e7d32;
-            font-size:1.2em;
+        .meta-item strong {
+            color: #2e7d32;
+            font-size: 1.2em;
         }
-        .instructor-actions{
-            display:flex;
-            gap:10px;
-            margin-top:15px;
+        /* BOTONES DE ACCIÓN - GRID 2x2 */
+        .instructor-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
         }
-        .btn-action{
-            flex:1;
-            padding:10px;
-            border:none;
-            border-radius:8px;
-            font-size:0.9em;
-            font-weight:600;
-            cursor.pointer;
-            transition:all 0.3s ease;
-            text-align:center;
-            text-decoration:none;
-            display:block;
+        .btn-action {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
         }
-        .btn-view{
-            background:#e8f5e9;
-            color:#2e7d32;
+        .btn-view {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
-        .btn-view:hover{
-            background:#2e7d32;
-            color:white;
+        .btn-view:hover {
+            background: #2e7d32;
+            color: white;
         }
-        .btn-edit{
-            background:#fff3e0;
-            color:#ef6c00;
+        .btn-edit {
+            background: #fff3e0;
+            color: #ef6c00;
         }
-        .btn-edit:hover{
-            background:#ef6c00;
-            color:white;
+        .btn-edit:hover {
+            background: #ef6c00;
+            color: white;
         }
-        .btn-delete{
-            background:#ffebee;
-            color:#c62828;
+        .btn-delete {
+            background: #fff3e0;
+            color: #f57c00;
         }
-        .btn-delete:hover{
-            background:#c62828;
-            color:white;
+        .btn-delete:hover {
+            background: #f57c00;
+            color: white;
         }
-        .empty-state{
-            background:white;
-            padding:60px 40px;
-            border-radius:15px;
-            text-align.center;
-            box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        .btn-eliminate {
+            background: #ffebee;
+            color: #c62828;
         }
-        .empty-state-icon{
-            font-size:5em;
-            margin-bottom:20px;
-            opacity:0.3;
+        .btn-eliminate:hover {
+            background: #c62828;
+            color: white;
         }
-        .empty-state h3{
-            color:#666;
-            font-size:1.5em;
-            margin-bottom:10px; 
+        /* ESTADO VACÍO */
+        .empty-state {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        .empty-state p{
-            color:#999;
-            margin-bottom:20px;
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.3;
         }
-        /* FOOTER STYLES*/
-        footer{
+        .empty-state h3 {
+            color: #666;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+        /* FOOTER */
+        footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            footer p{
-                font-weight:500;
-                letter-spacing:0.5px;
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            .filters-layout {
+                grid-template-columns: 1fr;
+            }
+            .btn-create {
+                width: 100%;
+                text-align: center;
             }
         }
-        @media (max-width:768px){
-            .header h1{
-                font-size:1.8em;
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
             }
-            .controls-section{
-                flex-direction:column;
+            .instructores-grid {
+                grid-template-columns: 1fr;
             }
-            .search-box{
-                width:100%;
-            }
-            .instructores-grid{
-                grid-template-columns:1fr;
-            }
-            .page-wrapper{
-                padding:15px;
-            }
-            footer{
-                font-size:0.85rem;
-                padding:15px;
+            footer {
+                font-size: 0.85rem;
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
             <h1>👨‍🏫 Instructores</h1>
-            <p>Gestiona los instructores del  SENA - Formadores de excelencia</p>
+            <p>Gestiona los instructores del SENA - Formadores de excelencia</p>
         </div>
 
+        <!-- BREADCRUMB -->
         <div class="breadcrumb">
-            <a href="{% url 'core:dashboard'%}">🏠 Dashboard</a>
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
             <span>Instructores</span>
         </div>
-        <!-- Mensajes -->
+
+        <!-- MENSAJES -->
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class=alert-icon>
+                    <div class="alert-icon">
                         {% if 'error' in message.tags %}
                             ❌
                         {% elif 'warning' in message.tags %}
@@ -567,47 +575,51 @@
             {% endfor %}
         </div>
         {% endif %}
-        
+
+        <!-- CONTROLES DE BÚSQUEDA Y FILTROS -->
         <div class="controls-section">
             <form method="get" class="filters-layout">
-
                 <!-- Buscador -->
                 <div class="search-box">
-                    <input type="text"
+                    <input 
+                        type="text"
                         name="search"
                         placeholder="Buscar por nombre, correo o teléfono..."
-                        value="{{ search }}">
+                        value="{{ search }}"
+                    >
                 </div>
 
-                <!-- Especialidad -->
+                <!-- Filtro Especialidad -->
                 <select name="especialidad" class="filter-select">
-                    <option value="">Todas las especialidades</option>
+                    <option value="">🎯 Todas las especialidades</option>
                     {% for especialidad in especialidades %}
-                        <option value="{{ especialidad.id }}"
+                        <option value="{{ especialidad.id }}" 
                             {% if especialidad_filter == especialidad.id|stringformat:"s" %}selected{% endif %}>
                             {{ especialidad.nombre }}
                         </option>
                     {% endfor %}
                 </select>
 
-                <!-- Estado -->
+                <!-- Filtro Estado -->
                 <select name="activo" class="filter-select">
-                    <option value="">Todos los estados</option>
-                    <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>Activos</option>
-                    <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>Inactivos</option>
+                    <option value="">📋 Todos los estados</option>
+                    <option value="true" {% if activo_filter == 'true' %}selected{% endif %}>✅ Activos</option>
+                    <option value="false" {% if activo_filter == 'false' %}selected{% endif %}>❌ Inactivos</option>
                 </select>
 
-                <!-- Botón filtrar -->
+                <!-- Botón Filtrar -->
                 <button type="submit" class="btn btn-secondary filter-btn">
                     🔍 Filtrar
                 </button>
             </form>
 
-            <!-- Acción principal -->
+            <!-- Botón Crear -->
             <a href="{% url 'instructores:crear_instructor' %}" class="btn btn-primary btn-create">
-                ➕ Nuevo instructor
+                ➕ Nuevo Instructor
             </a>
         </div>
+
+        <!-- ESTADÍSTICAS -->
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total de Instructores</h3>
@@ -622,79 +634,108 @@
                 <div class="number">{{ total_solicitudes }}</div>
             </div>
         </div>
-        <br>
-        <br>
+
+        <!-- GRID DE INSTRUCTORES -->
         {% if instructores %}
         <div class="instructores-grid">
             {% for instructor in instructores %}
             <div class="instructor-card">
                 <div class="instructor-header">
                     <div>
-                        <h2 class="instructor-title">{{ instructor.nombre}}</h2>
+                        <h2 class="instructor-title">{{ instructor.nombre }}</h2>
                     </div>
-                    <span class="status-badge {% if instructor.activo%}status-active{%else%}status-inactive{%endif%}">
-                        {% if instructor.activo%}● Activo{%else%}○ Inactivo{%endif%}
+                    <span class="status-badge {% if instructor.activo %}status-active{% else %}status-inactive{% endif %}">
+                        {% if instructor.activo %}● Activo{% else %}○ Inactivo{% endif %}
                     </span>
                 </div>
 
                 <div class="instructor-contact">
                     <div class="contact-item">
-                        📧 {{instructor.correo}}
+                        📧 {{ instructor.correo }}
                     </div>
                     <div class="contact-item">
-                        📞 {{instructor.telefono}}
+                        📞 {{ instructor.telefono }}
                     </div>
                 </div>
 
                 <div class="instructor-specialties">
                     <div class="specialties-title">Especialidades</div>
                     <div class="specialty-tags">
-                        {%for especialidad in instructor.especialidad.all%}
-                        <span class="specialty-tag">{{especialidad.nombre}}</span>
-                        {%empty%}
-                        <span style="color:#999; font-size:0.9em">Sin especialidades</span>
-                        {%endfor%}
+                        {% for especialidad in instructor.especialidad.all %}
+                        <span class="specialty-tag">{{ especialidad.nombre }}</span>
+                        {% empty %}
+                        <span style="color: #999; font-size: 0.9em">Sin especialidades</span>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="instructor-meta">
                     <div class="meta-item">
-                        📋<strong>{{instructor.total_solicitudes}}</strong>Solicitudes
+                        📋 <strong>{{ instructor.total_solicitudes }}</strong> Solicitudes
                     </div>
                 </div>
 
                 <div class="instructor-actions">
                     <a href="{% url 'instructores:detalle_instructor' instructor.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'instructores:editar_instructor' instructor.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                    <a href="{% url 'instructores:desactivar_instructor' instructor.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar este instructor?')">🚫 Desactivar</a>
+                    <a href="{% url 'instructores:desactivar_instructor' instructor.id %}" class="btn-action btn-delete" onclick="return confirm('¿Desactivar este instructor?')">🚫 Desactivar</a>
+                    <a href="{% url 'instructores:eliminar_instructor' instructor.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente este instructor?')">🗑️ Eliminar</a>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
+        <!-- ESTADO VACÍO -->
         <div class="empty-state">
             <div class="empty-state-icon">👨‍🏫</div>
             <h3>No se encontraron instructores</h3>
-            <p>{% if search %}No hay instructores que coincidan con tu búsqueda "{{search}}"{% else %}Aún no hay instructores registrados en el sistema{% endif %}</p>
-            <a href="{% url 'instructores:crear_instructor'%}" class="btn btn-primary">➕ Crear Primero Instructor</a>
+            <p>
+                {% if search %}
+                    No hay instructores que coincidan con tu búsqueda "{{ search }}"
+                {% else %}
+                    Aún no hay instructores registrados en el sistema
+                {% endif %}
+            </p>
+            <a href="{% url 'instructores:crear_instructor' %}" class="btn btn-primary">➕ Crear Primer Instructor</a>
         </div>
         {% endif %}
     </div>
+
+    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
-    {%include 'core/accessibility.html'%}
+
+    <!-- SCRIPTS -->
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+    {% include 'core/accessibility.html' %}
 </body>
 </html>
-
-
-
-
-
-
-                        
-
-                    
-
-
-        

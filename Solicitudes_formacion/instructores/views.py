@@ -264,8 +264,65 @@ def desactivar_instructor(request, instructor_id):
     }
     return render(request, 'instructores/desactivar_instructor.html', context)
     
-            
+def eliminar_instructor(request, instructor_id):
+    """Vista para eliminar permanentemente el  instructor"""  
+    instructor = get_object_or_404(Instructor, id=instructor_id)
+    #Contar solicitudes relacionadas
+    total_solicitudes = instructor.solicitud_set.count()
     
+    if request.method == 'POST':
+        #Verificar si  tiene solicitudes asociadas
+        if total_solicitudes > 0:
+            #Verificar que hacer con las solicitudes
+            accion_solicitudes = request.POST.get('accion_solicitudes')
+            if accion_solicitudes == 'desasignar':
+                #Desasignar instructor de las solicitudes
+                nombre_instructor = instructor.nombre
+                solicitudes_desasignadas = total_solicitudes
+                
+                instructor.solicitud_set.update(instructor_asignado=None)
+                instructor.delete()
+                
+                messages.success(
+                    request,
+                    f'✅ Instructor "{nombre_instructor}" eliminado permanentemente y {solicitudes_desasignadas} solicitud(es) fueron desasignadas'
+                )
+            elif accion_solicitudes == 'cancelar':
+                #Cancelar la eliminacion
+                messages.warning(
+                    request,
+                    f'⚠️ Eliminacion cancelada. El instructor "{instructor.nombre}" no  se elimino'
+                )
+                return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
+            else:
+                #No se selecciono ninguna opcion
+                messages.error(
+                    request,
+                    '❌ Debes seleccionar que hacer con las solicitudes asociadas'
+                )
+                return render(request, 'instructores/eliminar_instructor.html', {
+                    'instructor': instructor,
+                    'total_solicitudes': total_solicitudes
+                })
+        else:
+            #No tiene solicitudes, eliminar directamente
+            nombre_instructor = instructor.nombre
+            instructor.delete()
+            messages.success(
+                request,
+                f'✅ Instructor "{nombre_instructor}" eliminado exitosamente'
+            )
+        
+        return redirect('instructores:listar_instructores')
+    
+    context={
+        'instructor': instructor,
+        'total_solicitudes': total_solicitudes,
+    }
+    return render(request, 'instructores/eliminar_instructor.html', context)
+
+                
+        
             
             
                 
