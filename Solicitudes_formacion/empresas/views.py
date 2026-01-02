@@ -399,3 +399,71 @@ def desactivar_empresa(request, empresa_id):
         'tiene_dependencias': tiene_dependencias,
     }
     return render(request, 'empresas/desactivar_empresa.html', context)
+
+@login_required
+@permission_required('empresas.delete_empresa', raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def eliminar_empresa(request, empresa_id):
+    """Vista para eliminar permanentemente una empresa"""
+    empresa = get_object_or_404(Empresa, id=empresa_id)
+    
+    # Contar solicitudes relacionadas
+    total_solicitudes = empresa.solicitud_set.count()
+    
+    if request.method == 'POST':
+        # Verificar si tiene solicitudes asociadas
+        if total_solicitudes > 0:
+            # Verificar qué hacer con las solicitudes
+            accion_solicitudes = request.POST.get('accion_solicitudes')
+            
+            if accion_solicitudes == 'eliminar':
+                # Eliminar también las solicitudes
+                nombre_empresa = empresa.nombre
+                solicitudes_eliminadas = total_solicitudes
+                
+                with transaction.atomic():
+                    empresa.solicitud_set.all().delete()
+                    empresa.delete()
+                
+                messages.success(
+                    request,
+                    f'✅ Empresa "{nombre_empresa}" y sus {solicitudes_eliminadas} solicitud(es) eliminadas permanentemente'
+                )
+            
+            elif accion_solicitudes == 'cancelar':
+                # Cancelar la eliminación
+                messages.warning(
+                    request,
+                    f'⚠️ Eliminación cancelada. La empresa "{empresa.nombre}" no se eliminó'
+                )
+                return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
+            
+            else:
+                # No se seleccionó ninguna opción
+                messages.error(
+                    request,
+                    '❌ Debes seleccionar qué hacer con las solicitudes asociadas'
+                )
+                return render(request, 'empresas/eliminar_empresa.html', {
+                    'empresa': empresa,
+                    'total_solicitudes': total_solicitudes
+                })
+        else:
+            # No tiene solicitudes, eliminar directamente
+            nombre_empresa = empresa.nombre
+            
+            with transaction.atomic():
+                empresa.delete()
+            
+            messages.success(
+                request,
+                f'✅ Empresa "{nombre_empresa}" eliminada exitosamente'
+            )
+        
+        return redirect('empresas:listar_empresas')
+    
+    context = {
+        'empresa': empresa,
+        'total_solicitudes': total_solicitudes,
+    }
+    return render(request, 'empresas/eliminar_empresa.html', context)

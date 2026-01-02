@@ -619,6 +619,16 @@
             background: #c62828;
             color: white;
         }
+        .btn-eliminate {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-eliminate:hover {
+            background: #b71c1c;
+            color: white;
+            transform: scale(1.05);
+        }
 
         /* ===== ESTADO VACÍO ===== */
         .empty-state {
@@ -932,6 +942,7 @@
                     <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete">🗑️ Desactivar</a>
+                    <a href="{% url 'empresas:eliminar_empresa' empresa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente esta empresa?')">🗑️ Eliminar</a>
                 </div>
             </div>
             {% endfor %}
