@@ -10,6 +10,7 @@ urlpatterns = [
     path('probar-email/', views.probar_conexion_email, name='probar_conexion_email'),
     path('<int:solicitud_id>/', views.detalle_solicitud, name='detalle_solicitud'),
     path('<int:solicitud_id>/editar/', views.editar_solicitud, name='editar_solicitud'),
+    path('<int:solicitud_id>/eliminar/', views.eliminar_solicitud, name='eliminar_solicitud'),
     path('<int:solicitud_id>/enviar-respuesta/', views.enviar_respuesta, name='enviar_respuesta'),
     path('procesar-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),
     path('procesar-correos-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),

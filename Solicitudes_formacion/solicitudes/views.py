@@ -11,6 +11,9 @@ from programas.models import Programa
 from empresas.models import Empresa
 from instructores.models import Instructor
 import re
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
 # Create your views here.
 
 def listar_solicitudes(request):
@@ -525,3 +528,62 @@ def procesar_correos_ajax(request):
             }, status=500)
     
     return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
+@login_required
+@permission_required('solicitudes.delete_solicitud', raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def eliminar_solicitud(request, solicitud_id):
+    """Vista para eliminar permanentemente una solicitud"""
+    solicitud = get_object_or_404(
+        Solicitud.objects.select_related(
+            'empresa',
+            'programa',
+            'programa__area',
+            'instructor_asignado'
+        ),
+        id=solicitud_id
+    )
+    
+    if request.method == 'POST':
+        # Guardar información para el mensaje
+        empresa_nombre = solicitud.empresa.nombre
+        programa_nombre = solicitud.programa.nombre
+        solicitud_id_str = solicitud.id
+        
+        # Verificar si está finalizada (advertencia adicional)
+        if solicitud.estado == 'FINALIZADA':
+            confirmacion_finalizada = request.POST.get('confirmar_finalizada')
+            if confirmacion_finalizada != 'confirmar':
+                messages.warning(
+                    request,
+                    '⚠️ Debes confirmar la eliminación de una solicitud finalizada'
+                )
+                return render(request, 'solicitudes/eliminar_solicitud.html', {
+                    'solicitud': solicitud,
+                })
+        
+        # Eliminar la solicitud
+        try:
+            with transaction.atomic():
+                solicitud.delete()
+            
+            messages.success(
+                request,
+                f'✅ Solicitud #{solicitud_id_str} de "{empresa_nombre}" para el programa "{programa_nombre}" eliminada exitosamente'
+            )
+            return redirect('solicitudes:listar_solicitudes')
+            
+        except Exception as e:
+            messages.error(
+                request,
+                f'❌ Error al eliminar la solicitud: {str(e)}'
+            )
+            return render(request, 'solicitudes/eliminar_solicitud.html', {
+                'solicitud': solicitud,
+            })
+    
+    # GET request - mostrar confirmación
+    context = {
+        'solicitud': solicitud,
+    }
+    return render(request, 'solicitudes/eliminar_solicitud.html', context)
