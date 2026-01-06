@@ -587,3 +587,93 @@ def eliminar_solicitud(request, solicitud_id):
         'solicitud': solicitud,
     }
     return render(request, 'solicitudes/eliminar_solicitud.html', context)
+
+@login_required
+@user_passes_test(es_admin)
+def crear_solicitud(request):
+    """Vista para crear una nueva solicitud manualmente"""
+    
+    if request.method == 'POST':
+        try:
+            #Obtener datos del formulario
+            empresa_id = request.POST.get('empresa')
+            programa_id = request.POST.get('programa')
+            correo_remitente = request.POST.get('correo_remitente')
+            numero_aprendices = request.POST.get('numero_aprendices')
+            observaciones= request.POST.get('observaciones')
+            documento_pdf = request.FILES.get('documento_pdf')
+            
+            # Validaciones
+            if not empresa_id:
+                messages.error(request, '❌ Debes seleccionar una empresa')
+                return redirect('solicitudes:crear_solicitud')
+            
+            if not programa_id:
+                messages.error(request,'❌ Debes seleccionar un programa')
+                return redirect('solicitudes:crear_solicitud')
+            #Validar que la empresa y programa existan
+            try:
+                empresa=Empresa.objects.get(id=empresa_id)
+            except Empresa.DoesNotExist:
+                messages.error(request, '❌ La empresa seleccionada no  existe')
+                return redirect('solicitudes:crear_solicitud')
+            
+            try:
+                programa = Programa.objects.get(id=programa_id, activo=True)
+            except Programa.DoesNotExist:
+                messages.error(request, '❌ El programa seleccionado no  existe no  existe o  no esta activo')
+                return redirect('solicitudes:crear_solicitud')
+            
+            # Validar documentos PDF si se subio
+            if documento_pdf:
+                # Verificar extension
+                if not documento_pdf.name.lower().endswith('.pdf'):
+                    messages.error(request, '❌ Solo se permiten archivos PDF')
+                    return redirect('solicitudes:crear_solicitud')
+                
+                #Verificar tamaño
+                if documento_pdf.size > 10 * 1024 * 1024:
+                    messages.error(request,  '❌ El archivo no debe superar 10MB')
+                    return redirect('solicitudes:crear_solicitud') 
+            # crear la solicitud
+            solicitud = solicitud(
+                empresa=empresa,
+                programa=programa,
+                correo_remitente=correo_remitente if correo_remitente else None,
+                observaciones= observaciones if observaciones else '',
+                estado='RECIBIDA',
+                fecha_recepcion=timezone.now()
+            )
+            #Asignar numero de aprendices si  se proporciono
+            if numero_aprendices:
+                try:
+                    solicitud.numero_aprendices = int(numero_aprendices)
+                except ValueError:
+                    pass
+            #Asignar documento PDF si  se subio
+            if documento_pdf:
+                solicitud.documento_pdf = documento_pdf
+            
+            solicitud.save()
+            
+            messages.success(
+                request,
+                f'✅ Solicitud #{solicitud.id} creada exitosamente para {empresa.nombre}'
+                
+            )
+            return redirect('solicitudes:detalle_solicitud', solicitud_id =solicitud.id)  
+        
+        except Exception as e:
+            messages.error(request, f'❌ Error al crear la solicitud:{str(e)}')
+            return redirect('solicitudes:crear_solicitud')
+        
+    #GET request - mostrar formulario
+    empresas=Empresa.objects.all().order_by('nombre')
+    programas= Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+    
+    context={
+        'empresas':empresas,
+        'programas':programas,
+    }
+    return render(request, 'solicitudes/crear_solicitud.html', context)
+            

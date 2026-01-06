@@ -162,3 +162,10 @@ IMAP_PASSWORD = 'rfhafcjadnjpgrbq'  # Sin espacios
 # Nota: IMAP usa SSL implícitamente en puerto 993, no requiere EMAIL_USE_SSL
 #CONFIGURACION DE RESTABLECIMIENTO  DE CONTRASEÑA
 PASSWORD_RESET_TIMEOUT = 3600
+
+
+# 🔥 CONFIGURACIÓN DE ARCHIVOS MEDIA
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

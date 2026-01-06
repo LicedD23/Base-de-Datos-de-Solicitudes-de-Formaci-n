@@ -24,12 +24,22 @@ class Solicitud(models.Model):
     numero_aprendices = models.IntegerField(null=True, blank=True)
     
     correo_remitente = models.EmailField(
-    max_length=255,
-    blank=True,
-    null=True,
-    verbose_name="Correo del Remitente",
-    help_text="Email desde donde se envió la solicitud original"
-)
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Correo del Remitente",
+        help_text="Email desde donde se envió la solicitud original"
+    )
+    
+    # Campo para documentos PDF
+    documento_pdf = models.FileField(
+        upload_to='solicitudes/documentos/%Y/%m/',
+        blank=True,
+        null=True,
+        verbose_name="Documento PDF",
+        help_text="Documento adjunto de la solicitud (solo PDF)"
+    )
+    
     class Meta:
         verbose_name_plural = "Solicitudes"
         ordering = ['-fecha_recepcion']
@@ -47,4 +57,3 @@ class Solicitud(models.Model):
         }
         estados_permitidos = flujo_valido.get(self.estado,[])
         return nuevo_estado in estados_permitidos
-        
