@@ -126,6 +126,23 @@
             height: 48px;
             justify-content: center;
         }
+        .filter-btn{
+            width:100%;
+            height:48px;
+            justify-content:center;
+            padding:12px 20px;
+        }
+        .clear-btn{
+            width:auto;
+            min-width:200px;
+        }
+        .filter-group{
+            display:grid;
+            grid-template-column: repeat(auto-fit, minmax(220px, 1fr)) 140px;
+            gap:10px;
+            align-items:center;
+            width:100%;
+        }
         /* ⭐ NUEVO: Estilo especial para el filtro de período */
         .filter-group select[name="periodo"] {
             border-color: #ff9800;
@@ -445,6 +462,10 @@
             .filter-group {
                 grid-template-columns: 1fr;
             }
+            .filter-btn,
+            .clear-btn{
+                width:100%;
+            }
             .solicitudes-grid {
                 grid-template-columns: 1fr;
             }
@@ -490,13 +511,13 @@
                     </div>
 
                     <div class="filter-group">
-                        <select name="estado" onchange="this.form.submit()">
+                        <select name="estado">
                             <option value="">Todos los estados</option>
                             {% for codigo, nombre in ESTADOS_CHOICES %}
                                 <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>{{ nombre }}</option>
                             {% endfor %}
                         </select>
-                        <select name="programa" onchange="this.form.submit()">
+                        <select name="programa">
                             <option value="">Todos los programas</option>
                             {% for programa in programas %}
                                 <option value="{{ programa.id }}" {% if programa_filter == programa.id|stringformat:"s" %}selected{% endif %}>
@@ -505,7 +526,7 @@
                             {% endfor %}
                         </select>
 
-                        <select name="empresa" onchange="this.form.submit()">
+                        <select name="empresa">
                             <option value="">Todas las empresas</option>
                             {% for empresa in empresas %}
                                 <option value="{{ empresa.id }}" {% if empresa_filter == empresa.id|stringformat:"s" %}selected{% endif %}>
@@ -515,16 +536,30 @@
                         </select>
 
                         <!-- ⭐ CAMBIO 1: Nuevo filtro de período -->
-                        <select name="periodo" onchange="this.form.submit()">
+                        <select name="periodo">
                             <option value="">📅 Todas las fechas</option>
                             <option value="hoy" {% if periodo_filter == 'hoy' %}selected{% endif %}>📅 Hoy</option>
                             <option value="semana" {% if periodo_filter == 'semana' %}selected{% endif %}>📆 Última semana</option>
                             <option value="mes" {% if periodo_filter == 'mes' %}selected{% endif %}>📊 Último mes</option>
                             <option value="trimestre" {% if periodo_filter == 'trimestre' %}selected{% endif %}>📈 Último trimestre</option>
                         </select>
+                        <!-- Boton Filtrar-->
+                        <button type="submit" class="btn btn-secondary filter-btn">
+                            🔍 Filtrar
+                        </button>
                     </div>
                 </div>
-
+                
+                <!-- Boton limpiar filtros -->
+                <div class="actions-row">
+                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter%}
+                        <a href="{% url 'solicitudes:listar_solicitudes'%}" class="btn btn-secondary clear-btn">
+                            🔄 Limpiar Filtros
+                        </a>
+                    {% endif %}
+                    </div>
+                </form>
+            </div>
                 <div class="actions-row">
                     <!-- ⭐ CAMBIO 2: Actualizada condición para incluir periodo_filter -->
                     {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
