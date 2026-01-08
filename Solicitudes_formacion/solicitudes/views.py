@@ -14,6 +14,7 @@ import re
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
+from django.db import IntegrityError, transaction
 # Create your views here.
 
 def listar_solicitudes(request):
@@ -595,85 +596,185 @@ def crear_solicitud(request):
     
     if request.method == 'POST':
         try:
-            #Obtener datos del formulario
+            # Obtener datos del formulario
             empresa_id = request.POST.get('empresa')
             programa_id = request.POST.get('programa')
+            
+            # NUEVOS CAMPOS ALINEADOS CON EMAIL HANDLER
             correo_remitente = request.POST.get('correo_remitente')
             numero_aprendices = request.POST.get('numero_aprendices')
-            observaciones= request.POST.get('observaciones')
+            observaciones = request.POST.get('observaciones', '')
             documento_pdf = request.FILES.get('documento_pdf')
             
-            # Validaciones
-            if not empresa_id:
-                messages.error(request, '❌ Debes seleccionar una empresa')
-                return redirect('solicitudes:crear_solicitud')
+            # Campos adicionales de la empresa
+            contacto_empresa = request.POST.get('contacto_empresa')
+            telefono_empresa = request.POST.get('telefono_empresa')
+            municipio_empresa = request.POST.get('municipio_empresa')
+            direccion_empresa = request.POST.get('direccion_empresa')
+            nit_empresa = request.POST.get('nit_empresa')
             
+            # Opción: crear empresa nueva o usar existente
+            crear_nueva_empresa = request.POST.get('crear_nueva_empresa') == 'on'
+            nombre_nueva_empresa = request.POST.get('nombre_nueva_empresa')
+            
+            # Validaciones básicas
+            if crear_nueva_empresa:
+                # CREAR NUEVA EMPRESA
+                if not nombre_nueva_empresa:
+                    messages.error(request, '❌ Debes ingresar el nombre de la nueva empresa')
+                    return redirect('solicitudes:crear_solicitud')
+                
+                # Validar NIT
+                nit_validado = None
+                if nit_empresa:
+                    nit_limpio = nit_empresa.replace(' ', '').replace('-', '').replace('.', '')
+                    if nit_limpio.isdigit() and 8 <= len(nit_limpio) <= 12:
+                        if not (nit_limpio.startswith('3') and len(nit_limpio) == 10):
+                            nit_validado = nit_limpio
+                        else:
+                            messages.warning(request, '⚠️ El NIT ingresado parece un número de celular')
+                    else:
+                        messages.warning(request, '⚠️ NIT inválido (debe tener entre 8 y 12 dígitos)')
+                
+                # Crear empresa
+                try:
+                    with transaction.atomic():
+                        # Verificar duplicados por NIT
+                        if nit_validado and Empresa.objects.filter(nit=nit_validado).exists():
+                            messages.error(request, f'❌ Ya existe una empresa con NIT {nit_validado}')
+                            return redirect('solicitudes:crear_solicitud')
+                        
+                        # Verificar nombre duplicado
+                        if Empresa.objects.filter(nombre__iexact=nombre_nueva_empresa).exists():
+                            timestamp = timezone.now().strftime('%Y%m%d-%H%M%S')
+                            nombre_nueva_empresa = f"{nombre_nueva_empresa} ({timestamp})"
+                            messages.warning(request, f'⚠️ Nombre duplicado, se ajustó a: {nombre_nueva_empresa}')
+                        
+                        empresa = Empresa.objects.create(
+                            nombre=nombre_nueva_empresa[:200],
+                            nit=nit_validado,
+                            contacto=contacto_empresa[:100] if contacto_empresa else 'Sin contacto',
+                            telefono=telefono_empresa[:20] if telefono_empresa else '',
+                            correo=correo_remitente if correo_remitente else f"sin-correo-{timezone.now().timestamp()}@ejemplo.com",
+                            municipio=municipio_empresa[:100] if municipio_empresa else '',
+                            direccion=direccion_empresa[:250] if direccion_empresa else '',
+                            numero_trabajadores=int(numero_aprendices) if numero_aprendices else 0
+                        )
+                        messages.success(request, f'✅ Empresa "{empresa.nombre}" creada exitosamente')
+                        
+                except IntegrityError as e:
+                    messages.error(request, f'❌ Error al crear empresa: Ya existe una empresa con esos datos')
+                    return redirect('solicitudes:crear_solicitud')
+            else:
+                # USAR EMPRESA EXISTENTE
+                if not empresa_id:
+                    messages.error(request, '❌ Debes seleccionar una empresa existente o crear una nueva')
+                    return redirect('solicitudes:crear_solicitud')
+                
+                try:
+                    empresa = Empresa.objects.get(id=empresa_id)
+                    
+                    # ACTUALIZAR DATOS SI SE PROPORCIONARON
+                    actualizado = False
+                    
+                    if contacto_empresa and not empresa.contacto:
+                        empresa.contacto = contacto_empresa[:100]
+                        actualizado = True
+                    
+                    if telefono_empresa and not empresa.telefono:
+                        empresa.telefono = telefono_empresa[:20]
+                        actualizado = True
+                    
+                    if correo_remitente and not empresa.correo:
+                        empresa.correo = correo_remitente
+                        actualizado = True
+                    
+                    if municipio_empresa and not empresa.municipio:
+                        empresa.municipio = municipio_empresa[:100]
+                        actualizado = True
+                    
+                    if direccion_empresa and not empresa.direccion:
+                        empresa.direccion = direccion_empresa[:250]
+                        actualizado = True
+                    
+                    if nit_empresa and not empresa.nit:
+                        nit_limpio = nit_empresa.replace(' ', '').replace('-', '').replace('.', '')
+                        if nit_limpio.isdigit() and 8 <= len(nit_limpio) <= 12:
+                            if not (nit_limpio.startswith('3') and len(nit_limpio) == 10):
+                                empresa.nit = nit_limpio
+                                actualizado = True
+                    
+                    if actualizado:
+                        empresa.save()
+                        messages.info(request, f'📝 Datos de la empresa "{empresa.nombre}" actualizados')
+                        
+                except Empresa.DoesNotExist:
+                    messages.error(request, '❌ La empresa seleccionada no existe')
+                    return redirect('solicitudes:crear_solicitud')
+            
+            # Validar programa
             if not programa_id:
-                messages.error(request,'❌ Debes seleccionar un programa')
-                return redirect('solicitudes:crear_solicitud')
-            #Validar que la empresa y programa existan
-            try:
-                empresa=Empresa.objects.get(id=empresa_id)
-            except Empresa.DoesNotExist:
-                messages.error(request, '❌ La empresa seleccionada no  existe')
+                messages.error(request, '❌ Debes seleccionar un programa')
                 return redirect('solicitudes:crear_solicitud')
             
             try:
                 programa = Programa.objects.get(id=programa_id, activo=True)
             except Programa.DoesNotExist:
-                messages.error(request, '❌ El programa seleccionado no  existe no  existe o  no esta activo')
+                messages.error(request, '❌ El programa seleccionado no existe o no está activo')
                 return redirect('solicitudes:crear_solicitud')
             
-            # Validar documentos PDF si se subio
+            # Validar documento PDF
             if documento_pdf:
-                # Verificar extension
                 if not documento_pdf.name.lower().endswith('.pdf'):
                     messages.error(request, '❌ Solo se permiten archivos PDF')
                     return redirect('solicitudes:crear_solicitud')
                 
-                #Verificar tamaño
                 if documento_pdf.size > 10 * 1024 * 1024:
-                    messages.error(request,  '❌ El archivo no debe superar 10MB')
-                    return redirect('solicitudes:crear_solicitud') 
-            # crear la solicitud
-            solicitud = solicitud(
-                empresa=empresa,
-                programa=programa,
-                correo_remitente=correo_remitente if correo_remitente else None,
-                observaciones= observaciones if observaciones else '',
-                estado='RECIBIDA',
-                fecha_recepcion=timezone.now()
-            )
-            #Asignar numero de aprendices si  se proporciono
-            if numero_aprendices:
-                try:
-                    solicitud.numero_aprendices = int(numero_aprendices)
-                except ValueError:
-                    pass
-            #Asignar documento PDF si  se subio
-            if documento_pdf:
-                solicitud.documento_pdf = documento_pdf
+                    messages.error(request, '❌ El archivo no debe superar 10MB')
+                    return redirect('solicitudes:crear_solicitud')
             
-            solicitud.save()
+            # ✅ CREAR LA SOLICITUD (CORREGIDO)
+            with transaction.atomic():
+                nueva_solicitud = Solicitud(  # ✅ Mayúscula y nombre diferente
+                    empresa=empresa,
+                    programa=programa,
+                    correo_remitente=correo_remitente if correo_remitente else None,
+                    observaciones=observaciones,
+                    estado='RECIBIDA',
+                    fecha_recepcion=timezone.now()
+                )
+                
+                # Asignar número de aprendices
+                if numero_aprendices:
+                    try:
+                        nueva_solicitud.numero_aprendices = int(numero_aprendices)
+                    except ValueError:
+                        pass
+                
+                # Asignar documento PDF
+                if documento_pdf:
+                    nueva_solicitud.documento_pdf = documento_pdf
+                
+                nueva_solicitud.save()
             
             messages.success(
                 request,
-                f'✅ Solicitud #{solicitud.id} creada exitosamente para {empresa.nombre}'
-                
+                f'✅ Solicitud #{nueva_solicitud.id} creada exitosamente para {empresa.nombre}'
             )
-            return redirect('solicitudes:detalle_solicitud', solicitud_id =solicitud.id)  
+            return redirect('solicitudes:detalle_solicitud', solicitud_id=nueva_solicitud.id)
         
         except Exception as e:
-            messages.error(request, f'❌ Error al crear la solicitud:{str(e)}')
+            messages.error(request, f'❌ Error al crear la solicitud: {str(e)}')
+            import traceback
+            traceback.print_exc()
             return redirect('solicitudes:crear_solicitud')
-        
-    #GET request - mostrar formulario
-    empresas=Empresa.objects.all().order_by('nombre')
-    programas= Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
     
-    context={
-        'empresas':empresas,
-        'programas':programas,
+    # GET request
+    empresas = Empresa.objects.all().order_by('nombre')
+    programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+    
+    context = {
+        'empresas': empresas,
+        'programas': programas,
     }
     return render(request, 'solicitudes/crear_solicitud.html', context)
-            

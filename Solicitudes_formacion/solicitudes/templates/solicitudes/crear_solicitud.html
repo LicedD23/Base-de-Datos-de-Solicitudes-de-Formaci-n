@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -38,11 +38,6 @@
             font-weight: 700;
         }
 
-        .header p {
-            font-size: 1em;
-            opacity: 0.95;
-        }
-
         .breadcrumb {
             background: white;
             padding: 15px 20px;
@@ -58,23 +53,13 @@
         .breadcrumb a {
             color: #2e7d32;
             text-decoration: none;
-            transition: color 0.3s ease;
         }
 
         .breadcrumb a:hover {
-            color: #1b5e20;
             text-decoration: underline;
         }
 
-        .breadcrumb span {
-            color: #999;
-        }
-
         /* MENSAJES */
-        .messages-container {
-            margin-bottom: 25px;
-        }
-
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -82,94 +67,33 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            font-size: 1em;
-            font-weight: 500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            animation: slideInDown 0.4s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .alert::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
         }
 
         .alert-success {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
-            border: 2px solid #1b5e20;
-        }
-
-        .alert-success::before {
-            background: #fff;
         }
 
         .alert-error {
             background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
             color: white;
-            border: 2px solid #b71c1c;
-        }
-
-        .alert-error::before {
-            background: #fff;
         }
 
         .alert-warning {
             background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
             color: white;
-            border: 2px solid #e65100;
-        }
-
-        .alert-warning::before {
-            background: #fff;
-        }
-
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
         }
 
         .alert-close {
             background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: none;
             color: white;
             width: 28px;
             height: 28px;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-weight: bold;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
         }
 
         /* FORMULARIO */
@@ -186,13 +110,68 @@
             padding: 12px 15px;
             border-radius: 8px;
             margin-bottom: 25px;
-            font-size: 0.9em;
             color: #ef6c00;
             border-left: 4px solid #ef6c00;
         }
 
-        .form-group {
+        .section-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 30px 0 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        /* TOGGLE EMPRESA */
+        .empresa-toggle {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
             margin-bottom: 25px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+        }
+
+        .toggle-content {
+            display: none;
+        }
+
+        .toggle-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -200,7 +179,6 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 8px;
-            font-size: 1em;
         }
 
         .form-group label.required::after {
@@ -209,6 +187,7 @@
         }
 
         .form-group select,
+        .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group input[type="number"],
         .form-group textarea {
@@ -222,17 +201,11 @@
         }
 
         .form-group select:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="number"]:focus,
+        .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
         }
 
         .form-group small {
@@ -242,27 +215,19 @@
             font-size: 0.9em;
         }
 
-        /* UPLOAD DE ARCHIVO */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* ARCHIVO */
         .file-upload-section {
             background: #f9f9f9;
             padding: 25px;
             border-radius: 10px;
             border: 2px dashed #e0e0e0;
-            transition: all 0.3s ease;
-        }
-
-        .file-upload-section:hover {
-            border-color: #2e7d32;
-            background: #e8f5e9;
-        }
-
-        .file-upload-section h3 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-top: 30px;
         }
 
         .file-input-wrapper {
@@ -289,20 +254,14 @@
             border: 2px solid #2e7d32;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: 600;
             color: #2e7d32;
+            transition: all 0.3s ease;
         }
 
         .file-input-label:hover {
             background: #2e7d32;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-        }
-
-        .file-input-label .icon {
-            font-size: 1.5em;
         }
 
         .file-info {
@@ -317,29 +276,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-        }
-
-        .file-details {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-        }
-
-        .file-icon {
-            font-size: 2em;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: #333;
-            word-break: break-all;
-        }
-
-        .file-size {
-            color: #666;
-            font-size: 0.9em;
         }
 
         .file-remove {
@@ -350,15 +286,9 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
         }
 
-        .file-remove:hover {
-            background: #c62828;
-            color: white;
-        }
-
-        /* BOTONES DE ACCIÓN */
+        /* BOTONES */
         .form-actions {
             display: flex;
             gap: 15px;
@@ -391,7 +321,6 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
 
         .btn-secondary {
@@ -401,76 +330,24 @@
             flex: 1;
         }
 
-        .btn-secondary:hover {
-            background: #f5f5f5;
-            border-color: #bdbdbd;
-        }
-
-        /* PROGRAMAS AGRUPADOS */
-        .programas-grouped {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .programas-grouped optgroup {
-            font-weight: 600;
-            color: #1b5e20;
-        }
-
-        .programas-grouped option {
-            padding: 8px;
-        }
-
-        /* FOOTER */
-        footer {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
-        }
-
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .form-card {
-                padding: 25px;
+            .form-row {
+                grid-template-columns: 1fr;
             }
 
             .form-actions {
                 flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <h1>📋 Crear Nueva Solicitud</h1>
             <p>Registra una solicitud de formación manualmente</p>
         </div>
 
-        <!-- BREADCRUMB -->
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
@@ -479,30 +356,17 @@
             <span>Crear Solicitud</span>
         </div>
 
-        <!-- MENSAJES -->
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
-                        {% endif %}
-                    </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}">
+                    <div>{{ message }}</div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- FORMULARIO -->
         <div class="form-card">
             <div class="required-note">
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
@@ -511,22 +375,117 @@
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
 
-                <!-- EMPRESA -->
-                <div class="form-group">
-                    <label for="empresa" class="required">Empresa</label>
-                    <select id="empresa" name="empresa" required>
-                        <option value="">Seleccione una empresa</option>
-                        {% for empresa in empresas %}
-                            <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                    <small>Empresa que solicita la formación</small>
+                <!-- ========== SECCIÓN 1: EMPRESA ========== -->
+                <div class="section-header">
+                    🏢 Información de la Empresa
                 </div>
 
-                <!-- PROGRAMA -->
+                <div class="empresa-toggle">
+                    <div class="toggle-buttons">
+                        <button type="button" class="toggle-btn active" onclick="toggleEmpresa('existente')">
+                            Empresa Existente
+                        </button>
+                        <button type="button" class="toggle-btn" onclick="toggleEmpresa('nueva')">
+                            Crear Nueva Empresa
+                        </button>
+                    </div>
+
+                    <!-- EMPRESA EXISTENTE -->
+                    <div id="empresa-existente" class="toggle-content active">
+                        <div class="form-group">
+                            <label for="empresa" class="required">Seleccionar Empresa</label>
+                            <select id="empresa" name="empresa">
+                                <option value="">Seleccione una empresa</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}">
+                                        {{ empresa.nombre }}{% if empresa.nit %} - NIT: {{ empresa.nit }}{% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small>Empresa que solicita la formación</small>
+                        </div>
+
+                        <!-- Campos opcionales para actualizar empresa existente -->
+                        <div style="background: #fffbf0; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #ffa726;">
+                            <strong>💡 Opcional:</strong> Completa los datos faltantes de la empresa
+                        </div>
+
+                        <div class="form-row" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label for="nit_empresa_existente">NIT</label>
+                                <input type="text" id="nit_empresa_existente" name="nit_empresa" placeholder="Ej: 900123456">
+                                <small>Solo si la empresa no tiene NIT registrado</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="contacto_empresa_existente">Contacto</label>
+                                <input type="text" id="contacto_empresa_existente" name="contacto_empresa" placeholder="Nombre del contacto">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="telefono_empresa_existente">Teléfono</label>
+                                <input type="text" id="telefono_empresa_existente" name="telefono_empresa" placeholder="Ej: 3001234567">
+                            </div>
+                            <div class="form-group">
+                                <label for="municipio_empresa_existente">Municipio</label>
+                                <input type="text" id="municipio_empresa_existente" name="municipio_empresa" placeholder="Ej: Bogotá">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="direccion_empresa_existente">Dirección</label>
+                            <input type="text" id="direccion_empresa_existente" name="direccion_empresa" placeholder="Ej: Calle 123 # 45-67">
+                        </div>
+                    </div>
+
+                    <!-- CREAR NUEVA EMPRESA -->
+                    <div id="empresa-nueva" class="toggle-content">
+                        <input type="checkbox" id="crear_nueva_empresa" name="crear_nueva_empresa" style="display: none;">
+
+                        <div class="form-group">
+                            <label for="nombre_nueva_empresa" class="required">Nombre de la Empresa</label>
+                            <input type="text" id="nombre_nueva_empresa" name="nombre_nueva_empresa" placeholder="Ej: Constructora ABC S.A.S" maxlength="200">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nit_nueva_empresa">NIT</label>
+                                <input type="text" id="nit_nueva_empresa" name="nit_empresa" placeholder="Ej: 900123456">
+                                <small>8-12 dígitos numéricos</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="contacto_nueva_empresa" class="required">Contacto</label>
+                                <input type="text" id="contacto_nueva_empresa" name="contacto_empresa" placeholder="Nombre del contacto" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="telefono_nueva_empresa">Teléfono</label>
+                                <input type="text" id="telefono_nueva_empresa" name="telefono_empresa" placeholder="Ej: 3001234567" maxlength="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="municipio_nueva_empresa">Municipio</label>
+                                <input type="text" id="municipio_nueva_empresa" name="municipio_empresa" placeholder="Ej: Bogotá" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="direccion_nueva_empresa">Dirección</label>
+                            <input type="text" id="direccion_nueva_empresa" name="direccion_empresa" placeholder="Ej: Calle 123 # 45-67" maxlength="250">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== SECCIÓN 2: PROGRAMA Y SOLICITUD ========== -->
+                <div class="section-header">
+                    📚 Programa de Formación
+                </div>
+
                 <div class="form-group">
-                    <label for="programa" class="required">Programa de Formación</label>
-                    <select id="programa" name="programa" class="programas-grouped" required>
+                    <label for="programa" class="required">Programa Solicitado</label>
+                    <select id="programa" name="programa" required>
                         <option value="">Seleccione un programa</option>
                         {% regroup programas by area as areas_programas %}
                         {% for area in areas_programas %}
@@ -537,83 +496,61 @@
                             </optgroup>
                         {% endfor %}
                     </select>
-                    <small>Programa de formación solicitado</small>
                 </div>
 
-                <!-- CORREO REMITENTE -->
-                <div class="form-group">
-                    <label for="correo_remitente">Correo del Remitente</label>
-                    <input 
-                        type="email" 
-                        id="correo_remitente" 
-                        name="correo_remitente" 
-                        placeholder="ejemplo@empresa.com"
-                        maxlength="255"
-                    >
-                    <small>Email desde donde se envió la solicitud (opcional)</small>
+                <!-- ========== SECCIÓN 3: DATOS DE CONTACTO ========== -->
+                <div class="section-header">
+                    📧 Datos de Contacto
                 </div>
 
-                <!-- NÚMERO DE APRENDICES -->
-                <div class="form-group">
-                    <label for="numero_aprendices">Número de Aprendices</label>
-                    <input 
-                        type="number" 
-                        id="numero_aprendices" 
-                        name="numero_aprendices" 
-                        placeholder="Ej: 25"
-                        min="1"
-                        max="1000"
-                    >
-                    <small>Cantidad estimada de aprendices para el programa (opcional)</small>
-                </div>
-
-                <!-- OBSERVACIONES -->
-                <div class="form-group">
-                    <label for="observaciones">Observaciones</label>
-                    <textarea 
-                        id="observaciones" 
-                        name="observaciones" 
-                        placeholder="Detalles adicionales sobre la solicitud..."
-                    ></textarea>
-                    <small>Información adicional relevante (opcional)</small>
-                </div>
-
-                <!-- DOCUMENTO PDF -->
-                <div class="form-group">
-                    <div class="file-upload-section">
-                        <h3>📄 Documento Adjunto (opcional)</h3>
-                        <small style="margin-bottom: 15px; display: block;">Carga un documento PDF relacionado con la solicitud (máximo 10MB)</small>
-                        
-                        <div class="file-input-wrapper">
-                            <input 
-                                type="file" 
-                                id="documento_pdf" 
-                                name="documento_pdf" 
-                                accept=".pdf"
-                                onchange="handleFileSelect(event)"
-                            >
-                            <label for="documento_pdf" class="file-input-label">
-                                <span class="icon">📎</span>
-                                <span>Seleccionar archivo PDF</span>
-                            </label>
-                        </div>
-
-                        <div class="file-info" id="fileInfo">
-                            <div class="file-details">
-                                <span class="file-icon">📄</span>
-                                <div>
-                                    <div class="file-name" id="fileName"></div>
-                                    <div class="file-size" id="fileSize"></div>
-                                </div>
-                            </div>
-                            <button type="button" class="file-remove" onclick="removeFile()">
-                                🗑️ Eliminar
-                            </button>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="correo_remitente">Correo del Remitente</label>
+                        <input type="email" id="correo_remitente" name="correo_remitente" placeholder="ejemplo@empresa.com" maxlength="255">
+                        <small>Email desde donde se envió la solicitud</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero_aprendices">Número de Aprendices</label>
+                        <input type="number" id="numero_aprendices" name="numero_aprendices" placeholder="Ej: 25" min="1" max="1000">
+                        <small>Cantidad estimada de personas a capacitar</small>
                     </div>
                 </div>
 
-                <!-- BOTONES DE ACCIÓN -->
+                <!-- ========== SECCIÓN 4: OBSERVACIONES ========== -->
+                <div class="section-header">
+                    📝 Información Adicional
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" placeholder="Detalles adicionales sobre la solicitud..." rows="4"></textarea>
+                    <small>Información relevante que complementa la solicitud</small>
+                </div>
+
+                <!-- ========== SECCIÓN 5: DOCUMENTO ========== -->
+                <div class="file-upload-section">
+                    <h3 style="color: #2e7d32; margin-bottom: 15px;">📄 Documento Adjunto (opcional)</h3>
+                    <small style="display: block; margin-bottom: 15px; color: #666;">Carga un documento PDF relacionado (máximo 10MB)</small>
+                    
+                    <div class="file-input-wrapper">
+                        <input type="file" id="documento_pdf" name="documento_pdf" accept=".pdf" onchange="handleFileSelect(event)">
+                        <label for="documento_pdf" class="file-input-label">
+                            <span>📎</span>
+                            <span>Seleccionar archivo PDF</span>
+                        </label>
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <div>
+                            <span>📄</span>
+                            <span id="fileName"></span>
+                            <span id="fileSize" style="color: #666; font-size: 0.9em;"></span>
+                        </div>
+                        <button type="button" class="file-remove" onclick="removeFile()">🗑️ Eliminar</button>
+                    </div>
+                </div>
+
+                <!-- BOTONES -->
                 <div class="form-actions">
                     <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary">
                         ✕ Cancelar
@@ -626,24 +563,64 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>
-
-    <!-- SCRIPTS -->
     <script>
-        // Auto-cerrar mensajes
+        // Toggle empresa existente/nueva
+        function toggleEmpresa(tipo) {
+            const existenteContent = document.getElementById('empresa-existente');
+            const nuevaContent = document.getElementById('empresa-nueva');
+            const existenteBtn = document.querySelector('.toggle-btn:first-child');
+            const nuevaBtn = document.querySelector('.toggle-btn:last-child');
+            const checkbox = document.getElementById('crear_nueva_empresa');
+            const empresaSelect = document.getElementById('empresa');
+
+            if (tipo === 'existente') {
+                existenteContent.classList.add('active');
+                nuevaContent.classList.remove('active');
+                existenteBtn.classList.add('active');
+                nuevaBtn.classList.remove('active');
+                checkbox.checked = false;
+                empresaSelect.required = true;
+                document.getElementById('nombre_nueva_empresa').required = false;
+                document.getElementById('contacto_nueva_empresa').required = false;
+            } else {
+                existenteContent.classList.remove('active');
+                nuevaContent.classList.add('active');
+                existenteBtn.classList.remove('active');
+                nuevaBtn.classList.add('active');
+                checkbox.checked = true;
+                empresaSelect.required = false;
+                empresaSelect.value = '';
+                document.getElementById('nombre_nueva_empresa').required = true;
+                document.getElementById('contacto_nueva_empresa').required = true;
+            }
+        }
+
+        // Manejo de archivos
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileInfo = document.getElementById('fileInfo');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                
+                fileName.textContent = file.name;
+                fileSize.textContent = `(${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                fileInfo.classList.add('active');
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('documento_pdf').value = '';
+            document.getElementById('fileInfo').classList.remove('active');
+        }
+
+        // Auto-cerrar alertas
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.animation = 'slideOutUp 0.4s ease-out';
-                    setTimeout(() => alert.remove(), 400);
-                }, 8000);
+                setTimeout(() => alert.remove(), 8000);
             });
         });
-
-        // Animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
+    </script>
+</body>
+</html>
