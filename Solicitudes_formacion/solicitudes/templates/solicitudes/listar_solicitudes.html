@@ -682,6 +682,14 @@
                                 <strong>Fecha de Recepción:</strong>
                                 <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
                             </div>
+                            <!-- indicador de pdf-->
+                            {% if solicitud.documento_pdf%}
+                            <div class="info-item">
+                                <span class="info-icon">📄</span>
+                                <strong>Documento:</strong>
+                                <span style="color:#2196f3; font-weight:600;">PDF adjunto</span>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="solicitud-meta">

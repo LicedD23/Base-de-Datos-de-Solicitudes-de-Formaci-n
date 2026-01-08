@@ -616,6 +616,82 @@
                 padding: 15px;
             }
         }
+        /* Visualizar el  PDF*/
+        .PDF-viewer-card{
+            background:#f9f9f9;
+            padding:25px;
+            border-radius:12px;
+            border:2px solid #e0e0e0; 
+        }
+        .pdf-header{
+            display:flex;
+            justify-count:space-between;
+            align-items:center;
+            margin-bottom:20px;
+            padding-bottom:20px;
+            border-bottom:2px solid #e0e0e0;
+            flex-wrap:wrap;
+            gap:15px;
+        }
+        .pdf-info{
+            display: flex;
+            align-items: center;
+            gap:15px;
+        }
+        .pdf-icon{
+            font-size:2.5em;
+            background:linear-gradient(135deg, #2196f6 0%, #1565c0 100%);
+            width:60px;
+            height:60px;
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 4px 12px rgba(33,150,243,0.3);
+        }
+        .pdf-filename{
+            font-size:1.2em;
+            font-weight:600;
+            color:#333;
+            margin-bottom:5px;
+        }
+        .pdf-meta{
+            font-size:0.9em;
+            color:#666;
+        }
+        .pdf-actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+        .btn-sm{
+            padding:8px 15px;
+            font-size:0.9em;
+        }
+        .pdf-viewer{
+            background:white;
+            padding:10px,
+            border-radius:8px;
+        }
+        .pdf-viewer iframe{
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+        }
+        @media(max-width:768px){
+            .pdf-header{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+            .pdf-actions{
+                width:100%;
+            }
+            .pdf-actions .btn{
+                flex:1;
+            }
+            .pdf-viewer iframe{
+                height:400px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -745,6 +821,36 @@
                 {% endif %}
             </div>
         </div>
+        <!-- Documento PDF-->
+
+        {% if solicitud.documento_pdf %}
+        <div class="section">
+            <h2>📄 Documento Adjunto</h2>
+            <div class="pdf-viewer-card">
+                <div class="pdf-header">
+                    <div class="pdf-info">
+                        <span class="pdf-icon">📄</span>
+                        <div>
+                            <div class="pdf-filename">
+                                {{ solicitud.documento_pdf.name }}
+                            </div>
+                            <div class="pdf-meta">
+                                Documento cargado el {{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pdf-actions">
+                        <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="btn btn-info btn-sm">
+                            🔍 Ver en Nueva Pestaña
+                        </a>
+                        <a href="{{ solicitud.documento_pdf.url }}" download class="btn btn-primary btn-sm">
+                            📥 Descargar PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- SECCIÓN DE INSTRUCTOR: SOLO INFORMACIÓN, SIN FORMULARIO DE ASIGNACIÓN -->
         {% if solicitud.instructor_asignado %}

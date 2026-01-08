@@ -61,3 +61,23 @@ desktop.ini
 *.bak
 *.backup
 *.old
+
+# Archivos de medios (no subir al repositorio)
+media/
+
+# Base de datos
+*.sqlite3
+db.sqlite3
+
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+
+# Entorno virtual
+venv/
+env/
+.venv/
+
+# VS Code
+.vscode/

@@ -458,8 +458,7 @@ def eliminar_empresa(request, empresa_id):
             messages.success(
                 request,
                 f'✅ Empresa "{nombre_empresa}" eliminada exitosamente'
-            )
-        
+            )       
         return redirect('empresas:listar_empresas')
     
     context = {
