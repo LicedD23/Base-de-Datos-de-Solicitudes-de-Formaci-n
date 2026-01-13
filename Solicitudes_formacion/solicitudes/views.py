@@ -599,6 +599,17 @@ def eliminar_solicitud(request, solicitud_id):
         # Eliminar la solicitud
         try:
             with transaction.atomic():
+                #Eliminar el  archivo PDF antes de eliminar la solicitud
+                if solicitud.documento_pdf:
+                    import os
+                    try:
+                        if os.path.isfile(solicitud.documento_pdf.path):
+                            #eliminar el  archivo fisico  del  disco duro
+                            os.remove(solicitud.documento_pdf.path)
+                            print(f"Archivo PDF eliminado:{solicitud.documento_pdf.path}")
+                    except Exception as e:
+                        print(f"⚠️ Error al  eliminar el PDF:{str(e)}")
+                            
                 solicitud.delete()
             
             messages.success(

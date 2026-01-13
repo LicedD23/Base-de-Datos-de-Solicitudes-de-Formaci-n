@@ -12,7 +12,8 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            /* ✅ Fondo verde claro SENA */
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,12 +26,14 @@
         }
         /* Header de advertencia */
         .header {
-            background: linear-gradient(90deg, #b71c1c, #c62828);
+            /* ✅ Header con colores verde SENA */
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 -4px 20px rgba(183, 28, 28, 0.2);
+            /* ✅ Sombra verde */
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
         .header h1 {
             font-size: 2.5em;
@@ -69,35 +72,154 @@
             color: #999;
         }
         .breadcrumb .current {
-            color: #c62828;
+            /* ✅ Color verde */
+            color: #2e7d32;
             font-weight: 600;
         }
-        /* Alerts */
+        
+        /* ✅ Contenedor de mensajes */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+        
+        /* ✅ Estilos mejorados de alertas con animaciones */
         .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.95em;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* Animación de entrada */
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Borde lateral */
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+        
+        /* Alerta de éxito (verde) */
         .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
+        
+        .alert-success::before {
+            background: #fff;
+        }
+        
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        /* Animación del ícono de éxito */
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Alerta de error (rojo) */
         .alert-error {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #c62828;
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
         }
+        
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
+        }
+        
+        /* Animación de shake para errores */
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+        
+        /* Alerta de advertencia (naranja) */
         .alert-warning {
-            background: #fff3e0;
-            color: #f57c00;
-            border-left: 4px solid #f57c00;
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
         }
-        /* Warning boxes */
+        
+        .alert-warning::before {
+            background: #fff;
+        }
+        
+        /* Elementos internos de la alerta */
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+        
+        /* Botón de cerrar alerta */
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        
+        /* Warning boxes - MANTENER EN ROJO (advertencia de eliminación) */
         .warning-box {
             background: #ffebee;
             border-left: 4px solid #b71c1c;
@@ -176,12 +298,14 @@
             overflow: hidden;
         }
         .info-card-header {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left: 4px solid #c62828;
+            /* ✅ Header de card con colores verdes */
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid #2e7d32;
             padding: 20px 30px;
         }
         .info-card-header h2 {
-            color: #b71c1c;
+            /* ✅ Texto verde oscuro */
+            color: #1b5e20;
             font-size: 1.5em;
             font-weight: 700;
             display: flex;
@@ -201,7 +325,8 @@
             padding: 15px;
             background: #f9f9f9;
             border-radius: 8px;
-            border-left: 3px solid #c62828;
+            /* ✅ Borde verde */
+            border-left: 3px solid #2e7d32;
         }
         .info-item label {
             display: block;
@@ -363,13 +488,15 @@
         }
         /* FOOTER STYLES */
         footer {
-            background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
+            /* ✅ Footer con colores verde SENA */
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
             text-align: center;
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(183, 28, 28, 0.2);
+            /* ✅ Sombra verde */
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
         footer p {
             font-weight: 500;
@@ -410,13 +537,27 @@
             <span class="current">Eliminar Área</span>
         </div>
 
-        <!-- Messages -->
+        <!-- ✅ Mensajes mejorados con animaciones y botón cerrar -->
         {% if messages %}
+        <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                    {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✓{% endif %} {{ message }}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}
+                            ❌
+                        {% elif 'warning' in message.tags %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        {{ message }}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
+        </div>
         {% endif %}
 
         <!-- Critical Warning Box -->
@@ -477,7 +618,7 @@
 
                 <!-- Descripción -->
                 {% if area.descripcion %}
-                <div class="info-item" style="border-left: 3px solid #c62828;">
+                <div class="info-item" style="border-left: 3px solid #2e7d32;">
                     <label>Descripción</label>
                     <div class="value" style="font-weight: 400; line-height: 1.6;">{{ area.descripcion }}</div>
                 </div>
@@ -567,6 +708,36 @@
     </footer>
 
     {% include 'core/accessibility.html' %}
+
+    <!-- ✅ Script para auto-cerrar mensajes -->
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 
     {% if total_programas > 0 %}
     <script>

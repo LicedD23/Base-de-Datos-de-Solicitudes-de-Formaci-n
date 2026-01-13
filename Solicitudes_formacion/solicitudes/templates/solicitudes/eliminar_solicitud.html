@@ -577,30 +577,6 @@
             <span class="current">Eliminar Solicitud</span>
         </div>
 
-    
-        {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
-                        {% endif %}
-                    </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
-                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-
         <div class="warning-box">
             <h3>🚨 ADVERTENCIA CRÍTICA</h3>
             <p>

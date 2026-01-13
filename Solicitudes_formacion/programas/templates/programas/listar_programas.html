@@ -93,7 +93,84 @@
         .breadcrumb span {
             color: #999;
         }
+         /* ========================================
+           MENSAJES MEJORADOS - ESTILO EDITAR_SOLICITUD
+           ======================================== */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+        
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+        }
 
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+            color: white;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-size: 1em;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
         /* CONTROLS SECTION MEJORADA */
         .controls-section {
             background: white;
@@ -534,7 +611,20 @@
             <a href="{% url 'programas:listar_programas' %}">Programas de Formación</a>
             <span>›</span>
         </div>
-
+        <!-- MENSAJES-->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% elif 'info' in message.tags %}alert-info{% else %}alert-success{% endif %}">
+                    <div class="alert-message">
+                        {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% elif 'info' in message.tags %}ℹ️{% else %}{% endif %} 
+                        {{ message }}
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         <!-- SECCIÓN DE CONTROLES MEJORADA -->
         <div class="controls-section">
             <form method="get" class="filters-form-horizontal">
@@ -543,9 +633,9 @@
                     <!-- Buscador -->
                     <div class="search-input">
                         <input type="text"
-                               name="search"
-                               placeholder="🔍 Buscar por nombre, código..."
-                               value="{{ search }}">
+                                name="search"
+                                placeholder="🔍 Buscar por nombre, código..."
+                                value="{{ search }}">
                     </div>
 
                     <!-- Filtro Programa -->
