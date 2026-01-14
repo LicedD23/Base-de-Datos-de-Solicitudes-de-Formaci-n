@@ -70,7 +70,7 @@
             color: #999;
         }
 
-        /* ===== MENSAJES ===== */
+        /* MENSAJES */
         .messages-container {
             margin-bottom: 25px;
         }
@@ -126,9 +126,15 @@
         }
 
         @keyframes scaleIn {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .alert-error {
@@ -137,15 +143,25 @@
             border: 2px solid #b71c1c;
         }
 
+        .alert-error::before {
+            background: #fff;
+        }
+
         .alert-error .alert-icon {
             font-size: 1.8em;
             animation: shake 0.5s ease-out;
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
         }
 
         .alert-warning {
@@ -190,131 +206,94 @@
             transform: scale(1.1);
         }
 
-        /* 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS MEJORADA */
+        /* CONTROLES DE BÚSQUEDA Y FILTROS */
         .controls-section {
             background: white;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 25px;
+            align-items: end;
         }
 
-        .search-form {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            min-width: 280px;
-            position: relative;
-        }
-
+        /* BUSCADOR */
         .search-box {
-            position: relative;
             width: 100%;
+            position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 15px 20px 15px 50px;
+            height: 48px;
+            padding: 0 18px 0 48px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1em;
+            background: white;
             transition: all 0.3s ease;
+        }
+
+        /* Icono lupa */
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            opacity: 0.7;
         }
 
         .search-box input:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
         }
 
-        .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2em;
-            z-index: 1;
-        }
-
-        /* 🎯 FILTROS DESPLEGABLES */
-        .filters-wrapper {
-            display: flex;
-            gap: 10px;
+        /* FORMULARIO DE FILTROS */
+        .filters-layout {
+            display: grid;
+            grid-template-columns: 1fr 260px 220px 140px;
+            gap: 15px;
             align-items: center;
-            flex-wrap: wrap;
         }
 
-        .filter-dropdown {
-            position: relative;
-        }
-
-        .filter-dropdown select,
-        .filter-dropdown input[type="number"] {
-            padding: 15px 40px 15px 20px;
+        /* SELECTS */
+        .filter-select {
+            width: 100%;
+            padding: 14px 18px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
-            cursor: pointer;
             background: white;
+            cursor: pointer;
             transition: all 0.3s ease;
-            appearance: none;
-            min-width: 160px;
-            font-weight: 500;
         }
 
-        .filter-dropdown input[type="number"] {
-            cursor: text;
-            padding-right: 20px;
-        }
-
-        .filter-dropdown select:focus,
-        .filter-dropdown input:focus {
+        .filter-select:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        .filter-dropdown.has-select::after {
-            content: "▼";
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: #2e7d32;
-            font-size: 0.8em;
+        /* BOTÓN FILTRAR */
+        .filter-btn {
+            height: 48px;
+            justify-content: center;
         }
 
-        .filter-dropdown select option {
-            padding: 10px;
+        /* BOTÓN CREAR */
+        .btn-create {
+            height: 48px;
+            white-space: nowrap;
         }
 
-        /* Indicador de filtro activo */
-        .filter-dropdown.active select,
-        .filter-dropdown.active input {
-            border-color: #2e7d32;
-            background: #e8f5e9;
-            font-weight: 600;
-        }
-
-        .filter-dropdown.active.has-select::after {
-            color: #1b5e20;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
+        /* BOTONES */
         .btn {
-            padding: 15px 25px;
+            padding: 12px 25px;
             border: none;
             border-radius: 10px;
             font-size: 1em;
@@ -325,7 +304,6 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            white-space: nowrap;
         }
 
         .btn-primary {
@@ -350,58 +328,7 @@
             color: white;
         }
 
-        .btn-clear {
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-clear:hover {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        /* Badge de filtros activos */
-        .active-filters {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #c8e6c9;
-        }
-
-        .filter-badge-remove {
-            background: none;
-            border: none;
-            color: #1b5e20;
-            cursor: pointer;
-            font-size: 1.2em;
-            padding: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-        }
-
-        .filter-badge-remove:hover {
-            background: #c8e6c9;
-        }
-
-        /* ===== ESTADÍSTICAS ===== */
+        /* ESTADÍSTICAS */
         .stats-bar {
             display: flex;
             gap: 20px;
@@ -433,7 +360,7 @@
             font-weight: 700;
         }
 
-        /* ===== GRID DE EMPRESAS ===== */
+        /* GRID DE EMPRESAS */
         .empresas-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -611,25 +538,26 @@
         }
 
         .btn-delete {
-            background: #ffebee;
-            color: #c62828;
+            background: #fff3e0;
+            color: #f57c00;
         }
 
         .btn-delete:hover {
-            background: #c62828;
+            background: #f57c00;
             color: white;
         }
+
         .btn-eliminate {
             background: #ffebee;
             color: #c62828;
         }
 
         .btn-eliminate:hover {
-            background: #;c62828;
+            background: #c62828;
             color: white;
         }
 
-        /* ===== ESTADO VACÍO ===== */
+        /* ESTADO VACÍO */
         .empty-state {
             background: white;
             padding: 60px 40px;
@@ -655,7 +583,7 @@
             margin-bottom: 20px;
         }
 
-        /* ===== FOOTER ===== */
+        /* FOOTER */
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
@@ -671,25 +599,25 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-create {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
-            }
-
-            .search-form {
-                flex-direction: column;
-            }
-
-            .search-input-wrapper,
-            .filters-wrapper,
-            .action-buttons {
-                width: 100%;
-            }
-
-            .filter-dropdown select,
-            .filter-dropdown input {
-                width: 100%;
             }
 
             .empresas-grid {
@@ -701,26 +629,17 @@
                 padding: 15px;
             }
         }
-
-        @keyframes slideOutUp {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
             <h1>🏢 Empresas Aliadas</h1>
             <p>Gestiona las empresas asociadas al SENA - Fortaleciendo alianzas estratégicas</p>
         </div>
 
+        <!-- BREADCRUMB -->
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
@@ -751,119 +670,53 @@
         </div>
         {% endif %}
 
-        <!-- 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS MEJORADA -->
+        <!-- CONTROLES DE BÚSQUEDA Y FILTROS -->
         <div class="controls-section">
-            <form method="get" class="search-form" id="filterForm">
-                <div class="search-input-wrapper">
-                    <div class="search-box">
-                        <input 
-                            type="text" 
-                            name="search" 
-                            placeholder="Buscar por nombre, NIT, contacto o correo..." 
-                            value="{{ search|default:'' }}"
-                            id="searchInput"
-                        >
-                    </div>
+            <form method="get" class="filters-layout">
+                <!-- Buscador -->
+                <div class="search-box">
+                    <input 
+                        type="text"
+                        name="search"
+                        placeholder="Buscar por nombre, NIT, contacto o correo..."
+                        value="{{ search|default:'' }}"
+                    >
                 </div>
-                
-                <div class="filters-wrapper">
-                    <div class="filter-dropdown has-select {% if municipio_filter %}active{% endif %}">
-                        <select name="municipio" id="municipioFilter">
-                            <option value="">🏙️ Todos los municipios</option>
-                            {% for muni in municipios %}
-                                <option value="{{ muni }}" {% if municipio_filter == muni %}selected{% endif %}>
-                                    {{ muni }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
 
-                    <div class="filter-dropdown has-select {% if rango_fecha %}active{% endif %}">
-                        <select name="rango_fecha" id="rangoFechaFilter">
-                            <option value="">📅 Todas las fechas</option>
-                            <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
-                            <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
-                            <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
-                            <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
-                            <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
-                            <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
-                            <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
-                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
-                            <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
-                        </select>
-                    </div>
+                <!-- Filtro Municipio -->
+                <select name="municipio" class="filter-select">
+                    <option value="">🏙️ Todos los municipios</option>
+                    {% for muni in municipios %}
+                        <option value="{{ muni }}" {% if municipio_filter == muni %}selected{% endif %}>
+                            {{ muni }}
+                        </option>
+                    {% endfor %}
+                </select>
 
-                    <div class="filter-dropdown {% if min_trabajadores_filter %}active{% endif %}">
-                        <input 
-                            type="number" 
-                            name="min_trabajadores" 
-                            id="minTrabajadoresFilter"
-                            placeholder="👥 Min. trabajadores" 
-                            value="{{ min_trabajadores_filter|default:'' }}" 
-                            min="0"
-                        >
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button type="submit" class="btn btn-secondary">
-                            🔍 Buscar
-                        </button>
-                        
-                        {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
-                        <a href="{% url 'empresas:listar_empresas' %}" class="btn btn-clear">
-                            🔄 Limpiar
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
+                <!-- Filtro Rango de Fecha -->
+                <select name="rango_fecha" class="filter-select">
+                    <option value="">📅 Todas las fechas</option>
+                    <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                    <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                    <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                    <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                    <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                    <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                    <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                    <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                    <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                </select>
+
+                <!-- Botón Filtrar -->
+                <button type="submit" class="btn btn-secondary filter-btn">
+                    🔍 Buscar
+                </button>
             </form>
-            
-            <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary">
+
+            <!-- Botón Crear -->
+            <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary btn-create">
                 ➕ Nueva Empresa
             </a>
-
-            <!-- 🏷️ BADGES DE FILTROS ACTIVOS -->
-            {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
-            <div class="active-filters">
-                {% if search %}
-                <div class="filter-badge">
-                    🔍 Búsqueda: "{{ search }}"
-                    <button type="button" class="filter-badge-remove" onclick="removeFilter('search')">×</button>
-                </div>
-                {% endif %}
-                
-                {% if municipio_filter %}
-                <div class="filter-badge">
-                    🏙️ Municipio: "{{ municipio_filter }}"
-                    <button type="button" class="filter-badge-remove" onclick="removeFilter('municipio')">×</button>
-                </div>
-                {% endif %}
-                
-                {% if min_trabajadores_filter %}
-                <div class="filter-badge">
-                    👥 Mínimo: {{ min_trabajadores_filter }} trabajadores
-                    <button type="button" class="filter-badge-remove" onclick="removeFilter('min_trabajadores')">×</button>
-                </div>
-                {% endif %}
-
-                {% if rango_fecha %}
-                <div class="filter-badge">
-                    📅 Período: 
-                    {% if rango_fecha == 'hoy' %}Hoy
-                    {% elif rango_fecha == 'ayer' %}Ayer
-                    {% elif rango_fecha == 'esta_semana' %}Esta semana
-                    {% elif rango_fecha == 'semana_pasada' %}Semana pasada
-                    {% elif rango_fecha == 'este_mes' %}Este mes
-                    {% elif rango_fecha == 'mes_pasado' %}Mes pasado
-                    {% elif rango_fecha == 'ultimos_7_dias' %}Últimos 7 días
-                    {% elif rango_fecha == 'ultimos_30_dias' %}Últimos 30 días
-                    {% elif rango_fecha == 'este_año' %}Este año
-                    {% endif %}
-                    <button type="button" class="filter-badge-remove" onclick="removeFilter('rango_fecha')">×</button>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
         </div>
 
         <!-- ESTADÍSTICAS -->
@@ -940,18 +793,19 @@
                 <div class="empresa-actions">
                     <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
                     <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                    <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete">🗑️ Desactivar</a>
+                    <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete" onclick="return confirm('¿Desactivar esta empresa?')">🚫 Desactivar</a>
                     <a href="{% url 'empresas:eliminar_empresa' empresa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente esta empresa?')">🗑️ Eliminar</a>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
+        <!-- ESTADO VACÍO -->
         <div class="empty-state">
             <div class="empty-state-icon">🏢</div>
             <h3>No se encontraron empresas</h3>
             <p>
-                {% if search or municipio_filter or min_trabajadores_filter or rango_fecha %}
+                {% if search or municipio_filter or rango_fecha %}
                     No hay empresas que coincidan con los filtros aplicados
                 {% else %}
                     Aún no hay empresas registradas en el sistema
@@ -962,10 +816,12 @@
         {% endif %}
     </div>
 
+    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
 
+    <!-- SCRIPTS -->
     <script>
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
@@ -978,19 +834,21 @@
             });
         });
 
-        // Función para remover filtros individuales
-        function removeFilter(filterName) {
-            const form = document.getElementById('filterForm');
-            const input = form.querySelector(`[name="${filterName}"]`);
-            if (input) {
-                if (input.type === 'text' || input.type === 'number') {
-                    input.value = '';
-                } else {
-                    input.value = '';
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
                 }
-                form.submit();
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
             }
-        }
+        `;
+        document.head.appendChild(style);
     </script>
 
     {% include 'core/accessibility.html' %}

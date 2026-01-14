@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from django.db import IntegrityError, transaction
+from django.core.files.base import ContentFile
 
 from .models import Solicitud
 from empresas.models import Empresa
@@ -47,6 +48,9 @@ class EmailSolicitudHandler:
     
     CAMPOS_MINIMOS_REQUERIDOS = 2
     
+    MAX_PDF_SIZE = 10 * 1024 * 1024
+    ALLOWED_PDF_EXTENSIONS = ['.pdf']
+    
     # Keywords para programas (fácil de expandir)
     KEYWORDS_PROGRAMAS = {
         'minicargador': 'Operador de Minicargador',
@@ -71,6 +75,7 @@ class EmailSolicitudHandler:
             'correos_filtrados': 0,
             'correos_procesados': 0,
             'solicitudes_creadas': 0,
+            'pdfs_extraidos': 0,
             'errores': 0,
         }
         
@@ -80,7 +85,75 @@ class EmailSolicitudHandler:
     # =========================================================================
     # MÉTODOS DE CONEXIÓN (MEJORADOS CON MANEJO DE ERRORES)
     # =========================================================================
-    
+    def extraer_pdf_adjunto(self, msg):
+        """
+        Extrae el primer archivo PDF adjunto del correo
+        
+        Returns:
+            dict: {'nombre': str, 'contenido': bytes, 'size': int} o None
+        """
+        try:
+            print("\n   === BUSCANDO ARCHIVOS PDF ADJUNTOS ===")
+            if not msg.is_multipart():
+                return None
+        
+            for part in msg.walk():
+                #Saltar el contenido del mensaje principal
+                if part.get_content_maintype() == 'multipart':
+                    continue
+                if part.get('Content-Disposition') is None:
+                    continue
+            
+                #Obtener el nombre del  archivo
+                filename = part.get_filename()
+            
+                if filename:
+                    #Decodificar el nombre si  esta codificado
+                    if isinstance (filename, bytes):
+                        filename = filename.decode('utf-8', errors='ignore')
+                    else:
+                        #Decodificar encabezados RFC 2047
+                        decoded_parts = decode_header(filename)
+                        filename_parts = []
+                        for content, encoding in decoded_parts:
+                            if isinstance(content, bytes):
+                                filename_parts.append(content.decode(encoding or 'utf-8', errors='ignore'))
+                            else:
+                                filename_parts.append(content)
+                        filename = ''.join(filename_parts)
+                    #Verificar si es un PDF
+                    if filename.lower().endswith('.pdf'):
+                        #obtener el  contenido  del archivo
+                        file_data = part.get_payload(decode=True)
+                    
+                        if file_data:
+                            file_size = len(file_data)
+                        
+                            #Vallidar tamaño maximo
+                            if file_size > self.MAX_PDF_SIZE:
+                                print(f" ⚠️ PDF '{filename}' excede{self.MAX_PDF_SIZE / (1024*1024):.1f}MB (tamaño: {file_size / (1024*1024):.1f}MB)")
+                                continue
+                        
+                            #Validar que sea realmente un PDF 
+                            if not file_data.startswith(b'%PDF'):
+                                print(f"  ⚠️ Archivo '{filename}' no  es un PDF valido")
+                                continue
+                        
+                            print(f"   ✅ PDF encontrado: {filename} ({file_size / 1024:.1f} KB)")
+                        
+                            return{
+                                'nombre': filename,
+                                'contenido': file_data,
+                                'size': file_size
+                            }
+            print("   ℹ️ No se encontraron archivos PDF adjuntos")
+            return None
+        except Exception as e:
+            print(f"   ❌ Error extrayendo PDF: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return None
+        
     def conectar_email(self):
         """Conecta al servidor IMAP con manejo robusto de errores"""
         try:
@@ -208,12 +281,15 @@ class EmailSolicitudHandler:
                         body = payload.decode('utf-8', errors='ignore')
                 except:
                     pass
+            # Nuevo: Extraer PDF adjunto
+            pdf_adjunto = self.extraer_pdf_adjunto(msg)
             
             return {
                 'asunto': subject,
                 'remitente': from_email,
                 'cuerpo': body,
-                'fecha': msg.get("Date", "")
+                'fecha': msg.get("Date", ""),
+                'pdf_adjunto': pdf_adjunto
             }
             
         except Exception as e:
@@ -922,6 +998,28 @@ class EmailSolicitudHandler:
                 numero_aprendices=info.get('numero_trabajadores'),
                 correo_remitente=self._extraer_email_limpio(correo_info['remitente'])
             )
+            # Guardar PDF si  existe
+            pdf_adjunto = correo_info.get('pdf_adjunto')
+            if pdf_adjunto:
+                try:
+                    print(f"  📄 Guardando PDF: {pdf_adjunto['nombre']}")
+                    # Crear nombre unico
+                    timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+                    nombre_limpio = re.sub(r'[^\w\s\-.]', '', pdf_adjunto['nombre'])
+                    nombre_final = f"solicitud_{solicitud.id}_{timestamp}_{nombre_limpio}"
+                    
+                    # Guardar usando ContentFile
+                    solicitud.documento_pdf.save(
+                        nombre_final,
+                        ContentFile(pdf_adjunto['contenido']),
+                        save=True
+                        
+                    )
+                    self.stats['pdfs_extraidos'] += 1
+                    print(f"   ✅ PDF guardado: {nombre_final} ({pdf_adjunto['size'] / 1024:.1f} KB)")
+                except Exception as e:
+                    print(f"   ⚠️ Error guardando PDF: {str(e)}")
+                    
             
             print(f"✅ SOLICITUD CREADA: #{solicitud.id}")
             self.stats['solicitudes_creadas'] += 1
@@ -967,6 +1065,7 @@ class EmailSolicitudHandler:
             'correos_filtrados': 0,
             'correos_procesados': 0,
             'solicitudes_creadas': 0,
+            'pdfs_extraidos': 0,
             'errores': 0,
         }
         
@@ -1019,6 +1118,7 @@ class EmailSolicitudHandler:
         print(f"🚫 Correos filtrados:         {self.stats['correos_filtrados']}")
         print(f"✅ Correos procesados:        {self.stats['correos_procesados']}")
         print(f"📝 Solicitudes creadas:       {self.stats['solicitudes_creadas']}")
+        print(f"📄 PDFs extraidos:            {self.stats['pdfs_extraidos']}")
         print(f"❌ Errores:                   {self.stats['errores']}")
         print("="*60)
         

@@ -10,33 +10,39 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             min-height: 100vh;
             padding: 20px;
         }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
         }
+
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
+
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
         }
+
         .header p {
             font-size: 1.1em;
             opacity: 0.95;
         }
+
         .breadcrumb {
             background: white;
             padding: 15px 20px;
@@ -48,20 +54,23 @@
             gap: 10px;
             font-size: 0.95em;
         }
+
         .breadcrumb a {
             color: #2e7d32;
             text-decoration: none;
             transition: color 0.3s ease;
         }
+
         .breadcrumb a:hover {
             color: #1b5e20;
             text-decoration: underline;
         }
+
         .breadcrumb span {
             color: #999;
         }
 
-        /* 🔥 MENSAJES MEJORADOS */
+        /* MENSAJES */
         .messages-container {
             margin-bottom: 25px;
         }
@@ -73,6 +82,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            font-size: 1em;
             font-weight: 500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             animation: slideInDown 0.4s ease-out;
@@ -82,7 +92,7 @@
 
         @keyframes slideInDown {
             from {
-                transform: translateY(-20%);
+                transform: translateY(-20px);
                 opacity: 0;
             }
             to {
@@ -196,109 +206,91 @@
             transform: scale(1.1);
         }
 
-        /* SECCIÓN DE CONTROLES */
+        /* CONTROLES DE BÚSQUEDA Y FILTROS */
         .controls-section {
             background: white;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-        
-        /* INDICADOR DE FILTRO */
-        .filter-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #fff3e0;
-            color: #e65100;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        /* LAYOUT PRINCIPAL DE FILTROS */
-        .filters-layout {
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: start;
+            gap: 25px;
+            align-items: end;
         }
-        
-        /* COLUMNA IZQUIERDA: BÚSQUEDA Y FILTROS */
-        .filters-column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
+
         /* BUSCADOR */
         .search-box {
             width: 100%;
             position: relative;
         }
+
         .search-box input {
             width: 100%;
-            padding: 15px 20px 15px 50px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s ease;
             height: 48px;
+            padding: 0 18px 0 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            background: white;
+            transition: all 0.3s ease;
         }
-        .search-box input:focus {
-            outline: none;
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
+
+        /* Icono lupa */
         .search-box::before {
             content: "🔍";
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.2em;
+            font-size: 1.1em;
+            opacity: 0.7;
         }
-        
-        /* GRUPO DE FILTROS CON BOTÓN */
-        .filter-group {
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+        }
+
+        /* FORMULARIO DE FILTROS */
+        .filters-layout {
             display: grid;
-            grid-template-columns: repeat(4, 1fr) 140px;
-            gap: 10px;
+            grid-template-columns: 1fr 200px 200px 200px 140px;
+            gap: 15px;
             align-items: center;
-            width: 100%;
         }
-        
-        .filter-group select {
-            padding: 12px 20px;
+
+        /* SELECTS */
+        .filter-select {
+            width: 100%;
+            padding: 14px 18px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
-            cursor: pointer;
             background: white;
+            cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
-            height: 48px;
         }
-        
-        .filter-group select:focus {
+
+        .filter-select:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
-        
-        /* ESTILO ESPECIAL PARA PERÍODO */
-        .filter-group select[name="periodo"] {
-            border-color: #ff9800;
-            background: #fff8f0;
+
+        /* BOTÓN FILTRAR */
+        .filter-btn {
+            height: 48px;
+            justify-content: center;
         }
-        .filter-group select[name="periodo"]:focus {
-            border-color: #f57c00;
-            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+
+        /* BOTÓN CREAR */
+        .btn-create {
+            height: 48px;
+            white-space: nowrap;
         }
-        
+
         /* BOTONES */
         .btn {
             padding: 12px 25px;
@@ -310,60 +302,32 @@
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
             text-decoration: none;
-            white-space: nowrap;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
         }
-        
+
         .btn-secondary {
             background: white;
             color: #2e7d32;
             border: 2px solid #2e7d32;
         }
+
         .btn-secondary:hover {
             background: #2e7d32;
             color: white;
         }
-        
-        .filter-btn {
-            width: 100%;
-            height: 48px;
-        }
-        
-        .clear-btn {
-            min-width: 180px;
-            height: 48px;
-        }
-        
-        /* COLUMNA DERECHA: BOTÓN CREAR */
-        .create-button-column {
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .btn-create {
-            height: 48px;
-            min-width: 200px;
-        }
-        
-        /* FILA DE ACCIONES (LIMPIAR FILTROS) */
-        .actions-row {
-            display: flex;
-            justify-content: flex-start;
-            margin-top: 15px;
-        }
-        
+
         /* ESTADÍSTICAS */
         .stats-bar {
             display: flex;
@@ -371,6 +335,7 @@
             margin-bottom: 25px;
             flex-wrap: wrap;
         }
+
         .stat-card {
             flex: 1;
             min-width: 200px;
@@ -380,6 +345,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border-left: 4px solid #2e7d32;
         }
+
         .stat-card h3 {
             color: #666;
             font-size: 0.9em;
@@ -387,36 +353,45 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .stat-card .number {
             color: #2e7d32;
             font-size: 2em;
             font-weight: 700;
         }
+
         .stat-card.recibida {
             border-left-color: #ff9800;
         }
+
         .stat-card.recibida .number {
             color: #ff9800;
         }
+
         .stat-card.respondida {
             border-left-color: #2196f3;
         }
+
         .stat-card.respondida .number {
             color: #2196f3;
         }
+
         .stat-card.atendida {
             border-left-color: #9c27b0;
         }
+
         .stat-card.atendida .number {
             color: #9c27b0;
         }
+
         .stat-card.finalizada {
             border-left-color: #4caf50;
         }
+
         .stat-card.finalizada .number {
             color: #4caf50;
         }
-        
+
         /* GRID DE SOLICITUDES */
         .solicitudes-grid {
             display: grid;
@@ -424,6 +399,7 @@
             gap: 25px;
             margin-bottom: 30px;
         }
+
         .solicitud-card {
             background: white;
             border-radius: 15px;
@@ -434,6 +410,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .solicitud-card::before {
             content: "";
             position: absolute;
@@ -443,10 +420,12 @@
             height: 4px;
             background: linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%);
         }
+
         .solicitud-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
         }
+
         .solicitud-header {
             display: flex;
             justify-content: space-between;
@@ -454,6 +433,7 @@
             margin-bottom: 15px;
             gap: 10px;
         }
+
         .solicitud-title {
             font-size: 1.3em;
             color: #2e7d32;
@@ -461,6 +441,7 @@
             margin-bottom: 5px;
             flex: 1;
         }
+
         .status-badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -469,25 +450,31 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
+
         .status-recibida {
             background: #fff3e0;
             color: #e65100;
         }
+
         .status-respondida {
             background: #e3f2fd;
             color: #1565c0;
         }
+
         .status-atendida {
             background: #f3e5f5;
             color: #6a1b9a;
         }
+
         .status-finalizada {
             background: #c8e6c9;
             color: #1b5e20;
         }
+
         .solicitud-info {
             margin-bottom: 15px;
         }
+
         .info-item {
             display: flex;
             align-items: center;
@@ -497,14 +484,17 @@
             margin-bottom: 8px;
             padding: 8px 0;
         }
+
         .info-item strong {
             color: #333;
             min-width: 100px;
         }
+
         .info-icon {
             font-size: 1.1em;
             min-width: 20px;
         }
+
         .solicitud-meta {
             display: flex;
             gap: 15px;
@@ -513,6 +503,7 @@
             border-top: 1px solid #e0e0e0;
             flex-wrap: wrap;
         }
+
         .meta-item {
             display: flex;
             align-items: center;
@@ -523,54 +514,67 @@
             padding: 6px 12px;
             border-radius: 8px;
         }
+
         .solicitud-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 15px;
-            align-items: stretch;
         }
+
         .btn-action {
-            flex: 1;
-            padding: 12px 10px;
+            padding: 10px;
             border: none;
             border-radius: 8px;
             font-size: 0.9em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            white-space: nowrap;
+            text-decoration: none;
+            display: block;
         }
+
         .btn-view {
             background: #e8f5e9;
             color: #2e7d32;
         }
+
         .btn-view:hover {
             background: #2e7d32;
             color: white;
         }
+
         .btn-edit {
             background: #fff3e0;
             color: #ef6c00;
         }
+
         .btn-edit:hover {
             background: #ef6c00;
             color: white;
         }
+
         .btn-delete {
-            background: #ffcdd2;
+            background: #ffebee;
             color: #c62828;
         }
+
         .btn-delete:hover {
             background: #c62828;
             color: white;
         }
-        
+
+        .btn-email {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .btn-email:hover {
+            background: #1565c0;
+            color: white;
+        }
+
         /* ESTADO VACÍO */
         .empty-state {
             background: white;
@@ -579,103 +583,94 @@
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
+
         .empty-state-icon {
             font-size: 5em;
             margin-bottom: 20px;
             opacity: 0.3;
         }
+
         .empty-state h3 {
             color: #666;
             font-size: 1.5em;
             margin-bottom: 10px;
         }
+
         .empty-state p {
             color: #999;
             margin-bottom: 20px;
         }
-        
+
         /* FOOTER */
         footer {
-            background: linear-gradient(90deg, #1b5e20, #2e7d32);
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
             text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
             box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
-            margin-top: 40px;
-            border-radius: 15px;
         }
+
         footer p {
-            margin: 0;
-            font-weight: 600;
+            font-weight: 500;
             letter-spacing: 0.5px;
         }
-        
+
         /* RESPONSIVE */
-        @media (max-width: 1200px) {
+        @media (max-width: 992px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+
             .filters-layout {
                 grid-template-columns: 1fr;
             }
-            
-            .filter-group {
-                grid-template-columns: repeat(2, 1fr) 140px;
-            }
-            
-            .create-button-column {
-                justify-content: stretch;
-            }
-            
+
             .btn-create {
                 width: 100%;
+                text-align: center;
             }
         }
-        
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
             }
-            
-            .filter-group {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-btn,
-            .clear-btn,
-            .btn-create {
-                width: 100%;
-            }
-            
+
             .solicitudes-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             footer {
                 font-size: 0.85rem;
-                padding: 1.2rem;
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
             <h1>📋 Solicitudes de Formación</h1>
             <p>Gestiona las solicitudes de formación de SENA - Conectando empresas con oportunidades de aprendizaje</p>
         </div>
 
+        <!-- BREADCRUMB -->
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
             <a href="{% url 'solicitudes:panel_correos' %}">Panel de Correos</a>
             <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes de Formación</a>
+            <span>Solicitudes de Formación</span>
         </div>
 
-        <!-- 🔥 MENSAJES CON ESTILOS MEJORADOS -->
+        <!-- MENSAJES -->
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert{% if 'error' in message.tags %} alert-error{% elif 'warning' in message.tags %} alert-warning{% else %} alert-success{% endif %}" role="alert">
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
                         {% if 'error' in message.tags %}
                             ❌
@@ -694,84 +689,60 @@
         </div>
         {% endif %}
 
+        <!-- CONTROLES DE BÚSQUEDA Y FILTROS -->
         <div class="controls-section">
-            <!-- Indicador de filtro de período activo -->
-            {% if periodo_filter %}
-            <div class="filter-indicator">
-                ⏰ Mostrando solicitudes: 
-                {% if periodo_filter == 'hoy' %}de hoy
-                {% elif periodo_filter == 'semana' %}de la última semana
-                {% elif periodo_filter == 'mes' %}del último mes
-                {% elif periodo_filter == 'trimestre' %}del último trimestre
-                {% endif %}
-            </div>
-            {% endif %}
-
             <form method="get" class="filters-layout">
-                <!-- COLUMNA IZQUIERDA: FILTROS -->
-                <div class="filters-column">
-                    <div class="search-box">
-                        <input type="text" name="search" placeholder="Buscar por empresa, programa o instructor..." value="{{ search }}">
-                    </div>
-
-                    <div class="filter-group">
-                        <select name="estado">
-                            <option value="">Todos los estados</option>
-                            {% for codigo, nombre in ESTADOS_CHOICES %}
-                                <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>{{ nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        
-                        <select name="programa">
-                            <option value="">Todos los programas</option>
-                            {% for programa in programas %}
-                                <option value="{{ programa.id }}" {% if programa_filter == programa.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ programa.nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <select name="empresa">
-                            <option value="">Todas las empresas</option>
-                            {% for empresa in empresas %}
-                                <option value="{{ empresa.id }}" {% if empresa_filter == empresa.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ empresa.nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <select name="periodo">
-                            <option value="">📅 Todas las fechas</option>
-                            <option value="hoy" {% if periodo_filter == 'hoy' %}selected{% endif %}>📅 Hoy</option>
-                            <option value="semana" {% if periodo_filter == 'semana' %}selected{% endif %}>📆 Última semana</option>
-                            <option value="mes" {% if periodo_filter == 'mes' %}selected{% endif %}>📊 Último mes</option>
-                            <option value="trimestre" {% if periodo_filter == 'trimestre' %}selected{% endif %}>📈 Último trimestre</option>
-                        </select>
-                        
-                        <button type="submit" class="btn btn-secondary filter-btn">
-                            🔍 Filtrar
-                        </button>
-                    </div>
-                    
-                    <!-- Botón limpiar filtros -->
-                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
-                    <div class="actions-row">
-                        <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary clear-btn">
-                            🔄 Limpiar Filtros
-                        </a>
-                    </div>
-                    {% endif %}
+                <!-- Buscador -->
+                <div class="search-box">
+                    <input 
+                        type="text"
+                        name="search"
+                        placeholder="Buscar por empresa, programa o instructor..."
+                        value="{{ search|default:'' }}"
+                    >
                 </div>
 
-                <!-- COLUMNA DERECHA: BOTÓN CREAR -->
-                <div class="create-button-column">
-                    <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary btn-create">
-                        ➕ Nueva Solicitud
-                    </a>
-                </div>
+                <!-- Filtro Estado -->
+                <select name="estado" class="filter-select">
+                    <option value="">📊 Todos los estados</option>
+                    {% for codigo, nombre in ESTADOS_CHOICES %}
+                        <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filtro Programa -->
+                <select name="programa" class="filter-select">
+                    <option value="">📚 Todos los programas</option>
+                    {% for programa in programas %}
+                        <option value="{{ programa.id }}" {% if programa_filter == programa.id|stringformat:"s" %}selected{% endif %}>
+                            {{ programa.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filtro Empresa -->
+                <select name="empresa" class="filter-select">
+                    <option value="">🏢 Todas las empresas</option>
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa.id }}" {% if empresa_filter == empresa.id|stringformat:"s" %}selected{% endif %}>
+                            {{ empresa.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <!-- Botón Filtrar -->
+                <button type="submit" class="btn btn-secondary filter-btn">
+                    🔍 Buscar
+                </button>
             </form>
+
+            <!-- Botón Crear -->
+            <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary btn-create">
+                ➕ Nueva Solicitud
+            </a>
         </div>
 
+        <!-- ESTADÍSTICAS -->
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total Solicitudes</h3>
@@ -795,265 +766,126 @@
             </div>
         </div>
 
+        <!-- GRID DE SOLICITUDES -->
         {% if solicitudes %}
-            <div class="solicitudes-grid">
-                {% for solicitud in solicitudes %}
-                    <div class="solicitud-card">
-                        <div class="solicitud-header">
-                            <h2 class="solicitud-title">{{ solicitud.empresa.nombre }}</h2>
-                            <span class="status-badge status-{{ solicitud.estado|lower }}">
-                                {% if solicitud.estado == 'RECIBIDA' %}⏳ Recibida
-                                {% elif solicitud.estado == 'RESPONDIDA' %}💬 Respondida
-                                {% elif solicitud.estado == 'ATENDIDA' %}🔄 Atendida
-                                {% elif solicitud.estado == 'FINALIZADA' %}✅ Finalizada
-                                {% endif %}
-                            </span>
-                        </div>
+        <div class="solicitudes-grid">
+            {% for solicitud in solicitudes %}
+            <div class="solicitud-card">
+                <div class="solicitud-header">
+                    <h2 class="solicitud-title">{{ solicitud.empresa.nombre }}</h2>
+                    <span class="status-badge status-{{ solicitud.estado|lower }}">
+                        {% if solicitud.estado == 'RECIBIDA' %}⏳ Recibida
+                        {% elif solicitud.estado == 'RESPONDIDA' %}💬 Respondida
+                        {% elif solicitud.estado == 'ATENDIDA' %}🔄 Atendida
+                        {% elif solicitud.estado == 'FINALIZADA' %}✅ Finalizada
+                        {% endif %}
+                    </span>
+                </div>
 
-                        <div class="solicitud-info">
-                            <div class="info-item">
-                                <span class="info-icon">📚</span>
-                                <strong>Programa:</strong>
-                                <span>{{ solicitud.programa.nombre }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">🏷️</span>
-                                <strong>Área:</strong>
-                                <span>{{ solicitud.programa.area.nombre }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">👨‍🏫</span>
-                                <strong>Instructor:</strong>
-                                <span>{{ solicitud.instructor_asignado.nombre|default:"Sin asignar" }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">📅</span>
-                                <strong>Fecha de Recepción:</strong>
-                                <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
-                            </div>
-                            <!-- indicador de pdf-->
-                            {% if solicitud.documento_pdf %}
-                            <div class="info-item">
-                                <span class="info-icon">📄</span>
-                                <strong>Documento:</strong>
-                                <span style="color:#2196f3; font-weight:600;">PDF adjunto</span>
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="solicitud-meta">
-                            {% if solicitud.fecha_respuesta %}
-                                <div class="meta-item">
-                                    💬 Respuesta: {{ solicitud.fecha_respuesta|date:"d/m/Y" }}
-                                </div>
-                            {% endif %}
-                            {% if solicitud.fecha_atencion %}
-                                <div class="meta-item">
-                                    🔄 Atención: {{ solicitud.fecha_atencion|date:"d/m/Y" }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="solicitud-actions">
-                            <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn-action btn-view">📧 Correo</a>
-                            <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
-                            <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                            <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn-action btn-delete">🗑️ Eliminar</a>
-                        </div>
+                <div class="solicitud-info">
+                    <div class="info-item">
+                        <span class="info-icon">📚</span>
+                        <strong>Programa:</strong>
+                        <span>{{ solicitud.programa.nombre }}</span>
                     </div>
-                {% endfor %}
-            </div>
-            {% endif%}
-
-
-        <div class="controls-section">
-            <!-- Indicador de filtro de período activo -->
-            {% if periodo_filter %}
-            <div class="filter-indicator">
-                ⏰ Mostrando solicitudes: 
-                {% if periodo_filter == 'hoy' %}de hoy
-                {% elif periodo_filter == 'semana' %}de la última semana
-                {% elif periodo_filter == 'mes' %}del último mes
-                {% elif periodo_filter == 'trimestre' %}del último trimestre
-                {% endif %}
-            </div>
-            {% endif %}
-
-            <form method="get" class="filters-layout">
-                <!-- COLUMNA IZQUIERDA: FILTROS -->
-                <div class="filters-column">
-                    <div class="search-box">
-                        <input type="text" name="search" placeholder="Buscar por empresa, programa o instructor..." value="{{ search }}">
+                    <div class="info-item">
+                        <span class="info-icon">🏷️</span>
+                        <strong>Área:</strong>
+                        <span>{{ solicitud.programa.area.nombre }}</span>
                     </div>
-
-                    <div class="filter-group">
-                        <select name="estado">
-                            <option value="">Todos los estados</option>
-                            {% for codigo, nombre in ESTADOS_CHOICES %}
-                                <option value="{{ codigo }}" {% if estado_filter == codigo %}selected{% endif %}>{{ nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        
-                        <select name="programa">
-                            <option value="">Todos los programas</option>
-                            {% for programa in programas %}
-                                <option value="{{ programa.id }}" {% if programa_filter == programa.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ programa.nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <select name="empresa">
-                            <option value="">Todas las empresas</option>
-                            {% for empresa in empresas %}
-                                <option value="{{ empresa.id }}" {% if empresa_filter == empresa.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ empresa.nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <select name="periodo">
-                            <option value="">📅 Todas las fechas</option>
-                            <option value="hoy" {% if periodo_filter == 'hoy' %}selected{% endif %}>📅 Hoy</option>
-                            <option value="semana" {% if periodo_filter == 'semana' %}selected{% endif %}>📆 Última semana</option>
-                            <option value="mes" {% if periodo_filter == 'mes' %}selected{% endif %}>📊 Último mes</option>
-                            <option value="trimestre" {% if periodo_filter == 'trimestre' %}selected{% endif %}>📈 Último trimestre</option>
-                        </select>
-                        
-                        <button type="submit" class="btn btn-secondary filter-btn">
-                            🔍 Filtrar
-                        </button>
+                    <div class="info-item">
+                        <span class="info-icon">👨‍🏫</span>
+                        <strong>Instructor:</strong>
+                        <span>{{ solicitud.instructor_asignado.nombre|default:"Sin asignar" }}</span>
                     </div>
-                    
-                    <!-- Botón limpiar filtros -->
-                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
-                    <div class="actions-row">
-                        <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary clear-btn">
-                            🔄 Limpiar Filtros
-                        </a>
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <strong>Recepción:</strong>
+                        <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
+                    </div>
+                    {% if solicitud.documento_pdf %}
+                    <div class="info-item">
+                        <span class="info-icon">📄</span>
+                        <strong>Documento:</strong>
+                        <span style="color:#2196f3; font-weight:600;">PDF adjunto</span>
                     </div>
                     {% endif %}
                 </div>
 
-                <!-- COLUMNA DERECHA: BOTÓN CREAR -->
-                <div class="create-button-column">
-                    <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary btn-create">
-                        ➕ Nueva Solicitud
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <div class="stats-bar">
-            <div class="stat-card">
-                <h3>Total Solicitudes</h3>
-                <div class="number">{{ total_solicitudes }}</div>
-            </div>
-            <div class="stat-card recibida">
-                <h3>Recibidas</h3>
-                <div class="number">{{ solicitudes_recibidas }}</div>
-            </div>
-            <div class="stat-card respondida">
-                <h3>Respondidas</h3>
-                <div class="number">{{ solicitudes_respondidas }}</div>
-            </div>
-            <div class="stat-card atendida">
-                <h3>Atendidas</h3>
-                <div class="number">{{ solicitudes_atendidas }}</div>
-            </div>
-            <div class="stat-card finalizada">
-                <h3>Finalizadas</h3>
-                <div class="number">{{ solicitudes_finalizadas }}</div>
-            </div>
-        </div>
-
-        {% if solicitudes %}
-            <div class="solicitudes-grid">
-                {% for solicitud in solicitudes %}
-                    <div class="solicitud-card">
-                        <div class="solicitud-header">
-                            <h2 class="solicitud-title">{{ solicitud.empresa.nombre }}</h2>
-                            <span class="status-badge status-{{ solicitud.estado|lower }}">
-                                {% if solicitud.estado == 'RECIBIDA' %}⏳ Recibida
-                                {% elif solicitud.estado == 'RESPONDIDA' %}💬 Respondida
-                                {% elif solicitud.estado == 'ATENDIDA' %}🔄 Atendida
-                                {% elif solicitud.estado == 'FINALIZADA' %}✅ Finalizada
-                                {% endif %}
-                            </span>
-                        </div>
-
-                        <div class="solicitud-info">
-                            <div class="info-item">
-                                <span class="info-icon">📚</span>
-                                <strong>Programa:</strong>
-                                <span>{{ solicitud.programa.nombre }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">🏷️</span>
-                                <strong>Área:</strong>
-                                <span>{{ solicitud.programa.area.nombre }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">👨‍🏫</span>
-                                <strong>Instructor:</strong>
-                                <span>{{ solicitud.instructor_asignado.nombre|default:"Sin asignar" }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">📅</span>
-                                <strong>Fecha de Recepción:</strong>
-                                <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
-                            </div>
-                            <!-- indicador de pdf-->
-                            {% if solicitud.documento_pdf%}
-                            <div class="info-item">
-                                <span class="info-icon">📄</span>
-                                <strong>Documento:</strong>
-                                <span style="color:#2196f3; font-weight:600;">PDF adjunto</span>
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="solicitud-meta">
-                            {% if solicitud.fecha_respuesta %}
-                                <div class="meta-item">
-                                    💬 Respuesta: {{ solicitud.fecha_respuesta|date:"d/m/Y" }}
-                                </div>
-                            {% endif %}
-                            {% if solicitud.fecha_atencion %}
-                                <div class="meta-item">
-                                    🔄 Atención: {{ solicitud.fecha_atencion|date:"d/m/Y" }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="solicitud-actions">
-                            <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn-action btn-view">📧 Correo</a>
-                            <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
-                            <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                            <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn-action btn-delete">🗑️ Eliminar</a>
-                        </div>
+                <div class="solicitud-meta">
+                    {% if solicitud.fecha_respuesta %}
+                    <div class="meta-item">
+                        💬 Respuesta: {{ solicitud.fecha_respuesta|date:"d/m/Y" }}
                     </div>
-                {% endfor %}
+                    {% endif %}
+                    {% if solicitud.fecha_atencion %}
+                    <div class="meta-item">
+                        🔄 Atención: {{ solicitud.fecha_atencion|date:"d/m/Y" }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="solicitud-actions">
+                    <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn-action btn-email">📧 Correo</a>
+                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn-action btn-edit">✏️ Editar</a>
+                    <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn-action btn-delete" onclick="return confirm('⚠️ ¿Eliminar esta solicitud?')">🗑️ Eliminar</a>
+                </div>
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">📋</div>
-                <h3>No se encontraron solicitudes</h3>
-                <p>
-                    {% if search or estado_filter or programa_filter or empresa_filter or periodo_filter %}
-                        No hay solicitudes que coincidan con los filtros aplicados
-                    {% else %}
-                        Aún no hay solicitudes registradas en el sistema
-                    {% endif %}
-                </p>
-                <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary">➕ Crear Primera Solicitud</a>
-            </div>
+        <!-- ESTADO VACÍO -->
+        <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No se encontraron solicitudes</h3>
+            <p>
+                {% if search or estado_filter or programa_filter or empresa_filter %}
+                    No hay solicitudes que coincidan con los filtros aplicados
+                {% else %}
+                    Aún no hay solicitudes registradas en el sistema
+                {% endif %}
+            </p>
+            <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary">➕ Crear Primera Solicitud</a>
+        </div>
         {% endif %}
     </div>
 
+    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
     {% include 'core/accessibility.html' %}
 </body>
 </html>
