@@ -223,7 +223,7 @@ def editar_solicitud(request, solicitud_id):
             'programa',
             'programa__area',
             'instructor_asignado'
-        ),
+        ).prefetch_related('documentos'),  # 🔥 NUEVO: Cargar documentos relacionados
         id=solicitud_id
     )
     
@@ -234,8 +234,13 @@ def editar_solicitud(request, solicitud_id):
             instructor_id = request.POST.get('instructor_asignado')
             observaciones = request.POST.get('observaciones', '')
             numero_aprendices = request.POST.get('numero_aprendices')
-            documento_pdf = request.FILES.get('documento_pdf')
+            
+            # 🔥 NUEVO: Obtener múltiples documentos PDF
+            nuevos_documentos_pdf = request.FILES.getlist('documentos_pdf')
             eliminar_pdf = request.POST.get('eliminar_pdf')
+            
+            # 🔥 NUEVO: Obtener IDs de documentos a eliminar
+            documentos_a_eliminar = request.POST.getlist('eliminar_documentos')
             
             # Validar campos requeridos
             if not estado:
@@ -261,94 +266,147 @@ def editar_solicitud(request, solicitud_id):
                 messages.error(request, '❌ La solicitud debe estar ATENDIDA antes de finalizarla')
                 return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
             
-            # Actualizar campos básicos
-            solicitud.estado = estado
-            solicitud.observaciones = observaciones
+            # 🔥 VALIDACIÓN: Límite de documentos (existentes + nuevos - eliminados)
+            documentos_actuales = solicitud.documentos.count()
+            documentos_a_eliminar_count = len(documentos_a_eliminar)
+            nuevos_documentos_count = len(nuevos_documentos_pdf)
             
-            # Actualizar número de aprendices si se proporcionó
-            if numero_aprendices:
-                try:
-                    solicitud.numero_aprendices = int(numero_aprendices)
-                except ValueError:
-                    messages.warning(request, '⚠️ Número de Aprendices no válido, se mantuvo el valor anterior')
+            total_documentos = documentos_actuales - documentos_a_eliminar_count + nuevos_documentos_count
             
-            # 🔥 LÓGICA PRINCIPAL: Asignar instructor y cambiar a ATENDIDA automáticamente
-            instructor_anterior = solicitud.instructor_asignado
+            if total_documentos > 5:
+                messages.error(
+                    request,
+                    f'❌ Máximo 5 documentos permitidos. Tienes {documentos_actuales} documentos, '
+                    f'intentas agregar {nuevos_documentos_count} y eliminar {documentos_a_eliminar_count}. '
+                    f'Total resultante: {total_documentos}'
+                )
+                return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
             
-            if instructor_id:
-                try:
-                    instructor = Instructor.objects.get(id=instructor_id, activo=True)
-                    solicitud.instructor_asignado = instructor
-                    
-                    if solicitud.estado != 'FINALIZADA':
-                        solicitud.estado = 'ATENDIDA'
-                        if not solicitud.fecha_atencion:
-                            solicitud.fecha_atencion = timezone.now()
-                        
-                        messages.success(
-                            request,
-                            f'✅ Instructor "{instructor.nombre}" asignado. Estado cambiado automáticamente a ATENDIDA'
-                        )
-                    
-                except Instructor.DoesNotExist:
-                    messages.warning(request, '⚠️ Instructor no encontrado')
-            else:
-                # Si se quita el instructor
-                solicitud.instructor_asignado = None
-                if instructor_anterior:
-                    messages.info(request, f'ℹ️ Instructor "{instructor_anterior.nombre}" removido')
-            
-            # 🔥 NUEVO: Manejo del documento PDF
-            if eliminar_pdf == 'on':
-                # Eliminar PDF existente
-                if solicitud.documento_pdf:
-                    import os
-                    try:
-                        if os.path.exists(solicitud.documento_pdf.path):
-                            os.remove(solicitud.documento_pdf.path)
-                    except:
-                        pass
-                    solicitud.documento_pdf = None
-                    messages.info(request, 'ℹ️ Documento PDF eliminado')
-                    
-            elif documento_pdf:
-                # ✅ CORRECCIÓN: endswith (no endwith)
-                if not documento_pdf.name.lower().endswith('.pdf'):
-                    messages.error(request, '❌ Solo se permiten archivos PDF')
+            # 🔥 VALIDACIÓN: Validar nuevos documentos PDF
+            for doc in nuevos_documentos_pdf:
+                # Validar extensión
+                if not doc.name.lower().endswith('.pdf'):
+                    messages.error(request, f'❌ {doc.name} no es un archivo PDF')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
                 
                 # Validar tamaño (máx 10MB)
-                if documento_pdf.size > 10 * 1024 * 1024:
-                    messages.error(request, '❌ El archivo no debe superar 10MB')
+                if doc.size > 10 * 1024 * 1024:
+                    messages.error(request, f'❌ {doc.name} supera 10MB')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+            
+            # ========== TRANSACCIÓN ATÓMICA ==========
+            with transaction.atomic():
+                # Actualizar campos básicos
+                solicitud.estado = estado
+                solicitud.observaciones = observaciones
                 
-                # Eliminar PDF anterior si existe
-                if solicitud.documento_pdf:
-                    import os 
+                # Actualizar número de aprendices si se proporcionó
+                if numero_aprendices:
                     try:
-                        if os.path.exists(solicitud.documento_pdf.path):
-                            os.remove(solicitud.documento_pdf.path)
-                    except:
-                        pass
-                        
-                # Asignar nuevo PDF
-                solicitud.documento_pdf = documento_pdf
-                messages.success(request, f'✅ Documento PDF actualizado: {documento_pdf.name}')
+                        solicitud.numero_aprendices = int(numero_aprendices)
+                    except ValueError:
+                        messages.warning(request, '⚠️ Número de Aprendices no válido, se mantuvo el valor anterior')
                 
-            # Actualizar fechas según el estado
-            now = timezone.now()
-            
-            if estado == 'RESPONDIDA' and not solicitud.fecha_respuesta:
-                solicitud.fecha_respuesta = now
-            
-            if estado == 'ATENDIDA' and not solicitud.fecha_atencion:
-                solicitud.fecha_atencion = now
-            
-            if estado == 'FINALIZADA' and not solicitud.fecha_finalizacion:
-                solicitud.fecha_finalizacion = now
-            
-            # Guardar cambios
-            solicitud.save()
+                # 🔥 LÓGICA PRINCIPAL: Asignar instructor y cambiar a ATENDIDA automáticamente
+                instructor_anterior = solicitud.instructor_asignado
+                
+                if instructor_id:
+                    try:
+                        instructor = Instructor.objects.get(id=instructor_id, activo=True)
+                        solicitud.instructor_asignado = instructor
+                        
+                        if solicitud.estado != 'FINALIZADA':
+                            solicitud.estado = 'ATENDIDA'
+                            if not solicitud.fecha_atencion:
+                                solicitud.fecha_atencion = timezone.now()
+                            
+                            messages.success(
+                                request,
+                                f'✅ Instructor "{instructor.nombre}" asignado. Estado cambiado automáticamente a ATENDIDA'
+                            )
+                        
+                    except Instructor.DoesNotExist:
+                        messages.warning(request, '⚠️ Instructor no encontrado')
+                else:
+                    # Si se quita el instructor
+                    solicitud.instructor_asignado = None
+                    if instructor_anterior:
+                        messages.info(request, f'ℹ️ Instructor "{instructor_anterior.nombre}" removido')
+                
+                # 🔥 NUEVO: Eliminar documentos seleccionados
+                from .models import DocumentoSolicitud
+                import os
+                
+                if documentos_a_eliminar:
+                    for doc_id in documentos_a_eliminar:
+                        try:
+                            documento = DocumentoSolicitud.objects.get(id=doc_id, solicitud=solicitud)
+                            
+                            # Eliminar archivo físico
+                            if documento.archivo and os.path.exists(documento.archivo.path):
+                                os.remove(documento.archivo.path)
+                            
+                            # Eliminar registro de BD
+                            documento.delete()
+                            
+                        except DocumentoSolicitud.DoesNotExist:
+                            pass
+                        except Exception as e:
+                            print(f"⚠️ Error al eliminar documento {doc_id}: {str(e)}")
+                    
+                    messages.success(
+                        request,
+                        f'✅ {len(documentos_a_eliminar)} documento(s) eliminado(s)'
+                    )
+                
+                # 🔥 NUEVO: Agregar nuevos documentos
+                if nuevos_documentos_pdf:
+                    documentos_agregados = 0
+                    
+                    for doc in nuevos_documentos_pdf:
+                        DocumentoSolicitud.objects.create(
+                            solicitud=solicitud,
+                            archivo=doc,
+                            nombre_archivo=doc.name
+                        )
+                        documentos_agregados += 1
+                    
+                    messages.success(
+                        request,
+                        f'✅ {documentos_agregados} documento(s) agregado(s) exitosamente'
+                    )
+                    
+                    # 🔥 COMPATIBILIDAD: Actualizar documento_pdf con el primer documento
+                    primer_documento = solicitud.documentos.first()
+                    if primer_documento:
+                        solicitud.documento_pdf = primer_documento.archivo
+                
+                # 🔥 MANEJO DEL CAMPO ANTIGUO: documento_pdf
+                if eliminar_pdf == 'on':
+                    # Eliminar PDF antiguo (campo legacy)
+                    if solicitud.documento_pdf:
+                        try:
+                            if os.path.exists(solicitud.documento_pdf.path):
+                                os.remove(solicitud.documento_pdf.path)
+                        except:
+                            pass
+                        solicitud.documento_pdf = None
+                        messages.info(request, 'ℹ️ Documento PDF principal eliminado')
+                
+                # Actualizar fechas según el estado
+                now = timezone.now()
+                
+                if estado == 'RESPONDIDA' and not solicitud.fecha_respuesta:
+                    solicitud.fecha_respuesta = now
+                
+                if estado == 'ATENDIDA' and not solicitud.fecha_atencion:
+                    solicitud.fecha_atencion = now
+                
+                if estado == 'FINALIZADA' and not solicitud.fecha_finalizacion:
+                    solicitud.fecha_finalizacion = now
+                
+                # Guardar cambios
+                solicitud.save()
             
             messages.success(
                 request,
@@ -370,12 +428,17 @@ def editar_solicitud(request, solicitud_id):
     instructores_especializados = instructores.filter(especialidad=solicitud.programa)
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
     
+    # 🔥 NUEVO: Cargar documentos relacionados
+    from .models import DocumentoSolicitud
+    documentos_actuales = DocumentoSolicitud.objects.filter(solicitud=solicitud).order_by('-fecha_subida')
+    
     context = {
         'solicitud': solicitud,
         'instructores': instructores,
         'instructores_especializados': instructores_especializados,
         'programas': programas,
         'ESTADO_CHOICES': Solicitud.ESTADO_CHOICES,
+        'documentos_actuales': documentos_actuales,
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
                     
@@ -646,7 +709,8 @@ def crear_solicitud(request):
             correo_remitente = request.POST.get('correo_remitente')
             numero_aprendices = request.POST.get('numero_aprendices')
             observaciones = request.POST.get('observaciones', '')
-            documento_pdf = request.FILES.get('documento_pdf')
+            # 🔥 CAMBIO: Obtener múltiples archivos
+            documentos_pdf = request.FILES.getlist('documentos_pdf')
             
             # ========== VALIDACIÓN 1: EMPRESA ==========
             if not empresa_id:
@@ -670,16 +734,20 @@ def crear_solicitud(request):
                 messages.error(request, '❌ El programa seleccionado no existe o no está activo')
                 return redirect('solicitudes:crear_solicitud')
             
-            # ========== VALIDACIÓN 3: DOCUMENTO PDF (OPCIONAL) ==========
-            if documento_pdf:
+            # ========== VALIDACIÓN 3: DOCUMENTOS PDF (MÁXIMO 5) ==========
+            if len(documentos_pdf) > 5:
+                messages.error(request, '❌ Máximo 5 documentos PDF permitidos')
+                return redirect('solicitudes:crear_solicitud')
+            
+            for doc in documentos_pdf:
                 # Validar extensión
-                if not documento_pdf.name.lower().endswith('.pdf'):
-                    messages.error(request, '❌ Solo se permiten archivos PDF')
+                if not doc.name.lower().endswith('.pdf'):
+                    messages.error(request, f'❌ {doc.name} no es un archivo PDF')
                     return redirect('solicitudes:crear_solicitud')
                 
                 # Validar tamaño (máx 10MB)
-                if documento_pdf.size > 10 * 1024 * 1024:
-                    messages.error(request, '❌ El archivo no debe superar 10MB')
+                if doc.size > 10 * 1024 * 1024:
+                    messages.error(request, f'❌ {doc.name} supera 10MB')
                     return redirect('solicitudes:crear_solicitud')
             
             # ========== CREAR LA SOLICITUD ==========
@@ -700,16 +768,28 @@ def crear_solicitud(request):
                     except ValueError:
                         nueva_solicitud.numero_aprendices = 0
                 
-                # Asignar documento PDF si se subió
-                if documento_pdf:
-                    nueva_solicitud.documento_pdf = documento_pdf
+                # 🔥 COMPATIBILIDAD: Asignar primer documento al campo existente
+                if documentos_pdf:
+                    nueva_solicitud.documento_pdf = documentos_pdf[0]
                 
                 nueva_solicitud.save()
+                
+                # 🔥 NUEVO: Guardar todos los documentos en DocumentoSolicitud
+                from .models import DocumentoSolicitud  # Importar el nuevo modelo
+                
+                for doc in documentos_pdf:
+                    DocumentoSolicitud.objects.create(
+                        solicitud=nueva_solicitud,
+                        archivo=doc,
+                        nombre_archivo=doc.name
+                    )
             
-            messages.success(
-                request,
-                f'✅ Solicitud #{nueva_solicitud.id} creada exitosamente para {empresa.nombre}'
-            )
+            # Mensaje de éxito
+            mensaje_exito = f'✅ Solicitud #{nueva_solicitud.id} creada exitosamente para {empresa.nombre}'
+            if len(documentos_pdf) > 0:
+                mensaje_exito += f' con {len(documentos_pdf)} documento(s)'
+            
+            messages.success(request, mensaje_exito)
             return redirect('solicitudes:detalle_solicitud', solicitud_id=nueva_solicitud.id)
         
         except Exception as e:

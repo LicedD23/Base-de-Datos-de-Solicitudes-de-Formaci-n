@@ -131,7 +131,6 @@
             margin-top: 0;
         }
 
-        /* ✅ NUEVO: HELP BOX PARA CREAR EMPRESA */
         .help-box {
             background: #e3f2fd;
             padding: 15px 20px;
@@ -211,13 +210,34 @@
             gap: 20px;
         }
 
-        /* ARCHIVO */
+        /* 🔥 ESTILOS ACTUALIZADOS PARA MÚLTIPLES ARCHIVOS */
         .file-upload-section {
             background: #f9f9f9;
             padding: 25px;
             border-radius: 10px;
             border: 2px dashed #e0e0e0;
             margin-top: 30px;
+        }
+
+        .file-upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-header h3 {
+            color: #2e7d32;
+            margin: 0;
+        }
+
+        .file-counter {
+            background: #2e7d32;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
         }
 
         .file-input-wrapper {
@@ -254,21 +274,61 @@
             color: white;
         }
 
-        .file-info {
-            margin-top: 15px;
-            padding: 12px;
-            background: white;
-            border-radius: 6px;
+        /* Lista de archivos */
+        .files-list {
+            margin-top: 20px;
             display: none;
         }
 
-        .file-info.active {
+        .files-list.active {
+            display: block;
+        }
+
+        .file-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 2px solid #e8f5e9;
+            transition: all 0.3s ease;
         }
 
-        .file-remove {
+        .file-item:hover {
+            border-color: #2e7d32;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+        }
+
+        .file-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 1.5em;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .file-remove-btn {
             background: #ffebee;
             color: #c62828;
             border: none;
@@ -276,6 +336,27 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .file-remove-btn:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        .file-limit-warning {
+            background: #fff3e0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            color: #ef6c00;
+            font-size: 0.9em;
+            border-left: 3px solid #ef6c00;
+            display: none;
+        }
+
+        .file-limit-warning.active {
+            display: block;
         }
 
         /* BOTONES */
@@ -319,7 +400,7 @@
             border: 2px solid #e0e0e0;
             flex: 1;
         }
-        /* FOOTER STYLES */
+
         footer{
             background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color:white;
@@ -329,6 +410,7 @@
             margin-top:30px;
             box-shadow:0 -4px 20px rgba(27,94,32,0.2);
         }
+
         footer p{
             font-weight:500;
             letter-spacing:0.5px;
@@ -342,9 +424,20 @@
             .form-actions {
                 flex-direction: column;
             }
+
             footer{
                 font-size:0.85rem;
                 padding:15px;
+            }
+
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .file-remove-btn {
+                width: 100%;
             }
         }
     </style>
@@ -383,7 +476,7 @@
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
 
-                <!-- ========== SECCIÓN 1: EMPRESA (SIMPLIFICADA) ========== -->
+                <!-- ========== SECCIÓN 1: EMPRESA ========== -->
                 <div class="section-header">
                     🏢 Información de la Empresa
                 </div>
@@ -401,7 +494,6 @@
                     <small>Empresa que solicita la formación</small>
                 </div>
 
-                <!-- ✅ HELP BOX PARA CREAR EMPRESA -->
                 <div class="help-box">
                     <span style="font-size: 1.5em;">ℹ️</span>
                     <p>
@@ -462,26 +554,37 @@
                     <small>Información relevante que complementa la solicitud</small>
                 </div>
 
-                <!-- ========== SECCIÓN 5: DOCUMENTO ========== -->
+                <!-- 🔥 SECCIÓN 5: DOCUMENTOS MÚLTIPLES ========== -->
                 <div class="file-upload-section">
-                    <h3 style="color: #2e7d32; margin-bottom: 15px;">📄 Documento Adjunto (opcional)</h3>
-                    <small style="display: block; margin-bottom: 15px; color: #666;">Carga un documento PDF relacionado (máximo 10MB)</small>
+                    <div class="file-upload-header">
+                        <h3>📄 Documentos Adjuntos (opcional)</h3>
+                        <span class="file-counter" id="fileCounter">0 / 5</span>
+                    </div>
+                    
+                    <small style="display: block; margin-bottom: 15px; color: #666;">
+                        Puedes adjuntar hasta <strong>5 documentos PDF</strong> (máximo 10MB cada uno)
+                    </small>
                     
                     <div class="file-input-wrapper">
-                        <input type="file" id="documento_pdf" name="documento_pdf" accept=".pdf" onchange="handleFileSelect(event)">
-                        <label for="documento_pdf" class="file-input-label">
+                        <input 
+                            type="file" 
+                            id="documentos_pdf" 
+                            name="documentos_pdf" 
+                            accept=".pdf" 
+                            multiple
+                            onchange="handleMultipleFiles(event)">
+                        <label for="documentos_pdf" class="file-input-label">
                             <span>📎</span>
-                            <span>Seleccionar archivo PDF</span>
+                            <span>Seleccionar archivos PDF</span>
                         </label>
                     </div>
 
-                    <div class="file-info" id="fileInfo">
-                        <div>
-                            <span>📄</span>
-                            <span id="fileName"></span>
-                            <span id="fileSize" style="color: #666; font-size: 0.9em;"></span>
-                        </div>
-                        <button type="button" class="file-remove" onclick="removeFile()">🗑️ Eliminar</button>
+                    <!-- Lista de archivos seleccionados -->
+                    <div class="files-list" id="filesList"></div>
+
+                    <!-- Advertencia de límite -->
+                    <div class="file-limit-warning" id="fileLimitWarning">
+                        ⚠️ Has alcanzado el límite máximo de 5 archivos. Elimina alguno para agregar más.
                     </div>
                 </div>
 
@@ -503,24 +606,138 @@
     </footer>
 
     <script>
-        // Manejo de archivos
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const fileInfo = document.getElementById('fileInfo');
-                const fileName = document.getElementById('fileName');
-                const fileSize = document.getElementById('fileSize');
-                
-                fileName.textContent = file.name;
-                fileSize.textContent = `(${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-                fileInfo.classList.add('active');
+        // 🔥 MANEJO DE MÚLTIPLES ARCHIVOS
+        let selectedFiles = [];
+        const MAX_FILES = 5;
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+        function handleMultipleFiles(event) {
+            const newFiles = Array.from(event.target.files);
+            
+            // Validar cantidad total
+            if (selectedFiles.length + newFiles.length > MAX_FILES) {
+                alert(`⚠️ Solo puedes subir máximo ${MAX_FILES} archivos`);
+                event.target.value = ''; // Limpiar input
+                return;
+            }
+
+            // Validar cada archivo
+            for (let file of newFiles) {
+                // Validar tipo
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    alert(`❌ ${file.name} no es un archivo PDF`);
+                    event.target.value = '';
+                    return;
+                }
+
+                // Validar tamaño
+                if (file.size > MAX_SIZE) {
+                    alert(`❌ ${file.name} supera 10MB`);
+                    event.target.value = '';
+                    return;
+                }
+
+                // Agregar archivo si pasa validaciones
+                selectedFiles.push(file);
+            }
+
+            // Actualizar vista
+            updateFilesList();
+            updateCounter();
+            event.target.value = ''; // Limpiar input para permitir nueva selección
+        }
+
+        function updateFilesList() {
+            const filesList = document.getElementById('filesList');
+            
+            if (selectedFiles.length === 0) {
+                filesList.classList.remove('active');
+                filesList.innerHTML = '';
+                return;
+            }
+
+            filesList.classList.add('active');
+            filesList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-item-info">
+                        <span class="file-icon">📄</span>
+                        <div class="file-details">
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        </div>
+                    </div>
+                    <button type="button" class="file-remove-btn" onclick="removeFile(${index})">
+                        🗑️ Eliminar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFilesList();
+            updateCounter();
+        }
+
+        function updateCounter() {
+            const counter = document.getElementById('fileCounter');
+            const warning = document.getElementById('fileLimitWarning');
+            const input = document.getElementById('documentos_pdf');
+
+            counter.textContent = `${selectedFiles.length} / ${MAX_FILES}`;
+
+            // Mostrar/ocultar advertencia
+            if (selectedFiles.length >= MAX_FILES) {
+                warning.classList.add('active');
+                input.disabled = true;
+            } else {
+                warning.classList.remove('active');
+                input.disabled = false;
             }
         }
 
-        function removeFile() {
-            document.getElementById('documento_pdf').value = '';
-            document.getElementById('fileInfo').classList.remove('active');
-        }
+        // Enviar archivos al servidor
+        document.getElementById('solicitudForm').addEventListener('submit', function(e) {
+            if (selectedFiles.length > 0) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                // Remover el input file original del FormData
+                formData.delete('documentos_pdf');
+                
+                // Agregar archivos seleccionados
+                selectedFiles.forEach(file => {
+                    formData.append('documentos_pdf', file);
+                });
+                
+                // Enviar formulario
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(html => {
+                    if (html) {
+                        document.open();
+                        document.write(html);
+                        document.close();
+                    }
+                })
+                .catch(error => {
+                    alert('Error al enviar el formulario: ' + error);
+                });
+            }
+        });
 
         // Auto-cerrar alertas
         document.addEventListener('DOMContentLoaded', function() {

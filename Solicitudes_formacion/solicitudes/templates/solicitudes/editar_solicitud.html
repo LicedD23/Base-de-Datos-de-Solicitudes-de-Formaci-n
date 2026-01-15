@@ -18,8 +18,12 @@
             padding: 20px;
         }
 
+        a {
+            text-decoration: none;
+        }
+
         .container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -33,7 +37,7 @@
         }
 
         .header h1 {
-            font-size: 2.2em;
+            font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
         }
@@ -52,14 +56,18 @@
 
         .breadcrumb a {
             color: #2e7d32;
-            text-decoration: none;
+            transition: color 0.3s ease;
         }
 
         .breadcrumb a:hover {
+            color: #1b5e20;
             text-decoration: underline;
         }
 
-        /* MENSAJES */
+        .breadcrumb span {
+            color: #999;
+        }
+
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -80,115 +88,45 @@
             color: white;
         }
 
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
         }
 
-        .alert-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .info-banner {
-            background: #e8f5e9;
-            border-left: 4px solid #2e7d32;
-            padding: 15px 20px;
-            border-radius: 8px;
+        .section h2 {
+            color: #2e7d32;
+            font-size: 1.5em;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .info-banner strong {
-            color: #2e7d32;
-        }
-
-        .form-card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border-top: 4px solid #2e7d32;
-        }
-
-        .metadata-section {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border-left: 3px solid #2e7d32;
-        }
-
-        .metadata-section h3 {
-            color: #2e7d32;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
-
-        .metadata-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .metadata-item label {
-            font-size: 0.85em;
-            color: #666;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .metadata-item .value {
-            font-size: 1.1em;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .info-box {
-            background: #fff3e0;
-            border: 2px solid #ff9800;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
             gap: 10px;
         }
 
-        .info-box strong {
-            color: #ef6c00;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .form-group label {
-            display: block;
             font-weight: 600;
-            color: #333;
+            color: #555;
             margin-bottom: 8px;
+            font-size: 0.95em;
         }
 
-        .form-group label.required::after {
-            content: " *";
-            color: #c62828;
-        }
-
-        .form-group select,
         .form-group input,
+        .form-group select,
         .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 1em;
@@ -196,204 +134,275 @@
             transition: all 0.3s ease;
         }
 
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-group select:focus,
         .form-group input:focus,
+        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
-        .form-group small {
-            display: block;
-            color: #666;
-            margin-top: 5px;
-            font-size: 0.9em;
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
         }
 
-        /* SECCIÓN PDF */
-        .pdf-section {
-            background: #f9f9f9;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 25px;
-            border: 2px dashed #e0e0e0;
+        .form-group input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
         }
 
-        .pdf-section h3 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-
-        .pdf-current {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #2196f3;
-            margin-bottom: 15px;
+        /* 🔥 ESTILOS PARA DOCUMENTOS */
+        .documents-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        .pdf-current-info {
-            display: flex;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
         }
 
-        .pdf-current-info span {
-            font-size: 1.5em;
-        }
-
-        .pdf-current-name {
-            font-weight: 600;
-            color: #1565c0;
-        }
-
-        .pdf-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-pdf {
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.9em;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-view {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .btn-view:hover {
-            background: #1976d2;
-            color: white;
-        }
-
-        .btn-download {
-            background: #e8f5e9;
+        .documents-title {
             color: #2e7d32;
-        }
-
-        .btn-download:hover {
-            background: #2e7d32;
-            color: white;
-        }
-
-        .delete-option {
-            background: #ffebee;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            font-size: 1.5em;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .delete-option input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .delete-option label {
-            color: #c62828;
-            font-weight: 600;
-            cursor: pointer;
             margin: 0;
         }
 
-        .file-upload {
-            border: 2px dashed #2e7d32;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            background: white;
+        .documents-count {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .document-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .document-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+        }
+
+        .document-card:hover {
+            border-color: #2196f3;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .document-icon-wrapper {
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .document-info {
+            margin-bottom: 12px;
+        }
+
+        .document-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+            margin-bottom: 6px;
+            word-break: break-word;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 36px;
+        }
+
+        .document-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .doc-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-
-        .file-upload:hover {
-            background: #f1f8e9;
-            border-color: #1b5e20;
-        }
-
-        .file-upload input[type="file"] {
-            display: none;
-        }
-
-        .file-upload-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .file-upload-icon {
-            font-size: 2em;
-            color: #2e7d32;
-        }
-
-        .file-upload-text {
-            color: #2e7d32;
-            font-weight: 600;
-        }
-
-        .file-selected {
-            background: #e8f5e9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .file-selected.active {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .file-selected-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
         }
 
-        .btn-remove-file {
-            background: #ffebee;
-            color: #c62828;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
+        .doc-btn-view {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 2px solid #1565c0;
         }
 
-        /* BOTONES */
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 20px;
+        .doc-btn-view:hover {
+            background: #1565c0;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .doc-btn-download {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+        }
+
+        .doc-btn-download:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+        }
+
+        .document-delete-box {
+            padding-top: 12px;
             border-top: 2px solid #f0f0f0;
         }
 
+        .delete-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #d32f2f;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .delete-checkbox-label input {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .upload-box {
+            background: #f9f9f9;
+            border: 3px dashed #2e7d32;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .upload-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .upload-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-info {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        #files-preview {
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            background: #e8f5e9;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-icon {
+            font-size: 1.5em;
+        }
+
+        .preview-info {
+            flex: 1;
+        }
+
+        .preview-name {
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 3px;
+        }
+
+        .preview-size {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         .btn {
-            padding: 12px 30px;
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             font-size: 1em;
@@ -402,10 +411,8 @@
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
             text-decoration: none;
-            flex: 1;
         }
 
         .btn-primary {
@@ -420,12 +427,13 @@
 
         .btn-secondary {
             background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
         }
 
         .btn-secondary:hover {
-            background: #f5f5f5;
+            background: #2e7d32;
+            color: white;
         }
 
         footer {
@@ -438,23 +446,28 @@
             box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
 
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
         @media (max-width: 768px) {
-            .form-actions {
-                flex-direction: column;
+            .header h1 {
+                font-size: 1.8em;
             }
-            
-            .pdf-current {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .documents-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .pdf-buttons {
-                width: 100%;
-            }
-            
-            .btn-pdf {
-                flex: 1;
+                gap: 10px;
             }
         }
     </style>
@@ -463,7 +476,7 @@
     <div class="container">
         <div class="header">
             <h1>✏️ Editar Solicitud #{{ solicitud.id }}</h1>
-            <p>{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
+            <p style="margin-top: 10px; font-size: 1.1em;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
         </div>
 
         <div class="breadcrumb">
@@ -479,147 +492,185 @@
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}">
+                <div class="alert {% if 'error' in message.tags %}alert-error{% else %}alert-success{% endif %}">
                     <div>{{ message }}</div>
-                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <div class="form-card">
-            <div class="info-banner">
-                <span style="font-size: 1.5em;">ℹ️</span>
-                <div>
-                    <strong>Estado actual:</strong> {{ solicitud.get_estado_display }} | 
-                    <strong>Recibida:</strong> {{ solicitud.fecha_recepcion|date:"d/m/Y" }}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Información General -->
+            <div class="section">
+                <h2>📋 Información General</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Empresa Solicitante</label>
+                        <input type="text" value="{{ solicitud.empresa.nombre }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Programa Solicitado</label>
+                        <input type="text" value="{{ solicitud.programa.nombre }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Área de Formación</label>
+                        <input type="text" value="{{ solicitud.programa.area.nombre }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero_aprendices">Número de Aprendices</label>
+                        <input type="number" 
+                               name="numero_aprendices" 
+                               id="numero_aprendices" 
+                               value="{{ solicitud.numero_aprendices|default:'' }}"
+                               min="0"
+                               placeholder="Ej: 25">
+                    </div>
                 </div>
             </div>
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <div class="form-group">
-                    <label for="estado" class="required">Estado de la Solicitud</label>
-                    <select id="estado" name="estado" required>
-                        {% for value, label in ESTADO_CHOICES %}
-                            <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="instructor_asignado">Instructor Asignado</label>
-                    <select id="instructor_asignado" name="instructor_asignado">
-                        <option value="">-- Sin asignar --</option>
-                        {% if instructores_especializados %}
-                        <optgroup label="✓ Especializados">
-                            {% for instructor in instructores_especializados %}
-                            <option value="{{ instructor.id }}" 
-                                {% if solicitud.instructor_asignado and solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                {{ instructor.nombre }}
-                            </option>
-                            {% endfor %}
-                        </optgroup>
-                        {% endif %}
-                        <optgroup label="Otros Instructores">
-                            {% for instructor in instructores %}
-                                {% if instructor not in instructores_especializados %}
-                                <option value="{{ instructor.id }}" 
-                                    {% if solicitud.instructor_asignado and solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                    {{ instructor.nombre }}
+            <!-- Estado e Instructor -->
+            <div class="section">
+                <h2>⚙️ Estado e Instructor</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="estado">Estado *</label>
+                        <select name="estado" id="estado" required>
+                            {% for value, label in ESTADO_CHOICES %}
+                                <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
+                                    {{ label }}
                                 </option>
-                                {% endif %}
                             {% endfor %}
-                        </optgroup>
-                    </select>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="instructor_asignado">Instructor Asignado</label>
+                        <select name="instructor_asignado" id="instructor_asignado">
+                            <option value="">Sin asignar</option>
+                            {% if instructores_especializados %}
+                                <optgroup label="🌟 Especializados en {{ solicitud.programa.nombre }}">
+                                    {% for instructor in instructores_especializados %}
+                                        <option value="{{ instructor.id }}" 
+                                                {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
+                                            {{ instructor.nombre }}
+                                        </option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endif %}
+                            <optgroup label="Todos los Instructores">
+                                {% for instructor in instructores %}
+                                    <option value="{{ instructor.id }}" 
+                                            {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
+                                        {{ instructor.nombre }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
+            </div>
 
+            <!-- Observaciones -->
+            <div class="section">
+                <h2>📝 Observaciones</h2>
                 <div class="form-group">
-                    <label for="numero_aprendices">Número de Aprendices</label>
-                    <input type="number" id="numero_aprendices" name="numero_aprendices" 
-                           value="{{ solicitud.numero_aprendices|default:'' }}" min="1" max="999">
+                    <label for="observaciones">Notas y Comentarios</label>
+                    <textarea name="observaciones" 
+                              id="observaciones" 
+                              placeholder="Escribe cualquier observación relevante sobre esta solicitud...">{{ solicitud.observaciones }}</textarea>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="observaciones">Observaciones</label>
-                    <textarea id="observaciones" name="observaciones">{{ solicitud.observaciones|default:'' }}</textarea>
+            <!-- 🔥 DOCUMENTOS ACTUALES -->
+            {% if documentos_actuales %}
+            <div class="section">
+                <div class="documents-header">
+                    <h2 class="documents-title">📄 Documentos Actuales</h2>
+                    <span class="documents-count">{{ documentos_actuales|length }}/5</span>
                 </div>
+                
+                <div class="documents-grid">
+                    {% for documento in documentos_actuales %}
+                    <div class="document-card">
+                        <div class="document-icon-wrapper">
+                            📄
+                        </div>
+                        
+                        <div class="document-info">
+                            <div class="document-name" title="{{ documento.nombre_archivo }}">
+                                {{ documento.nombre_archivo }}
+                            </div>
+                            <div class="document-date">
+                                <span>📅</span>
+                                <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="document-actions">
+                            <a href="{{ documento.archivo.url }}" 
+                               target="_blank" 
+                               class="doc-btn doc-btn-view"
+                               title="Ver en nueva pestaña">
+                                <span>🔍</span>
+                            </a>
+                            <a href="{{ documento.archivo.url }}" 
+                               download 
+                               class="doc-btn doc-btn-download"
+                               title="Descargar">
+                                <span>📥</span>
+                            </a>
+                        </div>
+                        
+                        <div class="document-delete-box">
+                            <label class="delete-checkbox-label">
+                                <input type="checkbox" name="eliminar_documentos" value="{{ documento.id }}">
+                                <span>🗑️ Eliminar este documento</span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
-                <!-- SECCIÓN PDF -->
-                <div class="pdf-section">
-                    <h3>📄 Documento PDF</h3>
+            <!-- 🔥 AGREGAR NUEVOS DOCUMENTOS -->
+            <div class="section">
+                <h2>➕ Agregar Nuevos Documentos</h2>
+                
+                <div class="upload-box">
+                    <h3>Seleccionar Archivos PDF</h3>
                     
-                    {% if solicitud.documento_pdf %}
-                        <div class="pdf-current">
-                            <div class="pdf-current-info">
-                                <span>📄</span>
-                                <div>
-                                    <div class="pdf-current-name">{{ solicitud.documento_pdf.name|slice:"23:" }}</div>
-                                    <small style="color: #666;">Documento actual</small>
-                                </div>
-                            </div>
-                            <div class="pdf-buttons">
-                                <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="btn-pdf btn-view">
-                                    👁️ Ver
-                                </a>
-                                <a href="{{ solicitud.documento_pdf.url }}" download class="btn-pdf btn-download">
-                                    📥 Descargar
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="delete-option">
-                            <input type="checkbox" id="eliminar_pdf" name="eliminar_pdf">
-                            <label for="eliminar_pdf">Eliminar este documento</label>
-                        </div>
-
-                        <small style="display: block; text-align: center; margin: 15px 0; color: #999;">
-                            — o reemplázalo subiendo uno nuevo —
-                        </small>
-                    {% endif %}
-
-                    <div class="file-upload" onclick="document.getElementById('documento_pdf').click()">
-                        <input type="file" id="documento_pdf" name="documento_pdf" accept=".pdf" onchange="showFileName(event)">
-                        <label for="documento_pdf" class="file-upload-label">
-                            <div class="file-upload-icon">📎</div>
-                            <div class="file-upload-text">
-                                {% if solicitud.documento_pdf %}
-                                    Subir nuevo documento PDF
-                                {% else %}
-                                    Seleccionar archivo PDF
-                                {% endif %}
-                            </div>
-                            <small style="color: #666;">Máximo 10MB</small>
-                        </label>
+                    <input type="file" 
+                           id="documentos_pdf" 
+                           name="documentos_pdf" 
+                           class="upload-input"
+                           multiple 
+                           accept=".pdf">
+                    
+                    <label for="documentos_pdf" class="upload-label">
+                        📁 Examinar Archivos
+                    </label>
+                    
+                    <div class="upload-info">
+                        ℹ️ Puedes agregar hasta {{ 5|add:documentos_actuales.count|add:"-5" }} documentos más | 
+                        Formato: PDF | Tamaño máximo: 10MB por archivo
                     </div>
-
-                    <div class="file-selected" id="fileSelected">
-                        <div class="file-selected-info">
-                            <span>📄</span>
-                            <div>
-                                <div id="fileName" style="font-weight: 600; color: #2e7d32;"></div>
-                                <small id="fileSize" style="color: #666;"></small>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-remove-file" onclick="clearFile()">
-                            🗑️ Quitar
-                        </button>
-                    </div>
+                    
+                    <div id="files-preview"></div>
                 </div>
+            </div>
 
-                <div class="form-actions">
-                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
-                        ✕ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
+            <!-- Botones de Acción -->
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">
+                    💾 Guardar Cambios
+                </button>
+                <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
+                    ❌ Cancelar
+                </a>
+            </div>
+        </form>
     </div>
 
     <footer>
@@ -627,30 +678,57 @@
     </footer>
 
     <script>
-        function showFileName(event) {
-            const file = event.target.files[0];
-            if (file) {
-                document.getElementById('fileName').textContent = file.name;
-                document.getElementById('fileSize').textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-                document.getElementById('fileSelected').classList.add('active');
-                
-                const deleteCheckbox = document.getElementById('eliminar_pdf');
-                if (deleteCheckbox) deleteCheckbox.checked = false;
+        // Preview de archivos seleccionados
+        document.getElementById('documentos_pdf').addEventListener('change', function(e) {
+            const preview = document.getElementById('files-preview');
+            const files = Array.from(e.target.files);
+            
+            if (files.length === 0) {
+                preview.innerHTML = '';
+                return;
             }
-        }
-
-        function clearFile() {
-            document.getElementById('documento_pdf').value = '';
-            document.getElementById('fileSelected').classList.remove('active');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => alert.remove(), 8000);
+            
+            // Validar número de archivos
+            const documentosActuales = {{ documentos_actuales|length|default:0 }};
+            const maxNuevos = 5 - documentosActuales;
+            
+            if (files.length > maxNuevos) {
+                alert(`❌ Solo puedes agregar ${maxNuevos} documento(s) más. Actualmente tienes ${documentosActuales} documentos.`);
+                e.target.value = '';
+                preview.innerHTML = '';
+                return;
+            }
+            
+            // Validar cada archivo
+            let valid = true;
+            files.forEach(file => {
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    alert(`❌ ${file.name} no es un archivo PDF`);
+                    valid = false;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`❌ ${file.name} supera los 10MB`);
+                    valid = false;
+                }
             });
+            
+            if (!valid) {
+                e.target.value = '';
+                preview.innerHTML = '';
+                return;
+            }
+            
+            // Mostrar preview
+            preview.innerHTML = files.map(file => `
+                <div class="preview-item">
+                    <div class="preview-icon">✅</div>
+                    <div class="preview-info">
+                        <div class="preview-name">${file.name}</div>
+                        <div class="preview-size">${(file.size / 1024).toFixed(2)} KB</div>
+                    </div>
+                </div>
+            `).join('');
         });
     </script>
-    {% include 'core/accessibility.html' %}
 </body>
 </html>

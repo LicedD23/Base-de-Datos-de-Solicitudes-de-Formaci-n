@@ -40,7 +40,7 @@
                     {% for s in ultimas_solicitudes %}
                     <tr>
                         <td><strong>{{ s.empresa.nit }}</strong></td>
-                        <td><strong>{{ s.empresa }}</strong></td>
+                        <td><strong>{{ s.empresa.nombre }}</strong></td>
                         <td>{{ s.programa }}</td>
                         <td>
                             {% if s.instructor_asignado %}

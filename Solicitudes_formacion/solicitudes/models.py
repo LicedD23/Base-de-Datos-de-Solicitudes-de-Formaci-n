@@ -57,3 +57,31 @@ class Solicitud(models.Model):
         }
         estados_permitidos = flujo_valido.get(self.estado,[])
         return nuevo_estado in estados_permitidos
+
+class DocumentoSolicitud(models.Model):
+    """Modelo para almacenar múltiples documentos PDF por solicitud"""
+    solicitud = models.ForeignKey(
+        Solicitud, 
+        on_delete=models.CASCADE, 
+        related_name='documentos'
+    )
+    archivo = models.FileField(
+        upload_to='solicitudes/documentos/%Y/%m/',
+        verbose_name="Archivo PDF"
+    )
+    nombre_archivo = models.CharField(
+        max_length=255,
+        verbose_name="Nombre del archivo"
+    )
+    fecha_subida = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Fecha de subida"
+    )
+    
+    class Meta:
+        ordering = ['-fecha_subida']
+        verbose_name = "Documento de Solicitud"
+        verbose_name_plural = "Documentos de Solicitudes"
+    
+    def __str__(self):
+        return f"{self.nombre_archivo} - Solicitud #{self.solicitud.id}"
