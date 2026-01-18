@@ -494,6 +494,31 @@
             font-size: 1.1em;
             min-width: 20px;
         }
+        /* Badge de Documentos*/
+        .documents-badge{
+            display: inline-plex;
+            align-items: center;
+            gap:6px;
+            background:linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            color:white;
+            padding:6px 12px;
+            border-radius:20px;
+            font-size:0.85em;
+            font-weight:600;
+            box-shadow: 0 2px 8px rgba(33,150,243,0.3);
+        }
+        .documents-badge-icon{
+            font-size:1.1em;
+        }
+        .documents-badge-multiple{
+            background:linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            box-shadow:0 2px 8px rgba(46, 125, 50, 0.3); 
+        }
+        .documents-badge-none{
+            background:#e0e0e0;
+            color:#999;
+            box-shadow:none;
+        }
 
         .solicitud-meta {
             display: flex;
@@ -803,15 +828,33 @@
                         <strong>Recepción:</strong>
                         <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
                     </div>
-                    {% if solicitud.documento_pdf %}
+                    <!--indicador de documentos-->
                     <div class="info-item">
                         <span class="info-icon">📄</span>
-                        <strong>Documento:</strong>
-                        <span style="color:#2196f3; font-weight:600;">PDF adjunto</span>
+                        <strong>Documentos:</strong>
+                        {% if solicitud.documentos.count > 1%}
+                            <span class="documents-badge documents-badge-multiple">
+                                <span class="documents-badge-icon">📄</span>
+                                <span>{{ solicitud.documentos.count }} archivos</span>
+                            </span>
+                        {% elif solicitud.documentos.count == 1 %}
+                            <span class="documents-badge">
+                                <span class="documents-badge-icon">📄</span>
+                                <span>1 archivo</span>
+                            </span>
+                        {% elif solicitud.documento_pdf %}
+                            <span class="documents-badge">
+                                <span class="documents-badge-icon">📄</span>
+                                <span>1 PDF</span>
+                            </span>
+                        {% else %}
+                            <span class="documents-badge documents-badge-none">
+                                <span class="documents-badge-icon">📄</span>
+                                <span>Sin documentos</span>
+                            </span>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
-
                 <div class="solicitud-meta">
                     {% if solicitud.fecha_respuesta %}
                     <div class="meta-item">

@@ -12,7 +12,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); /* ✅ NUEVO: Verde claro */
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -27,12 +27,12 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); /* ✅ NUEVO: Verde SENA */
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3); /* ✅ NUEVO: Sombra verde */
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
         
         .header h1 {
@@ -77,16 +77,14 @@
         }
         
         .breadcrumb .current {
-            color: #2e7d32; /* ✅ NUEVO: Verde (antes era rojo #c62828) */
+            color: #2e7d32;
             font-weight: 600;
         }
         
-        /* Contenedor de mensajes */
         .messages-container {
             margin-bottom: 25px;
         }
         
-        /*  Estilos base de alertas con animación */
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -102,7 +100,6 @@
             overflow: hidden;
         }
         
-        /* Animación de entrada */
         @keyframes slideInDown {
             from {
                 transform: translateY(-20%);
@@ -114,7 +111,6 @@
             }
         }
         
-        /* Borde lateral */
         .alert::before {
             content: '';
             position: absolute;
@@ -124,7 +120,6 @@
             width: 5px;
         }
         
-        /* Alerta de éxito (verde) */
         .alert-success {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
@@ -140,7 +135,6 @@
             animation: scaleIn 0.5s ease-out;
         }
         
-        /* Animación del ícono de éxito */
         @keyframes scaleIn {
             0% {
                 transform: scale(0);
@@ -153,7 +147,6 @@
             }
         }
         
-        /* Alerta de error (rojo) */
         .alert-error {
             background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
             color: white;
@@ -165,7 +158,6 @@
             animation: shake 0.5s ease-out;
         }
         
-        /* Animación de shake para errores */
         @keyframes shake {
             0%, 100% {
                 transform: translateX(0);
@@ -178,7 +170,6 @@
             }
         }
         
-        /* Alerta de advertencia (naranja) */
         .alert-warning {
             background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
             color: white;
@@ -189,7 +180,6 @@
             background: #fff;
         }
         
-        /*  Elementos internos de la alerta */
         .alert-icon {
             font-size: 1.5em;
             flex-shrink: 0;
@@ -200,7 +190,6 @@
             line-height: 1.5;
         }
         
-        /* Botón de cerrar alerta */
         .alert-close {
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -223,7 +212,6 @@
             transform: scale(1.1);
         }
         
-        /* ⚠️ MANTENER EN ROJO: Advertencia crítica de eliminación */
         .warning-box {
             background: #ffebee;
             border-left: 4px solid #c62828;
@@ -289,13 +277,13 @@
         }
         
         .info-card-header {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); /* ✅ NUEVO: Verde claro */
-            border-left: 4px solid #2e7d32; /* ✅ NUEVO: Borde verde */
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid #2e7d32;
             padding: 20px 30px;
         }
         
         .info-card-header h2 {
-            color: #1b5e20; /* ✅ NUEVO: Texto verde oscuro */
+            color: #1b5e20;
             font-size: 1.5em;
             font-weight: 700;
             display: flex;
@@ -318,7 +306,7 @@
             padding: 15px;
             background: #f9f9f9;
             border-radius: 8px;
-            border-left: 3px solid #2e7d32; /* ✅ NUEVO: Borde verde */
+            border-left: 3px solid #2e7d32;
         }
         
         .info-item label {
@@ -366,7 +354,6 @@
             color: #1b5e20;
         }
         
-        /* Estilos para documento PDF */
         .pdf-section {
             background: #fff8e1;
             border-left: 4px solid #ffa726;
@@ -384,57 +371,123 @@
             gap: 10px;
         }
         
-        .pdf-info {
+        .pdf-count-badge {
+            background: #ff6f00;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .pdf-card {
+            background: white;
+            border: 2px solid #ffd54f;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .pdf-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(255, 111, 0, 0.2);
+        }
+        
+        .pdf-card-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 2px solid #ffd54f;
+            gap: 12px;
+            margin-bottom: 10px;
         }
         
         .pdf-icon {
-            font-size: 2.5em;
+            font-size: 2em;
+            flex-shrink: 0;
         }
         
-        .pdf-details {
+        .pdf-info {
             flex: 1;
+            min-width: 0;
         }
         
         .pdf-name {
             font-weight: 600;
             color: #e65100;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            word-break: break-word;
+            font-size: 0.95em;
+        }
+        
+        .pdf-metadata {
+            display: flex;
+            gap: 10px;
+            font-size: 0.85em;
+            color: #666;
         }
         
         .pdf-size {
-            color: #666;
-            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .pdf-date {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
         }
         
         .pdf-link {
+            flex: 1;
             background: #ff6f00;
             color: white;
-            padding: 8px 20px;
+            padding: 8px 12px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: 600;
-            display: inline-flex;
+            font-size: 0.9em;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
             transition: all 0.3s ease;
         }
         
         .pdf-link:hover {
             background: #e65100;
-            transform: translateY(-2px);
         }
         
         .no-pdf {
             color: #999;
             font-style: italic;
-            padding: 10px;
+            padding: 15px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            border: 2px dashed #ffd54f;
+        }
+        
+        .legacy-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 8px;
         }
         
         .form-card {
@@ -529,13 +582,13 @@
         }
         
         footer {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); /* ✅ NUEVO: Verde SENA */
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
             text-align: center;
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2); /* ✅ NUEVO: Sombra verde */
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
         
         footer p {
@@ -587,6 +640,9 @@
                 ✗ El historial completo de estados<br>
                 ✗ Las fechas de respuesta, atención y finalización<br>
                 ✗ Las observaciones registradas<br>
+                {% if solicitud.documentos.exists %}
+                ✗ <strong>{{ solicitud.documentos.count }} documento(s)</strong><br>
+                {% endif %}
                 ✗ No podrás recuperar esta información
             </p>
         </div>
@@ -677,26 +733,83 @@
                 </div>
                 {% endif %}
 
-                <!-- Documento PDF -->
+                <!-- Sección de múltiples documentos PDF -->
                 <div class="pdf-section">
-                    <h3>📄 Documento Adjunto</h3>
-                    {% if solicitud.documento_pdf %}
-                        <div class="pdf-info">
-                            <div class="pdf-icon">📄</div>
-                            <div class="pdf-details">
-                                <div class="pdf-name">{{ solicitud.documento_pdf.name|slice:"11:" }}</div>
-                                <div class="pdf-size">
-                                    Tamaño: {{ solicitud.documento_pdf.size|filesizeformat }}
+                    <h3>
+                        📄 Documentos Adjuntos
+                        {% if solicitud.documentos.exists %}
+                            <span class="pdf-count-badge">{{ solicitud.documentos.count }} archivo(s)</span>
+                        {% endif %}
+                    </h3>
+
+                    {% if solicitud.documentos.exists %}
+                        <div class="pdf-grid">
+                            {% for documento in solicitud.documentos.all %}
+                                <div class="pdf-card">
+                                    <div class="pdf-card-header">
+                                        <div class="pdf-icon">📄</div>
+                                        <div class="pdf-info">
+                                            <div class="pdf-name">
+                                                {{ documento.nombre_archivo|truncatechars:30 }}
+                                            </div>
+                                            <div class="pdf-metadata">
+                                                <span class="pdf-size">
+                                                    📦 {{ documento.archivo.size|filesizeformat }}
+                                                </span>
+                                                <span class="pdf-date">
+                                                    🕒 {{ documento.fecha_subida|date:"d/m/y" }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pdf-actions">
+                                        <a href="{{ documento.archivo.url }}" target="_blank" class="pdf-link">
+                                            🔗 Ver Documento
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Mostrar si hay documento legacy -->
+                        {% if solicitud.documento_pdf %}
+                            <div style="margin-top: 15px; padding: 12px; background: #f3e5f5; border-left: 3px solid #9c27b0; border-radius: 6px;">
+                                <p style="color:#6a1b9a; font-size: 0.9em; margin:0;">
+                                    ℹ️ <strong>Nota:</strong> Esta solicitud también tiene un documento PDF en el campo legacy que será eliminado.
+                                </p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Si no hay documentos nuevos pero hay documento_pdf legacy -->
+                        {% if solicitud.documento_pdf %}
+                            <div class="pdf-grid">
+                                <div class="pdf-card">
+                                    <div class="pdf-card-header">
+                                        <div class="pdf-icon">📄</div>
+                                        <div class="pdf-info">
+                                            <div class="pdf-name">
+                                                {{ solicitud.documento_pdf.name|slice:"11:"|truncatechars:30 }}
+                                                <span class="legacy-badge">LEGACY</span>
+                                            </div>
+                                            <div class="pdf-metadata">
+                                                <span class="pdf-size">
+                                                    📦 {{ solicitud.documento_pdf.size|filesizeformat }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pdf-actions">
+                                        <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="pdf-link">
+                                            🔗 Ver documento
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="pdf-link">
-                                🔗 Ver Documento
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="no-pdf">
-                            ℹ️ Esta solicitud no tiene documento PDF adjunto
-                        </div>
+                        {% else %}
+                            <div class="no-pdf">
+                                ℹ️ Esta solicitud no tiene documentos PDF adjuntos
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -708,7 +821,9 @@
                 <li>Se eliminarán todos los datos de la solicitud de forma irreversible</li>
                 <li>Se perderá el historial completo de estados y fechas</li>
                 <li>Las observaciones y datos del instructor asignado se perderán</li>
-                {% if solicitud.documento_pdf %}
+                {% if solicitud.documentos.exists %}
+                <li><strong>Los {{ solicitud.documentos.count }} documento(s) PDF adjunto(s) serán eliminados permanentemente del servidor</strong></li>
+                {% elif solicitud.documento_pdf %}
                 <li><strong>El documento PDF adjunto será eliminado permanentemente del servidor</strong></li>
                 {% endif %}
                 <li>Esta acción no se puede deshacer</li>
@@ -750,6 +865,7 @@
     </footer>
 
     {% include 'core/accessibility.html' %}
+    
     <script>
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
@@ -790,18 +906,32 @@
 
         // Confirmación antes de enviar
         document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            const documentosCount = {{ solicitud.documentos.count|default:0 }};
+            let documentosMsg = '';
+
+            if (documentosCount > 0) {
+                documentosMsg = `• ${documentosCount} documento(s) PDF adjunto(s)\n`;
+            } {% if solicitud.documento_pdf and not solicitud.documentos.exists %}else {
+                documentosMsg = '• 1 documento PDF adjunto (legacy)\n';
+            }{% endif %}
+
             const confirmacion = confirm(
                 '🚨 CONFIRMACIÓN FINAL\n\n' +
                 '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente:\n\n' +
                 '• Solicitud #{{ solicitud.id }}\n' +
                 '• Empresa: {{ solicitud.empresa.nombre }}\n' +
                 '• Programa: {{ solicitud.programa.nombre }}\n' +
-                '• Estado: {{ solicitud.get_estado_display }}\n\n' +
-                {% if solicitud.documento_pdf %}'• Documento PDF adjunto\n' +{% endif %}
-                'ESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
+                '• Estado: {{ solicitud.get_estado_display }}\n' +
+                documentosMsg +
+                '\nESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
                 '¿Deseas continuar?'
             );
-            
+
             if (!confirmacion) {
                 e.preventDefault();
                 return false;
+            }
+        });
+    </script>
+</body>
+</html>
