@@ -479,16 +479,7 @@
             border-radius: 8px;
             border: 2px dashed #ffd54f;
         }
-        
-        .legacy-badge {
-            background: #9c27b0;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.75em;
-            font-weight: 600;
-            margin-left: 8px;
-        }
+
         
         .form-card {
             background: white;
@@ -789,7 +780,6 @@
                                         <div class="pdf-info">
                                             <div class="pdf-name">
                                                 {{ solicitud.documento_pdf.name|slice:"11:"|truncatechars:30 }}
-                                                <span class="legacy-badge">LEGACY</span>
                                             </div>
                                             <div class="pdf-metadata">
                                                 <span class="pdf-size">

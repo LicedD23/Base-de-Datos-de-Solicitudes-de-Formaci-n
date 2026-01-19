@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.db import IntegrityError, transaction
 from django.core.files.base import ContentFile
 
-from .models import Solicitud
+from .models import Solicitud, DocumentoSolicitud
 from empresas.models import Empresa
 from programas.models import Programa
 from instructores.models import Instructor
@@ -49,6 +49,7 @@ class EmailSolicitudHandler:
     CAMPOS_MINIMOS_REQUERIDOS = 2
     
     MAX_PDF_SIZE = 10 * 1024 * 1024
+    MAX_PDFS_PER_EMAIL = 5  # 🔥 NUEVO: Límite de PDFs por correo
     ALLOWED_PDF_EXTENSIONS = ['.pdf']
     
     # Keywords para programas (fácil de expandir)
@@ -85,34 +86,38 @@ class EmailSolicitudHandler:
     # =========================================================================
     # MÉTODOS DE CONEXIÓN (MEJORADOS CON MANEJO DE ERRORES)
     # =========================================================================
-    def extraer_pdf_adjunto(self, msg):
+    
+    def extraer_pdfs_adjuntos(self, msg):
         """
-        Extrae el primer archivo PDF adjunto del correo
+        🔥 NUEVA FUNCIÓN: Extrae TODOS los archivos PDF adjuntos del correo
         
         Returns:
-            dict: {'nombre': str, 'contenido': bytes, 'size': int} o None
+            list: Lista de dicts {'nombre': str, 'contenido': bytes, 'size': int}
         """
+        pdfs_encontrados = []
+        
         try:
             print("\n   === BUSCANDO ARCHIVOS PDF ADJUNTOS ===")
             if not msg.is_multipart():
-                return None
+                print("   ℹ️ El mensaje no es multiparte (sin adjuntos)")
+                return pdfs_encontrados
         
             for part in msg.walk():
-                #Saltar el contenido del mensaje principal
+                # Saltar el contenido del mensaje principal
                 if part.get_content_maintype() == 'multipart':
                     continue
                 if part.get('Content-Disposition') is None:
                     continue
             
-                #Obtener el nombre del  archivo
+                # Obtener el nombre del archivo
                 filename = part.get_filename()
             
                 if filename:
-                    #Decodificar el nombre si  esta codificado
-                    if isinstance (filename, bytes):
+                    # Decodificar el nombre si está codificado
+                    if isinstance(filename, bytes):
                         filename = filename.decode('utf-8', errors='ignore')
                     else:
-                        #Decodificar encabezados RFC 2047
+                        # Decodificar encabezados RFC 2047
                         decoded_parts = decode_header(filename)
                         filename_parts = []
                         for content, encoding in decoded_parts:
@@ -121,39 +126,51 @@ class EmailSolicitudHandler:
                             else:
                                 filename_parts.append(content)
                         filename = ''.join(filename_parts)
-                    #Verificar si es un PDF
+                    
+                    # Verificar si es un PDF
                     if filename.lower().endswith('.pdf'):
-                        #obtener el  contenido  del archivo
+                        # Obtener el contenido del archivo
                         file_data = part.get_payload(decode=True)
                     
                         if file_data:
                             file_size = len(file_data)
                         
-                            #Vallidar tamaño maximo
+                            # Validar tamaño máximo
                             if file_size > self.MAX_PDF_SIZE:
-                                print(f" ⚠️ PDF '{filename}' excede{self.MAX_PDF_SIZE / (1024*1024):.1f}MB (tamaño: {file_size / (1024*1024):.1f}MB)")
+                                print(f"   ⚠️ PDF '{filename}' excede {self.MAX_PDF_SIZE / (1024*1024):.1f}MB (tamaño: {file_size / (1024*1024):.1f}MB) - OMITIDO")
                                 continue
                         
-                            #Validar que sea realmente un PDF 
+                            # Validar que sea realmente un PDF
                             if not file_data.startswith(b'%PDF'):
-                                print(f"  ⚠️ Archivo '{filename}' no  es un PDF valido")
+                                print(f"   ⚠️ Archivo '{filename}' no es un PDF válido - OMITIDO")
                                 continue
                         
-                            print(f"   ✅ PDF encontrado: {filename} ({file_size / 1024:.1f} KB)")
+                            # 🔥 LÍMITE: Máximo 5 PDFs por correo
+                            if len(pdfs_encontrados) >= self.MAX_PDFS_PER_EMAIL:
+                                print(f"   ⚠️ Límite de {self.MAX_PDFS_PER_EMAIL} PDFs alcanzado - '{filename}' OMITIDO")
+                                continue
                         
-                            return{
+                            print(f"   ✅ PDF #{len(pdfs_encontrados)+1} encontrado: {filename} ({file_size / 1024:.1f} KB)")
+                        
+                            pdfs_encontrados.append({
                                 'nombre': filename,
                                 'contenido': file_data,
                                 'size': file_size
-                            }
-            print("   ℹ️ No se encontraron archivos PDF adjuntos")
-            return None
+                            })
+            
+            if pdfs_encontrados:
+                print(f"   📄 Total PDFs encontrados: {len(pdfs_encontrados)}")
+            else:
+                print("   ℹ️ No se encontraron archivos PDF adjuntos")
+            
+            return pdfs_encontrados
+            
         except Exception as e:
-            print(f"   ❌ Error extrayendo PDF: {str(e)}")
+            print(f"   ❌ Error extrayendo PDFs: {str(e)}")
             import traceback
             traceback.print_exc()
-            return None
-        
+            return pdfs_encontrados
+    
     def conectar_email(self):
         """Conecta al servidor IMAP con manejo robusto de errores"""
         try:
@@ -281,15 +298,16 @@ class EmailSolicitudHandler:
                         body = payload.decode('utf-8', errors='ignore')
                 except:
                     pass
-            # Nuevo: Extraer PDF adjunto
-            pdf_adjunto = self.extraer_pdf_adjunto(msg)
+            
+            # 🔥 NUEVO: Extraer TODOS los PDFs adjuntos
+            pdfs_adjuntos = self.extraer_pdfs_adjuntos(msg)
             
             return {
                 'asunto': subject,
                 'remitente': from_email,
                 'cuerpo': body,
                 'fecha': msg.get("Date", ""),
-                'pdf_adjunto': pdf_adjunto
+                'pdfs_adjuntos': pdfs_adjuntos  # 🔥 CAMBIO: Lista en lugar de dict único
             }
             
         except Exception as e:
@@ -903,7 +921,7 @@ class EmailSolicitudHandler:
                         # Promedio de coberturas
                         score = ((cobertura_busqueda + cobertura_programa) / 2) * 85
                     
-                        # BONUS: Si contiene palabras clave importantes (hidráulico, sistemas, maquinaria, etc.)
+                        # BONUS: Si contiene palabras clave importantes
                         palabras_importantes = {'sistemas', 'hidraulicos', 'maquinaria', 'pesada', 
                                                 'operador', 'excavadora', 'retrocargador', 'montacargas',
                                                 'minicargador', 'interpretacion', 'planos'}
@@ -914,9 +932,8 @@ class EmailSolicitudHandler:
                     
                         if tokens_importantes_comunes:
                             bonus = (len(tokens_importantes_comunes) / len(tokens_importantes_busqueda)) * 15 if len(tokens_importantes_busqueda) > 0 else 0
-                            score = min(score + bonus, 95)  # Máximo 95% para evitar superar exacta
+                            score = min(score + bonus, 95)
             
-                # DEBUG: Mostrar scoring
                 if score > 30:
                     print(f"   Candidato: {programa.nombre} (score: {score:.0f}%)")
             
@@ -924,7 +941,6 @@ class EmailSolicitudHandler:
                     mejor_score = score
                     mejor_match = programa
         
-            # UMBRAL: Reducir de 40% a 35% para ser más permisivo
             if mejor_match and mejor_score >= 35:
                 print(f"   ✅ Programa encontrado: {mejor_match.nombre} (similitud: {mejor_score:.0f}%)")
                 return mejor_match
@@ -938,11 +954,11 @@ class EmailSolicitudHandler:
             return None
     
     # =========================================================================
-    # PROCESAMIENTO INDIVIDUAL (LIMPIO - TU LÓGICA)
+    # PROCESAMIENTO INDIVIDUAL (MEJORADO CON MÚLTIPLES PDFs)
     # =========================================================================
     
     def procesar_correo_individual(self, correo_info):
-        """Procesa un solo correo - MANTIENE TU LÓGICA ORIGINAL"""
+        """🔥 MEJORADO: Procesa un solo correo y guarda MÚLTIPLES PDFs"""
         try:
             asunto_corto = correo_info['asunto'][:50]
             
@@ -981,14 +997,13 @@ class EmailSolicitudHandler:
             if info.get('programa_solicitado'):
                 programa = self.buscar_programa(info.get('programa_solicitado'))
             
-            # TU LÓGICA: Si no hay programa, NO se crea solicitud
             if not programa:
                 print("❌ ERROR: Programa no encontrado - No se puede crear solicitud")
                 print(f"   Programa solicitado: {info.get('programa_solicitado')}")
                 self.stats['errores'] += 1
                 return None
             
-            # PASO 5: Crear solicitud (TU ESTRUCTURA)
+            # PASO 5: Crear solicitud
             solicitud = Solicitud.objects.create(
                 empresa=empresa,
                 programa=programa,
@@ -998,34 +1013,53 @@ class EmailSolicitudHandler:
                 numero_aprendices=info.get('numero_trabajadores'),
                 correo_remitente=self._extraer_email_limpio(correo_info['remitente'])
             )
-            # Guardar PDF si  existe
-            pdf_adjunto = correo_info.get('pdf_adjunto')
-            if pdf_adjunto:
-                try:
-                    print(f"  📄 Guardando PDF: {pdf_adjunto['nombre']}")
-                    # Crear nombre unico
-                    timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
-                    nombre_limpio = re.sub(r'[^\w\s\-.]', '', pdf_adjunto['nombre'])
-                    nombre_final = f"solicitud_{solicitud.id}_{timestamp}_{nombre_limpio}"
-                    
-                    # Guardar usando ContentFile
-                    solicitud.documento_pdf.save(
-                        nombre_final,
-                        ContentFile(pdf_adjunto['contenido']),
-                        save=True
+            
+            # 🔥 PASO 6: Guardar MÚLTIPLES PDFs
+            pdfs_adjuntos = correo_info.get('pdfs_adjuntos', [])
+            
+            if pdfs_adjuntos:
+                print(f"\n   📄 Procesando {len(pdfs_adjuntos)} PDF(s) adjunto(s)...")
+                
+                for idx, pdf in enumerate(pdfs_adjuntos, 1):
+                    try:
+                        print(f"   📄 Guardando PDF {idx}/{len(pdfs_adjuntos)}: {pdf['nombre']}")
                         
-                    )
-                    self.stats['pdfs_extraidos'] += 1
-                    print(f"   ✅ PDF guardado: {nombre_final} ({pdf_adjunto['size'] / 1024:.1f} KB)")
-                except Exception as e:
-                    print(f"   ⚠️ Error guardando PDF: {str(e)}")
-                    
+                        # Crear nombre único
+                        timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+                        nombre_limpio = re.sub(r'[^\w\s\-.]', '', pdf['nombre'])
+                        nombre_final = f"solicitud_{solicitud.id}_{timestamp}_{idx}_{nombre_limpio}"
+                        
+                        # 🔥 NUEVO: Guardar en DocumentoSolicitud
+                        DocumentoSolicitud.objects.create(
+                            solicitud=solicitud,
+                            archivo=ContentFile(pdf['contenido'], name=nombre_final),
+                            nombre_archivo=pdf['nombre']
+                        )
+                        
+                        # 🔥 COMPATIBILIDAD: El PRIMER PDF también va al campo legacy
+                        if idx == 1:
+                            solicitud.documento_pdf.save(
+                                nombre_final,
+                                ContentFile(pdf['contenido']),
+                                save=True
+                            )
+                            print(f"   ✅ PDF #{idx} guardado (principal + DocumentoSolicitud): {nombre_final} ({pdf['size'] / 1024:.1f} KB)")
+                        else:
+                            print(f"   ✅ PDF #{idx} guardado (DocumentoSolicitud): {nombre_final} ({pdf['size'] / 1024:.1f} KB)")
+                        
+                        self.stats['pdfs_extraidos'] += 1
+                        
+                    except Exception as e:
+                        print(f"   ⚠️ Error guardando PDF #{idx}: {str(e)}")
+                        import traceback
+                        traceback.print_exc()
+            else:
+                print("   ℹ️ No hay PDFs adjuntos en este correo")
             
-            print(f"✅ SOLICITUD CREADA: #{solicitud.id}")
+            print(f"\n✅ SOLICITUD CREADA: #{solicitud.id}")
+            if pdfs_adjuntos:
+                print(f"   📄 Total PDFs guardados: {self.stats['pdfs_extraidos']}")
             self.stats['solicitudes_creadas'] += 1
-            
-            # PASO 6: Enviar respuesta automática
-            #self.enviar_respuesta_automatica(empresa, solicitud, correo_info)
             
             self.stats['correos_procesados'] += 1
             return solicitud
@@ -1181,10 +1215,10 @@ Coordinación de Formación Empresarial"""
         except Exception as e:
             print(f"⚠️ Error marcando correo como leído: {str(e)}")
         return False
+    
     def _extraer_email_limpio(self, remitente):
         """Extrae solo el email del remitente (sin nombre)"""
         try:
-            # Formato: "Nombre Apellido <email@ejemplo.com>" o solo "email@ejemplo.com"
             email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', remitente)
             if email_match:
                 return email_match.group(0).lower()
