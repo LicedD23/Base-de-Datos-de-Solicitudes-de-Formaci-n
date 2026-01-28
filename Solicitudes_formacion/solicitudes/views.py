@@ -790,7 +790,7 @@ def crear_solicitud(request):
                 mensaje_exito += f' con {len(documentos_pdf)} documento(s)'
             
             messages.success(request, mensaje_exito)
-            return redirect('solicitudes:detalle_solicitud', solicitud_id=nueva_solicitud.id)
+            return redirect('solicitudes:listar_solicitudes')
         
         except Exception as e:
             messages.error(request, f'❌ Error al crear la solicitud: {str(e)}')

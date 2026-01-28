@@ -210,7 +210,7 @@
             gap: 20px;
         }
 
-        /* 🔥 ESTILOS ACTUALIZADOS PARA MÚLTIPLES ARCHIVOS */
+        /* ESTILOS PARA MÚLTIPLES ARCHIVOS */
         .file-upload-section {
             background: #f9f9f9;
             padding: 25px;
@@ -274,7 +274,6 @@
             color: white;
         }
 
-        /* Lista de archivos */
         .files-list {
             margin-top: 20px;
             display: none;
@@ -394,6 +393,12 @@
             transform: translateY(-2px);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-secondary {
             background: white;
             color: #666;
@@ -401,19 +406,19 @@
             flex: 1;
         }
 
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
@@ -425,9 +430,9 @@
                 flex-direction: column;
             }
 
-            footer{
-                font-size:0.85rem;
-                padding:15px;
+            footer {
+                font-size: 0.85rem;
+                padding: 15px;
             }
 
             .file-item {
@@ -476,7 +481,7 @@
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
 
-                <!-- ========== SECCIÓN 1: EMPRESA ========== -->
+                <!-- SECCIÓN 1: EMPRESA -->
                 <div class="section-header">
                     🏢 Información de la Empresa
                 </div>
@@ -505,7 +510,7 @@
                     </p>
                 </div>
 
-                <!-- ========== SECCIÓN 2: PROGRAMA ========== -->
+                <!-- SECCIÓN 2: PROGRAMA -->
                 <div class="section-header">
                     📚 Programa de Formación
                 </div>
@@ -525,7 +530,7 @@
                     </select>
                 </div>
 
-                <!-- ========== SECCIÓN 3: DATOS DE CONTACTO ========== -->
+                <!-- SECCIÓN 3: DATOS DE CONTACTO -->
                 <div class="section-header">
                     📧 Datos de Contacto
                 </div>
@@ -543,7 +548,7 @@
                     </div>
                 </div>
 
-                <!-- ========== SECCIÓN 4: OBSERVACIONES ========== -->
+                <!-- SECCIÓN 4: OBSERVACIONES -->
                 <div class="section-header">
                     📝 Información Adicional
                 </div>
@@ -554,7 +559,7 @@
                     <small>Información relevante que complementa la solicitud</small>
                 </div>
 
-                <!-- 🔥 SECCIÓN 5: DOCUMENTOS MÚLTIPLES ========== -->
+                <!-- SECCIÓN 5: DOCUMENTOS MÚLTIPLES -->
                 <div class="file-upload-section">
                     <div class="file-upload-header">
                         <h3>📄 Documentos Adjuntos (opcional)</h3>
@@ -579,10 +584,8 @@
                         </label>
                     </div>
 
-                    <!-- Lista de archivos seleccionados -->
                     <div class="files-list" id="filesList"></div>
 
-                    <!-- Advertencia de límite -->
                     <div class="file-limit-warning" id="fileLimitWarning">
                         ⚠️ Has alcanzado el límite máximo de 5 archivos. Elimina alguno para agregar más.
                     </div>
@@ -593,7 +596,7 @@
                     <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary">
                         ✕ Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
                         💾 Crear Solicitud
                     </button>
                 </div>
@@ -606,7 +609,7 @@
     </footer>
 
     <script>
-        // 🔥 MANEJO DE MÚLTIPLES ARCHIVOS
+        // MANEJO DE MÚLTIPLES ARCHIVOS
         let selectedFiles = [];
         const MAX_FILES = 5;
         const MAX_SIZE = 10 * 1024 * 1024; // 10MB
@@ -614,37 +617,31 @@
         function handleMultipleFiles(event) {
             const newFiles = Array.from(event.target.files);
             
-            // Validar cantidad total
             if (selectedFiles.length + newFiles.length > MAX_FILES) {
                 alert(`⚠️ Solo puedes subir máximo ${MAX_FILES} archivos`);
-                event.target.value = ''; // Limpiar input
+                event.target.value = '';
                 return;
             }
 
-            // Validar cada archivo
             for (let file of newFiles) {
-                // Validar tipo
                 if (!file.name.toLowerCase().endsWith('.pdf')) {
                     alert(`❌ ${file.name} no es un archivo PDF`);
                     event.target.value = '';
                     return;
                 }
 
-                // Validar tamaño
                 if (file.size > MAX_SIZE) {
                     alert(`❌ ${file.name} supera 10MB`);
                     event.target.value = '';
                     return;
                 }
 
-                // Agregar archivo si pasa validaciones
                 selectedFiles.push(file);
             }
 
-            // Actualizar vista
             updateFilesList();
             updateCounter();
-            event.target.value = ''; // Limpiar input para permitir nueva selección
+            event.target.value = '';
         }
 
         function updateFilesList() {
@@ -686,7 +683,6 @@
 
             counter.textContent = `${selectedFiles.length} / ${MAX_FILES}`;
 
-            // Mostrar/ocultar advertencia
             if (selectedFiles.length >= MAX_FILES) {
                 warning.classList.add('active');
                 input.disabled = true;
@@ -696,47 +692,27 @@
             }
         }
 
-        // Enviar archivos al servidor
+        // PREPARAR ARCHIVOS ANTES DEL SUBMIT (SIN FETCH - SUBMIT NORMAL)
         document.getElementById('solicitudForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Deshabilitar botón para evitar doble envío
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Guardando...';
+            
             if (selectedFiles.length > 0) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                
-                // Remover el input file original del FormData
-                formData.delete('documentos_pdf');
-                
-                // Agregar archivos seleccionados
+                // Crear DataTransfer para asignar archivos al input
+                const dataTransfer = new DataTransfer();
                 selectedFiles.forEach(file => {
-                    formData.append('documentos_pdf', file);
+                    dataTransfer.items.add(file);
                 });
                 
-                // Enviar formulario
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        return response.text();
-                    }
-                })
-                .then(html => {
-                    if (html) {
-                        document.open();
-                        document.write(html);
-                        document.close();
-                    }
-                })
-                .catch(error => {
-                    alert('Error al enviar el formulario: ' + error);
-                });
+                // Asignar archivos al input file original
+                document.getElementById('documentos_pdf').files = dataTransfer.files;
             }
+            
+            // DEJAR QUE EL FORM SE ENVÍE NORMALMENTE
+            // Esto permite que Django maneje el redirect con mensajes de sesión
         });
 
         // Auto-cerrar alertas
