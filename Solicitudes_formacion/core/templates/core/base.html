@@ -1044,7 +1044,12 @@
             </li>
 
             <div class="sidebar-divider"></div>
-            
+            <li>
+                <a href="{% url 'core:manual_usuario' %}" class="{% if request.resolver_match.url_name == 'manual_usuario'%}active{% endif%}">
+                    <i class="bi bi-book-fill"></i>
+                    <span>Manual de Usuario</span>
+                </a>
+            </li>
             <li>
                 <a href="{% url 'core:logout' %}">
                     <i class="bi bi-box-arrow-right"></i>

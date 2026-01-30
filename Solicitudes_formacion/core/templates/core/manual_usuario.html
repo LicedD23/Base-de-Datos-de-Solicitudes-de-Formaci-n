@@ -1,0 +1,153 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Manual de Usuario | SENA{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Card principal del manual -->
+        <div class="card" style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 150, 64, 0.15); border: none;">
+            
+            <!-- Header del manual -->
+            <div class="card-header" style="background: linear-gradient(135deg, var(--sena-green), var(--sena-light)); color: white; padding: 1.5rem; border: none;">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-book-fill me-3" style="font-size: 1.8rem;"></i>
+                        <div>
+                            <div style="font-weight: 700;">Manual de Usuario</div>
+                            <small style="font-size: 0.85rem; opacity: 0.9; font-weight: 400;">
+                                Sistema de Gestión de Solicitudes de Formación SENA
+                            </small>
+                        </div>
+                    </h4>
+                    
+                    <!-- Botones de acción -->
+                    <div class="d-flex gap-2">
+                        <a href="{% static 'docs/manual_usuario.pdf' %}" 
+                           class="btn btn-light" 
+                           download="Manual_Usuario_SENA.pdf"
+                           style="border-radius: 12px; font-weight: 600;">
+                            <i class="bi bi-download me-2"></i>
+                            Descargar PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuerpo con visor PDF -->
+            <div class="card-body p-0">
+                <!-- Visor PDF pantalla completa -->
+                <div style="height: calc(100vh - 280px); min-height: 700px; background: #f5f5f5;">
+                    <iframe 
+                        src="{% static 'docs/manual_usuario.pdf' %}" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none;"
+                        title="Manual de Usuario SENA"
+                        id="pdfViewer">
+                    </iframe>
+                </div>
+
+                <!-- Mensaje alternativo si no carga el PDF -->
+                <div class="text-center p-5" id="pdfFallback" style="display: none;">
+                    <div class="mb-4">
+                        <i class="bi bi-file-pdf text-danger" style="font-size: 5rem;"></i>
+                    </div>
+                    <h3 class="mb-3" style="color: var(--sena-dark);">
+                        No se pudo cargar el visor de PDF
+                    </h3>
+                    <p class="text-muted mb-4" style="max-width: 500px; margin: 0 auto;">
+                        Tu navegador no soporta la visualización de PDFs embebidos.
+                        <br>Por favor, descarga el manual usando el botón de abajo.
+                    </p>
+                    <a href="{% static 'docs/manual_usuario.pdf' %}" 
+                       class="btn btn-sena btn-lg" 
+                       download="Manual_Usuario_SENA.pdf"
+                       style="border-radius: 15px; padding: 1rem 2.5rem;">
+                        <i class="bi bi-download me-2"></i>
+                        Descargar Manual PDF (91 páginas)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card de ayuda adicional -->
+        <div class="card mt-4" style="border-radius: 16px; border: 2px solid rgba(0, 150, 64, 0.1);">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-1 text-center mb-3 mb-md-0">
+                        <i class="bi bi-question-circle-fill" style="font-size: 3rem; color: var(--sena-green);"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <h5 class="card-title mb-2" style="color: var(--sena-dark); font-weight: 700;">
+                            ¿Necesitas ayuda adicional?
+                        </h5>
+                        <p class="card-text text-muted mb-3">
+                            Este manual contiene <strong>91 páginas</strong> con instrucciones detalladas sobre todas las funcionalidades del sistema.
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Paso a paso</strong>
+                                        <br><small class="text-muted">Guías detalladas de cada módulo</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Capturas de pantalla</strong>
+                                        <br><small class="text-muted">Imágenes explicativas incluidas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Casos de uso</strong>
+                                        <br><small class="text-muted">Ejemplos prácticos reales</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Detectar si el PDF no carga y mostrar fallback
+document.addEventListener('DOMContentLoaded', function() {
+    const iframe = document.getElementById('pdfViewer');
+    const fallback = document.getElementById('pdfFallback');
+    
+    // Manejar error de carga
+    if (iframe) {
+        iframe.addEventListener('error', function() {
+            iframe.style.display = 'none';
+            if (fallback) fallback.style.display = 'block';
+        });
+        
+        // Timeout de 8 segundos para PDFs grandes
+        setTimeout(() => {
+            try {
+                if (!iframe.contentDocument && !iframe.contentWindow) {
+                    throw new Error('PDF no cargado');
+                }
+            } catch(e) {
+                console.warn('PDF viewer: usando fallback');
+                iframe.style.display = 'none';
+                if (fallback) fallback.style.display = 'block';
+            }
+        }, 8000);
+    }
+});
+</script>
+{% endblock %}

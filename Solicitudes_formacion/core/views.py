@@ -343,3 +343,8 @@ class CustomPasswordResetView(PasswordResetView):
         
         # ✅ Redirigir manualmente sin llamar a super() para evitar envío duplicado
         return HttpResponseRedirect(self.success_url)
+    
+@login_required
+def manual_usuario(request):
+    """Vista parac mostrar el manual de usuario"""
+    return render(request, 'core/manual_usuario.html')
