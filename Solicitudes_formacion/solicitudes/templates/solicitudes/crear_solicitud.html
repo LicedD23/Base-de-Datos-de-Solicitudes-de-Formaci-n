@@ -114,6 +114,79 @@
             border-left: 4px solid #ef6c00;
         }
 
+        /* 🆕 MODO MIGRACIÓN TOGGLE */
+        .migration-mode-toggle {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .migration-mode-info {
+            color: white;
+            flex: 1;
+        }
+
+        .migration-mode-info h3 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .migration-mode-info p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4caf50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
         .section-header {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
@@ -159,6 +232,43 @@
             color: #1976d2;
         }
 
+        /* 🆕 SECCIÓN DE FECHAS (OCULTA POR DEFECTO) */
+        .migration-section {
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .migration-section.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dates-info-box {
+            background: #fff9c4;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f9a825;
+        }
+
+        .dates-info-box p {
+            margin: 0;
+            color: #f57f17;
+            font-weight: 500;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -179,6 +289,7 @@
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group input[type="number"],
+        .form-group input[type="datetime-local"],
         .form-group textarea {
             width: 100%;
             padding: 12px 15px;
@@ -444,6 +555,12 @@
             .file-remove-btn {
                 width: 100%;
             }
+
+            .migration-mode-toggle {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -451,7 +568,7 @@
     <div class="container">
         <div class="header">
             <h1>📋 Crear Nueva Solicitud</h1>
-            <p>Registra una solicitud de formación manualmente</p>
+            <p>Registra una solicitud de formación de manera rápida y sencilla</p>
         </div>
 
         <div class="breadcrumb">
@@ -478,8 +595,23 @@
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
             </div>
 
+            <!-- 🆕 TOGGLE MODO MIGRACIÓN -->
+            <div class="migration-mode-toggle">
+                <div class="migration-mode-info">
+                    <h3>📦 Registrar Solicitudes Antiguas</h3>
+                    <p>Activa esto solo si estás registrando solicitudes antiguas con fechas históricas</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="migrationToggle" onchange="toggleMigrationMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
+
+                <!-- Campo oculto para indicar si es migración -->
+                <input type="hidden" id="esMigracion" name="es_migracion" value="false">
 
                 <!-- SECCIÓN 1: EMPRESA -->
                 <div class="section-header">
@@ -542,13 +674,90 @@
                         <small>Email desde donde se envió la solicitud</small>
                     </div>
                     <div class="form-group">
-                        <label for="numero_aprendices">Número de Aprendices</label>
+                        <label for="numero_aprendices">Trabajadores a Capacitar</label>
                         <input type="number" id="numero_aprendices" name="numero_aprendices" placeholder="Ej: 25" min="1" max="1000">
                         <small>Cantidad estimada de personas a capacitar</small>
                     </div>
                 </div>
 
-                <!-- SECCIÓN 4: OBSERVACIONES -->
+                <!-- 🆕 SECCIÓN 4: FECHAS (SOLO EN MODO MIGRACIÓN) -->
+                <div class="migration-section" id="migrationSection">
+                    <div class="section-header">
+                        📅 Fechas Históricas (Modo Migración)
+                    </div>
+
+                    <div class="dates-info-box">
+                        <p>
+                            💡 <strong>Estás en modo migración:</strong> Establece las fechas históricas según tus registros de Excel. El sistema calculará automáticamente el estado correcto según las fechas que completes.
+                        </p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_recepcion">📥 Fecha de Recepción *</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fecha_recepcion_migracion" 
+                                name="fecha_recepcion" 
+                                class="form-control"
+                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                            >
+                            <small>Fecha en que se recibió la solicitud</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fecha_respuesta">📧 Fecha de Respuesta (opcional)</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fecha_respuesta" 
+                                name="fecha_respuesta" 
+                                class="form-control"
+                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                            >
+                            <small>Solo completa si ya respondiste</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_atencion">✅ Fecha de Atención (opcional)</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fecha_atencion" 
+                                name="fecha_atencion" 
+                                class="form-control"
+                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                            >
+                            <small>Solo completa si ya se atendió</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fecha_finalizacion">🎓 Fecha de Finalización (opcional)</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fecha_finalizacion" 
+                                name="fecha_finalizacion" 
+                                class="form-control"
+                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                            >
+                            <small>Solo completa si ya finalizó</small>
+                        </div>
+                    </div>
+
+                    <!-- 🆕 INSTRUCTOR (solo en modo migración) -->
+                    <div class="form-group">
+                        <label for="instructor_asignado">👨‍🏫 Instructor Asignado (opcional)</label>
+                        <select id="instructor_asignado" name="instructor_asignado">
+                            <option value="">Sin asignar</option>
+                            {% for instructor in instructores %}
+                                <option value="{{ instructor.id }}">{{ instructor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <small>Solo asigna si ya tienes un instructor definido en tus registros</small>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 5: OBSERVACIONES -->
                 <div class="section-header">
                     📝 Información Adicional
                 </div>
@@ -559,7 +768,7 @@
                     <small>Información relevante que complementa la solicitud</small>
                 </div>
 
-                <!-- SECCIÓN 5: DOCUMENTOS MÚLTIPLES -->
+                <!-- SECCIÓN 6: DOCUMENTOS MÚLTIPLES -->
                 <div class="file-upload-section">
                     <div class="file-upload-header">
                         <h3>📄 Documentos Adjuntos (opcional)</h3>
@@ -609,6 +818,33 @@
     </footer>
 
     <script>
+        // 🆕 TOGGLE MODO MIGRACIÓN
+        function toggleMigrationMode() {
+            const toggle = document.getElementById('migrationToggle');
+            const migrationSection = document.getElementById('migrationSection');
+            const esMigracionInput = document.getElementById('esMigracion');
+            const fechaRecepcionMigracion = document.getElementById('fecha_recepcion_migracion');
+
+            if (toggle.checked) {
+                // Activar modo migración
+                migrationSection.classList.add('active');
+                esMigracionInput.value = 'true';
+                fechaRecepcionMigracion.required = true;
+            } else {
+                // Desactivar modo migración
+                migrationSection.classList.remove('active');
+                esMigracionInput.value = 'false';
+                fechaRecepcionMigracion.required = false;
+                
+                // Limpiar campos de fechas
+                document.getElementById('fecha_recepcion_migracion').value = '';
+                document.getElementById('fecha_respuesta').value = '';
+                document.getElementById('fecha_atencion').value = '';
+                document.getElementById('fecha_finalizacion').value = '';
+                document.getElementById('instructor_asignado').value = '';
+            }
+        }
+
         // MANEJO DE MÚLTIPLES ARCHIVOS
         let selectedFiles = [];
         const MAX_FILES = 5;
@@ -692,7 +928,7 @@
             }
         }
 
-        // PREPARAR ARCHIVOS ANTES DEL SUBMIT (SIN FETCH - SUBMIT NORMAL)
+        // PREPARAR ARCHIVOS ANTES DEL SUBMIT
         document.getElementById('solicitudForm').addEventListener('submit', function(e) {
             const submitBtn = document.getElementById('submitBtn');
             
@@ -710,9 +946,6 @@
                 // Asignar archivos al input file original
                 document.getElementById('documentos_pdf').files = dataTransfer.files;
             }
-            
-            // DEJAR QUE EL FORM SE ENVÍE NORMALMENTE
-            // Esto permite que Django maneje el redirect con mensajes de sesión
         });
 
         // Auto-cerrar alertas

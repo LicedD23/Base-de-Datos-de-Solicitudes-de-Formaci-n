@@ -104,40 +104,90 @@
             color: #999;
         }
 
+        /* MENSAJES - ESTILOS MEJORADOS */
+        .messages-container {
+        margin-bottom: 25px;
+        }
+
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .alert-success {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
+            border: 2px solid #1b5e20;
         }
 
         .alert-error {
             background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
             color: white;
+            border: 2px solid #b71c1c;
         }
 
         .alert-warning {
             background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
             color: white;
+            border: 2px solid #e65100;
+        }
+
+        .alert-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .alert-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
         }
 
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.3);
             border: none;
             color: white;
             width: 28px;
             height: 28px;
             border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
             font-weight: bold;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
         }
 
         .stats-bar {
@@ -642,9 +692,20 @@
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}">
-                    <div>{{ message }}</div>
-                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-content">
+                        <span class="alert-icon">
+                            {% if 'error' in message.tags %}
+                                ❌
+                            {% elif 'warning' in message.tags %}
+                                ⚠️
+                            {% else %}
+                                ✅
+                            {% endif %}
+                        </span>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
@@ -699,6 +760,16 @@
                 <div class="info-item">
                     <label>Estado</label>
                     <div class="value">{{ solicitud.get_estado_display }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Trabajadores a Capacitar</label>
+                    <div class="value">
+                        {% if solicitud.numero_aprendices %}
+                            {{ solicitud.numero_aprendices }} personas
+                        {% else %}
+                            <span style="color: #999; font-style: italic;">No especificado</span>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="info-item">
                     <label>Fecha de Recepción</label>

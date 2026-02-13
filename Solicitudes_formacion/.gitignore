@@ -1,14 +1,14 @@
-# Base de datos
-db.sqlite3
+# ==============================================================================
+# BASE DE DATOS
+# ==============================================================================
 *.sqlite3
+db.sqlite3
+db.sqlite3-journal
 db.sqlite3.backup
-data_backup.json
 
-# Variables de entorno
-.env
-*.env
-
-# Python
+# ==============================================================================
+# PYTHON
+# ==============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -26,58 +26,97 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Django
+# ==============================================================================
+# DJANGO
+# ==============================================================================
 *.log
 local_settings.py
-db.sqlite3-journal
-media/
 staticfiles/
-static/
+media/
 
-# Entornos virtuales
+# ==============================================================================
+# ARCHIVOS DE RESPALDO Y DATOS TEMPORALES
+# ==============================================================================
+*.bak
+*.backup
+*.old
+*.tmp
+*~
+*.json
+!package.json
+*.sql
+*.zip
+proyecto.zip
+data_backup_clean.json
+data_backup.json
+data_export_utf8.json
+data_export.json
+datos_completos.json
+datos_limpio.json
+solicitudes_formacion_backup.sql
+
+# ==============================================================================
+# ENTORNOS VIRTUALES
+# ==============================================================================
 venv/
 env/
 ENV/
 env.bak/
 venv.bak/
+.venv/
 
-# IDEs
+# ==============================================================================
+# IDEs Y EDITORES
+# ==============================================================================
 .vscode/
 .idea/
 *.swp
 *.swo
+*.swn
 *~
+.project
+.pydevproject
+.settings/
 
-# Sistema operativo
+# ==============================================================================
+# SISTEMA OPERATIVO
+# ==============================================================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Backups
-*.bak
-*.backup
-*.old
+# ==============================================================================
+# COVERAGE Y TESTING
+# ==============================================================================
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
-# Archivos de medios (no subir al repositorio)
-media/
+# ==============================================================================
+# JUPYTER NOTEBOOK
+# ==============================================================================
+.ipynb_checkpoints
 
-# Base de datos
-*.sqlite3
-db.sqlite3
-
-# Python
-*.pyc
-__pycache__/
-*.py[cod]
-
-# Entorno virtual
-venv/
-env/
-.venv/
-
-# VS Code
-.vscode/
+# ==============================================================================
+# OTROS
+# ==============================================================================
+*.orig

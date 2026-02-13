@@ -68,24 +68,192 @@
             color: #999;
         }
 
+        /* 🎨 MENSAJES - ESTILOS MEJORADOS (igual que editar áreas) */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
         }
 
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ✅ Mensaje de ÉXITO - Verde brillante */
         .alert-success {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
+            border: 2px solid #1b5e20;
         }
 
+        /* ❌ Mensaje de ERROR - Rojo vibrante */
         .alert-error {
             background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
             color: white;
+            border: 2px solid #b71c1c;
+        }
+
+        /* ⚠️ Mensaje de WARNING - Naranja */
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
+        }
+
+        .alert-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .alert-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        /* Botón de cerrar mensaje */
+        .alert-close {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* 🔥 MODO MIGRACIÓN TOGGLE */
+        .migration-toggle-section {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 3px solid #ff9800;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+
+        .migration-toggle-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .migration-toggle-icon {
+            font-size: 2em;
+        }
+
+        .migration-toggle-title {
+            flex: 1;
+        }
+
+        .migration-toggle-title h3 {
+            color: #e65100;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .migration-toggle-title p {
+            color: #ef6c00;
+            font-size: 0.9em;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff9800;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .migration-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+            margin-top: 15px;
+        }
+
+        .migration-info ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .migration-info li {
+            margin-bottom: 8px;
         }
 
         .section {
@@ -103,6 +271,61 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        /* 🔥 SECCIÓN DE FECHAS PERSONALIZADA */
+        .dates-section {
+            display: none;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 3px solid #2e7d32;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .dates-section.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dates-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dates-header h2 {
+            color: #1b5e20;
+            margin: 0;
+        }
+
+        .dates-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .dates-info p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .dates-info strong {
+            color: #2e7d32;
         }
 
         .form-grid {
@@ -147,12 +370,26 @@
             min-height: 120px;
         }
 
-        .form-group input:disabled {
+        .form-group input:disabled,
+        .form-group select:disabled {
             background: #f5f5f5;
             cursor: not-allowed;
         }
 
-        /* 🔥 ESTILOS PARA DOCUMENTOS */
+        .form-group small {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+            display: block;
+            font-style: italic;
+        }
+
+        .required-mark {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        /* DOCUMENTOS */
         .documents-header {
             display: flex;
             justify-content: space-between;
@@ -492,15 +729,114 @@
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% else %}alert-success{% endif %}">
-                    <div>{{ message }}</div>
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-content">
+                        <span class="alert-icon">
+                            {% if 'error' in message.tags %}
+                                ❌
+                            {% elif 'warning' in message.tags %}
+                                ⚠️
+                            {% else %}
+                                ✅
+                            {% endif %}
+                        </span>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <form method="POST" enctype="multipart/form-data">
+        <!-- 🔄 MODO MIGRACIÓN TOGGLE -->
+        <div class="migration-toggle-section">
+            <div class="migration-toggle-header">
+                <div class="migration-toggle-icon">🔄</div>
+                <div class="migration-toggle-title">
+                    <h3>Modo Migración de Datos</h3>
+                    <p>Permite establecer fechas personalizadas y calcular el estado automáticamente</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="migration-mode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="migration-info">
+                <strong>ℹ️ ¿Cuándo usar el Modo Migración?</strong>
+                <ul>
+                    <li>✅ Para actualizar solicitudes históricas con fechas precisas del pasado</li>
+                    <li>✅ El estado se calculará automáticamente según las fechas ingresadas</li>
+                    <li>✅ Los campos se pre-cargan con las fechas actuales de la solicitud</li>
+                    <li>❌ No usar para edición normal de solicitudes en progreso</li>
+                </ul>
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="edit-form">
             {% csrf_token %}
+            
+            <!-- Campo oculto para modo migración -->
+            <input type="hidden" name="es_migracion" id="es_migracion" value="false">
+
+            <!-- 🔥 FECHAS PERSONALIZADAS (Modo Migración) -->
+            <div class="dates-section" id="dates-section">
+                <div class="dates-header">
+                    <h2>📅 Fechas Personalizadas (Modo Migración)</h2>
+                </div>
+                
+                <div class="dates-info">
+                    <p><strong>📌 Instrucciones:</strong></p>
+                    <p>1️⃣ Los campos están <strong>pre-cargados con las fechas actuales</strong> de la solicitud</p>
+                    <p>2️⃣ La <strong>Fecha de Recepción</strong> es obligatoria</p>
+                    <p>3️⃣ Las demás fechas son opcionales pero deben seguir el orden cronológico</p>
+                    <p>4️⃣ El <strong>estado se calculará automáticamente</strong> según las fechas que ingreses</p>
+                    <p>5️⃣ Ninguna fecha puede ser futura</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fecha_recepcion">
+                            📥 Fecha de Recepción <span class="required-mark">*</span>
+                        </label>
+                        <input type="datetime-local" 
+                               name="fecha_recepcion" 
+                               id="fecha_recepcion"
+                               value="{{ solicitud.fecha_recepcion|date:'Y-m-d\TH:i' }}"
+                               max="{{ ahora|date:'Y-m-d\TH:i' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_respuesta">💬 Fecha de Respuesta (opcional)</label>
+                        <input type="datetime-local" 
+                               name="fecha_respuesta" 
+                               id="fecha_respuesta"
+                               value="{% if solicitud.fecha_respuesta %}{{ solicitud.fecha_respuesta|date:'Y-m-d\TH:i' }}{% endif %}"
+                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                               placeholder="Dejar vacío si no aplica">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_atencion">🔄 Fecha de Atención (opcional)</label>
+                        <input type="datetime-local" 
+                               name="fecha_atencion" 
+                               id="fecha_atencion"
+                               value="{% if solicitud.fecha_atencion %}{{ solicitud.fecha_atencion|date:'Y-m-d\TH:i' }}{% endif %}"
+                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                               placeholder="Dejar vacío si no aplica">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_finalizacion">✅ Fecha de Finalización (opcional)</label>
+                        <input type="datetime-local" 
+                               name="fecha_finalizacion" 
+                               id="fecha_finalizacion"
+                               value="{% if solicitud.fecha_finalizacion %}{{ solicitud.fecha_finalizacion|date:'Y-m-d\TH:i' }}{% endif %}"
+                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
+                               placeholder="Dejar vacío si no aplica">
+                    </div>
+                </div>
+            </div>
 
             <!-- Información General -->
             <div class="section">
@@ -519,7 +855,7 @@
                         <input type="text" value="{{ solicitud.programa.area.nombre }}" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="numero_aprendices">Número de Aprendices</label>
+                        <label for="numero_aprendices">Trabajadores a Capacitar</label>
                         <input type="number" 
                                name="numero_aprendices" 
                                id="numero_aprendices" 
@@ -530,12 +866,12 @@
                 </div>
             </div>
 
-            <!-- Estado e Instructor -->
-            <div class="section">
-                <h2>⚙️ Estado e Instructor</h2>
+            <!-- 🔴 ESTADO (se oculta en modo migración) -->
+            <div class="section" id="estado-section">
+                <h2>⚙️ Estado de la Solicitud</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="estado">Estado *</label>
+                        <label for="estado">Estado <span class="required-mark">*</span></label>
                         <select name="estado" id="estado" required>
                             {% for value, label in ESTADO_CHOICES %}
                                 <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
@@ -543,7 +879,17 @@
                                 </option>
                             {% endfor %}
                         </select>
+                        <small style="color: #666; margin-top: 8px; display: block;">
+                            ℹ️ En modo migración, el estado se calcula automáticamente según las fechas
+                        </small>
                     </div>
+                </div>
+            </div>
+
+            <!-- 👨‍🏫 INSTRUCTOR (siempre visible) -->
+            <div class="section">
+                <h2>👨‍🏫 Asignación de Instructor</h2>
+                <div class="form-grid">
                     <div class="form-group">
                         <label for="instructor_asignado">Instructor Asignado</label>
                         <select name="instructor_asignado" id="instructor_asignado">
@@ -567,6 +913,9 @@
                                 {% endfor %}
                             </optgroup>
                         </select>
+                        <small style="color: #666; margin-top: 8px; display: block;">
+                            💡 Puedes asignar o cambiar el instructor en cualquier momento
+                        </small>
                     </div>
                 </div>
             </div>
@@ -582,7 +931,7 @@
                 </div>
             </div>
 
-            <!-- 🔥 DOCUMENTOS ACTUALES -->
+            <!-- DOCUMENTOS ACTUALES -->
             {% if documentos_actuales %}
             <div class="section">
                 <div class="documents-header">
@@ -634,7 +983,7 @@
             </div>
             {% endif %}
 
-            <!-- 🔥 AGREGAR NUEVOS DOCUMENTOS -->
+            <!-- AGREGAR NUEVOS DOCUMENTOS -->
             <div class="section">
                 <h2>➕ Agregar Nuevos Documentos</h2>
                 
@@ -678,6 +1027,53 @@
     </footer>
 
     <script>
+        // Auto-cerrar mensajes después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOutUp 0.4s ease-out';
+                    setTimeout(() => alert.remove(), 400);
+                }, 8000);
+            });
+        });
+
+        // Animación de salida
+        const alertStyle = document.createElement('style');
+        alertStyle.textContent = `
+            @keyframes slideOutUp {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(-20px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(alertStyle);
+
+        // 🔥 TOGGLE MODO MIGRACIÓN
+        const migrationToggle = document.getElementById('migration-mode-toggle');
+        const datesSection = document.getElementById('dates-section');
+        const estadoSection = document.getElementById('estado-section');
+        const esMigracionInput = document.getElementById('es_migracion');
+        
+        migrationToggle.addEventListener('change', function() {
+            if (this.checked) {
+                // ✅ ACTIVAR MODO MIGRACIÓN
+                datesSection.classList.add('active');  // Mostrar fechas personalizadas
+                estadoSection.style.display = 'none';   // Ocultar SOLO estado (instructor sigue visible)
+                esMigracionInput.value = 'true';
+            } else {
+                // ❌ DESACTIVAR MODO MIGRACIÓN (Modo Normal)
+                datesSection.classList.remove('active'); // Ocultar fechas personalizadas
+                estadoSection.style.display = 'block';   // Mostrar estado
+                esMigracionInput.value = 'false';
+            }
+        });
+        
         // Preview de archivos seleccionados
         document.getElementById('documentos_pdf').addEventListener('change', function(e) {
             const preview = document.getElementById('files-preview');

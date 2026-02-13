@@ -673,18 +673,6 @@
         </div>
         {% endif %}
 
-        <div class="action-buttons" style="justify-content: center; gap: 20px;">
-            <a href="{% url 'area_formacion:detalle_area' programa.area.id %}" class="btn btn-secondary">
-                📂 Ver Área: {{ programa.area.nombre }}
-            </a>
-            <a href="{% url 'programas:editar_programa' programa.id %}" class="btn btn-warning">
-                ✏️ Editar Programa
-            </a>
-            <a href="{% url 'programas:desactivar_programa' programa.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este programa?')">
-                🗑️ Desactivar Programa
-            </a>
-        </div>
-
         <br>
 
         <div class="stats-bar">
@@ -768,7 +756,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>👨‍🏫 Instructores Asignados</h2>
-                <a href="#" class="btn btn-secondary">
+                <a href="{% url 'instructores:listar_instructores' %}" class="btn btn-secondary">
                     ➕ Gestionar Instructores
                 </a>
             </div>
@@ -811,7 +799,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>📝 Solicitudes Recientes</h2>
-                <a href="#" class="btn btn-secondary">
+                <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary">
                     Ver Todas
                 </a>
             </div>

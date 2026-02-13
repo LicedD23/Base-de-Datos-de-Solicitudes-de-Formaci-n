@@ -204,49 +204,6 @@
             transform:scale(1.1);
         }
         
-        /* Sección de botones de acción */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-warning {
-            background: #fff3e0;
-            color: #ef6c00;
-            border: 2px solid #ef6c00;
-        }
-
-        .btn-warning:hover {
-            background: #ef6c00;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #ffebee;
-            color: #c62828;
-            border: 2px solid #c62828;
-        }
-
-        .btn-danger:hover {
-            background: #c62828;
-            color: white;
-        }
-
         /* Estadísticas principales */
         .stats-bar {
             display: grid;
@@ -612,17 +569,6 @@
             <span>›</span>
             <span>{{ empresa.nombre }}</span>
         </div>
-
-
-        <!-- Botones de acción -->
-        <div class="action-buttons" style="justify-content: center; gap: 20px;">
-            <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn btn-warning">
-                ✏️ Editar Empresa
-            </a>
-            <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn btn-danger">
-                ❌ Desactivar
-            </a>
-        </div>
         <br>
         <!-- Mensajes-->
         {% if messages%}
@@ -813,7 +759,7 @@
                             </td>
                             <td>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</td>
                             <td>
-                                <a href="#" class="btn-ver-solicitud">
+                                <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-ver-solicitud">
                                     👁️ Ver Detalle
                                 </a>
                             </td>
@@ -863,7 +809,7 @@
                             </td>
                             <td>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</td>
                             <td>
-                                <a href="#" class="btn-ver-solicitud">
+                                <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-ver-solicitud">
                                     👁️ Ver Detalle
                                 </a>
                             </td>

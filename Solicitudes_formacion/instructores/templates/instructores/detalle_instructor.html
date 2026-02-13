@@ -199,49 +199,6 @@
             background:rgba(255,255,255,0.4);
             transform:scale(1.1);
         }
-        .action-buttons{
-            display:flex;
-            gap:15px;
-            flex-wrap:wrap;
-            margin-bottom:25px;
-        }
-        
-        .btn{
-            padding:12px 25px;
-            border:none;
-            border-radius:8px;
-            font-size:0.95em;
-            font-weight:600;
-            cursor:pointer;
-            transition:all 0.3s ease;
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            text-decoration:none;
-        }
-        
-        .btn-warning{
-            background:#fff3e0;
-            color:#ef6c00;
-            border:2px solid #ef6c00;
-        }
-        .btn-warning:hover{
-            background:#ef6c00;
-            color:white;
-            transform:translateY(-2px);
-            box-shadow:0 4px 12px rgba(239,108,0,0.3);
-        }
-        .btn-danger{
-            background:#ffebee;
-            color:#c62828;
-            border:2px solid #c62828;
-        }
-        .btn-danger:hover{
-            background:#c62828;
-            color:white;
-            transform:translateY(-2px);
-            box-shadow:0 4px 12px rgba(198,40,40,0.3);
-        }
         
         .stats-bar{
             display:grid;
@@ -538,14 +495,6 @@
             {%endfor%}
         </div>
         {%endif%}
-        <div class="action-buttons" style="justify-content: center; gap: 20px;">
-            <a href="{% url 'instructores:editar_instructor' instructor.id %}" class="btn btn-warning">
-                ✏️ Editar Instructor
-            </a>
-            <a href="{% url 'instructores:desactivar_instructor' instructor.id %}" class="btn btn-danger">
-                🚫 Desactivar Instructor
-            </a>
-        </div>
 
         <div class="stats-bar">
             <div class="stat-card">
