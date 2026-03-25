@@ -4,8 +4,9 @@ from django.contrib import messages
 from .models import Instructor
 from programas.models import Programa
 from django.db.models import Count, Q
+from core.management.decorators import puede_ver_requerido, puede_editar_requerido
 
-
+@puede_ver_requerido
 def listar_instructores(request):
     """Vista para listar todos los instructores"""
     search = request.GET.get('search', '')
@@ -54,7 +55,7 @@ def listar_instructores(request):
     }
     return render(request, 'instructores/listar_instructores.html', context)
 
-
+@puede_ver_requerido
 def detalle_instructor(request, instructor_id):
     """Vista para el detalle de un instructor"""
     instructor = get_object_or_404(
@@ -86,6 +87,7 @@ def detalle_instructor(request, instructor_id):
     }
     return render(request, 'instructores/detalle_instructor.html',context)
 
+@puede_editar_requerido
 def crear_instructor(request):
     """Vista para crear un nuevo instructor"""
     if request.method == 'POST':
@@ -147,7 +149,8 @@ def crear_instructor(request):
         #GET request
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
     return render(request, 'instructores/crear_instructor.html',{'programas': programas})
-    
+
+@puede_editar_requerido 
 def editar_instructor(request, instructor_id):
     """Vista para editar un instructor existente"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
@@ -219,6 +222,7 @@ def editar_instructor(request, instructor_id):
     }
     return render(request, 'instructores/editar_instructor.html', context)
 
+@puede_editar_requerido
 def desactivar_instructor(request, instructor_id):
     """Vista para desactivar un instructor"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
@@ -263,7 +267,7 @@ def desactivar_instructor(request, instructor_id):
         'solicitudes_activas': solicitudes_activas,
     }
     return render(request, 'instructores/desactivar_instructor.html', context)
-    
+@puede_editar_requerido
 def eliminar_instructor(request, instructor_id):
     """Vista para eliminar permanentemente el  instructor"""  
     instructor = get_object_or_404(Instructor, id=instructor_id)

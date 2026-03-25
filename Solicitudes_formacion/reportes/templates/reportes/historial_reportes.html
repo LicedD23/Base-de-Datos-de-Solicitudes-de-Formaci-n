@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Reportes - SENA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green-900: #1b5e20;
+            --green-800: #2e7d32;
+            --green-700: #388e3c;
+            --green-100: #e8f5e9;
+            --green-50:  #f1f8e9;
+            --surface:   #ffffff;
+            --border:    #e0e0e0;
+            --text-main: #1a1a1a;
+            --text-muted:#666;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 8px 32px rgba(46,125,50,0.18);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, var(--green-100) 0%, var(--green-50) 100%);
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, var(--green-800) 0%, var(--green-900) 100%);
+            color: white;
+            padding: 32px 40px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            opacity: 0.80;
+            font-size: 0.95rem;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            background: var(--surface);
+            padding: 13px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .breadcrumb a  { color: var(--green-800); text-decoration: none; font-weight: 500; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { color: #bbb; }
+
+        /* ── Stats bar ── */
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .stat-card {
+            background: var(--surface);
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--green-800);
+            flex: 1 1 160px;
+            min-width: 140px;
+            max-width: 220px;
+        }
+        .stat-card h3 {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .stat-card .number {
+            color: var(--green-800);
+            font-size: 1.75rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        /* ── Filters ── */
+        .filters-section {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+        .filters-section h3 {
+            color: var(--green-800);
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            background: #fafafa;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--green-800);
+            background: white;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* ── Buttons ── */
+        .btn-filter {
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border: none;
+        }
+        .btn-filter.primary {
+            background: linear-gradient(135deg, var(--green-800) 0%, var(--green-900) 100%);
+            color: white;
+        }
+        .btn-filter.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+        }
+        .btn-filter.secondary {
+            background: white;
+            color: var(--text-muted);
+            border: 2px solid var(--border);
+        }
+        .btn-filter.secondary:hover {
+            border-color: var(--green-800);
+            color: var(--green-800);
+            transform: translateY(-2px);
+        }
+
+        /* ── Table card ── */
+        .log-table {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 28px;
+            overflow-x: auto;
+        }
+        .log-table h2 {
+            color: var(--green-800);
+            margin-bottom: 18px;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 880px;
+        }
+        th {
+            background: var(--green-800);
+            color: white;
+            padding: 13px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child  { border-radius: 0 8px 0 0; }
+        td {
+            padding: 11px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--green-50); }
+
+        /* ── Badges ── */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: inline-block;
+        }
+        .badge-solicitudes  { background: #e3f2fd; color: #1565c0; }
+        .badge-empresas     { background: #fff3e0; color: #e65100; }
+        .badge-programas    { background: #f3e5f5; color: #6a1b9a; }
+        .badge-instructores { background: #e8f5e9; color: #2e7d32; }
+        .badge-consolidado  { background: #ffebee; color: #c62828; }
+        .badge-pdf          { background: #ffcdd2; color: #c62828; }
+        .badge-excel        { background: #c8e6c9; color: #1b5e20; }
+
+        /* ── Pagination ── */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+        .pagination a,
+        .pagination span {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .pagination a {
+            background: white;
+            color: var(--green-800);
+            border: 2px solid var(--green-800);
+        }
+        .pagination a:hover {
+            background: var(--green-800);
+            color: white;
+        }
+        .pagination .current {
+            background: var(--green-800);
+            color: white;
+            border: 2px solid var(--green-800);
+        }
+        .pagination .disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border: 2px solid #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        /* ── Back button ── */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--green-800) 0%, var(--green-900) 100%);
+            color: white;
+            padding: 11px 24px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46,125,50,0.4);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+        }
+        .empty-state-icon { font-size: 3.5rem; margin-bottom: 16px; }
+        .empty-state h3   { font-size: 1.1rem; color: #888; margin-bottom: 6px; }
+
+        /* ── Footer ── */
+        footer {
+            background: linear-gradient(135deg, var(--green-900) 0%, var(--green-800) 100%);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: var(--radius-lg);
+            margin-top: 28px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .filters-grid { grid-template-columns: 1fr; }
+            .stats-bar    { flex-direction: row; }
+            .stat-card    { max-width: none; }
+            .log-table    { padding: 14px; }
+            .header       { padding: 22px 20px; }
+            .filter-actions { justify-content: stretch; flex-direction: column; }
+            .btn-filter   { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <h1>📊 Historial de Reportes Generados</h1>
+            <p>Registro de auditoría de reportes generados por usuarios del sistema</p>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'reportes:panel_reportes' %}">Panel de Reportes</a>
+            <span>›</span>
+            <span>Historial</span>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Total de Reportes</h3>
+                <div class="number">{{ stats.total }}</div>
+            </div>
+            {% for item in stats.por_tipo %}
+            <div class="stat-card">
+                <h3>{{ item.tipo|title }}</h3>
+                <div class="number">{{ item.count }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <h3>🔍 Filtrar Reportes</h3>
+            <form method="get">
+                <div class="filters-grid">
+
+                    <div class="filter-group">
+                        <label>Tipo de Reporte</label>
+                        <select name="tipo">
+                            <option value="">Todos los tipos</option>
+                            {% for codigo, nombre in tipos_reporte %}
+                            <option value="{{ codigo }}" {% if tipo_filter == codigo %}selected{% endif %}>
+                                {{ nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Formato</label>
+                        <select name="formato">
+                            <option value="">Todos los formatos</option>
+                            {% for codigo, nombre in formatos_reporte %}
+                            <option value="{{ codigo }}" {% if formato_filter == codigo %}selected{% endif %}>
+                                {{ nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% if es_administrador or es_coordinador %}
+                    <div class="filter-group">
+                        <label>Usuario</label>
+                        <select name="usuario">
+                            <option value="">Todos los usuarios</option>
+                            {% for usuario in usuarios_disponibles %}
+                            <option value="{{ usuario.generado_por__id }}"
+                                {% if usuario_filter == usuario.generado_por__id|stringformat:"s" %}selected{% endif %}>
+                                {{ usuario.generado_por__first_name }} {{ usuario.generado_por__last_name }}
+                                (@{{ usuario.generado_por__username }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="filter-group">
+                        <label>Periodo</label>
+                        <select name="rango">
+                            <option value="">Todas las fechas</option>
+                            <option value="hoy"          {% if rango_filter == 'hoy' %}selected{% endif %}>Hoy</option>
+                            <option value="ayer"         {% if rango_filter == 'ayer' %}selected{% endif %}>Ayer</option>
+                            <option value="esta_semana"  {% if rango_filter == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                            <option value="este_mes"     {% if rango_filter == 'este_mes' %}selected{% endif %}>Este mes</option>
+                            <option value="ultimos_30"   {% if rango_filter == 'ultimos_30' %}selected{% endif %}>Últimos 30 días</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Buscar Usuario</label>
+                        <input type="text" name="search" placeholder="Nombre o usuario..." value="{{ search }}">
+                    </div>
+
+                </div>
+
+                <div class="filter-actions">
+                    <a href="{% url 'reportes:historial_reportes' %}" class="btn-filter secondary">
+                        🔄 Limpiar Filtros
+                    </a>
+                    <button type="submit" class="btn-filter primary">
+                        🔍 Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla -->
+        <div class="log-table">
+            <h2>Reportes Generados — Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</h2>
+
+            {% if logs %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Formato</th>
+                        <th>Generado Por</th>
+                        <th>Fecha / Hora</th>
+                        <th>Registros</th>
+                        <th>Tiempo</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td><strong>#{{ log.id }}</strong></td>
+                        <td>
+                            <span class="badge badge-{{ log.tipo }}">
+                                {{ log.get_tipo_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ log.formato }}">
+                                {% if log.formato == 'pdf' %}📄{% else %}📊{% endif %}
+                                {{ log.formato|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>{{ log.generado_por.get_full_name|default:log.generado_por.username }}</strong><br>
+                            <small style="color:#999;">@{{ log.generado_por.username }}</small>
+                        </td>
+                        <td>{{ log.fecha_generacion|date:"d/m/Y H:i:s" }}</td>
+                        <td><strong>{{ log.total_registros }}</strong></td>
+                        <td>
+                            {% if log.tiempo_generacion < 1 %}
+                                {{ log.tiempo_generacion|floatformat:3 }}ms
+                            {% else %}
+                                {{ log.tiempo_generacion|floatformat:2 }}s
+                            {% endif %}
+                        </td>
+                        <td><small>{{ log.ip_address }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Paginación -->
+            {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if formato_filter %}&formato={{ formato_filter }}{% endif %}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if rango_filter %}&rango={{ rango_filter }}{% endif %}{% if search %}&search={{ search }}{% endif %}">« Primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if formato_filter %}&formato={{ formato_filter }}{% endif %}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if rango_filter %}&rango={{ rango_filter }}{% endif %}{% if search %}&search={{ search }}{% endif %}">‹ Anterior</a>
+                {% else %}
+                    <span class="disabled">« Primera</span>
+                    <span class="disabled">‹ Anterior</span>
+                {% endif %}
+
+                <span class="current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if formato_filter %}&formato={{ formato_filter }}{% endif %}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if rango_filter %}&rango={{ rango_filter }}{% endif %}{% if search %}&search={{ search }}{% endif %}">Siguiente ›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if formato_filter %}&formato={{ formato_filter }}{% endif %}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if rango_filter %}&rango={{ rango_filter }}{% endif %}{% if search %}&search={{ search }}{% endif %}">Última »</a>
+                {% else %}
+                    <span class="disabled">Siguiente ›</span>
+                    <span class="disabled">Última »</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>No se encontraron reportes</h3>
+                <p>No hay reportes que coincidan con los filtros aplicados.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align:center; margin-bottom: 10px;">
+            <a href="{% url 'reportes:panel_reportes' %}" class="btn-back">
+                ← Volver al Panel de Reportes
+            </a>
+        </div>
+
+        <footer>
+            <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+        </footer>
+    </div>
+
+    {% include 'core/accessibility.html' %}
+</body>
+</html>

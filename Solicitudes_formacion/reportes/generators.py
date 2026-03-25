@@ -698,7 +698,7 @@ class ExcelReportGenerator:
             adjusted_width = max(12, min(max_length + 4,60))
             ws.column_dimensions[column_letter].width = adjusted_width
     
-    def generate_solicitudes_report(self, solicitudes):
+    def generate_solicitudes_report(self, solicitudes, filtros=None):
         """Genera reporte de solicitudes en Excel"""
         wb = Workbook()
         ws = wb.active
@@ -715,6 +715,11 @@ class ExcelReportGenerator:
         ws['A2'].font = Font(italic=True, size=10)
         ws.merge_cells('A2:I2')
         
+        if filtros:
+            ws['A3'] = f'Filtros aplicados: {filtros}'
+            ws['A3'].font = Font(italic=True, size=10, color="558b2f")
+            ws.merge_cells('A3:I3')
+            
         # Estadísticas
         ws['A4'] = 'RESUMEN ESTADÍSTICO'
         ws['A4'].font = Font(bold=True, size=12)

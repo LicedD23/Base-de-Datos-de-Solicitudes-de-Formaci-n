@@ -6,7 +6,7 @@ class SolicitudAdmin(admin.ModelAdmin):
     list_display = ['empresa', 'programa', 'fecha_recepcion', 'instructor_asignado', 'estado']
     list_filter = ['estado', 'programa', 'fecha_recepcion']
     search_fields = ['empresa__nombre', 'observaciones']
-    date_hierarchy = 'fecha_recepcion'
+    #date_hierarchy = 'fecha_recepcion'
     
     fieldsets = (
         ('Informacion Basica', {

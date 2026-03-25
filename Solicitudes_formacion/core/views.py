@@ -24,6 +24,7 @@ from programas.models import Programa
 from empresas.models import Empresa
 from instructores.models import Instructor
 from solicitudes.models import Solicitud
+from core.management.decorators import admin_requerido
 
 # Intentamos importar EstadoSolicitud si existe (TextChoices). Si no, lo manejamos abajo.
 try:
@@ -32,54 +33,84 @@ except Exception:
     EstadoSolicitud = None
 
 
-@staff_member_required
+@login_required
 def dashboard(request):
-    """Dashboard principal con métricas generales (optimizado)."""
-    cache_key = 'core_dashboard_metrics'
-    context = cache.get(cache_key)
-    if context is None:
-        # métricas agregadas
-        total_areas = Area.objects.count()
-        total_programas = Programa.objects.count()
-        total_empresas = Empresa.objects.count()
-        total_instructores = Instructor.objects.filter(activo=True).count()
-        total_solicitudes = Solicitud.objects.count()
-
-        # usar la constante EstadoSolicitud si está definida, si no usar la cadena
-        if EstadoSolicitud is not None:
-            solicitudes_pendientes = Solicitud.objects.filter(estado=EstadoSolicitud.RECIBIDA).count()
-        else:
-            solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
-
-        ultimas = list(
-            Solicitud.objects
-                .select_related('empresa', 'programa', 'instructor_asignado')
-                .order_by('-fecha_recepcion')[:5]
-        )
-
-        # preparar lista de métricas para render en plantilla (incluye iconos y color)
-        metrics = [
-            (total_areas, "Áreas", "bi-diagram-3", "primary"),
-            (total_programas, "Programas", "bi-book", "success"),
-            (total_empresas, "Empresas", "bi-building", "warning"),
-            (total_instructores, "Instructores Activos", "bi-person-badge", "info"),
-            (total_solicitudes, "Solicitudes", "bi-envelope", "danger"),
-            (solicitudes_pendientes, "Pendientes", "bi-hourglass-split", "secondary"),
-        ]
-
-        context = {
-            'total_areas': total_areas,
-            'total_programas': total_programas,
-            'total_empresas': total_empresas,
-            'total_instructores': total_instructores,
-            'total_solicitudes': total_solicitudes,
-            'solicitudes_pendientes': solicitudes_pendientes,
-            'ultimas_solicitudes': ultimas,
-            'metrics': metrics,
-            'now': timezone.now(),
-        }
-        cache.set(cache_key, context, 60)
-
+    """Dashboard adaptado según el rol del usuario"""
+    
+    user = request.user
+    
+    # ========================================
+    # DETECTAR ROL DEL USUARIO
+    # ========================================
+    es_administrador = user.is_superuser or user.groups.filter(name='Administrador').exists()
+    es_asistente = user.groups.filter(name='Asistente').exists()
+    es_coordinador = user.groups.filter(name='Coordinador').exists()
+    
+    # ========================================
+    # MÉTRICAS SEGÚN ROL
+    # ========================================
+    
+    # Métricas base (TODOS)
+    total_solicitudes = Solicitud.objects.count()
+    total_empresas = Empresa.objects.count()
+    total_programas = Programa.objects.count()
+    total_instructores = Instructor.objects.filter(activo=True).count()
+    
+    # Variables adicionales
+    solicitudes_pendientes = None
+    solicitudes_finalizadas = None
+    ultimas_solicitudes = []
+    
+    # --- ADMINISTRADOR Y ASISTENTE: Ven TODO ---
+    if es_administrador or es_asistente:
+        solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
+        solicitudes_finalizadas = Solicitud.objects.filter(estado='FINALIZADA').count()
+        
+        # Últimas 15 solicitudes
+        ultimas_solicitudes = Solicitud.objects.select_related(
+            'empresa', 'programa', 'instructor_asignado'
+        ).order_by('-fecha_recepcion')[:15]
+    
+    # --- COORDINADOR: Solo lectura básica ---
+    elif es_coordinador:
+        solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
+        # NO ve finalizadas
+        
+        # Solo 10 solicitudes
+        ultimas_solicitudes = Solicitud.objects.select_related(
+            'empresa', 'programa', 'instructor_asignado'
+        ).order_by('-fecha_recepcion')[:10]
+    
+    # ========================================
+    # CONSTRUIR MÉTRICAS PARA EL TEMPLATE
+    # ========================================
+    
+    metrics = [
+        (total_solicitudes, 'Total Solicitudes', 'bi-file-text-fill', 'primary'),
+        (total_empresas, 'Empresas Registradas', 'bi-building-fill', 'info'),
+        (total_programas, 'Programas Activos', 'bi-book-fill', 'warning'),
+        (total_instructores, 'Instructores Activos', 'bi-person-badge-fill', 'secondary'),
+    ]
+    
+    if solicitudes_pendientes is not None:
+        metrics.append((solicitudes_pendientes, 'Pendientes', 'bi-clock-history', 'danger'))
+    
+    if solicitudes_finalizadas is not None:
+        metrics.append((solicitudes_finalizadas, 'Finalizadas', 'bi-check-circle-fill', 'success'))
+    
+    # ========================================
+    # CONTEXTO
+    # ========================================
+    
+    context = {
+        'metrics': metrics,
+        'ultimas_solicitudes': ultimas_solicitudes,
+        'es_administrador': es_administrador,
+        'es_coordinador': es_coordinador,
+        'es_asistente': es_asistente,
+        'now': timezone.now(),
+    }
+    
     return render(request, 'core/dashboard.html', context)
 
 
@@ -112,45 +143,48 @@ def login_view(request):
     
     return render(request, 'core/login.html')
 
-#REGISTRO DE ADMINISTRADORES
-@user_passes_test(lambda u: u.is_superuser)
-def register_admin_view(request):
-    """Vista para crear usuarios administradores o superusuarios"""
+from django.contrib.auth.models import Group
+
+@admin_requerido
+def register_user_view(request):
+    """Vista para crear usuarios con diferentes roles (Administrador, Asistente, Coordinador)"""
     
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
         password2 = request.POST.get('password2', '')
-        is_superuser = request.POST.get('is_superuser') == 'on'
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
+        rol = request.POST.get('rol', '')
         
         # Validaciones
-        if not all([username, email, password, password2]):
-            messages.error(request, 'Usuario, correo y contraseñas son obligatorios')
-            return render(request, 'core/register_admin.html')
+        if not all([username, email, password, password2, rol]):
+            messages.error(request, 'Todos los campos son obligatorios')
+            return render(request, 'core/register_user.html')
         
         if password != password2:
             messages.error(request, 'Las contraseñas no coinciden')
-            return render(request, 'core/register_admin.html')
+            return render(request, 'core/register_user.html')
         
         if len(password) < 8:
             messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
-            return render(request, 'core/register_admin.html')
+            return render(request, 'core/register_user.html')
         
-        # Validar que el username no exista
+        if rol not in ['Administrador', 'Asistente', 'Coordinador']:
+            messages.error(request, 'Rol inválido')
+            return render(request, 'core/register_user.html')
+        
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'El nombre de usuario ya existe')
-            return render(request, 'core/register_admin.html')
+            messages.error(request, f'El nombre de usuario "{username}" ya existe')
+            return render(request, 'core/register_user.html')
         
-        # Validar email duplicado
         if User.objects.filter(email=email).exists():
-            messages.error(request, 'El correo electrónico ya está registrado')
-            return render(request, 'core/register_admin.html')
+            messages.error(request, f'El correo "{email}" ya está registrado')
+            return render(request, 'core/register_user.html')
         
         try:
-            # Crear el usuario
+            # Crear usuario
             user = User.objects.create_user(
                 username=username,
                 email=email,
@@ -158,23 +192,34 @@ def register_admin_view(request):
                 first_name=first_name,
                 last_name=last_name
             )
-            user.is_staff = True
-            user.is_superuser = is_superuser
+            
+            # Configurar según rol
+            if rol == 'Administrador':
+                user.is_staff = True
+            else:
+                user.is_staff = False
+            
+            user.is_superuser = False
             user.save()
             
-            tipo = "superusuario" if is_superuser else "administrador"
-            messages.success(request, f'✅ {tipo.capitalize()} "{username}" creado exitosamente.')
+            # Asignar grupo
+            try:
+                grupo = Group.objects.get(name=rol)
+                user.groups.add(grupo)
+                user.save()
+            except Group.DoesNotExist:
+                user.delete()
+                messages.error(request, f'El rol "{rol}" no existe. Ejecuta "python manage.py crear_roles"')
+                return render(request, 'core/register_user.html')
+            
+            messages.success(request, f'✅ Usuario "{username}" creado con rol "{rol}"')
             return redirect('core:dashboard')
         
         except Exception as e:
-            messages.error(request, f'Error inesperado: {str(e)}')
-            return render(request, 'core/register_admin.html')
+            messages.error(request, f'Error: {str(e)}')
+            return render(request, 'core/register_user.html')
     
-    # Contexto para el template
-    context = {
-        'current_user': request.user,
-    }
-    return render(request, 'core/register_admin.html', context)
+    return render(request, 'core/register_user.html')
         
 def logout_view(request):
     """vista para cerrar sesion"""

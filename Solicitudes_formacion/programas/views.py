@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Programa, Area
 from django.db.models import Count, Q
+from core.management.decorators import puede_ver_requerido, puede_editar_requerido
 
 
+@puede_ver_requerido
 def listar_programas(request):
     """vistas para listar todos los programas"""
     # Obtener parametros de busqueda y filtros
@@ -57,6 +59,7 @@ def listar_programas(request):
     }
     return render(request, 'programas/listar_programas.html', context)
 
+@puede_ver_requerido
 def detalle_programa(request, programa_id):
     """Vista para el detalle de un programa"""
     programa = get_object_or_404(
@@ -80,7 +83,8 @@ def detalle_programa(request, programa_id):
     }
     return render(request, 'programas/detalle_programa.html', context)
 
-    
+
+@puede_editar_requerido    
 def crear_programa(request):
     """Vista para crear un nuevo programa"""
     areas = Area.objects.filter(activo=True).order_by('nombre')
@@ -129,7 +133,8 @@ def crear_programa(request):
             messages.error(request, f'Error al crear el programa: {str(e)}')
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
-            
+
+@puede_editar_requerido            
 def editar_programa(request, programa_id):
     """vista para editar un programa existente"""
     programa = get_object_or_404(Programa, id=programa_id)
@@ -187,7 +192,7 @@ def editar_programa(request, programa_id):
         'areas': areas
     })
 
-
+@puede_editar_requerido
 def desactivar_programa(request, programa_id):
     """Vista para desactivar un programa"""
     programa = get_object_or_404(Programa, id=programa_id)
@@ -216,6 +221,7 @@ def desactivar_programa(request, programa_id):
     }
     return render(request, 'programas/desactivar_programa.html', context)
 
+@puede_editar_requerido
 def eliminar_programa(request, programa_id):
     """Vista para eliminar permanentemente un programa"""
     programa = get_object_or_404(Programa, id=programa_id)

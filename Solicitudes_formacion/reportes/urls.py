@@ -11,6 +11,7 @@ urlpatterns = [
     # Panel principal
     path('', views.panel_reportes, name='panel_reportes'),
     
+    path('historial/', views.historial_reportes, name='historial_reportes'),
     # Reportes de Solicitudes
     path('solicitudes/pdf/', views.generar_reporte_solicitudes_pdf, name='reporte_solicitudes_pdf'),
     path('solicitudes/excel/', views.generar_reporte_solicitudes_excel, name='reporte_solicitudes_excel'),

@@ -489,7 +489,11 @@
             gap:10px;
             margin-top: 15px;
         }
-
+        .btn-view:only-child {
+            grid-column: 1 / -1;
+            width: 150px;
+            margin:0 auto;
+        }
         .btn-action {
             flex: 1;
             padding: 10px;
@@ -669,10 +673,12 @@
                     <button type="submit" class="btn-filter">
                         🔍 Filtrar
                     </button>
-
+                    
+                    {% if es_administrador or es_asistente %}
                     <a href="{% url 'programas:crear_programa' %}" class="btn-new">
                         ➕ Nuevo Programa
                     </a>
+                    {% endif %}
                 </div>
 
                 <!-- Enlace para limpiar (opcional, debajo de los filtros) -->
@@ -738,11 +744,13 @@
                 <!-- BOTONES DE ACCIÓN -->
                 <div class="programa-actions">
                     <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    {% if es_administrador or es_asistente %}
                     <a href="{% url 'programas:editar_programa' programa.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'programas:desactivar_programa' programa.id %}" 
                         class="btn-action btn-delete" 
                         onclick="return confirm('¿Estás seguro de desactivar este programa?')">🚫 Desactivar</a>
                     <a href="{% url 'programas:eliminar_programa' programa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente este programa?')">🗑️ Eliminar</a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -760,7 +768,9 @@
                     Aún no hay programas registrados en el sistema
                 {% endif %}
             </p>
+            {% if es_administrador or es_asistente %}
             <a href="{% url 'programas:crear_programa' %}" class="btn-new">➕ Crear Primer Programa</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

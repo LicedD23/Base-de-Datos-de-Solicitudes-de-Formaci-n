@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Backups - SENA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,10 +14,7 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
 
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -29,51 +22,27 @@
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 8px 20px rgba(46,125,50,0.3);
         }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
+        .header p  { font-size: 1.1em; opacity: 0.95; }
 
         .breadcrumb {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
         }
+        .breadcrumb a { color: #2e7d32; text-decoration: none; transition: color 0.3s; }
+        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb span { color: #999; }
 
-        .breadcrumb a {
-            color: #2e7d32;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-
-        .breadcrumb span {
-            color: #999;
-        }
-
-        .messages {
-            margin-bottom: 20px;
-        }
-
+        .messages { margin-bottom: 20px; }
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -82,554 +51,317 @@
             align-items: center;
             gap: 10px;
             font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+        .alert-success { background: #c8e6c9; color: #1b5e20; border-left: 4px solid #2e7d32; }
+        .alert-error   { background: #ffcdd2; color: #c62828; border-left: 4px solid #d32f2f; }
+        .alert-warning { background: #fff3e0; color: #e65100; border-left: 4px solid #ef6c00; }
+        .alert-info    { background: #e1f5fe; color: #01579b; border-left: 4px solid #0288d1; }
 
-        .alert-success {
-            background: #c8e6c9;
-            color: #1b5e20;
-            border-left: 4px solid #2e7d32;
-        }
-
-        .alert-error {
-            background: #ffcdd2;
-            color: #c62828;
-            border-left: 4px solid #d32f2f;
-        }
-
-        .alert-warning {
-            background: #fff3e0;
-            color: #e65100;
-            border-left: 4px solid #ef6c00;
-        }
-
-        .alert-info {
-            background: #e1f5fe;
-            color: #01579b;
-            border-left: 4px solid #0288d1;
-        }
-
-        /* Sección de filtros - MEJORADA */
+        /* Filtros */
         .filters-section {
             background: white;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
-
-        .filters-section h3 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .filters-container {
-            display: flex;
-            align-items: flex-end;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filters-grid {
-            display: flex;
-            gap: 15px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        .filters-section h3 { color: #2e7d32; margin-bottom: 20px; font-size: 1.2em; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        .filters-container  { display: flex; align-items: flex-end; gap: 15px; flex-wrap: wrap; }
+        .filters-grid       { display: flex; gap: 15px; flex: 1; min-width: 0; }
+        .filter-group       { flex: 1; min-width: 200px; }
+        .filter-group label { display: block; font-size: 0.85em; color: #666; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .filter-group input,
-        .filter-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 0.95em;
-            font-family: 'Segoe UI', sans-serif;
-            transition: all 0.3s ease;
-            background: white;
-            height: 48px;
-        }
-
+        .filter-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.95em; font-family: 'Segoe UI', sans-serif; transition: all 0.3s; background: white; height: 48px; }
         .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
+        .filter-group select:focus { outline: none; border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+        .filter-actions { display: flex; gap: 10px; flex-shrink: 0; }
+        .btn-filter { padding: 12px 25px; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-family: 'Segoe UI', sans-serif; border: none; height: 48px; white-space: nowrap; }
+        .btn-filter.primary   { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
+        .btn-filter.secondary { background: white; color: #666; border: 2px solid #e0e0e0; }
+        .btn-filter:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-filter.primary:hover { box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
 
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            flex-shrink: 0;
-        }
+        /* Controls */
+        .controls-section { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .actions-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
 
-        .btn-filter {
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 0.95em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            border: none;
-            height: 48px;
-            white-space: nowrap;
-        }
+        .btn { padding: 12px 25px; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
+        .btn-danger  { background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); color: white; box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
+        .btn-danger:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(211,47,47,0.4); }
+        .btn-cancel  { background: #e0e0e0; color: #333; }
+        .btn-cancel:hover  { background: #bdbdbd; }
 
-        .btn-filter.primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-        }
+        /* Stats */
+        .stats-bar { display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card  { flex: 1; min-width: 200px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 4px solid #2e7d32; }
+        .stat-card h3      { color: #666; font-size: 0.9em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card .number { color: #2e7d32; font-size: 2em; font-weight: 700; }
 
-        .btn-filter.secondary {
-            background: white;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
+        /* DB info */
+        .db-info-section { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 4px solid #2e7d32; }
+        .db-info-section h2 { color: #2e7d32; font-size: 1.5em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .db-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 15px; }
+        .db-info-item { display: flex; align-items: flex-start; gap: 10px; color: #666; font-size: 0.95em; background: #f5f5f5; padding: 12px 15px; border-radius: 8px; overflow: hidden; min-width: 0; }
+        .db-info-item .info-icon { flex-shrink: 0; font-size: 1.1em; min-width: 20px; }
+        .db-info-item strong { color: #333; min-width: 100px; flex-shrink: 0; }
+        .db-info-item > span:last-child { word-break: break-all; overflow-wrap: break-word; flex: 1; min-width: 0; }
 
-        .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-filter.primary:hover {
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
-        }
-
-        .controls-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .actions-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
-        }
-
-        .stats-bar {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #2e7d32;
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-card .number {
-            color: #2e7d32;
-            font-size: 2em;
-            font-weight: 700;
-        }
-
-        .db-info-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border-top: 4px solid #2e7d32;
-        }
-
-        .db-info-section h2 {
-            color: #2e7d32;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .db-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .db-info-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            color: #666;
-            font-size: 0.95em;
-            background: #f5f5f5;
-            padding: 12px 15px;
-            border-radius: 8px;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        .db-info-item .info-icon {
-            flex-shrink: 0;
-            font-size: 1.1em;
-            min-width: 20px;
-        }
-
-        .db-info-item strong {
-            color: #333;
-            min-width: 100px;
-            flex-shrink: 0;
-        }
-
-        .db-info-item > span:last-child {
-            word-break: break-all;
-            overflow-wrap: break-word;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .backups-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
+        /* Backup cards */
+        .backups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px,1fr)); gap: 25px; margin-bottom: 30px; }
         .backup-card {
             background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
             border-top: 4px solid #2e7d32;
             position: relative;
             overflow: hidden;
         }
+        .backup-card::before { content:""; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg,#2e7d32,#66bb6a); }
+        .backup-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(46,125,50,0.2); }
+        .backup-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .backup-title  { font-size: 1.2em; color: #2e7d32; font-weight: 700; margin-bottom: 5px; flex: 1; word-break: break-all; }
+        .backup-icon   { font-size: 2.5em; opacity: 0.2; }
+        .backup-info   { margin-bottom: 15px; }
+        .info-item     { display: flex; align-items: center; gap: 10px; color: #666; font-size: 0.95em; margin-bottom: 8px; padding: 8px 0; }
+        .info-item strong { color: #333; min-width: 90px; }
+        .info-icon     { font-size: 1.1em; min-width: 20px; }
+        .backup-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-action { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; text-decoration: none; display: block; }
+        .btn-download { background: #e8f5e9; color: #2e7d32; }
+        .btn-download:hover { background: #2e7d32; color: white; }
+        .btn-restore  { background: #fff3e0; color: #ef6c00; }
+        .btn-restore:hover  { background: #ef6c00; color: white; }
+        .btn-delete   { background: #ffebee; color: #c62828; }
+        .btn-delete:hover   { background: #c62828; color: white; }
 
-        .backup-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%);
-        }
+        /* Empty state */
+        .empty-state { background: white; padding: 60px 40px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .empty-state-icon { font-size: 5em; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state h3 { color: #666; font-size: 1.5em; margin-bottom: 10px; }
+        .empty-state p  { color: #999; margin-bottom: 20px; }
 
-        .backup-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
-        }
+        /* ═══════════════════════════════════════════════════════════
+           MODALES PERSONALIZADOS — reemplazo de confirm() y alert()
+           ═══════════════════════════════════════════════════════════ */
 
-        .backup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .backup-title {
-            font-size: 1.2em;
-            color: #2e7d32;
-            font-weight: 700;
-            margin-bottom: 5px;
-            flex: 1;
-            word-break: break-all;
-        }
-
-        .backup-icon {
-            font-size: 2.5em;
-            opacity: 0.2;
-        }
-
-        .backup-info {
-            margin-bottom: 15px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #666;
-            font-size: 0.95em;
-            margin-bottom: 8px;
-            padding: 8px 0;
-        }
-
-        .info-item strong {
-            color: #333;
-            min-width: 90px;
-        }
-
-        .info-icon {
-            font-size: 1.1em;
-            min-width: 20px;
-        }
-
-        .backup-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-        }
-
-        .btn-download {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .btn-download:hover {
-            background: #2e7d32;
-            color: white;
-        }
-
-        .btn-restore {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-
-        .btn-restore:hover {
-            background: #ef6c00;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .btn-delete:hover {
-            background: #c62828;
-            color: white;
-        }
-
-        .empty-state {
-            background: white;
-            padding: 60px 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .empty-state-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            color: #666;
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #999;
-            margin-bottom: 20px;
-        }
-
-        .confirm-modal {
+        /* Fondo oscuro compartido */
+        .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            inset: 0;
+            background: rgba(0,0,0,0.50);
+            backdrop-filter: blur(4px);
             z-index: 1000;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
+        .modal-overlay.open { display: flex; }
 
-        .confirm-modal.active {
-            display: flex;
-        }
-
-        .modal-content {
+        /* Contenedor base de todos los modales */
+        .sena-modal {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
+            border-radius: 20px;
             width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.88) translateY(-20px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);     opacity: 1; }
         }
 
-        .modal-content h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .modal-content p {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .modal-actions {
+        /* Header del modal — color varía por tipo */
+        .sena-modal-header {
+            padding: 26px 32px 20px;
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .btn-cancel {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-cancel:hover {
-            background: #bdbdbd;
-        }
-
-        footer {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            align-items: center;
+            gap: 14px;
             color: white;
-            text-align: center;
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+        }
+        .sena-modal-header.green  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        .sena-modal-header.orange { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+        .sena-modal-header.red    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); }
+
+        .sena-modal-header-icon { font-size: 2em; flex-shrink: 0; }
+        .sena-modal-header h3   { font-size: 1.25em; font-weight: 700; }
+
+        /* Cuerpo del modal */
+        .sena-modal-body {
+            padding: 24px 32px;
+        }
+        .sena-modal-body p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.97em;
+            margin-bottom: 12px;
+        }
+        .sena-modal-body p:last-child { margin-bottom: 0; }
+
+        /* Nombre del archivo destacado */
+        .modal-filename {
+            background: #f5f5f5;
+            border-left: 3px solid #2e7d32;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-weight: 700;
+            color: #1b5e20;
+            font-size: 0.92em;
+            word-break: break-all;
+            margin: 10px 0 0;
         }
 
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
+        /* Lista de consecuencias */
+        .modal-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0;
         }
+        .modal-list li {
+            padding: 7px 0;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+            font-size: 0.93em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-list li:last-child { border-bottom: none; }
+
+        /* Pie del modal con botones */
+        .sena-modal-footer {
+            padding: 16px 32px 26px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Botones del modal */
+        .modal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-btn-cancel { background: #eeeeee; color: #555; }
+        .modal-btn-cancel:hover { background: #e0e0e0; }
+
+        .modal-btn-orange { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); color: white; box-shadow: 0 4px 14px rgba(239,108,0,0.35); }
+        .modal-btn-orange:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,108,0,0.4); }
+
+        .modal-btn-red    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); color: white; box-shadow: 0 4px 14px rgba(198,40,40,0.35); }
+        .modal-btn-red:hover    { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(198,40,40,0.4); }
+
+        .modal-btn-green  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 14px rgba(46,125,50,0.35); }
+        .modal-btn-green:hover  { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+
+        /* Footer */
+        footer { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 20px; border-radius: 16px; margin-top: 30px; box-shadow: 0 -4px 20px rgba(27,94,32,0.2); }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .actions-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .backups-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-            }
-
-            .filters-container {
-                flex-direction: column;
-            }
-
-            .filters-grid {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .filter-group {
-                min-width: 100%;
-            }
-
-            .filter-actions {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .btn-filter {
-                width: 100%;
-                justify-content: center;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
+            .header h1 { font-size: 1.8em; }
+            .actions-row { flex-direction: column; align-items: stretch; }
+            .backups-grid { grid-template-columns: 1fr; }
+            .stats-bar { flex-direction: column; }
+            .filters-container { flex-direction: column; }
+            .filters-grid { flex-direction: column; width: 100%; }
+            .filter-group { min-width: 100%; }
+            .filter-actions { width: 100%; flex-direction: column; }
+            .btn-filter { width: 100%; justify-content: center; }
+            footer { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ══ MODAL: RESTAURAR ══════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="overlayRestore">
+        <div class="sena-modal">
+            <div class="sena-modal-header orange">
+                <span class="sena-modal-header-icon">🔄</span>
+                <h3>Confirmar Restauración</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p>¿Estás seguro de que deseas restaurar este backup?</p>
+                <ul class="modal-list">
+                    <li>💾 Se creará un backup de seguridad automático</li>
+                    <li>⚠️ La base de datos actual será reemplazada</li>
+                    <li>🔁 Se requiere reiniciar el servidor</li>
+                </ul>
+                <div class="modal-filename" id="restoreFileName">—</div>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('overlayRestore')">Cancelar</button>
+                <form id="restoreForm" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-btn modal-btn-orange">🔄 Sí, Restaurar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ MODAL: ELIMINAR BACKUP ════════════════════════════════════════ -->
+    <div class="modal-overlay" id="overlayDelete">
+        <div class="sena-modal">
+            <div class="sena-modal-header red">
+                <span class="sena-modal-header-icon">🗑️</span>
+                <h3>Confirmar Eliminación</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p>¿Estás seguro de que deseas eliminar este backup?</p>
+                <ul class="modal-list">
+                    <li>❌ Esta acción <strong>no se puede deshacer</strong></li>
+                    <li>📂 El archivo será eliminado permanentemente</li>
+                </ul>
+                <div class="modal-filename" id="deleteFileName">—</div>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('overlayDelete')">Cancelar</button>
+                <form id="deleteForm" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-btn modal-btn-red">🗑️ Sí, Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ MODAL: LIMPIAR ANTIGUOS ═══════════════════════════════════════ -->
+    <div class="modal-overlay" id="overlayLimpiar">
+        <div class="sena-modal">
+            <div class="sena-modal-header red">
+                <span class="sena-modal-header-icon">🧹</span>
+                <h3>Limpiar Backups Antiguos</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p>¿Confirmas la limpieza de backups antiguos?</p>
+                <ul class="modal-list">
+                    <li>✅ Se conservarán los <strong>últimos 10 backups</strong></li>
+                    <li>❌ Los backups más antiguos serán eliminados</li>
+                    <li>⚠️ Esta acción <strong>no se puede deshacer</strong></li>
+                </ul>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('overlayLimpiar')">Cancelar</button>
+                <form id="limpiarForm" method="post" action="{% url 'backups:limpiar_backups' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-btn modal-btn-red">🧹 Sí, Limpiar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+
     <div class="container">
         <div class="header">
             <h1>💾 Panel de Backups</h1>
@@ -642,18 +374,15 @@
             <span>Backups</span>
         </div>
 
-        <!-- Mensajes -->
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- Sección de Filtros MEJORADA -->
+        <!-- Filtros -->
         <div class="filters-section">
             <h3>🔍 Filtros de Búsqueda</h3>
             <form method="get" id="filtrosForm">
@@ -661,33 +390,29 @@
                     <div class="filters-grid">
                         <div class="filter-group">
                             <label>Nombre del Backup</label>
-                            <input type="text" name="nombre" id="filtro_nombre" 
-                                    value="{{ nombre_filtro }}" 
-                                    placeholder="Ej: backup_20250101">
+                            <input type="text" name="nombre" id="filtro_nombre"
+                                   value="{{ nombre_filtro }}"
+                                   placeholder="Ej: backup_20250101">
                         </div>
                         <div class="filter-group">
                             <label>📅 Período</label>
                             <select name="rango_fecha" id="filtro_rango_fecha">
                                 <option value="">Todas las fechas</option>
-                                <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
-                                <option value="ayer" {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
-                                <option value="esta_semana" {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
-                                <option value="semana_pasada" {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
-                                <option value="este_mes" {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
-                                <option value="mes_pasado" {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                                <option value="hoy"            {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                                <option value="ayer"           {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                                <option value="esta_semana"    {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                                <option value="semana_pasada"  {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                                <option value="este_mes"       {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                                <option value="mes_pasado"     {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
                                 <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
-                                <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
-                                <option value="este_año" {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                                <option value="ultimos_30_dias"{% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                                <option value="este_año"       {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
                             </select>
                         </div>
                     </div>
                     <div class="filter-actions">
-                        <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">
-                            🔄 Limpiar
-                        </button>
-                        <button type="submit" class="btn-filter primary">
-                            🔍 Buscar
-                        </button>
+                        <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">🔄 Limpiar</button>
+                        <button type="submit"  class="btn-filter primary">🔍 Buscar</button>
                     </div>
                 </div>
             </form>
@@ -696,19 +421,16 @@
         <!-- Controles -->
         <div class="controls-section">
             <div class="actions-row">
-                <div style="display: flex; gap: 10px;">
-                    <form method="post" action="{% url 'backups:crear_backup' %}" style="display: inline;">
+                <div style="display:flex; gap:10px;">
+                    <form method="post" action="{% url 'backups:crear_backup' %}" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">
-                            ➕ Crear Nuevo Backup
-                        </button>
+                        <button type="submit" class="btn btn-primary">➕ Crear Nuevo Backup</button>
                     </form>
-                    <form method="post" action="{% url 'backups:limpiar_backups' %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar backups antiguos (mantener solo los últimos 10)?')">
-                            🗑️ Limpiar Antiguos
-                        </button>
-                    </form>
+                    <!-- ✅ Reemplazado: antes usaba onclick="return confirm(...)" -->
+                    <button type="button" class="btn btn-danger"
+                            onclick="abrirModal('overlayLimpiar')">
+                        🗑️ Limpiar Antiguos
+                    </button>
                 </div>
             </div>
         </div>
@@ -729,7 +451,7 @@
             </div>
         </div>
 
-        <!-- Información de la Base de Datos -->
+        <!-- Info BD -->
         <div class="db-info-section">
             <h2>📊 Información de la Base de Datos</h2>
             <div class="db-info-grid">
@@ -756,7 +478,7 @@
             </div>
         </div>
 
-        <!-- Grid de Backups -->
+        <!-- Grid de backups -->
         {% if backups %}
         <div class="backups-grid">
             {% for backup in backups %}
@@ -765,7 +487,6 @@
                     <h2 class="backup-title">{{ backup.nombre }}</h2>
                     <div class="backup-icon">💾</div>
                 </div>
-
                 <div class="backup-info">
                     <div class="info-item">
                         <span class="info-icon">📅</span>
@@ -780,20 +501,17 @@
                     <div class="info-item">
                         <span class="info-icon">📂</span>
                         <strong>Ubicación:</strong>
-                        <span style="font-size: 0.85em; word-break: break-all;">backups/</span>
+                        <span style="font-size:0.85em; word-break:break-all;">backups/</span>
                     </div>
                 </div>
-
                 <div class="backup-actions">
-                    <a href="{% url 'backups:descargar_backup' backup.nombre %}" class="btn-action btn-download" title="Descargar backup">
-                        ⬇️ Descargar
-                    </a>
-                    <button onclick="confirmRestore('{{ backup.nombre }}')" class="btn-action btn-restore" title="Restaurar backup">
-                        🔄 Restaurar
-                    </button>
-                    <button onclick="confirmDelete('{{ backup.nombre }}')" class="btn-action btn-delete" title="Eliminar backup">
-                        🗑️ Eliminar
-                    </button>
+                    <a href="{% url 'backups:descargar_backup' backup.nombre %}"
+                       class="btn-action btn-download">⬇️ Descargar</a>
+                    <!-- ✅ Reemplazados: antes usaban funciones que llamaban confirm() -->
+                    <button onclick="abrirRestore('{{ backup.nombre }}')"
+                            class="btn-action btn-restore">🔄 Restaurar</button>
+                    <button onclick="abrirDelete('{{ backup.nombre }}')"
+                            class="btn-action btn-delete">🗑️ Eliminar</button>
                 </div>
             </div>
             {% endfor %}
@@ -803,9 +521,7 @@
             <div class="empty-state-icon">💾</div>
             <h3>No se encontraron backups</h3>
             <p>No hay copias de seguridad que coincidan con los filtros aplicados</p>
-            <button type="button" class="btn btn-primary" onclick="limpiarFiltros()">
-                🔄 Limpiar Filtros
-            </button>
+            <button type="button" class="btn btn-primary" onclick="limpiarFiltros()">🔄 Limpiar Filtros</button>
         </div>
         {% endif %}
     </div>
@@ -814,83 +530,47 @@
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
 
-    <!-- Modal de confirmación para restaurar -->
-    <div id="restoreModal" class="confirm-modal">
-        <div class="modal-content">
-            <h3>⚠️ Confirmar Restauración</h3>
-            <p>
-                ¿Estás seguro de que deseas restaurar este backup?<br><br>
-                <strong>Esta acción:</strong><br>
-                • Creará un backup de seguridad automático<br>
-                • Reemplazará la base de datos actual<br>
-                • Requerirá reiniciar el servidor<br><br>
-                <strong>Backup a restaurar:</strong> <span id="restoreFileName"></span>
-            </p>
-            <div class="modal-actions">
-                <button onclick="closeModal()" class="btn btn-cancel">Cancelar</button>
-                <form id="restoreForm" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">🔄 Sí, Restaurar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de confirmación para eliminar -->
-    <div id="deleteModal" class="confirm-modal">
-        <div class="modal-content">
-            <h3>⚠️ Confirmar Eliminación</h3>
-            <p>
-                ¿Estás seguro de que deseas eliminar este backup?<br><br>
-                <strong>Esta acción no se puede deshacer.</strong><br><br>
-                <strong>Backup a eliminar:</strong> <span id="deleteFileName"></span>
-            </p>
-            <div class="modal-actions">
-                <button onclick="closeModal()" class="btn btn-cancel">Cancelar</button>
-                <form id="deleteForm" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">🗑️ Sí, Eliminar</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    {% include 'core/accessibility.html' %}
 
     <script>
-        function confirmRestore(filename) {
+        /* ── Abrir / cerrar modales ─────────────────────────────────────── */
+        function abrirModal(overlayId) {
+            document.getElementById(overlayId).classList.add('open');
+        }
+
+        function cerrarModal(overlayId) {
+            document.getElementById(overlayId).classList.remove('open');
+        }
+
+        // Cerrar al hacer clic fuera del modal
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) cerrarModal(this.id);
+            });
+        });
+
+        /* ── Restaurar backup ───────────────────────────────────────────── */
+        function abrirRestore(filename) {
             document.getElementById('restoreFileName').textContent = filename;
-            document.getElementById('restoreForm').action = "{% url 'backups:restaurar_backup' 'FILENAME' %}".replace('FILENAME', filename);
-            document.getElementById('restoreModal').classList.add('active');
+            document.getElementById('restoreForm').action =
+                "{% url 'backups:restaurar_backup' 'FILENAME' %}".replace('FILENAME', filename);
+            abrirModal('overlayRestore');
         }
 
-        function confirmDelete(filename) {
+        /* ── Eliminar backup ────────────────────────────────────────────── */
+        function abrirDelete(filename) {
             document.getElementById('deleteFileName').textContent = filename;
-            document.getElementById('deleteForm').action = "{% url 'backups:eliminar_backup' 'FILENAME' %}".replace('FILENAME', filename);
-            document.getElementById('deleteModal').classList.add('active');
+            document.getElementById('deleteForm').action =
+                "{% url 'backups:eliminar_backup' 'FILENAME' %}".replace('FILENAME', filename);
+            abrirModal('overlayDelete');
         }
 
-        function closeModal() {
-            document.getElementById('restoreModal').classList.remove('active');
-            document.getElementById('deleteModal').classList.remove('active');
-        }
-
+        /* ── Limpiar filtros ────────────────────────────────────────────── */
         function limpiarFiltros() {
             document.getElementById('filtro_nombre').value = '';
             document.getElementById('filtro_rango_fecha').value = '';
             document.getElementById('filtrosForm').submit();
         }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            const restoreModal = document.getElementById('restoreModal');
-            const deleteModal = document.getElementById('deleteModal');
-            if (event.target === restoreModal) {
-                restoreModal.classList.remove('active');
-            }
-            if (event.target === deleteModal) {
-                deleteModal.classList.remove('active');
-            }
-        }
     </script>
-    {% include 'core/accessibility.html' %}
 </body>
 </html>

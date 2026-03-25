@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Administrador - SENA</title>
+    <title>Crear Usuario - SENA</title>
 
     <!-- Fuentes y estilos -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
             background: rgba(255, 255, 255, 0.98);
             padding: 40px 35px;
             border-radius: 24px;
-            max-width: 520px;
+            max-width: 600px;
             width: 100%;
             box-shadow: 0px 15px 45px rgba(0, 150, 64, 0.2);
             position: relative;
@@ -96,6 +96,13 @@
             margin-bottom: 25px;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
         .form-group {
             margin-bottom: 18px;
         }
@@ -139,7 +146,7 @@
             color: var(--sena-green);
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 13px 44px 13px 44px;
             border: 2px solid #ddd;
@@ -149,33 +156,30 @@
             transition: .3s;
         }
 
-        input.no-icon-left {
+        input.no-icon-left, select {
             padding-left: 14px;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: var(--sena-green);
             box-shadow: 0 0 0 4px rgba(0,150,64,0.15);
         }
 
-        .form-check {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
         }
 
-        .form-check-input {
-            accent-color: var(--sena-green);
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .form-check-label {
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
+        .role-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+            min-height: 18px;
         }
 
         button.btn {
@@ -244,6 +248,36 @@
         .footer-text a:hover {
             color: var(--sena-dark);
         }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-admin {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge-asistente {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-coordinador {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -253,9 +287,9 @@
 
         <!-- Logo -->
         <div class="logo-container">
-            <div class="logo-icon"><i class="bi bi-person-gear"></i></div>
-            <h2 class="title">Crear Administrador</h2>
-            <p class="subtitle">Registrar un nuevo usuario administrador del sistema</p>
+            <div class="logo-icon"><i class="bi bi-person-plus-fill"></i></div>
+            <h2 class="title">Crear Usuario</h2>
+            <p class="subtitle">Registrar un nuevo usuario en el sistema</p>
         </div>
 
         <!-- Mensajes -->
@@ -272,14 +306,35 @@
         <form method="POST">
             {% csrf_token %}
 
+            <!-- NOMBRES -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-person left-icon"></i>
+                        <input type="text" name="first_name" placeholder="Ej: Juan" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-person left-icon"></i>
+                        <input type="text" name="last_name" placeholder="Ej: Pérez" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USUARIO -->
             <div class="form-group">
                 <label>Usuario</label>
                 <div class="input-wrapper">
                     <i class="bi bi-person-badge left-icon"></i>
-                    <input type="text" name="username" placeholder="Ej: admin_sena" required>
+                    <input type="text" name="username" placeholder="Ej: juan.perez" required>
                 </div>
             </div>
 
+            <!-- EMAIL -->
             <div class="form-group">
                 <label>Correo Electrónico</label>
                 <div class="input-wrapper">
@@ -288,29 +343,42 @@
                 </div>
             </div>
 
+            <!-- ROL -->
             <div class="form-group">
-                <label>Contraseña</label>
-                <div class="input-wrapper">
-                    <input type="password" id="password" name="password" class="no-icon-left" placeholder="Mínimo 8 caracteres" required minlength="8">
-                    <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password', this)"></i>
-                </div>
+                <label>
+                    Rol del Usuario 
+                    <span id="role-badge"></span>
+                </label>
+                <select name="rol" id="rol-select" required>
+                    <option value="">-- Seleccione un rol --</option>
+                    <option value="Administrador">🔴 Administrador</option>
+                    <option value="Asistente">🔵 Asistente</option>
+                    <option value="Coordinador">🟠 Coordinador</option>
+                </select>
+                <div class="role-info" id="role-info"></div>
             </div>
 
-            <div class="form-group">
-                <label>Confirmar Contraseña</label>
-                <div class="input-wrapper">
-                    <input type="password" id="password2" name="password2" class="no-icon-left" placeholder="Repite la contraseña" required minlength="8">
-                    <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password2', this)"></i>
+            <!-- CONTRASEÑAS -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" class="no-icon-left" placeholder="Mínimo 8 caracteres" required minlength="8">
+                        <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password', this)"></i>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-check">
-                <input type="checkbox" name="is_superuser" class="form-check-input" id="isSuper">
-                <label for="isSuper" class="form-check-label">Conceder permisos de Superusuario</label>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password2" name="password2" class="no-icon-left" placeholder="Repite la contraseña" required minlength="8">
+                        <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password2', this)"></i>
+                    </div>
+                </div>
             </div>
 
             <button class="btn" type="submit">
-                Crear Administrador
+                Crear Usuario
             </button>
         </form>
 
@@ -336,6 +404,37 @@
                 icon.classList.add('bi-eye-slash');
             }
         }
+
+        // Mostrar información según el rol seleccionado
+        const rolSelect = document.getElementById('rol-select');
+        const roleInfo = document.getElementById('role-info');
+        const roleBadge = document.getElementById('role-badge');
+
+        const roleDescriptions = {
+            'Administrador': {
+                text: '✅ Gestión total del sistema, acceso a /admin/, crear usuarios',
+                badge: '<span class="role-badge badge-admin">ADMIN</span>'
+            },
+            'Asistente': {
+                text: '✅ CRUD completo en todos los módulos, generar reportes (vistas propias)',
+                badge: '<span class="role-badge badge-asistente">ASISTENTE</span>'
+            },
+            'Coordinador': {
+                text: '✅ Solo lectura (consulta) y generación de reportes (vistas propias)',
+                badge: '<span class="role-badge badge-coordinador">COORDINADOR</span>'
+            }
+        };
+
+        rolSelect.addEventListener('change', function() {
+            const selectedRole = this.value;
+            if (selectedRole && roleDescriptions[selectedRole]) {
+                roleInfo.textContent = roleDescriptions[selectedRole].text;
+                roleBadge.innerHTML = roleDescriptions[selectedRole].badge;
+            } else {
+                roleInfo.textContent = '';
+                roleBadge.innerHTML = '';
+            }
+        });
     </script>
     {% include 'core/accessibility.html'%}
 </body>

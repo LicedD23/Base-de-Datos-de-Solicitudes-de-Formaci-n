@@ -15,8 +15,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.db import IntegrityError, transaction
+from core.management.decorators import puede_ver_requerido, puede_editar_requerido, admin_requerido 
 # Create your views here.
 
+@puede_ver_requerido
 def listar_solicitudes(request):
     """Vista para listar todas las solicitudes de formacion"""
     search = request.GET.get('search', '')
@@ -106,13 +108,8 @@ def listar_solicitudes(request):
     return render(request, 'solicitudes/listar_solicitudes.html', context)
 
 
-def es_admin(user):
-    """Verifica si el usuario es admin"""
-    return user.is_staff or user.is_superuser
 
-
-@login_required
-@user_passes_test(es_admin)
+@puede_ver_requerido
 def panel_correos(request):
     """Panel de administracion de correos"""
     
@@ -161,8 +158,7 @@ def panel_correos(request):
     return render(request, 'solicitudes/panel_correos.html', context)
 
 
-@login_required
-@user_passes_test(es_admin)
+@puede_editar_requerido
 def probar_conexion_email(request):
     """Prueba la conexion al servidor de correo"""
     from django.http import JsonResponse
@@ -195,6 +191,7 @@ def probar_conexion_email(request):
             'message': f'❌ Error: {str(e)}\n\n{traceback.format_exc()}'
         })
 
+@puede_ver_requerido
 def detalle_solicitud(request, solicitud_id):
     """Vista para el detalle de una solicitud"""
     solicitud = get_object_or_404(
@@ -215,8 +212,7 @@ def detalle_solicitud(request, solicitud_id):
     
     return render(request, 'solicitudes/detalle_solicitud.html', context)
         
-@login_required
-@user_passes_test(es_admin)
+@puede_editar_requerido
 def editar_solicitud(request, solicitud_id):
     """Vista para editar una solicitud existente CON MODO MIGRACIÓN"""
     solicitud = get_object_or_404(
@@ -575,43 +571,42 @@ def editar_solicitud(request, solicitud_id):
     return render(request, 'solicitudes/editar_solicitud.html', context)
                     
         
-            
+
+@puede_editar_requerido
 def enviar_respuesta(request, solicitud_id):
     """Vista para enviar correo de respuesta y cambiar estado a RESPONDIDA"""
     solicitud = get_object_or_404(
         Solicitud.objects.select_related(
             'empresa',
             'programa',
-            'programa__area'
+            'programa__area',
+            'instructor_asignado',  # necesario para las plantillas
         ),
-        id=solicitud_id    
+        id=solicitud_id
     )
-    
+
     if request.method == 'POST':
         try:
-            # 🔥 CORRECCIÓN: Generar asunto automáticamente
-            asunto = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
+            asunto  = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
             mensaje = request.POST.get('mensaje')
-            
+
             if not mensaje:
                 messages.error(request, '❌ El mensaje es obligatorio')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-            
-            # 🔥 SOLO AL REMITENTE (prioriza correo_remitente)
+
             correo_destino = solicitud.correo_remitente or solicitud.empresa.correo
-            
+
             if not correo_destino:
                 messages.error(request, '❌ No hay correo de destino disponible')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-            
-            # Validar que no sea un correo de ejemplo
+
             if '@ejemplo.com' in correo_destino.lower():
                 messages.error(request, '❌ No se puede enviar correo a una dirección de ejemplo')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-            
-            from django.core.mail import send_mail 
+
+            from django.core.mail import send_mail
             from django.conf import settings
-            
+
             send_mail(
                 subject=asunto,
                 message=mensaje,
@@ -619,13 +614,11 @@ def enviar_respuesta(request, solicitud_id):
                 recipient_list=[correo_destino],
                 fail_silently=False,
             )
-            
-            # Actualizar estado solo si está en RECIBIDA
+
             if solicitud.estado == 'RECIBIDA':
-                solicitud.estado = "RESPONDIDA"
+                solicitud.estado = 'RESPONDIDA'
                 solicitud.fecha_respuesta = timezone.now()
                 solicitud.save()
-                
                 messages.success(
                     request,
                     f'✅ Correo enviado exitosamente a {correo_destino}. Estado actualizado a RESPONDIDA'
@@ -635,21 +628,35 @@ def enviar_respuesta(request, solicitud_id):
                     request,
                     f'✅ Correo enviado exitosamente a {correo_destino}'
                 )
-            
+
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
-        
+
         except Exception as e:
             messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
             return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-    
-    # 🔥 GET REQUEST: Pasar información completa al template
+
+    # ── GET: formatear fecha_atencion en español para la plantilla JS ──────────
+    # El modelo no tiene campo de fecha programada independiente,
+    # por lo que se usa fecha_atencion como semana pactada.
+    MESES = {
+        1: 'enero',    2: 'febrero',   3: 'marzo',     4: 'abril',
+        5: 'mayo',     6: 'junio',     7: 'julio',     8: 'agosto',
+        9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre',
+    }
+
+    fecha_inicio_texto = ''
+    if solicitud.fecha_atencion:
+        f = solicitud.fecha_atencion
+        fecha_inicio_texto = f"{f.day} de {MESES[f.month]} de {f.year}"
+
     context = {
         'solicitud': solicitud,
         'destinatario_email': solicitud.correo_remitente or solicitud.empresa.correo,
+        'fecha_inicio_texto': fecha_inicio_texto,  # ej: "18 de noviembre de 2025"
     }
     return render(request, 'solicitudes/enviar_respuesta.html', context)
-@login_required
-@user_passes_test(es_admin)
+
+@puede_editar_requerido
 def procesar_correos_ajax(request):
     """Procesa correos y retorna logs en tiempo real"""
     if request.method == 'POST':
@@ -758,8 +765,8 @@ def procesar_correos_ajax(request):
     
     return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
 
-@login_required
-@permission_required('solicitudes.delete_solicitud', raise_exception=True)
+
+@puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def eliminar_solicitud(request, solicitud_id):
     """Vista para eliminar permanentemente una solicitud"""
@@ -828,8 +835,8 @@ def eliminar_solicitud(request, solicitud_id):
     }
     return render(request, 'solicitudes/eliminar_solicitud.html', context)
 
-@login_required
-@user_passes_test(es_admin)
+
+@puede_editar_requerido
 def crear_solicitud(request):
     """Vista para crear una nueva solicitud manualmente CON MODO MIGRACIÓN"""
     

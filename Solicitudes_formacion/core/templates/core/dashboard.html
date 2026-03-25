@@ -3,12 +3,21 @@
 {% block title %}Dashboard | SENA{% endblock %}
 
 {% block content %}
-<h2 class="section-title mb-4">Panel de Control</h2>
+<h2 class="section-title mb-4">
+    Panel de Control
+    {% if es_administrador %}
+        <span class="badge bg-danger ms-2">Administrador</span>
+    {% elif es_asistente %}
+        <span class="badge bg-success ms-2">Asistente Operativo</span>
+    {% elif es_coordinador %}
+        <span class="badge bg-warning ms-2">Coordinador</span>
+    {% endif %}
+</h2>
 
-<!-- Tarjetas de Estadísticas Mejoradas -->
+<!-- Tarjetas de Estadísticas -->
 <div class="stats-container mb-5">
     {% for metric, label, icon, color in metrics %}
-    <div class="stat-card {% if color == 'primary' %}blue{% elif color == 'warning' %}orange{% elif color == 'danger' %}red{% elif color == 'info' %}cyan{% elif color == 'secondary' %}purple{% endif %}">
+    <div class="stat-card {% if color == 'primary' %}blue{% elif color == 'warning' %}orange{% elif color == 'danger' %}red{% elif color == 'info' %}cyan{% elif color == 'secondary' %}purple{% elif color == 'success' %}{% endif %}">
         <div class="stat-card-icon">
             <i class="bi {{ icon }}"></i>
         </div>
@@ -22,7 +31,12 @@
 <div class="card">
     <div class="card-body p-4">
         <h5 class="fw-semibold mb-4" style="color: var(--sena-green);">
-            <i class="bi bi-clock-history me-2"></i>Últimas Solicitudes
+            <i class="bi bi-clock-history me-2"></i>
+            {% if es_administrador or es_asistente %}
+                Últimas 15 Solicitudes
+            {% else %}
+                Últimas 10 Solicitudes
+            {% endif %}
         </h5>
 
         <div class="table-responsive">
@@ -34,6 +48,9 @@
                         <th>Programa</th>
                         <th>Instructor</th>
                         <th>Fecha Recepción</th>
+                        {% if es_administrador %}
+                            <th>Estado</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -41,10 +58,10 @@
                     <tr>
                         <td><strong>{{ s.empresa.nit }}</strong></td>
                         <td><strong>{{ s.empresa.nombre }}</strong></td>
-                        <td>{{ s.programa }}</td>
+                        <td>{{ s.programa.nombre }}</td>
                         <td>
                             {% if s.instructor_asignado %}
-                                <span class="badge bg-success">{{ s.instructor_asignado }}</span>
+                                <span class="badge bg-success">{{ s.instructor_asignado.nombre }}</span>
                             {% else %}
                                 <span class="badge bg-secondary">No asignado</span>
                             {% endif %}
@@ -55,10 +72,23 @@
                                 {{ s.fecha_recepcion|date:"d/m/Y H:i" }}
                             </small>
                         </td>
+                        {% if es_administrador %}
+                            <td>
+                                {% if s.estado == 'RECIBIDA' %}
+                                    <span class="badge bg-info">{{ s.get_estado_display }}</span>
+                                {% elif s.estado == 'RESPONDIDA' %}
+                                    <span class="badge bg-primary">{{ s.get_estado_display }}</span>
+                                {% elif s.estado == 'ATENDIDA' %}
+                                    <span class="badge bg-warning">{{ s.get_estado_display }}</span>
+                                {% elif s.estado == 'FINALIZADA' %}
+                                    <span class="badge bg-success">{{ s.get_estado_display }}</span>
+                                {% endif %}
+                            </td>
+                        {% endif %}
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center py-5">
+                        <td colspan="{% if es_administrador %}6{% else %}5{% endif %}" class="text-center py-5">
                             <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
                             <p class="text-muted mt-3 mb-0">No hay solicitudes recientes.</p>
                         </td>
@@ -67,6 +97,82 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Botón para ver todas (solo admins y asistentes) -->
+        {% if es_administrador or es_asistente %}
+        <div class="text-center mt-4">
+            <a href="{% url 'solicitudes:panel_correos' %}" class="btn btn-sena">
+                <i class="bi bi-arrow-right-circle me-2"></i>Ver Todas las Solicitudes
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Accesos rápidos según rol -->
+{% if es_administrador or es_asistente %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-semibold mb-4" style="color: var(--sena-green);">
+                    <i class="bi bi-lightning-charge-fill me-2"></i>Accesos Rápidos
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle me-2"></i>Nueva Empresa
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'instructores:crear_instructor' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person-plus me-2"></i>Nuevo Instructor
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'programas:crear_programa' %}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-book-fill me-2"></i>Nuevo Programa
+                        </a>
+                    </div>
+                    {% if es_administrador %}
+                    <div class="col-md-3">
+                        <a href="{% url 'backups:panel_backups' %}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-shield-check me-2"></i>Backups
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Panel especial para Coordinador -->
+{% if es_coordinador %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-semibold mb-4" style="color: var(--sena-green);">
+                    <i class="bi bi-graph-up me-2"></i>Panel de Supervisión
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'reportes:panel_reportes' %}" class="btn btn-outline-success w-100 py-3">
+                            <i class="bi bi-file-earmark-bar-graph me-2"></i>Generar Reporte
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'solicitudes:panel_correos' %}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="bi bi-eye me-2"></i>Ver Solicitudes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

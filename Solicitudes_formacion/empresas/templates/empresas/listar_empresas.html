@@ -517,6 +517,12 @@
             display: block;
         }
 
+        .btn-view:only-child{
+            grid-column:1 / -1;
+            width:150px;
+            margin:0 auto;
+        }
+
         .btn-view {
             background: #e8f5e9;
             color: #2e7d32;
@@ -714,9 +720,11 @@
             </form>
 
             <!-- Botón Crear -->
+            {% if es_administrador or es_asistente%}
             <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary btn-create">
                 ➕ Nueva Empresa
             </a>
+            {% endif %}
         </div>
 
         <!-- ESTADÍSTICAS -->
@@ -792,9 +800,11 @@
 
                 <div class="empresa-actions">
                     <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    {% if es_administrador or es_asistente%}
                     <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete" onclick="return confirm('¿Desactivar esta empresa?')">🚫 Desactivar</a>
                     <a href="{% url 'empresas:eliminar_empresa' empresa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente esta empresa?')">🗑️ Eliminar</a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -811,7 +821,9 @@
                     Aún no hay empresas registradas en el sistema
                 {% endif %}
             </p>
+            {% if es_administrador or es_asistente %}
             <a href="{% url 'empresas:crear_empresa' %}" class="btn btn-primary">➕ Crear Primera Empresa</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

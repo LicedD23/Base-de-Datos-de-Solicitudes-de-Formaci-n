@@ -7,11 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -20,29 +16,22 @@
             padding: 20px;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
         
         .header {
-            background: linear-gradient(135deg, rgba(46, 125, 50, 0.95) 0%, rgba(27, 94, 32, 0.95) 100%);
+            background: linear-gradient(135deg, rgba(46,125,50,0.95) 0%, rgba(27,94,32,0.95) 100%);
             backdrop-filter: blur(20px);
             color: white;
             padding: 40px;
             border-radius: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         
-        .header h1 {
-            font-size: 2.8em;
-            margin-bottom: 12px;
-            font-weight: 800;
-        }
+        .header h1 { font-size: 2.8em; margin-bottom: 12px; font-weight: 800; }
         
         .breadcrumb {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.95);
             padding: 18px 24px;
             border-radius: 16px;
             margin-bottom: 24px;
@@ -51,11 +40,7 @@
             gap: 12px;
         }
         
-        .breadcrumb a {
-            color: #2e7d32;
-            text-decoration: none;
-            font-weight: 600;
-        }
+        .breadcrumb a { color: #2e7d32; text-decoration: none; font-weight: 600; }
         
         .stats-grid {
             display: grid;
@@ -65,77 +50,41 @@
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.95);
             padding: 32px;
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             border-left: 5px solid #2e7d32;
             transition: all 0.3s ease;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.85em;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .stat-card .number {
-            font-size: 3.2em;
-            font-weight: 800;
-            color: #2e7d32;
-        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+        .stat-card h3 { color: #666; font-size: 0.85em; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card .number { font-size: 3.2em; font-weight: 800; color: #2e7d32; }
         
         .control-panel {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.95);
             padding: 40px;
             border-radius: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
         
-        .control-panel h2 {
-            color: #2e7d32;
-            margin-bottom: 24px;
-            font-size: 1.8em;
-            font-weight: 700;
-        }
+        .control-panel h2 { color: #2e7d32; margin-bottom: 24px; font-size: 1.8em; font-weight: 700; }
         
         .info-box {
-            background: linear-gradient(135deg, rgba(25, 118, 210, 0.08) 0%, rgba(21, 101, 192, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(25,118,210,0.08) 0%, rgba(21,101,192,0.05) 100%);
             padding: 28px;
             border-radius: 16px;
             border-left: 4px solid #1976d2;
             margin-bottom: 28px;
         }
         
-        .info-box h3 {
-            color: #1565c0;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .info-box ul {
-            padding-left: 20px;
-        }
-
-        .info-box ul li {
-            margin-bottom: 8px;
-            color: #555;
-        }
+        .info-box h3 { color: #1565c0; margin-bottom: 16px; font-weight: 600; }
+        .info-box ul { padding-left: 20px; }
+        .info-box ul li { margin-bottom: 8px; color: #555; }
         
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .btn-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
         
         .btn {
             padding: 16px 32px;
@@ -154,80 +103,50 @@
         .btn-primary {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
-            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 8px 24px rgba(46,125,50,0.3);
         }
         
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(46, 125, 50, 0.4);
-        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(46,125,50,0.4); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
-        }
-        
-        .btn-secondary:hover {
-            background: #2e7d32;
-            color: white;
-        }
-        
-        /* MODAL MODERNO ESTILO SENA */
+        .btn-secondary { background: white; color: #2e7d32; border: 2px solid #2e7d32; }
+        .btn-secondary:hover { background: #2e7d32; color: white; }
+
+        /* ── MODAL DE PROCESAMIENTO (consola) ──────────────────────────── */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.55);
+            background: rgba(0,0,0,0.55);
             backdrop-filter: blur(4px);
             z-index: 999;
         }
+        .modal-overlay.active { display: block; }
 
-        .modal-overlay.active {
-            display: block;
-        }
-
-        /* Modal contenedor */
         .console-modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 900px;
             max-height: 85vh;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255,255,255,0.98);
             backdrop-filter: blur(20px);
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
             overflow: hidden;
             z-index: 1000;
         }
-
         .console-modal.active {
             display: block;
             animation: modalDrop 0.35s ease-out;
         }
-
         @keyframes modalDrop {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
+            from { opacity: 0; transform: translate(-50%,-60%) scale(0.9); }
+            to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
         }
 
-        /* Header */
         .console-header {
             padding: 24px 32px;
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -235,67 +154,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
+        .console-header h3 { font-size: 1.5em; font-weight: 600; display: flex; align-items: center; gap: 12px; }
 
-        .console-header h3 {
-            font-size: 1.5em;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Botón cerrar */
         .close-console {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 12px;
             border: none;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.25);
             font-size: 1.5em;
             color: white;
             cursor: pointer;
             transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
+        .close-console:hover { background: rgba(255,255,255,0.45); transform: scale(1.1) rotate(90deg); }
 
-        .close-console:hover {
-            background: rgba(255, 255, 255, 0.45);
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        /* Body Moderno */
         .console-body {
             padding: 28px 32px;
             max-height: 65vh;
             overflow-y: auto;
             background: #fafafa;
         }
+        .console-body::-webkit-scrollbar { width: 8px; }
+        .console-body::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .console-body::-webkit-scrollbar-thumb { background: #2e7d32; border-radius: 10px; }
 
-        /* Scroll personalizado */
-        .console-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .console-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .console-body::-webkit-scrollbar-thumb {
-            background: #2e7d32;
-            border-radius: 10px;
-        }
-
-        .console-body::-webkit-scrollbar-thumb:hover {
-            background: #1b5e20;
-        }
-
-        /* Entradas de log con estilo "notificación" */
         .log-entry {
             margin-bottom: 12px;
             padding: 16px 20px;
@@ -305,90 +189,122 @@
             gap: 12px;
             background: white;
             border-left: 5px solid #2e7d32;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
             animation: fadeInUp 0.35s ease;
         }
-
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+        .log-icon { font-size: 1.3em; min-width: 24px; }
+        .log-info    { border-left-color: #2196f3; }
+        .log-success { border-left-color: #4caf50; }
+        .log-error   { border-left-color: #f44336; }
+        .log-warning { border-left-color: #ff9800; }
+        .log-section { font-weight: 700; color: #2e7d32; font-size: 1.1em; }
+        .log-separator { text-align: center; font-size: 0.9em; color: #999; padding: 8px 0; }
+        .log-empresa  { border-left-color: #0288d1; }
+        .log-programa { border-left-color: #8bc34a; }
 
-        .log-icon {
-            font-size: 1.3em;
-            min-width: 24px;
-        }
-
-        /* Tipos de logs */
-        .log-info {
-            border-left-color: #2196f3;
-        }
-
-        .log-success {
-            border-left-color: #4caf50;
-        }
-
-        .log-error {
-            border-left-color: #f44336;
-        }
-
-        .log-warning {
-            border-left-color: #ff9800;
-        }
-
-        .log-section {
-            font-weight: 700;
-            color: #2e7d32;
-            font-size: 1.1em;
-        }
-
-        .log-separator {
-            text-align: center;
-            font-size: 0.9em;
-            color: #999;
-            padding: 8px 0;
-        }
-
-        /* Detalles empresa/programa */
-        .log-empresa {
-            border-left-color: #0288d1;
-        }
-
-        .log-programa {
-            border-left-color: #8bc34a;
-        }
-
-        /* Indicador de procesamiento */
-        .processing-indicator {
-            text-align: center;
-            padding: 30px 0;
-        }
-
+        .processing-indicator { text-align: center; padding: 30px 0; }
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(0, 0, 0, 0.1);
+            width: 50px; height: 50px;
+            border: 5px solid rgba(0,0,0,0.1);
             border-top-color: #2e7d32;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 15px;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .processing-indicator p { color: #666; font-weight: 600; }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* ── NUEVO: Modal de notificación personalizado ─────────────────── */
+        .notif-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .notif-overlay.open { display: flex; }
+
+        .notif-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 460px;
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            animation: notifIn 0.3s ease-out;
+        }
+        @keyframes notifIn {
+            from { transform: scale(0.88) translateY(-20px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);     opacity: 1; }
         }
 
-        .processing-indicator p {
-            color: #666;
-            font-weight: 600;
+        .notif-header {
+            padding: 28px 32px 20px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
-        
+        .notif-header.error   { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); }
+        .notif-header.warning { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+
+        .notif-header-icon { font-size: 2em; flex-shrink: 0; }
+        .notif-header h3   { font-size: 1.25em; font-weight: 700; }
+
+        .notif-body {
+            padding: 24px 32px;
+        }
+        .notif-body p {
+            color: #444;
+            line-height: 1.7;
+            font-size: 0.97em;
+            white-space: pre-line;
+        }
+
+        /* Líneas especiales dentro del cuerpo */
+        .notif-body .notif-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.93em;
+            color: #555;
+        }
+        .notif-body .notif-line:last-child { border-bottom: none; }
+        .notif-body .notif-line strong { color: #1b5e20; min-width: 80px; }
+
+        .notif-footer {
+            padding: 16px 32px 28px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-notif-ok {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+            padding: 13px 36px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+        }
+        .btn-notif-ok:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+        .btn-notif-ok.error   { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); box-shadow: 0 4px 14px rgba(198,40,40,0.35); }
+        .btn-notif-ok.warning { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); box-shadow: 0 4px 14px rgba(239,108,0,0.35); }
+
+        /* ── Alertas Django messages ──────────────────────────────────────── */
         .alert {
             padding: 18px 24px;
             border-radius: 16px;
@@ -396,140 +312,40 @@
             font-weight: 500;
             animation: slideDown 0.4s ease-out;
         }
-        
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        
-        .alert-success {
-            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-            color: #1b5e20;
-            border-left: 4px solid #2e7d32;
-        }
-        
-        .alert-error {
-            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
-            color: #b71c1c;
-            border-left: 4px solid #d32f2f;
-        }
-        
-        .alert-warning {
-            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
-            color: #f57f17;
-            border-left: 4px solid #fbc02d;
-        }
-        
-        /* TABLA MODERNA */
+        .alert-success { background: linear-gradient(135deg,#c8e6c9,#a5d6a7); color:#1b5e20; border-left:4px solid #2e7d32; }
+        .alert-error   { background: linear-gradient(135deg,#ffcdd2,#ef9a9a); color:#b71c1c; border-left:4px solid #d32f2f; }
+        .alert-warning { background: linear-gradient(135deg,#fff9c4,#fff59d); color:#f57f17; border-left:4px solid #fbc02d; }
+
+        /* ── Tabla ──────────────────────────────────────────────────────── */
         .recent-solicitudes {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.95);
             padding: 40px;
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
-        
-        .recent-solicitudes h2 {
-            color: #2e7d32;
-            margin-bottom: 28px;
-            font-size: 1.8em;
-            font-weight: 700;
-        }
+        .recent-solicitudes h2 { color: #2e7d32; margin-bottom: 28px; font-size: 1.8em; font-weight: 700; }
 
-        .table-container {
-            overflow:hidden;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            table-layout:fixed;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-        }
-        
-        thead tr th {
-            padding: 18px 20px;
-            text-align: left;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85em;
-            letter-spacing: 1px;
-            color: white;
-            border: none;
-        }
+        .table-container { overflow: hidden; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        table { width: 100%; border-collapse: collapse; background: white; table-layout: fixed; }
+        thead { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        thead tr th { padding: 18px 20px; text-align: left; font-weight: 700; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; color: white; border: none; }
+        thead tr th:first-child { border-radius: 16px 0 0 0; }
+        thead tr th:last-child  { border-radius: 0 16px 0 0; }
+        tbody tr { transition: all 0.3s ease; border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background: rgba(46,125,50,0.03); transform: translateX(5px); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody td { padding: 20px; color: #333; font-size: 0.95em; }
+        tbody td:first-child { font-weight: 700; color: #2e7d32; }
 
-        thead tr th:first-child {
-            border-radius: 16px 0 0 0;
-        }
-
-        thead tr th:last-child {
-            border-radius: 0 16px 0 0;
-        }
-        
-        tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        tbody tr:hover {
-            background: linear-gradient(135deg, rgba(46, 125, 50, 0.03) 0%, rgba(27, 94, 32, 0.02) 100%);
-            transform: translateX(5px);
-        }
-
-        tbody tr:last-child {
-            border-bottom: none;
-        }
-        
-        tbody td {
-            padding: 20px;
-            color: #333;
-            font-size: 0.95em;
-        }
-
-        tbody td:first-child {
-            font-weight: 700;
-            color: #2e7d32;
-        }
-        
-        .badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        
-        .badge-recibida {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            color: #e65100;
-        }
-
-        .badge-respondida {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            color: #1565c0;
-        }
-
-        .badge-atendida {
-            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-            color: #6a1b9a;
-        }
-
-        .badge-finalizada {
-            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-            color: #1b5e20;
-        }
+        .badge { padding: 8px 16px; border-radius: 20px; font-size: 0.85em; font-weight: 700; text-transform: uppercase; display: inline-block; }
+        .badge-recibida   { background: linear-gradient(135deg,#fff3e0,#ffe0b2); color:#e65100; }
+        .badge-respondida { background: linear-gradient(135deg,#e3f2fd,#bbdefb); color:#1565c0; }
+        .badge-atendida   { background: linear-gradient(135deg,#f3e5f5,#e1bee7); color:#6a1b9a; }
+        .badge-finalizada { background: linear-gradient(135deg,#c8e6c9,#a5d6a7); color:#1b5e20; }
 
         .btn-view-detail {
             padding: 8px 16px;
@@ -546,23 +362,12 @@
             gap: 6px;
             text-decoration: none;
         }
+        .btn-view-detail:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.3); }
 
-        .btn-view-detail:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: #999;
-        }
+        .empty-state { text-align: center; padding: 80px 20px; color: #999; }
+        .empty-state p { font-size: 1.1em; margin-top: 10px; }
 
-        .empty-state p {
-            font-size: 1.1em;
-            margin-top: 10px;
-        }
-        footer{
+        footer {
             flex-shrink: 0;
             background: linear-gradient(90deg, #1b5e20, #2e7d32);
             color: white;
@@ -570,59 +375,26 @@
             padding: 1.5rem;
             font-size: 0.9rem;
             box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
-            position: relative;
             margin-top: 40px;
             border-radius: 15px;
+            position: relative;
         }
-        footer::before{
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #66bb6a, transparent);
-        }
-        footer p{
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+        footer::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,#66bb6a,transparent); }
+        footer p { margin:0; font-weight:600; letter-spacing:0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .console-modal {
-                width: 95%;
-                max-width: 95%;
-            }
-
-            .table-container {
-                overflow-x: scroll;
-            }
-
-            table {
-                min-width: 600px;
-            }
-            footer{
-                font-size: 0.85rem;
-                padding: 1.2rem;
-            }
+            .header h1 { font-size: 2em; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .console-modal { width: 95%; max-width: 95%; }
+            .table-container { overflow-x: scroll; }
+            table { min-width: 600px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ── Modal overlay para consola ── -->
     <div class="modal-overlay" id="modalOverlay"></div>
     
     <div class="console-modal" id="consoleModal">
@@ -639,6 +411,20 @@
         </div>
     </div>
 
+    <!-- ── NUEVO: Modal de notificación personalizado ── -->
+    <div class="notif-overlay" id="notifOverlay">
+        <div class="notif-modal" id="notifModal">
+            <div class="notif-header" id="notifHeader">
+                <span class="notif-header-icon" id="notifIcon">✅</span>
+                <h3 id="notifTitle">Resultado</h3>
+            </div>
+            <div class="notif-body" id="notifBody"></div>
+            <div class="notif-footer">
+                <button class="btn-notif-ok" id="notifOkBtn" onclick="cerrarNotif()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>📧 Panel de Gestión de Correos</h1>
@@ -648,14 +434,12 @@
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
-            <span style="color: #2e7d32; font-weight: 600;">Panel de Correos</span>
+            <span style="color:#2e7d32; font-weight:600;">Panel de Correos</span>
         </div>
 
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
@@ -686,14 +470,16 @@
             </div>
 
             <div class="btn-group">
+                {% if es_administrador or es_asistente %}
                 <button onclick="handleProcesarCorreos()" id="procesarBtn" class="btn btn-primary">
                     📬 Procesar Correos Nuevos
                 </button>
-
+                {% endif %}
+                {% if es_administrador or es_asistente %}
                 <button onclick="probarConexion()" class="btn btn-secondary">
                     🔌 Probar Conexión Email
                 </button>
-
+                {% endif %}
                 <a href="{% url 'solicitudes:listar_solicitudes' %}" class="btn btn-secondary">
                     📋 Ver Todas las Solicitudes
                 </a>
@@ -717,22 +503,22 @@
                         </thead>
                         <tbody>
                             {% for solicitud in ultimas_solicitudes %}
-                                <tr>
-                                    <td><strong>#{{ solicitud.empresa.nit }}</strong></td>
-                                    <td>{{ solicitud.empresa.nombre }}</td>
-                                    <td>{{ solicitud.programa.nombre }}</td>
-                                    <td>
-                                        <span class="badge badge-{{ solicitud.estado|lower }}">
-                                            {{ solicitud.get_estado_display }}
-                                        </span>
-                                    </td>
-                                    <td>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</td>
-                                    <td>
-                                        <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-view-detail">
-                                            👁️ Ver Detalle
-                                        </a>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td><strong>#{{ solicitud.empresa.nit }}</strong></td>
+                                <td>{{ solicitud.empresa.nombre }}</td>
+                                <td>{{ solicitud.programa.nombre }}</td>
+                                <td>
+                                    <span class="badge badge-{{ solicitud.estado|lower }}">
+                                        {{ solicitud.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-view-detail">
+                                        👁️ Ver Detalle
+                                    </a>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -744,80 +530,92 @@
             {% endif %}
         </div>
     </div>
+
     <footer>
-        <p>© 2025 Servicio Nacional  de Aprendizaje (SENA)</p>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
-    {% include 'core/accessibility.html'%}
+
+    {% include 'core/accessibility.html' %}
+
     <script>
+        /* ── Utilidades ──────────────────────────────────────────────────── */
         function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        function addLog(message, type = 'info') {
-            const consoleContent = document.getElementById('consoleContent');
-            const logEntry = document.createElement('div');
-            logEntry.className = `log-entry log-${type}`;
-
-            const icons = {
-                'success': '✅',
-                'error': '❌',
-                'warning': '⚠️',
-                'section': '📋',
-                'separator': '',
-                'empresa': '🏢',
-                'programa': '📚',
-                'info': 'ℹ️'
-            };
-
-            const icon = icons[type] || 'ℹ️';
-
-            if (type === 'separator') {
-                logEntry.className = 'log-separator';
-                logEntry.textContent = message;
-            } else {
-                logEntry.innerHTML = `<span class="log-icon">${icon}</span><span>${escapeHtml(message)}</span>`;
-            }
-
-            consoleContent.appendChild(logEntry);
-            consoleContent.parentElement.scrollTop = consoleContent.parentElement.scrollHeight;
+            let v = null;
+            document.cookie.split(';').forEach(c => {
+                c = c.trim();
+                if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+            });
+            return v;
         }
 
         function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
         }
 
-        function clearConsole() {
-            document.getElementById('consoleContent').innerHTML = '';
+        /* ── Modal de notificación personalizado ─────────────────────────── */
+        function mostrarNotif(tipo, titulo, lineas) {
+            // tipo: 'success' | 'error' | 'warning'
+            const overlay  = document.getElementById('notifOverlay');
+            const header   = document.getElementById('notifHeader');
+            const icon     = document.getElementById('notifIcon');
+            const titleEl  = document.getElementById('notifTitle');
+            const body     = document.getElementById('notifBody');
+            const okBtn    = document.getElementById('notifOkBtn');
+
+            const iconos = { success: '✅', error: '❌', warning: '⚠️' };
+
+            // Aplicar tipo al header y botón
+            header.className = 'notif-header ' + (tipo !== 'success' ? tipo : '');
+            okBtn.className  = 'btn-notif-ok '  + (tipo !== 'success' ? tipo : '');
+
+            icon.textContent    = iconos[tipo] || '✅';
+            titleEl.textContent = titulo;
+
+            // Construir cuerpo con líneas
+            body.innerHTML = lineas.map(l =>
+                `<div class="notif-line">
+                    <span>${escapeHtml(l.label)}</span>
+                    <strong>${escapeHtml(l.valor)}</strong>
+                </div>`
+            ).join('');
+
+            overlay.classList.add('open');
         }
 
-        function showProcessingIndicator(show) {
-            const indicator = document.getElementById('processingIndicator');
-            indicator.style.display = show ? 'block' : 'none';
+        function cerrarNotif() {
+            document.getElementById('notifOverlay').classList.remove('open');
         }
 
-        function openConsole() {
-            document.getElementById('consoleModal').classList.add('active');
-            document.getElementById('modalOverlay').classList.add('active');
+        // Cerrar al hacer clic fuera
+        document.getElementById('notifOverlay').addEventListener('click', function(e) {
+            if (e.target === this) cerrarNotif();
+        });
+
+        /* ── Consola de procesamiento ────────────────────────────────────── */
+        function addLog(message, type = 'info') {
+            const content  = document.getElementById('consoleContent');
+            const entry    = document.createElement('div');
+            const icons    = { success:'✅', error:'❌', warning:'⚠️', section:'📋', separator:'', empresa:'🏢', programa:'📚', info:'ℹ️' };
+
+            if (type === 'separator') {
+                entry.className   = 'log-separator';
+                entry.textContent = message;
+            } else {
+                entry.className  = `log-entry log-${type}`;
+                entry.innerHTML  = `<span class="log-icon">${icons[type] || 'ℹ️'}</span><span>${escapeHtml(message)}</span>`;
+            }
+            content.appendChild(entry);
+            content.parentElement.scrollTop = content.parentElement.scrollHeight;
         }
 
-        function closeConsole() {
-            document.getElementById('consoleModal').classList.remove('active');
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
+        function clearConsole()           { document.getElementById('consoleContent').innerHTML = ''; }
+        function showProcessingIndicator(show) { document.getElementById('processingIndicator').style.display = show ? 'block' : 'none'; }
+        function openConsole()  { document.getElementById('consoleModal').classList.add('active'); document.getElementById('modalOverlay').classList.add('active'); }
+        function closeConsole() { document.getElementById('consoleModal').classList.remove('active'); document.getElementById('modalOverlay').classList.remove('active'); }
 
+        /* ── Procesar correos ────────────────────────────────────────────── */
         async function handleProcesarCorreos() {
             const btn = document.getElementById('procesarBtn');
             const originalText = btn.innerHTML;
@@ -825,7 +623,6 @@
             openConsole();
             clearConsole();
             showProcessingIndicator(true);
-
             btn.disabled = true;
             btn.innerHTML = '🔄 Procesando...';
 
@@ -833,43 +630,28 @@
             addLog('='.repeat(60), 'separator');
 
             try {
-                const csrftoken = getCookie('csrftoken');
                 const response = await fetch('{% url "solicitudes:procesar_correos_ajax" %}', {
                     method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({action: 'procesar'})
+                    headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'procesar' })
                 });
-
                 const data = await response.json();
 
                 if (data.success) {
-                    if (data.logs && data.logs.length > 0) {
-                        data.logs.forEach(log => {
-                            addLog(log.message, log.type || 'info');
-                        });
-                    }
-
+                    if (data.logs) data.logs.forEach(l => addLog(l.message, l.type || 'info'));
                     addLog('='.repeat(60), 'separator');
                     addLog(`📊 RESUMEN: ${data.solicitudes_count} solicitud(es) creada(s)`, 'section');
-                    addLog('='.repeat(60), 'separator');
 
-                    if (data.solicitudes && data.solicitudes.length > 0) {
+                    if (data.solicitudes?.length) {
                         addLog('📝 Solicitudes creadas:', 'section');
-                        data.solicitudes.forEach((sol, index) => {
-                            addLog(`${index + 1}. Solicitud #${sol.id}`, 'success');
-                            addLog(`   - Empresa: ${sol.empresa}`, 'empresa');
-                            addLog(`   - Programa: ${sol.programa}`, 'programa');
+                        data.solicitudes.forEach((s, i) => {
+                            addLog(`${i+1}. Solicitud #${s.id}`, 'success');
+                            addLog(`   - Empresa: ${s.empresa}`, 'empresa');
+                            addLog(`   - Programa: ${s.programa}`, 'programa');
                         });
                     }
-
                     addLog('✅ Procesamiento completado exitosamente', 'success');
-
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
+                    setTimeout(() => window.location.reload(), 3000);
                 } else {
                     addLog('❌ ERROR EN EL PROCESAMIENTO', 'error');
                     addLog(data.error || 'Error desconocido', 'error');
@@ -884,8 +666,9 @@
             }
         }
 
+        /* ── Probar conexión — ahora usa el modal personalizado ──────────── */
         async function probarConexion() {
-            const btn = event.target;
+            const btn = event.currentTarget;
             const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '🔄 Probando...';
@@ -893,9 +676,30 @@
             try {
                 const response = await fetch('{% url "solicitudes:probar_conexion_email" %}');
                 const data = await response.json();
-                alert(data.message);
+
+                if (data.success) {
+                    // Parsear las líneas del mensaje
+                    const lineas = data.message
+                        .split('\n')
+                        .filter(l => l.trim() && !l.startsWith('✅'))
+                        .map(l => {
+                            const partes = l.split(':');
+                            return { label: partes[0].trim(), valor: partes.slice(1).join(':').trim() };
+                        });
+
+                    mostrarNotif('success', 'Conexión Exitosa', [
+                        { label: '🌐 Estado',    valor: 'Conectado correctamente' },
+                        ...lineas
+                    ]);
+                } else {
+                    mostrarNotif('error', 'Error de Conexión', [
+                        { label: '⚠️ Detalle', valor: data.message || 'No se pudo conectar al servidor de correo' }
+                    ]);
+                }
             } catch (error) {
-                alert('❌ Error al probar conexión: ' + error.message);
+                mostrarNotif('error', 'Error de Conexión', [
+                    { label: '⚠️ Detalle', valor: error.message }
+                ]);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;

@@ -70,7 +70,6 @@
             color: #999;
         }
 
-        /* 🎨 MENSAJES - ESTILOS COMPLETOS */
         .messages-container {
             margin-bottom: 25px;
         }
@@ -91,14 +90,8 @@
         }
 
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .alert::before {
@@ -116,9 +109,7 @@
             border: 2px solid #1b5e20;
         }
 
-        .alert-success::before {
-            background: #fff;
-        }
+        .alert-success::before { background: #fff; }
 
         .alert-success .alert-icon {
             font-size: 1.8em;
@@ -126,15 +117,9 @@
         }
 
         @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .alert-error {
@@ -143,9 +128,7 @@
             border: 2px solid #b71c1c;
         }
 
-        .alert-error::before {
-            background: #fff;
-        }
+        .alert-error::before { background: #fff; }
 
         .alert-error .alert-icon {
             font-size: 1.8em;
@@ -153,15 +136,9 @@
         }
 
         @keyframes shake {
-            0%, 100% { 
-                transform: translateX(0); 
-            }
-            25% { 
-                transform: translateX(-10px); 
-            }
-            75% { 
-                transform: translateX(10px); 
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
 
         .alert-warning {
@@ -170,19 +147,10 @@
             border: 2px solid #e65100;
         }
 
-        .alert-warning::before {
-            background: #fff;
-        }
+        .alert-warning::before { background: #fff; }
 
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
-        }
+        .alert-icon { font-size: 1.5em; flex-shrink: 0; }
+        .alert-content { flex: 1; line-height: 1.5; }
 
         .alert-close {
             background: rgba(255, 255, 255, 0.2);
@@ -206,7 +174,6 @@
             transform: scale(1.1);
         }
 
-        /* 🔍 NUEVA SECCIÓN DE BÚSQUEDA MEJORADA */
         .controls-section {
             background: white;
             padding: 25px;
@@ -258,7 +225,6 @@
             z-index: 1;
         }
 
-        /* 🎯 FILTRO DESPLEGABLE AVANZADO */
         .filters-wrapper {
             display: flex;
             gap: 10px;
@@ -266,9 +232,7 @@
             flex-wrap: wrap;
         }
 
-        .filter-dropdown {
-            position: relative;
-        }
+        .filter-dropdown { position: relative; }
 
         .filter-dropdown select {
             padding: 15px 40px 15px 20px;
@@ -300,25 +264,17 @@
             font-size: 0.8em;
         }
 
-        .filter-dropdown select option {
-            padding: 10px;
-        }
+        .filter-dropdown select option { padding: 10px; }
 
-        /* Indicador de filtro activo */
         .filter-dropdown.active select {
             border-color: #2e7d32;
             background: #e8f5e9;
             font-weight: 600;
         }
 
-        .filter-dropdown.active::after {
-            color: #1b5e20;
-        }
+        .filter-dropdown.active::after { color: #1b5e20; }
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
+        .action-buttons { display: flex; gap: 10px; }
 
         .btn {
             padding: 15px 25px;
@@ -352,10 +308,7 @@
             border: 2px solid #2e7d32;
         }
 
-        .btn-secondary:hover {
-            background: #2e7d32;
-            color: white;
-        }
+        .btn-secondary:hover { background: #2e7d32; color: white; }
 
         .btn-clear {
             background: #f5f5f5;
@@ -363,12 +316,8 @@
             border: 2px solid #e0e0e0;
         }
 
-        .btn-clear:hover {
-            background: #e0e0e0;
-            color: #333;
-        }
+        .btn-clear:hover { background: #e0e0e0; color: #333; }
 
-        /* Badge de filtros activos */
         .active-filters {
             display: flex;
             gap: 10px;
@@ -404,9 +353,7 @@
             transition: all 0.2s ease;
         }
 
-        .filter-badge-remove:hover {
-            background: #c8e6c9;
-        }
+        .filter-badge-remove:hover { background: #c8e6c9; }
 
         .stats-bar {
             display: flex;
@@ -494,15 +441,8 @@
             text-transform: uppercase;
         }
 
-        .status-active {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-
-        .status-inactive {
-            background: #ffcdd2;
-            color: #c62828;
-        }
+        .status-active { background: #c8e6c9; color: #1b5e20; }
+        .status-inactive { background: #ffcdd2; color: #c62828; }
 
         .area-description {
             color: #666;
@@ -527,11 +467,9 @@
             font-size: 0.95em;
         }
 
-        .meta-item strong {
-            color: #2e7d32;
-            font-size: 1.2em;
-        }
+        .meta-item strong { color: #2e7d32; font-size: 1.2em; }
 
+        /* ✅ GRID ORIGINAL para admin/asistente (2 columnas) */
         .area-actions {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -552,45 +490,24 @@
             display: block;
         }
 
-        .btn-view {
-            background: #e8f5e9;
-            color: #2e7d32;
+        /* ✅ Cuando "Ver" es el ÚNICO botón (coordinador), se centra automáticamente */
+        .btn-view:only-child {
+            grid-column: 1 / -1;
+            width: 150px;
+            margin: 0 auto;
         }
 
-        .btn-view:hover {
-            background: #2e7d32;
-            color: white;
-        }
+        .btn-view { background: #e8f5e9; color: #2e7d32; }
+        .btn-view:hover { background: #2e7d32; color: white; }
 
-        .btn-edit {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
+        .btn-edit { background: #fff3e0; color: #ef6c00; }
+        .btn-edit:hover { background: #ef6c00; color: white; }
 
-        .btn-edit:hover {
-            background: #ef6c00;
-            color: white;
-        }
+        .btn-delete { background: #fff3e0; color: #f57c00; }
+        .btn-delete:hover { background: #f57c00; color: white; }
 
-        .btn-delete {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
-        .btn-delete:hover {
-            background: #f57c00;
-            color: white;
-        }
-
-        .btn-eliminate {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .btn-eliminate:hover {
-            background: #c62828;
-            color: white;
-        }
+        .btn-eliminate { background: #ffebee; color: #c62828; }
+        .btn-eliminate:hover { background: #c62828; color: white; }
 
         .empty-state {
             background: white;
@@ -600,64 +517,31 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .empty-state-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-            opacity: 0.3;
+        .empty-state-icon { font-size: 5em; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state h3 { color: #666; font-size: 1.5em; margin-bottom: 10px; }
+        .empty-state p { color: #999; margin-bottom: 20px; }
+
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
 
-        .empty-state h3 {
-            color: #666;
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #999;
-            margin-bottom: 20px;
-        }
-
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2)
-        }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
-        }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .search-form {
-                flex-direction: column;
-            }
-
+            .header h1 { font-size: 1.8em; }
+            .search-form { flex-direction: column; }
             .search-input-wrapper,
             .filters-wrapper,
-            .action-buttons {
-                width: 100%;
-            }
-
-            .filter-dropdown select {
-                width: 100%;
-            }
-
-            .areas-grid {
-                grid-template-columns: 1fr;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
+            .action-buttons { width: 100%; }
+            .filter-dropdown select { width: 100%; }
+            .areas-grid { grid-template-columns: 1fr; }
+            footer { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
@@ -681,24 +565,19 @@
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
+                        {% if 'error' in message.tags %}❌
+                        {% elif 'warning' in message.tags %}⚠️
+                        {% else %}✅
                         {% endif %}
                     </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
+                    <div class="alert-content">{{ message }}</div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS MEJORADA -->
+        <!-- 🔍 SECCIÓN DE BÚSQUEDA Y FILTROS -->
         <div class="controls-section">
             <form method="get" class="search-form" id="filterForm">
                 <div class="search-input-wrapper">
@@ -737,7 +616,6 @@
                         <button type="submit" class="btn btn-secondary">
                             🔍 Buscar
                         </button>
-                        
                         {% if search or activo_filter or area_filter %}
                         <a href="{% url 'area_formacion:listar_areas' %}" class="btn btn-clear">
                             🔄 Limpiar
@@ -745,10 +623,12 @@
                         {% endif %}
                     </div>
                 </div>
-                
+
+                {% if es_administrador or es_asistente %}
                 <a href="{% url 'area_formacion:crear_area' %}" class="btn btn-primary">
                     ➕ Nueva Área
                 </a>
+                {% endif %}
             </form>
 
             <!-- 🏷️ BADGES DE FILTROS ACTIVOS -->
@@ -760,14 +640,12 @@
                     <button type="button" class="filter-badge-remove" onclick="removeFilter('search')">×</button>
                 </div>
                 {% endif %}
-                
                 {% if area_filter %}
                 <div class="filter-badge">
                     🎯 Área: "{{ area_seleccionada.nombre }}"
                     <button type="button" class="filter-badge-remove" onclick="removeFilter('area_id')">×</button>
                 </div>
                 {% endif %}
-                
                 {% if activo_filter == 'true' %}
                 <div class="filter-badge">
                     ✅ Mostrando: Solo Activos
@@ -783,6 +661,7 @@
             {% endif %}
         </div>
 
+        <!-- ESTADÍSTICAS -->
         <div class="stats-bar">
             <div class="stat-card">
                 <h3>Total de Áreas</h3>
@@ -798,6 +677,7 @@
             </div>
         </div>
 
+        <!-- GRID DE ÁREAS -->
         {% if areas %}
         <div class="areas-grid">
             {% for area in areas %}
@@ -830,9 +710,11 @@
 
                 <div class="area-actions">
                     <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    {% if es_administrador or es_asistente %}
                     <a href="{% url 'area_formacion:editar_area' area.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'area_formacion:desactivar_area' area.id %}" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro de desactivar esta área?')">🚫 Desactivar</a>
                     <a href="{% url 'area_formacion:eliminar_area' area.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Estás seguro de eliminar permanentemente esta área?')">🗑️ Eliminar</a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -842,17 +724,18 @@
             <div class="empty-state-icon">📂</div>
             <h3>No se encontraron áreas</h3>
             <p>{% if search %}No hay áreas que coincidan con tu búsqueda "{{ search }}"{% else %}Aún no hay áreas registradas en el sistema{% endif %}</p>
+            {% if es_administrador or es_asistente %}
             <a href="{% url 'area_formacion:crear_area' %}" class="btn btn-primary">➕ Crear Primera Área</a>
+            {% endif %}
         </div>
         {% endif %}
+
+        <footer>
+            <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+        </footer>
     </div>
 
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>
-
     <script>
-        // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
@@ -863,46 +746,23 @@
             });
         });
 
-        // Función para remover filtros individuales
         function removeFilter(filterName) {
             const form = document.getElementById('filterForm');
             const input = form.querySelector(`[name="${filterName}"]`);
             if (input) {
-                if (input.type === 'text') {
-                    input.value = '';
-                } else {
-                    input.value = '';
-                }
+                input.value = '';
                 form.submit();
             }
         }
 
-        // Animación de salida
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
+                from { transform: translateY(0); opacity: 1; }
+                to { transform: translateY(-20px); opacity: 0; }
             }
         `;
         document.head.appendChild(style);
-
-        // Búsqueda en tiempo real (opcional - comentar si no se desea)
-        /*
-        let searchTimeout;
-        document.getElementById('searchInput').addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                document.getElementById('filterForm').submit();
-            }, 500);
-        });
-        */
     </script>
 
     {% include 'core/accessibility.html' %}

@@ -559,7 +559,11 @@
             text-decoration: none;
             display: block;
         }
-
+        .btn-view:only-child{
+            grid-column:1 / -1;
+            width:150px;
+            margin:0 auto;
+        }
         .btn-view {
             background: #e8f5e9;
             color: #2e7d32;
@@ -762,9 +766,11 @@
             </form>
 
             <!-- Botón Crear -->
+            {% if es_administrador or es_asistente %}
             <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary btn-create">
                 ➕ Nueva Solicitud
             </a>
+            {% endif %}
         </div>
 
         <!-- ESTADÍSTICAS -->
@@ -869,10 +875,12 @@
                 </div>
 
                 <div class="solicitud-actions">
-                    <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn-action btn-email">📧 Correo</a>
                     <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn-action btn-view">👁️ Ver</a>
+                    {% if es_administrador or es_asistente %}
+                    <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn-action btn-email">📧 Correo</a>
                     <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn-action btn-edit">✏️ Editar</a>
                     <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn-action btn-delete" onclick="return confirm('⚠️ ¿Eliminar esta solicitud?')">🗑️ Eliminar</a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -889,7 +897,9 @@
                     Aún no hay solicitudes registradas en el sistema
                 {% endif %}
             </p>
+            {% if es_administrador or es_asistente %}
             <a href="{% url 'solicitudes:crear_solicitud' %}" class="btn btn-primary">➕ Crear Primera Solicitud</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

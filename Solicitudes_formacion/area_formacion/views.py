@@ -3,10 +3,10 @@ from django.contrib import messages
 from .models import Area 
 from programas.models import Programa
 from django.db.models import Count, Q
-
+from core.management.decorators import puede_ver_requerido, puede_editar_requerido
 # Create your views here.
 
-
+@puede_ver_requerido
 def listar_areas(request):
     """Vista para listar todas las áreas"""
     search = request.GET.get('search', '')
@@ -62,7 +62,7 @@ def listar_areas(request):
     }
     return render(request, 'area_formacion/listar_areas.html', context)
 
-
+@puede_ver_requerido
 def detalle_area(request,area_id):
     """Vista para el  detalle de un  area"""
     area=get_object_or_404(
@@ -86,6 +86,7 @@ def detalle_area(request,area_id):
     }
     return render(request,'area_formacion/detalle_area.html',context)
 
+@puede_editar_requerido
 def crear_area(request):
     """Vista para crear una nueva area"""
     if request.method == 'POST':
@@ -126,7 +127,8 @@ def crear_area(request):
             })
     
     return render(request, 'area_formacion/crear_area.html')
-            
+
+@puede_editar_requerido            
 def editar_area(request, area_id):
     """Vista para editar un area existente"""
     area = get_object_or_404(Area, id=area_id)
@@ -161,7 +163,7 @@ def editar_area(request, area_id):
             return render(request, 'area_formacion/editar_area.html', {'area': area})
     
     return render(request, 'area_formacion/editar_area.html', {'area': area})
-
+@puede_editar_requerido
 def desactivar_area(request, area_id):
     """Vista para desactivar un área y opcionalmente sus programas"""
     area = get_object_or_404(Area, id=area_id)
@@ -193,7 +195,7 @@ def desactivar_area(request, area_id):
         'programas_activos': programas_activos
     }
     return render(request, 'area_formacion/desactivar_area.html', context)
-
+@puede_editar_requerido
 def eliminar_area(request, area_id):
     """Vista para eliminar permanentemente un area"""
     area = get_object_or_404(Area, id=area_id)
