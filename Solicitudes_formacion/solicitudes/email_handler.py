@@ -26,6 +26,12 @@ class EmailSolicitudHandler:
     """
     Manejador de correos para solicitudes de formación.
 
+    CAMBIOS v2:
+    - Acepta correos con asunto válido + PDF adjunto aunque el cuerpo sea corto
+    - Extrae texto del PDF adjunto con pdfplumber cuando el cuerpo es insuficiente
+    - Si el PDF no tiene texto (escaneado), crea la solicitud con datos mínimos
+      y la marca para revisión manual en lugar de descartarla
+
     Reconoce como 'empresa' (igual que S.A.S o LTDA) a:
       - Empresas privadas (S.A.S, LTDA, S.A, EU, SAS, S.C.A...)
       - Alcaldías y gobernaciones
@@ -33,9 +39,6 @@ class EmailSolicitudHandler:
       - Instituciones educativas (colegios, escuelas, liceos)
       - Fundaciones, corporaciones, asociaciones, ONG
       - Entidades públicas (ministerios, hospitales, superintendencias...)
-
-    Todo se guarda en el modelo Empresa sin cambios. No se requiere
-    modificar ningún otro archivo.
     """
 
     # =========================================================================
@@ -45,25 +48,27 @@ class EmailSolicitudHandler:
     PALABRAS_CLAVE_ASUNTO = [
         'solicitud', 'formación', 'formacion', 'capacitación', 'capacitacion',
         'programa', 'curso', 'entrenamiento', 'sena', 'ficha', 'convenio',
+        # ⭐ NUEVO: frases compuestas que las empresas usan con frecuencia
+        'solicitud de formacion', 'solicitud de formación',
+        'solicitud de capacitacion', 'solicitud de capacitación',
+        'solicitud curso', 'solicitud de curso',
+        'solicitud sena', 'solicitud de programa',
+        'apoyo', 'placa', 'proyecto',  # Para casos como "Solicitud Apoyo Proyecto..."
     ]
 
     PALABRAS_CLAVE_CUERPO = [
-        # Verbos de solicitud
         'solicito', 'solicitamos', 'requerimos',
-        # Datos de la entidad
         'nit', 'empresa', 'entidad', 'institución', 'institucion',
-        # Personal (aplica a todo tipo de entidad)
         'trabajadores', 'funcionarios', 'empleados', 'internos', 'beneficiarios',
-        # Programas
         'programa de formación', 'programa de formacion',
-        # Instituciones reconocidas
         'alcaldía', 'alcaldia', 'gobernación', 'gobernacion',
         'fundación', 'fundacion', 'corporación', 'corporacion',
         'inpec', 'penitenciaria', 'penitenciaría',
         'institución educativa', 'institucion educativa',
-        # Fichas SENA
         'ficha sena', 'ficha de caracterización', 'ficha de caracterizacion',
         'código de ficha', 'numero de ficha',
+        # ⭐ NUEVO: palabras que aparecen en cuerpos cortos pero válidos
+        'adjunto', 'oficio', 'documento', 'solicitud',
     ]
 
     DOMINIOS_EXCLUIDOS = [
@@ -75,50 +80,44 @@ class EmailSolicitudHandler:
     MAX_PDF_SIZE = 10 * 1024 * 1024
     MAX_PDFS_PER_EMAIL = 5
 
+    # ⭐ NUEVO: umbral para considerar que el cuerpo es "demasiado corto"
+    # y hay que buscar los datos en el PDF adjunto
+    CUERPO_MINIMO_CHARS = 150
+
     # =========================================================================
     # IDENTIFICADORES DE ENTIDAD
-    #
-    # SUFIJOS_EMPRESA  → igual que antes: detecta "NOMBRE S.A.S", "NOMBRE LTDA"
-    # PREFIJOS_INSTITUCION → nuevo: detecta "Alcaldía de X", "INPEC X", etc.
-    #
-    # Ambas listas funcionan igual: si el texto coincide, se extrae el nombre
-    # completo y se guarda como empresa en el sistema. No hay diferencia de trato.
     # =========================================================================
 
-    # Sufijos jurídicos de sociedades comerciales colombianas
     SUFIJOS_EMPRESA = [
         r'S\.A\.S\.?', r'\bSAS\b', r'S\.A\.', r'\bSA\b',
         r'LTDA\.?', r'\bEU\b', r'E\.U\.?',
         r'S\.C\.A\.?', r'S\.C\.S\.?', r'S\s+EN\s+C',
     ]
 
-    # Prefijos que identifican instituciones públicas o del tercer sector
     PREFIJOS_INSTITUCION = [
-        # Gobierno local
         r'Alcald[íi]a\s+(?:Municipal\s+)?(?:de(?:l)?\s+)?',
         r'Gobernaci[oó]n\s+(?:de(?:l)?\s+)?',
         r'Municipio\s+de\s+',
         r'Distrito\s+(?:de\s+)?',
-        # INPEC y centros penitenciarios
         r'INPEC\s*',
         r'Establecimiento\s+Penitenciario\s+(?:y\s+Carcelario\s+)?(?:de(?:l)?\s+)?',
         r'C[áa]rcel\s+(?:y\s+Penitenciar[íi]a\s+)?(?:de(?:l)?\s+)?',
         r'Colonia\s+Agr[íi]cola\s+(?:de(?:l)?\s+)?',
-        # Instituciones educativas
         r'Instituci[oó]n\s+Educativa\s+',
         r'I\.E\.\s+',
         r'Colegio\s+',
         r'Escuela\s+',
         r'Liceo\s+',
         r'Centro\s+Educativo\s+',
-        # Fundaciones y ONG
         r'Fundaci[oó]n\s+',
         r'Corporaci[oó]n\s+',
         r'Asociaci[oó]n\s+',
         r'Liga\s+',
         r'Federaci[oó]n\s+',
         r'Confederaci[oó]n\s+',
-        # Entidades públicas nacionales
+        # ⭐ NUEVO: Junta de Acción Comunal (caso real de la imagen)
+        r'Junta\s+(?:de\s+)?Acci[oó]n\s+Comunal\s+(?:de(?:l)?\s+)?',
+        r'\bJAC\b\s+',
         r'Ministerio\s+de\s+',
         r'Departamento\s+Administrativo\s+(?:de(?:l)?\s+)?',
         r'Unidad\s+Administrativa\s+Especial\s+',
@@ -158,11 +157,10 @@ class EmailSolicitudHandler:
         'interpretación de planos': 'Interpretación de planos para maquinaria industrial',
         'planos maquinaria': 'Interpretación de planos para maquinaria industrial',
         'lectura de planos': 'Interpretación de planos para maquinaria industrial',
+        # ⭐ NUEVO: programa que aparece en el caso real de la imagen
+        'placas huellas': 'Placas Huellas',
+        'placa huella': 'Placas Huellas',
     }
-
-    # =========================================================================
-    # FICHAS SENA — código → nombre del programa
-    # =========================================================================
 
     FICHAS_SENA = {
         '2350024': 'Operador de Minicargador',
@@ -196,31 +194,72 @@ class EmailSolicitudHandler:
             'total_correos': 0, 'correos_filtrados': 0,
             'correos_procesados': 0, 'solicitudes_creadas': 0,
             'pdfs_extraidos': 0, 'errores': 0,
+            # ⭐ NUEVO: contador de solicitudes creadas desde PDF
+            'creadas_desde_pdf': 0,
+            'revision_manual': 0,
         }
 
         print(f"🔧 IMAP: {self.imap_server}:{self.imap_port}")
         print(f"📧 Cuenta: {self.email_account}")
 
     # =========================================================================
+    # ⭐ NUEVO — EXTRACCIÓN DE TEXTO DESDE PDF
+    # Este método es el corazón del cambio. Lee el PDF en memoria (sin guardar
+    # en disco) y devuelve su texto plano para que el resto del handler lo
+    # procese igual que si viniera en el cuerpo del correo.
+    # =========================================================================
+
+    def extraer_texto_pdf(self, pdf_bytes):
+        """
+        Extrae texto plano de un PDF en memoria usando pdfplumber.
+
+        ¿Por qué pdfplumber y no PyPDF2?
+        - pdfplumber maneja mejor PDFs con tablas y columnas
+        - Preserva mejor el orden de lectura del texto
+        - Más tolerante con PDFs mal formados
+
+        Retorna:
+            str con el texto extraído, o None si el PDF es una imagen escaneada
+            o si pdfplumber no está instalado.
+        """
+        try:
+            import pdfplumber
+            import io
+
+            with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+                texto_total = ''
+                for num_pagina, pagina in enumerate(pdf.pages, 1):
+                    texto_pagina = pagina.extract_text()
+                    if texto_pagina:
+                        texto_total += texto_pagina + '\n'
+                        print(f"   📄 Página {num_pagina}: {len(texto_pagina)} chars extraídos")
+                    else:
+                        print(f"   ⚠️  Página {num_pagina}: sin texto (posiblemente imagen)")
+
+                texto_total = texto_total.strip()
+
+                if texto_total:
+                    print(f"   ✅ PDF: {len(texto_total)} caracteres totales extraídos")
+                    return texto_total
+                else:
+                    print("   ⚠️  PDF sin texto extraíble — es un documento escaneado (imagen)")
+                    return None
+
+        except ImportError:
+            print("   ❌ pdfplumber no instalado. Ejecuta: pip install pdfplumber")
+            return None
+        except Exception as e:
+            print(f"   ⚠️  Error leyendo PDF: {e}")
+            return None
+
+    # =========================================================================
     # EXTRACCIÓN DEL NOMBRE DE ENTIDAD
-    #
-    # Esta es la función clave. Funciona igual para empresas e instituciones:
-    # busca el nombre usando prefijos (Alcaldía de...) o sufijos (...S.A.S),
-    # de la misma manera que antes solo buscaba sufijos jurídicos.
     # =========================================================================
 
     def extraer_nombre_entidad(self, texto):
         """
-        Extrae el nombre de la entidad del cuerpo del correo.
-
-        Orden de búsqueda:
-          1. Campo explícito: "Nombre:", "Entidad:", "Empresa:", "Institución:"
-          2. Prefijo de institución: "Alcaldía de X", "INPEC X", "Fundación X"...
-          3. Sufijo jurídico de empresa: "NOMBRE S.A.S", "NOMBRE LTDA"...
-          4. Texto en mayúsculas en las primeras líneas (fallback)
-
-        Returns:
-            str | None
+        Extrae el nombre de la entidad del texto (cuerpo del correo o PDF).
+        Sin cambios en la lógica — ahora también recibe texto extraído de PDFs.
         """
         # --- 1. Campo explícito ---
         campo = re.search(
@@ -264,7 +303,8 @@ class EmailSolicitudHandler:
         if mayus:
             candidato = self.limpiar_texto(mayus.group(1))
             ignorar = {'SEÑORES', 'ESTIMADOS', 'BUENOS DIAS', 'BUENAS TARDES',
-                       'BUENAS NOCHES', 'CORDIALMENTE', 'ATENTAMENTE'}
+                       'BUENAS NOCHES', 'CORDIALMENTE', 'ATENTAMENTE',
+                       'SENA', 'NIT', 'PERSONERIA JURIDICA'}
             if (candidato and len(candidato) > 8
                     and 'SENA' not in candidato
                     and candidato.upper().strip() not in ignorar):
@@ -279,7 +319,6 @@ class EmailSolicitudHandler:
     # =========================================================================
 
     def extraer_ficha_sena(self, cuerpo, asunto=''):
-        """Detecta un código de ficha SENA y lo mapea al programa."""
         texto = f"{asunto} {cuerpo}".lower()
         for patron in self.PATRON_FICHA_SENA:
             m = re.search(patron, texto, re.IGNORECASE)
@@ -297,7 +336,6 @@ class EmailSolicitudHandler:
     # =========================================================================
 
     def extraer_pdfs_adjuntos(self, msg):
-        """Extrae todos los PDFs adjuntos del correo."""
         pdfs = []
         try:
             print("\n   === BUSCANDO PDFs ===")
@@ -352,7 +390,6 @@ class EmailSolicitudHandler:
             return pdfs
 
     def conectar_email(self):
-        """Conecta al servidor IMAP."""
         try:
             if not self.email_account or not self.email_password:
                 print("❌ Credenciales no configuradas")
@@ -370,7 +407,6 @@ class EmailSolicitudHandler:
             return None
 
     def leer_correos_no_leidos(self, limite=20):
-        """Lee correos no leídos de la bandeja de entrada."""
         mail = self.conectar_email()
         if not mail:
             return []
@@ -416,7 +452,6 @@ class EmailSolicitudHandler:
             return []
 
     def parsear_correo(self, msg):
-        """Extrae asunto, remitente, cuerpo y PDFs."""
         try:
             subject = ''
             if msg['Subject']:
@@ -457,29 +492,61 @@ class EmailSolicitudHandler:
             return None
 
     # =========================================================================
-    # FILTRADO
+    # ⭐ FILTRADO — CAMBIO PRINCIPAL
+    #
+    # LÓGICA ANTERIOR:
+    #   El correo debía tener cuerpo largo + palabras clave + campos extraíbles.
+    #   Si el cuerpo era corto → RECHAZADO aunque traía PDF con todos los datos.
+    #
+    # LÓGICA NUEVA:
+    #   PUERTA 1 (nueva): asunto válido + PDF adjunto → ACEPTADO directamente.
+    #   PUERTA 2 (nueva): asunto válido + cuerpo con plantilla estructurada → ACEPTADO.
+    #   PUERTA 3 (original): validación completa del cuerpo libre.
+    #
+    # Esto significa que el correo de la Junta de Acción Comunal (asunto:
+    # "Solicitud Apoyo Proyecto PLACA HUELLA", cuerpo de 4 líneas, PDF adjunto)
+    # ahora entra por la PUERTA 1 y llega a extraer_informacion_con_ia().
     # =========================================================================
 
     def es_correo_valido(self, correo_info):
         """Determina si el correo es una solicitud válida."""
         try:
             asunto    = correo_info.get('asunto', '').lower()
-            cuerpo    = correo_info.get('cuerpo', '').lower()
+            cuerpo    = correo_info.get('cuerpo', '')
             remitente = correo_info.get('remitente', '').lower()
+            pdfs      = correo_info.get('pdfs_adjuntos', [])
+            tiene_pdf = len(pdfs) > 0  # ⭐ NUEVO
 
+            # --- Dominios excluidos (sin cambios) ---
             for dom in self.DOMINIOS_EXCLUIDOS:
                 if dom in remitente:
                     return False, f"Dominio excluido: {dom}"
 
+            # --- Asunto sigue siendo obligatorio ---
             if not any(p in asunto for p in self.PALABRAS_CLAVE_ASUNTO):
                 return False, "Sin palabras clave en asunto"
 
-            encontradas = sum(1 for p in self.PALABRAS_CLAVE_CUERPO if p in cuerpo)
+            # ⭐ PUERTA 1 — NUEVA:
+            # Si el asunto es válido Y hay PDF adjunto → aceptar sin revisar el cuerpo.
+            # Los datos vendrán del PDF. No importa si el cuerpo tiene 4 líneas.
+            if tiene_pdf:
+                print(f"   ✅ PUERTA 1: Asunto válido + {len(pdfs)} PDF(s) adjunto(s) → aceptado")
+                return True, f"Correo con asunto válido y {len(pdfs)} PDF adjunto(s)"
+
+            # ⭐ PUERTA 2 — NUEVA:
+            # Cuerpo con plantilla estructurada (etiquetas Nombre:, NIT:, etc.)
+            if self.es_correo_plantilla(cuerpo):
+                print("   ✅ PUERTA 2: Plantilla estructurada detectada → aceptado")
+                return True, "Correo con plantilla estructurada"
+
+            # --- PUERTA 3 — ORIGINAL: validación completa del cuerpo libre ---
+            cuerpo_lower = cuerpo.lower()
+            encontradas = sum(1 for p in self.PALABRAS_CLAVE_CUERPO if p in cuerpo_lower)
             if encontradas < 2:
                 return False, f"Solo {encontradas} palabras clave en cuerpo (mínimo 2)"
 
             if len(cuerpo) < 100:
-                return False, f"Cuerpo muy corto ({len(cuerpo)} chars)"
+                return False, f"Cuerpo muy corto ({len(cuerpo)} chars) y sin PDF adjunto"
 
             info = self.extraer_informacion_con_ia(correo_info)
             if not info:
@@ -494,9 +561,92 @@ class EmailSolicitudHandler:
             if campos < self.CAMPOS_MINIMOS_REQUERIDOS:
                 return False, f"Campos insuficientes ({campos}/{self.CAMPOS_MINIMOS_REQUERIDOS})"
 
-            return True, "Correo válido"
+            return True, "Correo válido (cuerpo completo)"
         except Exception as e:
             return False, f"Error en validación: {e}"
+
+    # =========================================================================
+    # ⭐ NUEVO — DETECCIÓN DE PLANTILLA ESTRUCTURADA
+    # =========================================================================
+
+    CAMPOS_PLANTILLA = [
+        'nombre', 'nit', 'contacto', 'teléfono', 'telefono',
+        'programa', 'aprendices', 'correo', 'email', 'empresa', 'entidad',
+    ]
+
+    def es_correo_plantilla(self, cuerpo):
+        """
+        Detecta si el correo usa la plantilla estructurada del sistema.
+        Retorna True si tiene al menos 3 etiquetas conocidas (campo: valor).
+        """
+        cuerpo_lower = cuerpo.lower()
+        encontrados = sum(1 for campo in self.CAMPOS_PLANTILLA if f'{campo}:' in cuerpo_lower)
+        return encontrados >= 3
+
+    def extraer_de_plantilla(self, cuerpo):
+        """Extrae datos directamente desde la plantilla estructurada."""
+        info = {
+            'nombre': None, 'nit': None, 'contacto': None,
+            'correo': None, 'telefono': None, 'municipio': None,
+            'direccion': None, 'numero_trabajadores': None,
+            'programa_solicitado': None,
+        }
+
+        campos_map = {
+            'nombre'       : ('nombre', 150),
+            'empresa'      : ('nombre', 150),
+            'entidad'      : ('nombre', 150),
+            'institución'  : ('nombre', 150),
+            'institucion'  : ('nombre', 150),
+            'nit'          : ('nit', 20),
+            'contacto'     : ('contacto', 100),
+            'responsable'  : ('contacto', 100),
+            'teléfono'     : ('telefono', 20),
+            'telefono'     : ('telefono', 20),
+            'celular'      : ('telefono', 20),
+            'correo'       : ('correo', 150),
+            'email'        : ('correo', 150),
+            'municipio'    : ('municipio', 100),
+            'ciudad'       : ('municipio', 100),
+            'dirección'    : ('direccion', 250),
+            'direccion'    : ('direccion', 250),
+            'programa'     : ('programa_solicitado', 200),
+            'curso'        : ('programa_solicitado', 200),
+            'capacitación' : ('programa_solicitado', 200),
+            'capacitacion' : ('programa_solicitado', 200),
+        }
+
+        for linea in cuerpo.split('\n'):
+            if ':' not in linea:
+                continue
+            clave_raw, _, valor_raw = linea.partition(':')
+            clave = clave_raw.strip().lower().replace('*', '').replace('n°', '').strip()
+            valor = valor_raw.strip().strip('[]').strip()
+
+            if valor.startswith('[') or not valor or valor.lower() in ('', 'n/a', 'na'):
+                continue
+
+            if clave in campos_map:
+                campo_destino, max_len = campos_map[clave]
+                if not info[campo_destino]:
+                    limpio = self.limpiar_texto(valor)
+                    if limpio:
+                        info[campo_destino] = limpio[:max_len]
+
+        if info['nit']:
+            info['nit'] = self.validar_nit(info['nit'])
+
+        m = re.search(
+            r'(?:aprendices|trabajadores|participantes|beneficiarios)\s*:\s*(\d+)',
+            cuerpo, re.IGNORECASE
+        )
+        if m:
+            n = int(m.group(1))
+            if n > 0:
+                info['numero_trabajadores'] = n
+
+        print(f"   📋 Plantilla → Nombre: {info['nombre']} | Programa: {info['programa_solicitado']}")
+        return info
 
     # =========================================================================
     # UTILIDADES DE TEXTO
@@ -536,8 +686,55 @@ class EmailSolicitudHandler:
         texto = re.sub(r'[^a-z0-9\s]', '', texto)
         return re.sub(r'\s+', ' ', texto).strip()
 
+    def normalizar_para_busqueda(self, texto):
+        """
+        Normalización avanzada para búsqueda de programas.
+
+        Además de quitar tildes y pasar a minúsculas, elimina plurales
+        simples del español para que:
+          'minicargadores' encuentre 'minicargador'
+          'placas huellas' encuentre 'placa huella'
+          'operadores'     encuentre 'operador'
+          'excavadoras'    encuentre 'excavadora'
+
+        Esto evita agregar keywords manuales para cada variante de nombre.
+        Funciona igual para correos con cuerpo largo, plantilla o PDF adjunto.
+        """
+        if not texto:
+            return ''
+        # Paso 1: quitar tildes y pasar a minúsculas
+        texto = texto.lower()
+        texto = ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
+        texto = re.sub(r'[^a-z0-9\s]', '', texto)
+        texto = re.sub(r'\s+', ' ', texto).strip()
+
+        # Paso 2: normalizar plurales token por token
+        tokens_normalizados = []
+        for token in texto.split():
+            if len(token) > 4 and token.endswith('es'):
+                # 'operadores' → 'operador', 'excavadoras' NO entra aquí
+                token = token[:-2]
+            elif len(token) > 3 and token.endswith('s'):
+                # 'placas' → 'placa', 'huellas' → 'huella', 'planos' → 'plano'
+                token = token[:-1]
+            tokens_normalizados.append(token)
+
+        return ' '.join(tokens_normalizados)
+
     # =========================================================================
-    # EXTRACCIÓN DE INFORMACIÓN
+    # ⭐ EXTRACCIÓN DE INFORMACIÓN — CAMBIO PRINCIPAL #2
+    #
+    # LÓGICA ANTERIOR:
+    #   Solo analizaba el cuerpo del correo.
+    #
+    # LÓGICA NUEVA (3 niveles de prioridad):
+    #   NIVEL 1: ¿Cuerpo tiene plantilla estructurada? → extraer_de_plantilla()
+    #   NIVEL 2: ¿Cuerpo es corto pero hay PDF? → extraer_texto_pdf() y reusar
+    #            este mismo método con el texto del PDF como "cuerpo enriquecido"
+    #   NIVEL 3: Comportamiento original (cuerpo libre largo)
     # =========================================================================
 
     def extraer_informacion_con_ia(self, correo_info):
@@ -547,10 +744,96 @@ class EmailSolicitudHandler:
             remitente = correo_info.get('remitente', '')
             asunto    = correo_info.get('asunto', '')
 
-            if not cuerpo:
+            if not cuerpo and not correo_info.get('pdfs_adjuntos'):
                 return None
 
             print("   Extrayendo información...")
+
+            # ------------------------------------------------------------------
+            # ⭐ NIVEL 1: Plantilla estructurada en el cuerpo del correo
+            # ------------------------------------------------------------------
+            if self.es_correo_plantilla(cuerpo):
+                print("   ✅ NIVEL 1: Plantilla estructurada detectada en cuerpo")
+                info = self.extraer_de_plantilla(cuerpo)
+                if not info['correo']:
+                    m = re.search(r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', remitente)
+                    if m:
+                        candidato = m.group(1).strip().lower()
+                        if not any(d in candidato for d in self.DOMINIOS_EXCLUIDOS):
+                            info['correo'] = candidato
+                return info
+
+            # ------------------------------------------------------------------
+            # ⭐ NIVEL 2: Cuerpo corto → intentar extraer datos del PDF adjunto
+            #
+            # ¿Cuándo entra aquí?
+            # - El correo tiene asunto válido (pasó es_correo_valido PUERTA 1)
+            # - El cuerpo tiene menos de CUERPO_MINIMO_CHARS (150) caracteres
+            # - Hay al menos un PDF adjunto
+            #
+            # ¿Qué hace?
+            # - Lee el primer PDF con pdfplumber
+            # - Si extrae texto: lo "pega" al cuerpo original y relanza la
+            #   extracción. El texto del PDF ya tiene NIT, nombre, teléfono, etc.
+            # - Si NO extrae texto (PDF escaneado): crea info mínima con lo que
+            #   hay en el asunto y el remitente, y pone una observación para
+            #   revisión manual. NO descarta el correo.
+            # ------------------------------------------------------------------
+            pdfs = correo_info.get('pdfs_adjuntos', [])
+            cuerpo_es_corto = len(cuerpo.strip()) < self.CUERPO_MINIMO_CHARS
+
+            if cuerpo_es_corto and pdfs:
+                print(f"\n   === NIVEL 2: Cuerpo corto ({len(cuerpo.strip())} chars) + PDF adjunto ===")
+                print(f"   📄 Intentando extraer texto del PDF: {pdfs[0]['nombre']}")
+
+                texto_pdf = self.extraer_texto_pdf(pdfs[0]['contenido'])
+
+                if texto_pdf:
+                    # ✅ PDF con texto: combinar PDF + cuerpo original y relanzar
+                    print("   ✅ Texto extraído del PDF — relanzando extracción con texto enriquecido")
+                    cuerpo_enriquecido = texto_pdf + '\n\n--- CUERPO CORREO ---\n' + cuerpo
+                    correo_enriquecido = dict(correo_info)
+                    correo_enriquecido['cuerpo'] = cuerpo_enriquecido
+                    # ⚠️ Evitar recursión infinita: el cuerpo enriquecido
+                    # ya tiene más de CUERPO_MINIMO_CHARS, así que no volverá
+                    # a entrar en este bloque NIVEL 2
+                    return self.extraer_informacion_con_ia(correo_enriquecido)
+
+                else:
+                    # ⚠️ PDF escaneado (imagen): crear info mínima para no perder el correo
+                    print("   ⚠️  PDF escaneado — creando solicitud mínima para revisión manual")
+                    info_minima = {
+                        'nombre': None, 'nit': None, 'contacto': None,
+                        'correo': None, 'telefono': None, 'municipio': None,
+                        'direccion': None, 'numero_trabajadores': None,
+                        'programa_solicitado': None,
+                        # ⭐ Bandera especial para que procesar_correo_individual
+                        # sepa que esta solicitud necesita revisión manual
+                        '_requiere_revision_manual': True,
+                        '_razon': 'PDF adjunto es imagen escaneada, no se pudo extraer texto',
+                    }
+
+                    # Intentar sacar programa del asunto
+                    for keyword, nombre_prog in self.KEYWORDS_PROGRAMAS.items():
+                        if keyword in asunto.lower():
+                            info_minima['programa_solicitado'] = nombre_prog
+                            print(f"   Programa (asunto): {nombre_prog}")
+                            break
+
+                    # Sacar correo del remitente
+                    m = re.search(r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', remitente)
+                    if m:
+                        candidato = m.group(1).strip().lower()
+                        if not any(d in candidato for d in self.DOMINIOS_EXCLUIDOS):
+                            info_minima['correo'] = candidato
+
+                    return info_minima
+
+            # ------------------------------------------------------------------
+            # NIVEL 3: Comportamiento original — cuerpo libre largo
+            # (sin cambios respecto a la versión anterior)
+            # ------------------------------------------------------------------
+            print("   NIVEL 3: Extracción desde cuerpo libre")
 
             info = {
                 'nombre': None, 'nit': None, 'contacto': None,
@@ -559,7 +842,7 @@ class EmailSolicitudHandler:
                 'programa_solicitado': None,
             }
 
-            # --- NOMBRE (empresas + instituciones, misma lógica) ---
+            # --- NOMBRE ---
             print("\n   === NOMBRE DE ENTIDAD ===")
             info['nombre'] = self.extraer_nombre_entidad(cuerpo)
 
@@ -659,7 +942,7 @@ class EmailSolicitudHandler:
             if not info['direccion']:
                 print("   ⚠️  Sin dirección")
 
-            # --- PARTICIPANTES (trabajadores / funcionarios / internos / etc.) ---
+            # --- PARTICIPANTES ---
             trab = re.search(
                 r'N[uúÚ]mero\s+de\s+'
                 r'(?:trabajadores|funcionarios|beneficiarios|empleados|internos|participantes)'
@@ -682,7 +965,6 @@ class EmailSolicitudHandler:
             # --- PROGRAMA ---
             if not info['programa_solicitado']:
                 print("\n   === PROGRAMA ===")
-
                 m = re.search(
                     r'(?:programa|formaci[oó]n|curso)\s+(?:de\s+)?([a-záéíóúñ\s]+)',
                     asunto.lower()
@@ -738,13 +1020,10 @@ class EmailSolicitudHandler:
 
     # =========================================================================
     # BUSCAR O CREAR EMPRESA
-    # Sin cambios en lógica ni en modelo. Ahora simplemente llegan más tipos
-    # de nombres correctamente extraídos desde extraer_nombre_entidad().
     # =========================================================================
 
     @transaction.atomic
     def buscar_o_crear_empresa(self, info):
-        """Busca o crea la entidad en el modelo Empresa (sin cambios en el modelo)."""
         try:
             nombre = info.get('nombre')
             correo = info.get('correo')
@@ -754,7 +1033,6 @@ class EmailSolicitudHandler:
                 print("   ❌ Sin nombre ni correo")
                 return None, False
 
-            # 1. Por NIT
             if nit:
                 empresa = Empresa.objects.filter(nit=nit).first()
                 if empresa:
@@ -762,7 +1040,6 @@ class EmailSolicitudHandler:
                     self._actualizar_empresa(empresa, info)
                     return empresa, False
 
-            # 2. Por nombre exacto
             if nombre:
                 qs = Empresa.objects.filter(nombre__iexact=nombre)
                 if qs.exists():
@@ -778,7 +1055,6 @@ class EmailSolicitudHandler:
                         self._actualizar_empresa(empresa, info)
                         return empresa, False
 
-            # 3. Por correo
             if correo and '@ejemplo.com' not in correo:
                 empresa = Empresa.objects.filter(correo__iexact=correo).first()
                 if empresa:
@@ -786,7 +1062,6 @@ class EmailSolicitudHandler:
                     self._actualizar_empresa(empresa, info)
                     return empresa, False
 
-            # 4. Crear nueva
             print("   🆕 Creando nueva entidad...")
 
             nombre_final = nombre if nombre else f"Entidad {(correo or '').split('@')[0]}"
@@ -811,7 +1086,6 @@ class EmailSolicitudHandler:
                     numero_trabajadores=info.get('numero_trabajadores') or 0,
                 )
                 print(f"   ✅ Creada: {empresa.nombre}")
-                print(f"      NIT: {empresa.nit or 'NO'} | Contacto: {empresa.contacto}")
                 return empresa, True
 
             except IntegrityError as e:
@@ -829,7 +1103,6 @@ class EmailSolicitudHandler:
             return None, False
 
     def _actualizar_empresa(self, empresa, info):
-        """Rellena campos vacíos de la entidad con datos del correo."""
         actualizado = False
         for campo, max_len in [('contacto', 100), ('telefono', 20),
                                 ('municipio', 100), ('direccion', 250)]:
@@ -852,20 +1125,21 @@ class EmailSolicitudHandler:
     # =========================================================================
 
     def buscar_programa(self, nombre_programa):
-        """Busca el programa con scoring de similitud."""
         try:
             if not nombre_programa:
                 return None
 
             print(f"   Buscando: {nombre_programa}")
-            nombre_norm = self.normalizar_texto(nombre_programa)
+            # ⭐ normalizar_para_busqueda normaliza plurales:
+            # 'minicargadores' → 'minicargador', 'placas huellas' → 'placa huella'
+            nombre_norm = self.normalizar_para_busqueda(nombre_programa)
             tokens_busq = set(nombre_norm.split())
             programas   = Programa.objects.filter(activo=True)
             mejor       = None
             mejor_score = 0
 
             for programa in programas:
-                prog_norm   = self.normalizar_texto(programa.nombre)
+                prog_norm   = self.normalizar_para_busqueda(programa.nombre)
                 tokens_prog = set(prog_norm.split())
                 score = 0
 
@@ -907,7 +1181,12 @@ class EmailSolicitudHandler:
             return None
 
     # =========================================================================
-    # PROCESAMIENTO
+    # ⭐ PROCESAMIENTO — CAMBIO EN procesar_correo_individual
+    #
+    # Único cambio: cuando info tiene '_requiere_revision_manual' = True
+    # (PDF escaneado), se crea la solicitud con observación de alerta y se
+    # permite que el programa sea None si no se encontró (en lugar de
+    # descartar el correo completamente).
     # =========================================================================
 
     def procesar_correo_individual(self, correo_info):
@@ -929,6 +1208,10 @@ class EmailSolicitudHandler:
                 self.stats['errores'] += 1
                 return None
 
+            # ⭐ NUEVO: detectar si viene de PDF escaneado
+            requiere_revision = info.pop('_requiere_revision_manual', False)
+            razon_revision    = info.pop('_razon', '')
+
             empresa, _ = self.buscar_o_crear_empresa(info)
             if not empresa:
                 self.stats['errores'] += 1
@@ -938,21 +1221,44 @@ class EmailSolicitudHandler:
             if info.get('programa_solicitado'):
                 programa = self.buscar_programa(info['programa_solicitado'])
 
+            # ⭐ NUEVO: si es revisión manual y no se encontró programa,
+            # buscar el primero activo como placeholder para no perder la solicitud
+            if not programa and requiere_revision:
+                print("   ⚠️  PDF escaneado sin programa identificado — usando placeholder")
+                programa = Programa.objects.filter(activo=True).first()
+                if not programa:
+                    print("❌ No hay programas activos en la base de datos")
+                    self.stats['errores'] += 1
+                    return None
+
             if not programa:
                 print(f"❌ Programa no encontrado: {info.get('programa_solicitado')}")
                 self.stats['errores'] += 1
                 return None
+
+            # ⭐ NUEVO: construir observación con alerta si es revisión manual
+            if requiere_revision:
+                observacion = (
+                    f"⚠️ REVISIÓN MANUAL REQUERIDA\n"
+                    f"Razón: {razon_revision}\n"
+                    f"Asunto original: {asunto_corto}\n"
+                    f"Datos extraídos del PDF adjunto no disponibles — completar manualmente."
+                )
+                self.stats['revision_manual'] += 1
+            else:
+                observacion = f"Creada automáticamente desde correo: {asunto_corto}"
 
             solicitud = Solicitud.objects.create(
                 empresa          =empresa,
                 programa         =programa,
                 estado           ='RECIBIDA',
                 fecha_recepcion  =timezone.now(),
-                observaciones    =f"Creada automáticamente desde correo: {asunto_corto}",
+                observaciones    =observacion,
                 numero_aprendices=info.get('numero_trabajadores'),
                 correo_remitente =self._extraer_email_limpio(correo_info['remitente']),
             )
 
+            # Guardar PDFs adjuntos
             pdfs = correo_info.get('pdfs_adjuntos', [])
             if pdfs:
                 print(f"\n   📄 Guardando {len(pdfs)} PDF(s)...")
@@ -975,7 +1281,8 @@ class EmailSolicitudHandler:
                     except Exception as e:
                         print(f"   ⚠️  Error PDF #{idx}: {e}")
 
-            print(f"\n✅ SOLICITUD #{solicitud.id} → {empresa.nombre}")
+            estado_log = "⚠️ REVISIÓN MANUAL" if requiere_revision else "✅"
+            print(f"\n{estado_log} SOLICITUD #{solicitud.id} → {empresa.nombre}")
             self.stats['solicitudes_creadas'] += 1
             self.stats['correos_procesados']  += 1
             return solicitud
@@ -988,7 +1295,6 @@ class EmailSolicitudHandler:
             return None
 
     def procesar_correos(self, limite=20, procesar_en_paralelo=False, max_workers=3):
-        """Procesa correos no leídos y crea solicitudes."""
         print("\n" + "="*60)
         print("🚀 PROCESAMIENTO DE CORREOS")
         print(f"   Límite: {limite} | Paralelo: {procesar_en_paralelo}")
@@ -1030,6 +1336,10 @@ class EmailSolicitudHandler:
         if self.stats['total_correos'] > 0:
             tasa = (self.stats['solicitudes_creadas'] / self.stats['total_correos']) * 100
             print(f"   tasa_exito: {tasa:.1f}%")
+        # ⭐ NUEVO: advertencia si hay solicitudes pendientes de revisión manual
+        if self.stats.get('revision_manual', 0) > 0:
+            print(f"\n   ⚠️  {self.stats['revision_manual']} solicitud(es) requieren REVISIÓN MANUAL")
+            print(f"      (PDF escaneado — completar datos en el panel de edición)")
         print("="*60)
 
     def enviar_respuesta_automatica(self, empresa, solicitud, correo_info):

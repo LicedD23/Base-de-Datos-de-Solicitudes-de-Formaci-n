@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitud #{{ solicitud.id }} - Detalle SENA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,14 +14,9 @@
             padding: 20px;
         }
 
-        a {
-            text-decoration: none;
-        }
+        a { text-decoration: none; }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
 
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -43,19 +34,11 @@
             gap: 20px;
         }
 
-        .header-info h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header-info p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
+        .header-info h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
+        .header-info p  { font-size: 1.1em; opacity: 0.95; }
 
         .solicitud-id {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.9em;
@@ -73,9 +56,9 @@
             white-space: nowrap;
         }
 
-        .status-recibida { background: #fff3e0; color: #ef6c00; }
+        .status-recibida   { background: #fff3e0; color: #ef6c00; }
+        .status-atendida   { background: #f3e5f5; color: #6a1b9a; }
         .status-respondida { background: #e3f2fd; color: #1565c0; }
-        .status-atendida { background: #f3e5f5; color: #6a1b9a; }
         .status-finalizada { background: #c8e6c9; color: #1b5e20; }
 
         .breadcrumb {
@@ -83,31 +66,18 @@
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
         }
 
-        .breadcrumb a {
-            color: #2e7d32;
-            transition: color 0.3s ease;
-        }
+        .breadcrumb a { color: #2e7d32; transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb span { color: #999; }
 
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-
-        .breadcrumb span {
-            color: #999;
-        }
-
-        /* MENSAJES - ESTILOS MEJORADOS */
-        .messages-container {
-        margin-bottom: 25px;
-        }
+        .messages-container { margin-bottom: 25px; }
 
         .alert {
             padding: 18px 25px;
@@ -119,39 +89,19 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
         }
 
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
         }
 
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            border: 2px solid #1b5e20;
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-            border: 2px solid #b71c1c;
-        }
-
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-            border: 2px solid #e65100;
-        }
+        .alert-success  { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
+        .alert-error    { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
+        .alert-warning  { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
 
         .alert-content {
             flex: 1;
@@ -161,17 +111,13 @@
             line-height: 1.5;
         }
 
-        .alert-icon {
-            font-size: 1.3em;
-            flex-shrink: 0;
-        }
+        .alert-icon    { font-size: 1.3em; flex-shrink: 0; }
 
         .alert-close {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
             border: none;
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -185,10 +131,30 @@
             line-height: 1;
         }
 
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
+        .alert-close:hover { background: rgba(255,255,255,0.5); transform: scale(1.1); }
+
+        /* Banner siguiente acción */
+        .next-action-banner {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
+
+        .next-action-banner-icon { font-size: 1.5em; }
+
+        .next-action-banner-body strong {
+            display: block;
+            color: #1b5e20;
+            font-size: 1em;
+            margin-bottom: 4px;
+        }
+
+        .next-action-banner-body span { color: #2e7d32; font-size: 0.95em; }
 
         .stats-bar {
             display: grid;
@@ -201,7 +167,7 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border-left: 4px solid #2e7d32;
         }
 
@@ -213,23 +179,14 @@
             letter-spacing: 1px;
         }
 
-        .stat-card .number {
-            color: #2e7d32;
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-
-        .stat-card .text-value {
-            color: #333;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
+        .stat-card .number    { color: #2e7d32; font-size: 2.5em; font-weight: 700; }
+        .stat-card .text-value { color: #333;    font-size: 1.3em;  font-weight: 600; }
 
         .info-card {
             background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             margin-bottom: 30px;
         }
 
@@ -265,27 +222,15 @@
             margin-bottom: 5px;
         }
 
-        .info-item .value {
-            font-size: 1.1em;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .info-item .value a {
-            color: #1976d2;
-            transition: color 0.3s ease;
-        }
-
-        .info-item .value a:hover {
-            color: #0d47a1;
-            text-decoration: underline;
-        }
+        .info-item .value           { font-size: 1.1em; color: #333; font-weight: 600; }
+        .info-item .value a         { color: #1976d2; transition: color 0.3s ease; }
+        .info-item .value a:hover   { color: #0d47a1; text-decoration: underline; }
 
         .section {
             background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             margin-bottom: 30px;
         }
 
@@ -298,7 +243,7 @@
             gap: 10px;
         }
 
-        /* 🔥 ESTILOS MEJORADOS PARA DOCUMENTOS */
+        /* Documentos */
         .documents-header {
             display: flex;
             justify-content: space-between;
@@ -345,35 +290,30 @@
         .document-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
         }
 
         .document-card:hover {
             border-color: #2196f3;
-            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+            box-shadow: 0 8px 25px rgba(33,150,243,0.15);
             transform: translateY(-3px);
         }
 
         .document-icon-wrapper {
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-            width: 45px;
-            height: 45px;
+            width: 45px; height: 45px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5em;
             margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 12px rgba(33,150,243,0.3);
         }
 
-        .document-info {
-            margin-bottom: 12px;
-        }
+        .document-info    { margin-bottom: 12px; }
 
         .document-name {
             font-weight: 600;
@@ -397,10 +337,7 @@
             color: #666;
         }
 
-        .document-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .document-actions { display: flex; gap: 8px; }
 
         .doc-btn {
             flex: 1;
@@ -418,29 +355,12 @@
             text-decoration: none;
         }
 
-        .doc-btn-view {
-            background: #e3f2fd;
-            color: #1565c0;
-            border: 2px solid #1565c0;
-        }
+        .doc-btn-view     { background: #e3f2fd; color: #1565c0; border: 2px solid #1565c0; }
+        .doc-btn-view:hover { background: #1565c0; color: white; transform: scale(1.05); }
+        .doc-btn-download { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
+        .doc-btn-download:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(46,125,50,0.4); }
 
-        .doc-btn-view:hover {
-            background: #1565c0;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .doc-btn-download {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-        }
-
-        .doc-btn-download:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
-        }
-
+        /* Observaciones */
         .observaciones-box {
             background: #f9f9f9;
             padding: 20px;
@@ -450,6 +370,7 @@
             border-left: 4px solid #64b5f6;
         }
 
+        /* Instructor */
         .instructor-card {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             padding: 25px;
@@ -458,16 +379,10 @@
             margin-top: 20px;
         }
 
-        .instructor-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+        .instructor-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
 
         .instructor-avatar {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border-radius: 50%;
             background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
             display: flex;
@@ -478,17 +393,8 @@
             font-weight: 700;
         }
 
-        .instructor-name {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #0d47a1;
-        }
-
-        .instructor-info {
-            color: #1565c0;
-            font-size: 0.95em;
-            margin-top: 5px;
-        }
+        .instructor-name { font-size: 1.3em; font-weight: 600; color: #0d47a1; }
+        .instructor-info { color: #1565c0; font-size: 0.95em; margin-top: 5px; }
 
         .instructor-details {
             display: grid;
@@ -505,34 +411,24 @@
             font-size: 0.95em;
         }
 
-        .timeline {
-            position: relative;
-            padding-left: 40px;
-            margin-top: 20px;
-        }
+        /* Timeline */
+        .timeline { position: relative; padding-left: 40px; margin-top: 20px; }
 
         .timeline::before {
             content: '';
             position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
+            left: 15px; top: 0; bottom: 0;
             width: 2px;
             background: #e0e0e0;
         }
 
-        .timeline-item {
-            position: relative;
-            margin-bottom: 30px;
-        }
+        .timeline-item { position: relative; margin-bottom: 30px; }
 
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -32px;
-            top: 5px;
-            width: 12px;
-            height: 12px;
+            left: -32px; top: 5px;
+            width: 12px; height: 12px;
             border-radius: 50%;
             background: #2e7d32;
             border: 3px solid white;
@@ -551,26 +447,13 @@
             border-left: 3px solid #2e7d32;
         }
 
-        .timeline-item.inactive .timeline-content {
-            border-left-color: #e0e0e0;
-        }
+        .timeline-item.inactive .timeline-content { border-left-color: #e0e0e0; }
 
-        .timeline-title {
-            font-weight: 600;
-            color: #2e7d32;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
+        .timeline-title { font-weight: 600; color: #2e7d32; font-size: 1.1em; margin-bottom: 5px; }
+        .timeline-item.inactive .timeline-title { color: #999; }
+        .timeline-date { font-size: 0.9em; color: #666; }
 
-        .timeline-item.inactive .timeline-title {
-            color: #999;
-        }
-
-        .timeline-date {
-            font-size: 0.9em;
-            color: #666;
-        }
-
+        /* Acciones */
         .action-buttons {
             display: flex;
             gap: 15px;
@@ -593,37 +476,17 @@
             text-decoration: none;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-        }
+        .btn-primary  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
+        .btn-secondary { background: white; color: #2e7d32; border: 2px solid #2e7d32; }
+        .btn-secondary:hover { background: #2e7d32; color: white; }
 
-        .btn-secondary {
-            background: white;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
-        }
+        .btn-info  { background: #e3f2fd; color: #1565c0; border: 2px solid #1565c0; }
+        .btn-info:hover { background: #1565c0; color: white; }
 
-        .btn-secondary:hover {
-            background: #2e7d32;
-            color: white;
-        }
-
-        .btn-info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border: 2px solid #1565c0;
-        }
-
-        .btn-info:hover {
-            background: #1565c0;
-            color: white;
-        }
+        .btn-danger { background: #ffebee; color: #c62828; border: 2px solid #c62828; }
+        .btn-danger:hover { background: #c62828; color: white; }
 
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
@@ -632,367 +495,384 @@
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-
-            .header-info h1 {
-                font-size: 1.8em;
-            }
-
-            .documents-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .documents-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
+            .header-content    { flex-direction: column; }
+            .header-info h1    { font-size: 1.8em; }
+            .documents-grid    { grid-template-columns: 1fr; }
+            .documents-header  { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .action-buttons    { flex-direction: column; }
+            footer             { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <div class="header-info">
-                    <h1>📋 Solicitud de Formación</h1>
-                    <span class="solicitud-id">#{{ solicitud.id }}</span>
-                    <p style="margin-top: 15px;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
-                </div>
-                <span class="status-badge-large status-{{ solicitud.estado|lower }}">
-                    {{ solicitud.get_estado_display }}
+<div class="container">
+
+    <div class="header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1>📋 Solicitud de Formación</h1>
+                <span class="solicitud-id">#{{ solicitud.id }}</span>
+                <p style="margin-top:15px;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
+            </div>
+            <span class="status-badge-large status-{{ solicitud.estado|lower }}">
+                {{ solicitud.get_estado_display }}
+            </span>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+        <span>›</span>
+        <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
+        <span>›</span>
+        <span>Solicitud #{{ solicitud.id }}</span>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+            <div class="alert-content">
+                <span class="alert-icon">
+                    {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
                 </span>
+                <span>{{ message }}</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Banner de siguiente acción — solo si no está finalizada -->
+    {% if not solicitud.esta_finalizada %}
+    <div class="next-action-banner">
+        <div class="next-action-banner-icon">👉</div>
+        <div class="next-action-banner-body">
+            <strong>Siguiente paso</strong>
+            <span>{{ solicitud.siguiente_accion }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <h3>Fecha de Recepción</h3>
+            <div class="text-value">{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Días Transcurridos</h3>
+            <div class="number">{{ solicitud.fecha_recepcion|timesince|slice:":2" }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Estado Actual</h3>
+            <div class="text-value">{{ solicitud.get_estado_display }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Área de Formación</h3>
+            <div class="text-value" style="font-size:1em;">{{ solicitud.programa.area.nombre }}</div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h2>📋 Información General</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Empresa Solicitante</label>
+                <div class="value">
+                    <a href="{% url 'empresas:detalle_empresa' solicitud.empresa.id %}">{{ solicitud.empresa.nombre }}</a>
+                </div>
+            </div>
+            <div class="info-item">
+                <label>Programa Solicitado</label>
+                <div class="value">
+                    <a href="{% url 'programas:detalle_programa' solicitud.programa.id %}">{{ solicitud.programa.nombre }}</a>
+                </div>
+            </div>
+            <div class="info-item">
+                <label>Área de Formación</label>
+                <div class="value">
+                    <a href="{% url 'area_formacion:detalle_area' solicitud.programa.area.id %}">{{ solicitud.programa.area.nombre }}</a>
+                </div>
+            </div>
+            <div class="info-item">
+                <label>Estado</label>
+                <div class="value">{{ solicitud.get_estado_display }}</div>
+            </div>
+            <div class="info-item">
+                <label>Trabajadores a Capacitar</label>
+                <div class="value">
+                    {% if solicitud.numero_aprendices %}
+                        {{ solicitud.numero_aprendices }} personas
+                    {% else %}
+                        <span style="color:#999; font-style:italic;">No especificado</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-item">
+                <label>Fecha de Recepción</label>
+                <div class="value">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% if solicitud.fecha_atencion %}
+            <div class="info-item">
+                <label>Fecha de Atención</label>
+                <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% endif %}
+            {% if solicitud.fecha_respuesta %}
+            <div class="info-item">
+                <label>Fecha de Respuesta</label>
+                <div class="value">{{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% endif %}
+            {% if solicitud.fecha_finalizacion %}
+            <div class="info-item">
+                <label>Finalización</label>
+                <div class="value">{{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Documentos -->
+    {% if solicitud.documentos.count > 0 %}
+    <div class="section">
+        <div class="documents-header">
+            <h2 class="documents-title">📄 Documentos Adjuntos</h2>
+            <span class="documents-count">{{ solicitud.documentos.count }} archivo{{ solicitud.documentos.count|pluralize }}</span>
+        </div>
+        <div class="documents-grid">
+            {% for documento in solicitud.documentos.all %}
+            <div class="document-card">
+                <div class="document-icon-wrapper">📄</div>
+                <div class="document-info">
+                    <div class="document-name" title="{{ documento.nombre_archivo }}">{{ documento.nombre_archivo }}</div>
+                    <div class="document-date">
+                        <span>📅</span>
+                        <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                <div class="document-actions">
+                    <a href="{{ documento.archivo.url }}" target="_blank" class="doc-btn doc-btn-view" title="Ver">🔍</a>
+                    <a href="{{ documento.archivo.url }}" download class="doc-btn doc-btn-download" title="Descargar">📥</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% elif solicitud.documento_pdf %}
+    <div class="section">
+        <div class="documents-header">
+            <h2 class="documents-title">📄 Documento Adjunto</h2>
+            <span class="documents-count">1 archivo</span>
+        </div>
+        <div class="documents-grid">
+            <div class="document-card">
+                <div class="document-icon-wrapper">📄</div>
+                <div class="document-info">
+                    <div class="document-name" title="{{ solicitud.documento_pdf.name }}">
+                        {{ solicitud.documento_pdf.name|slice:"22:" }}
+                    </div>
+                    <div class="document-date">
+                        <span>📅</span>
+                        <span>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                <div class="document-actions">
+                    <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="doc-btn doc-btn-view">🔍</a>
+                    <a href="{{ solicitud.documento_pdf.url }}" download class="doc-btn doc-btn-download">📥</a>
+                </div>
             </div>
         </div>
+    </div>
+    {% endif %}
 
-        <div class="breadcrumb">
-            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
-            <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
-            <span>›</span>
-            <span>Solicitud #{{ solicitud.id }}</span>
-        </div>
-
-        {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class="alert-content">
-                        <span class="alert-icon">
-                            {% if 'error' in message.tags %}
-                                ❌
-                            {% elif 'warning' in message.tags %}
-                                ⚠️
-                            {% else %}
-                                ✅
-                            {% endif %}
-                        </span>
-                        <span>{{ message }}</span>
-                    </div>
-                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+    <!-- Instructor asignado -->
+    {% if solicitud.instructor_asignado %}
+    <div class="section">
+        <h2>👨‍🏫 Instructor Asignado</h2>
+        <div class="instructor-card">
+            <div class="instructor-header">
+                <div class="instructor-avatar">{{ solicitud.instructor_asignado.nombre.0|upper }}</div>
+                <div>
+                    <div class="instructor-name">{{ solicitud.instructor_asignado.nombre }}</div>
+                    <div class="instructor-info">Instructor Especializado</div>
                 </div>
-            {% endfor %}
+            </div>
+            <div class="instructor-details">
+                <div class="instructor-detail-item"><span>📧</span><span>{{ solicitud.instructor_asignado.correo }}</span></div>
+                <div class="instructor-detail-item"><span>📞</span><span>{{ solicitud.instructor_asignado.telefono }}</span></div>
+                <div class="instructor-detail-item"><span>📚</span><span>{{ solicitud.instructor_asignado.especialidad.count }} especialidades</span></div>
+            </div>
+            <div class="action-buttons" style="margin-top:20px;">
+                <a href="{% url 'instructores:detalle_instructor' solicitud.instructor_asignado.id %}" class="btn btn-info">
+                    👁️ Ver Perfil Completo
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- =====================================================
+         HISTORIAL DE ESTADOS
+         Orden correcto: RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
+    ====================================================== -->
+    <div class="section">
+        <h2>🕒 Historial de Estados</h2>
+
+        <!-- Banner siguiente acción dentro de la sección timeline -->
+        {% if not solicitud.esta_finalizada %}
+        <div style="background:#e8f5e9; border-left:4px solid #2e7d32; padding:14px 18px;
+                    border-radius:8px; margin-bottom:25px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.3em;">👉</span>
+            <div>
+                <strong style="color:#1b5e20; display:block; margin-bottom:3px; font-size:0.95em;">
+                    Siguiente paso
+                </strong>
+                <span style="color:#2e7d32; font-size:0.92em;">{{ solicitud.siguiente_accion }}</span>
+            </div>
+        </div>
+        {% else %}
+        <div style="background:#c8e6c9; border-left:4px solid #1b5e20; padding:14px 18px;
+                    border-radius:8px; margin-bottom:25px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.3em;">🎓</span>
+            <div>
+                <strong style="color:#1b5e20; display:block; margin-bottom:3px; font-size:0.95em;">
+                    Formación completada
+                </strong>
+                <span style="color:#2e7d32; font-size:0.92em;">Esta solicitud ha sido finalizada exitosamente.</span>
+            </div>
         </div>
         {% endif %}
 
-        <div class="stats-bar">
-            <div class="stat-card">
-                <h3>Fecha de Recepción</h3>
-                <div class="text-value">{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</div>
+        <div class="timeline">
+            <!-- Paso 1: RECIBIDA -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-title">📥 Solicitud Recibida</div>
+                    <div class="timeline-date">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Días Transcurridos</h3>
-                <div class="number">{{ solicitud.fecha_recepcion|timesince|slice:":2" }}</div>
-            </div>
-            <div class="stat-card">
-                <h3>Estado Actual</h3>
-                <div class="text-value">{{ solicitud.get_estado_display }}</div>
-            </div>
-            <div class="stat-card">
-                <h3>Área de Formación</h3>
-                <div class="text-value" style="font-size: 1em;">{{ solicitud.programa.area.nombre }}</div>
-            </div>
-        </div>
 
-        <div class="info-card">
-            <h2>📋 Información General</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Empresa Solicitante</label>
-                    <div class="value">
-                        <a href="{% url 'empresas:detalle_empresa' solicitud.empresa.id %}">
-                            {{ solicitud.empresa.nombre }}
-                        </a>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <label>Programa Solicitado</label>
-                    <div class="value">
-                        <a href="{% url 'programas:detalle_programa' solicitud.programa.id %}">
-                            {{ solicitud.programa.nombre }}
-                        </a>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <label>Área de Formación</label>
-                    <div class="value">
-                        <a href="{% url 'area_formacion:detalle_area' solicitud.programa.area.id %}">
-                            {{ solicitud.programa.area.nombre }}
-                        </a>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <label>Estado</label>
-                    <div class="value">{{ solicitud.get_estado_display }}</div>
-                </div>
-                <div class="info-item">
-                    <label>Trabajadores a Capacitar</label>
-                    <div class="value">
-                        {% if solicitud.numero_aprendices %}
-                            {{ solicitud.numero_aprendices }} personas
+            <!-- Paso 2: ATENDIDA (instructor asignado) -->
+            <div class="timeline-item {% if not solicitud.fecha_atencion %}inactive{% endif %}">
+                <div class="timeline-content">
+                    <div class="timeline-title">👨‍🏫 Instructor Asignado / Atendida</div>
+                    <div class="timeline-date">
+                        {% if solicitud.fecha_atencion %}
+                            {{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}
+                            {% if solicitud.instructor_asignado %}
+                                — {{ solicitud.instructor_asignado.nombre }}
+                            {% endif %}
                         {% else %}
-                            <span style="color: #999; font-style: italic;">No especificado</span>
+                            Pendiente — asignar instructor
                         {% endif %}
                     </div>
                 </div>
-                <div class="info-item">
-                    <label>Fecha de Recepción</label>
-                    <div class="value">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
-                </div>
-                {% if solicitud.fecha_respuesta %}
-                <div class="info-item">
-                    <label>Fecha de Respuesta</label>
-                    <div class="value">{{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}</div>
-                </div>
-                {% endif %}
-                {% if solicitud.fecha_atencion %}
-                <div class="info-item">
-                    <label>Fecha de Atención</label>
-                    <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
-                </div>
-                {% endif %}
-                {% if solicitud.fecha_finalizacion %}
-                <div class="info-item">
-                    <label>Finalización</label>
-                    <div class="value">{{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}</div>
-                </div>
-                {% endif %}
             </div>
-        </div>
 
-        <!-- 🔥 DOCUMENTOS CON DISEÑO MEJORADO -->
-        {% if solicitud.documentos.count > 0 %}
-        <div class="section">
-            <div class="documents-header">
-                <h2 class="documents-title">
-                    📄 Documentos Adjuntos
-                </h2>
-                <span class="documents-count">{{ solicitud.documentos.count }} archivo{{ solicitud.documentos.count|pluralize }}</span>
-            </div>
-            
-            <div class="documents-grid">
-                {% for documento in solicitud.documentos.all %}
-                <div class="document-card">
-                    <div class="document-icon-wrapper">
-                        📄
-                    </div>
-                    
-                    <div class="document-info">
-                        <div class="document-name" title="{{ documento.nombre_archivo }}">
-                            {{ documento.nombre_archivo }}
-                        </div>
-                        <div class="document-date">
-                            <span>📅</span>
-                            <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="document-actions">
-                        <a href="{{ documento.archivo.url }}" 
-                           target="_blank" 
-                           class="doc-btn doc-btn-view"
-                           title="Ver en nueva pestaña">
-                            <span>🔍</span>
-                        </a>
-                        <a href="{{ documento.archivo.url }}" 
-                           download 
-                           class="doc-btn doc-btn-download"
-                           title="Descargar">
-                            <span>📥</span>
-                        </a>
+            <!-- Paso 3: RESPONDIDA (correo enviado a empresa) -->
+            <div class="timeline-item {% if not solicitud.fecha_respuesta %}inactive{% endif %}">
+                <div class="timeline-content">
+                    <div class="timeline-title">📧 Respuesta Enviada a la Empresa</div>
+                    <div class="timeline-date">
+                        {% if solicitud.fecha_respuesta %}
+                            {{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Pendiente — enviar respuesta por correo
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
             </div>
-        </div>
 
-        {% elif solicitud.documento_pdf %}
-        <div class="section">
-            <div class="documents-header">
-                <h2 class="documents-title">
-                    📄 Documento Adjunto
-                </h2>
-                <span class="documents-count">1 archivo</span>
-            </div>
-            
-            <div class="documents-grid">
-                <div class="document-card">
-                    <div class="document-icon-wrapper">
-                        📄
-                    </div>
-                    
-                    <div class="document-info">
-                        <div class="document-name" title="{{ solicitud.documento_pdf.name }}">
-                            {{ solicitud.documento_pdf.name|slice:"22:" }}
-                        </div>
-                        <div class="document-date">
-                            <span>📅</span>
-                            <span>{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="document-actions">
-                        <a href="{{ solicitud.documento_pdf.url }}" 
-                           target="_blank" 
-                           class="doc-btn doc-btn-view">
-                            <span>🔍</span>
-                        </a>
-                        <a href="{{ solicitud.documento_pdf.url }}" 
-                           download 
-                           class="doc-btn doc-btn-download">
-                            <span>📥</span>
-                        </a>
+            <!-- Paso 4: FINALIZADA -->
+            <div class="timeline-item {% if solicitud.estado != 'FINALIZADA' %}inactive{% endif %}">
+                <div class="timeline-content">
+                    <div class="timeline-title">🎓 Formación Finalizada</div>
+                    <div class="timeline-date">
+                        {% if solicitud.fecha_finalizacion %}
+                            {{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Pendiente — cerrar cuando concluya la formación
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-        {% endif %}
-
-        {% if solicitud.instructor_asignado %}
-        <div class="section">
-            <h2>👨‍🏫 Instructor Asignado</h2>
-            <div class="instructor-card">
-                <div class="instructor-header">
-                    <div class="instructor-avatar">
-                        {{ solicitud.instructor_asignado.nombre.0|upper }}
-                    </div>
-                    <div>
-                        <div class="instructor-name">{{ solicitud.instructor_asignado.nombre }}</div>
-                        <div class="instructor-info">Instructor Especializado</div>
-                    </div>
-                </div>
-                <div class="instructor-details">
-                    <div class="instructor-detail-item">
-                        <span>📧</span>
-                        <span>{{ solicitud.instructor_asignado.correo }}</span>
-                    </div>
-                    <div class="instructor-detail-item">
-                        <span>📞</span>
-                        <span>{{ solicitud.instructor_asignado.telefono }}</span>
-                    </div>
-                    <div class="instructor-detail-item">
-                        <span>📚</span>
-                        <span>{{ solicitud.instructor_asignado.especialidad.count }} especialidades</span>
-                    </div>
-                </div>
-                <div class="action-buttons" style="margin-top: 20px;">
-                    <a href="{% url 'instructores:detalle_instructor' solicitud.instructor_asignado.id %}" class="btn btn-info">
-                        👁️ Ver Perfil Completo
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="section">
-            <h2>🕒 Historial de Estados</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <div class="timeline-title">📥 Solicitud Recibida</div>
-                        <div class="timeline-date">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item {% if not solicitud.fecha_respuesta %}inactive{% endif %}">
-                    <div class="timeline-content">
-                        <div class="timeline-title">📧 Respuesta Enviada</div>
-                        <div class="timeline-date">
-                            {% if solicitud.fecha_respuesta %}
-                                {{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}
-                            {% else %}
-                                Pendiente
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item {% if not solicitud.fecha_atencion %}inactive{% endif %}">
-                    <div class="timeline-content">
-                        <div class="timeline-title">✓ Solicitud Atendida</div>
-                        <div class="timeline-date">
-                            {% if solicitud.fecha_atencion %}
-                                {{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}
-                            {% else %}
-                                Pendiente
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item {% if solicitud.estado != 'FINALIZADA' %}inactive{% endif %}">
-                    <div class="timeline-content">
-                        <div class="timeline-title">🎓 Formación Finalizada</div>
-                        <div class="timeline-date">
-                            {% if solicitud.estado == 'FINALIZADA' %}
-                                Completada
-                            {% else %}
-                                Pendiente
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {% if solicitud.observaciones %}
-        <div class="section">
-            <h2>📝 Observaciones</h2>
-            <div class="observaciones-box">
-                {{ solicitud.observaciones|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
     </div>
 
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>
+    <!-- =====================================================
+         ACCIONES CONTEXTUALES SEGÚN ESTADO
+    ====================================================== -->
+    <div class="section">
+        <h2>⚡ Acciones</h2>
+        <div class="action-buttons">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => alert.remove(), 8000);
-            });
+            {% if solicitud.estado == 'RECIBIDA' %}
+                <!-- Paso 1: el usuario debe ir a editar para asignar instructor -->
+                <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-primary">
+                    👨‍🏫 Asignar Instructor
+                </a>
+
+            {% elif solicitud.estado == 'ATENDIDA' %}
+                <!-- Paso 2: única puerta hacia RESPONDIDA -->
+                <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn btn-primary">
+                    📧 Enviar Respuesta a Empresa
+                </a>
+
+            {% elif solicitud.estado == 'RESPONDIDA' %}
+                <!-- Paso 3: finalizar desde editar cambiando el estado -->
+                <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-primary">
+                    🎓 Finalizar Formación
+                </a>
+            {% endif %}
+
+            <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-secondary">
+                ✏️ Editar Solicitud
+            </a>
+
+            {% if solicitud.puede_enviar_respuesta %}
+                <!-- Enlace rápido a enviar respuesta también en botón secundario si está ATENDIDA -->
+            {% endif %}
+
+            {% if not solicitud.esta_finalizada %}
+            <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn btn-danger">
+                🗑️ Eliminar
+            </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% if solicitud.observaciones %}
+    <div class="section">
+        <h2>📝 Observaciones</h2>
+        <div class="observaciones-box">
+            {{ solicitud.observaciones|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<footer>
+    <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.alert').forEach(function (alert) {
+            setTimeout(function () { alert.remove(); }, 8000);
         });
-    </script>
-    {% include 'core/accessibility.html' %}
+    });
+</script>
+{% include 'core/accessibility.html' %}
 </body>
 </html>

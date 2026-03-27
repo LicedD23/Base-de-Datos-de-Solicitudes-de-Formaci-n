@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Solicitud #{{ solicitud.id }} - SENA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,14 +14,9 @@
             padding: 20px;
         }
 
-        a {
-            text-decoration: none;
-        }
+        a { text-decoration: none; }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
 
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -36,42 +27,26 @@
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
 
         .breadcrumb {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
         }
 
-        .breadcrumb a {
-            color: #2e7d32;
-            transition: color 0.3s ease;
-        }
+        .breadcrumb a { color: #2e7d32; transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb span { color: #999; }
 
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-
-        .breadcrumb span {
-            color: #999;
-        }
-
-        /* 🎨 MENSAJES - ESTILOS MEJORADOS (igual que editar áreas) */
-        .messages-container {
-            margin-bottom: 25px;
-        }
+        /* Mensajes */
+        .messages-container { margin-bottom: 25px; }
 
         .alert {
             padding: 18px 25px;
@@ -83,63 +58,28 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
         }
 
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
         }
 
-        /* ✅ Mensaje de ÉXITO - Verde brillante */
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            border: 2px solid #1b5e20;
-        }
+        .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
+        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
 
-        /* ❌ Mensaje de ERROR - Rojo vibrante */
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-            border: 2px solid #b71c1c;
-        }
+        .alert-content { flex: 1; display: flex; align-items: center; gap: 10px; line-height: 1.5; }
+        .alert-icon    { font-size: 1.3em; flex-shrink: 0; }
 
-        /* ⚠️ Mensaje de WARNING - Naranja */
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-            border: 2px solid #e65100;
-        }
-
-        .alert-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            line-height: 1.5;
-        }
-
-        .alert-icon {
-            font-size: 1.3em;
-            flex-shrink: 0;
-        }
-
-        /* Botón de cerrar mensaje */
         .alert-close {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
             border: none;
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -149,71 +89,34 @@
             font-weight: bold;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            padding: 0;
-            line-height: 1;
+            padding: 0; line-height: 1;
         }
 
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
-        }
+        .alert-close:hover { background: rgba(255,255,255,0.5); transform: scale(1.1); }
 
-        /* 🔥 MODO MIGRACIÓN TOGGLE */
+        /* Modo Migración */
         .migration-toggle-section {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             border: 3px solid #ff9800;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(255,152,0,0.2);
         }
 
-        .migration-toggle-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+        .migration-toggle-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .migration-toggle-icon  { font-size: 2em; }
+        .migration-toggle-title { flex: 1; }
+        .migration-toggle-title h3 { color: #e65100; font-size: 1.3em; margin-bottom: 5px; }
+        .migration-toggle-title p  { color: #ef6c00; font-size: 0.9em; }
 
-        .migration-toggle-icon {
-            font-size: 2em;
-        }
-
-        .migration-toggle-title {
-            flex: 1;
-        }
-
-        .migration-toggle-title h3 {
-            color: #e65100;
-            font-size: 1.3em;
-            margin-bottom: 5px;
-        }
-
-        .migration-toggle-title p {
-            color: #ef6c00;
-            font-size: 0.9em;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-color: #ccc;
             transition: .4s;
             border-radius: 34px;
@@ -222,22 +125,15 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: #ff9800;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
+        input:checked + .slider              { background-color: #ff9800; }
+        input:checked + .slider:before       { transform: translateX(26px); }
 
         .migration-info {
             background: white;
@@ -247,33 +143,10 @@
             margin-top: 15px;
         }
 
-        .migration-info ul {
-            margin-left: 20px;
-            color: #666;
-        }
+        .migration-info ul   { margin-left: 20px; color: #666; }
+        .migration-info li   { margin-bottom: 8px; }
 
-        .migration-info li {
-            margin-bottom: 8px;
-        }
-
-        .section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .section h2 {
-            color: #2e7d32;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* 🔥 SECCIÓN DE FECHAS PERSONALIZADA */
+        /* Sección fechas migración */
         .dates-section {
             display: none;
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
@@ -289,28 +162,14 @@
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0);     }
         }
 
-        .dates-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .dates-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .dates-header h2 { color: #1b5e20; margin: 0; }
 
-        .dates-header h2 {
-            color: #1b5e20;
-            margin: 0;
-        }
-
+        /* Info box dentro de fechas */
         .dates-info {
             background: white;
             padding: 15px;
@@ -319,13 +178,52 @@
             border-left: 4px solid #2e7d32;
         }
 
-        .dates-info p {
-            color: #666;
-            margin-bottom: 10px;
+        .dates-info p      { color: #666; margin-bottom: 8px; font-size: 0.93em; line-height: 1.6; }
+        .dates-info p:last-child { margin-bottom: 0; }
+        .dates-info strong { color: #2e7d32; }
+
+        /* Banner flujo dentro de fechas */
+        .flujo-banner {
+            background: white;
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92em;
+            color: #1b5e20;
+            font-weight: 600;
+            flex-wrap: wrap;
         }
 
-        .dates-info strong {
+        .flujo-step {
+            background: #e8f5e9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .flujo-arrow { color: #2e7d32; font-size: 1.1em; }
+
+        /* Secciones generales */
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
             color: #2e7d32;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .form-grid {
@@ -334,10 +232,7 @@
             gap: 20px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .form-group { display: flex; flex-direction: column; }
 
         .form-group label {
             font-weight: 600;
@@ -362,34 +257,43 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
+        .form-group textarea { resize: vertical; min-height: 120px; }
 
         .form-group input:disabled,
-        .form-group select:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
+        .form-group select:disabled { background: #f5f5f5; cursor: not-allowed; }
 
         .form-group small {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 8px;
+            font-size: 0.83em;
+            color: #777;
+            margin-top: 6px;
             display: block;
             font-style: italic;
+            line-height: 1.4;
         }
 
-        .required-mark {
-            color: #c62828;
-            font-weight: bold;
+        /* Indicador de estado calculado junto a cada campo fecha */
+        .estado-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 600;
+            font-style: normal;
+            margin-left: 4px;
+            vertical-align: middle;
         }
 
-        /* DOCUMENTOS */
+        .badge-recibida   { background: #fff3e0; color: #e65100; }
+        .badge-atendida   { background: #f3e5f5; color: #6a1b9a; }
+        .badge-respondida { background: #e3f2fd; color: #1565c0; }
+        .badge-finalizada { background: #c8e6c9; color: #1b5e20; }
+
+        .required-mark { color: #c62828; font-weight: bold; }
+
+        /* Documentos */
         .documents-header {
             display: flex;
             justify-content: space-between;
@@ -436,35 +340,28 @@
         .document-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
         }
 
         .document-card:hover {
             border-color: #2196f3;
-            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+            box-shadow: 0 8px 25px rgba(33,150,243,0.15);
             transform: translateY(-3px);
         }
 
         .document-icon-wrapper {
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-            width: 45px;
-            height: 45px;
+            width: 45px; height: 45px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.5em;
             margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 12px rgba(33,150,243,0.3);
         }
 
-        .document-info {
-            margin-bottom: 12px;
-        }
+        .document-info { margin-bottom: 12px; }
 
         .document-name {
             font-weight: 600;
@@ -480,19 +377,9 @@
             min-height: 36px;
         }
 
-        .document-date {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8em;
-            color: #666;
-        }
+        .document-date { display: flex; align-items: center; gap: 5px; font-size: 0.8em; color: #666; }
 
-        .document-actions {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+        .document-actions  { display: flex; gap: 8px; margin-bottom: 12px; }
 
         .doc-btn {
             flex: 1;
@@ -503,57 +390,28 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             gap: 5px;
             text-decoration: none;
         }
 
-        .doc-btn-view {
-            background: #e3f2fd;
-            color: #1565c0;
-            border: 2px solid #1565c0;
-        }
+        .doc-btn-view     { background: #e3f2fd; color: #1565c0; border: 2px solid #1565c0; }
+        .doc-btn-view:hover { background: #1565c0; color: white; transform: scale(1.05); }
+        .doc-btn-download { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
+        .doc-btn-download:hover { transform: scale(1.05); }
 
-        .doc-btn-view:hover {
-            background: #1565c0;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .doc-btn-download {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-        }
-
-        .doc-btn-download:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
-        }
-
-        .document-delete-box {
-            padding-top: 12px;
-            border-top: 2px solid #f0f0f0;
-        }
+        .document-delete-box { padding-top: 12px; border-top: 2px solid #f0f0f0; }
 
         .delete-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex; align-items: center; gap: 8px;
             cursor: pointer;
             color: #d32f2f;
-            font-size: 0.85em;
-            font-weight: 600;
+            font-size: 0.85em; font-weight: 600;
         }
 
-        .delete-checkbox-label input {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-        }
+        .delete-checkbox-label input { cursor: pointer; width: 16px; height: 16px; }
 
+        /* Upload */
         .upload-box {
             background: #f9f9f9;
             border: 3px dashed #2e7d32;
@@ -563,11 +421,7 @@
             text-align: center;
         }
 
-        .upload-box h3 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
+        .upload-box h3 { color: #2e7d32; margin-bottom: 15px; font-size: 1.2em; }
 
         .upload-label {
             display: inline-block;
@@ -581,24 +435,11 @@
             margin-bottom: 10px;
         }
 
-        .upload-label:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-        }
+        .upload-label:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+        .upload-input { display: none; }
+        .upload-info  { color: #666; font-size: 0.9em; margin-top: 10px; }
 
-        .upload-input {
-            display: none;
-        }
-
-        .upload-info {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        #files-preview {
-            margin-top: 20px;
-        }
+        #files-preview { margin-top: 20px; }
 
         .preview-item {
             background: #e8f5e9;
@@ -606,72 +447,34 @@
             border-radius: 8px;
             border-left: 4px solid #2e7d32;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .preview-icon {
-            font-size: 1.5em;
-        }
+        .preview-icon { font-size: 1.5em; }
+        .preview-info { flex: 1; }
+        .preview-name { font-weight: 600; color: #2e7d32; margin-bottom: 3px; }
+        .preview-size { font-size: 0.85em; color: #666; }
 
-        .preview-info {
-            flex: 1;
-        }
-
-        .preview-name {
-            font-weight: 600;
-            color: #2e7d32;
-            margin-bottom: 3px;
-        }
-
-        .preview-size {
-            font-size: 0.85em;
-            color: #666;
-        }
-
+        /* Botones */
         .action-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20px;
+            display: flex; gap: 15px; flex-wrap: wrap;
+            justify-content: center; margin-top: 20px;
         }
 
         .btn {
             padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
+            border: none; border-radius: 8px;
+            font-size: 1em; font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-flex; align-items: center; gap: 8px;
             text-decoration: none;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
-        }
-
-        .btn-secondary:hover {
-            background: #2e7d32;
-            color: white;
-        }
+        .btn-primary  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-secondary { background: white; color: #2e7d32; border: 2px solid #2e7d32; }
+        .btn-secondary:hover { background: #2e7d32; color: white; }
 
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
@@ -680,451 +483,422 @@
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .documents-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .documents-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
+            .header h1         { font-size: 1.8em; }
+            .form-grid         { grid-template-columns: 1fr; }
+            .documents-grid    { grid-template-columns: 1fr; }
+            .documents-header  { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .flujo-banner      { font-size: 0.82em; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>✏️ Editar Solicitud #{{ solicitud.id }}</h1>
-            <p style="margin-top: 10px; font-size: 1.1em;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
-        </div>
+<div class="container">
 
-        <div class="breadcrumb">
-            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
-            <span>›</span>
-            <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
-            <span>›</span>
-            <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}">Solicitud #{{ solicitud.id }}</a>
-            <span>›</span>
-            <span>Editar</span>
-        </div>
+    <div class="header">
+        <h1>✏️ Editar Solicitud #{{ solicitud.id }}</h1>
+        <p style="margin-top:10px; font-size:1.1em;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
+    </div>
 
-        {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class="alert-content">
-                        <span class="alert-icon">
-                            {% if 'error' in message.tags %}
-                                ❌
-                            {% elif 'warning' in message.tags %}
-                                ⚠️
-                            {% else %}
-                                ✅
-                            {% endif %}
-                        </span>
-                        <span>{{ message }}</span>
-                    </div>
-                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+    <div class="breadcrumb">
+        <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+        <span>›</span>
+        <a href="{% url 'solicitudes:listar_solicitudes' %}">Solicitudes</a>
+        <span>›</span>
+        <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}">Solicitud #{{ solicitud.id }}</a>
+        <span>›</span>
+        <span>Editar</span>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+            <div class="alert-content">
+                <span class="alert-icon">
+                    {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
+                </span>
+                <span>{{ message }}</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Toggle Modo Migración -->
+    <div class="migration-toggle-section">
+        <div class="migration-toggle-header">
+            <div class="migration-toggle-icon">🔄</div>
+            <div class="migration-toggle-title">
+                <h3>Modo Migración de Datos</h3>
+                <p>Permite establecer fechas personalizadas y calcular el estado automáticamente</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="migration-mode-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="migration-info">
+            <strong>ℹ️ ¿Cuándo usar el Modo Migración?</strong>
+            <ul>
+                <li>✅ Para actualizar solicitudes históricas con fechas precisas del pasado</li>
+                <li>✅ El estado se calculará automáticamente según las fechas ingresadas</li>
+                <li>✅ Los campos se pre-cargan con las fechas actuales de la solicitud</li>
+                <li>❌ No usar para edición normal de solicitudes en progreso</li>
+            </ul>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="edit-form">
+        {% csrf_token %}
+        <input type="hidden" name="es_migracion" id="es_migracion" value="false">
+
+        <!-- =====================================================
+             FECHAS PERSONALIZADAS (solo modo migración)
+             ORDEN CORRECTO: Recepción → Atención → Respuesta → Finalización
+        ====================================================== -->
+        <div class="dates-section" id="dates-section">
+            <div class="dates-header">
+                <h2>📅 Fechas Personalizadas — Modo Migración</h2>
+            </div>
+
+            <!-- Banner visual del flujo -->
+            <div class="flujo-banner">
+                <span>Flujo:</span>
+                <span class="flujo-step">📥 Recibida</span>
+                <span class="flujo-arrow">→</span>
+                <span class="flujo-step">👨‍🏫 Atendida</span>
+                <span class="flujo-arrow">→</span>
+                <span class="flujo-step">📧 Respondida</span>
+                <span class="flujo-arrow">→</span>
+                <span class="flujo-step">🎓 Finalizada</span>
+            </div>
+
+            <div class="dates-info">
+                <p><strong>📌 Instrucciones:</strong></p>
+                <p>1️⃣ Los campos están <strong>pre-cargados con las fechas actuales</strong> de la solicitud.</p>
+                <p>2️⃣ La <strong>Fecha de Recepción</strong> es obligatoria.</p>
+                <p>3️⃣ Las demás fechas son opcionales pero deben respetar el orden cronológico del flujo.</p>
+                <p>4️⃣ El <strong>estado se calcula automáticamente</strong>: sin fechas = Recibida · con atención = Atendida · con respuesta = Respondida · con finalización = Finalizada.</p>
+                <p>5️⃣ Ninguna fecha puede ser futura.</p>
+            </div>
+
+            <div class="form-grid">
+
+                <!-- Paso 1: Recepción → estado RECIBIDA -->
+                <div class="form-group">
+                    <label for="fecha_recepcion">
+                        📥 Fecha de Recepción <span class="required-mark">*</span>
+                    </label>
+                    <input type="datetime-local"
+                           name="fecha_recepcion"
+                           id="fecha_recepcion"
+                           value="{{ solicitud.fecha_recepcion|date:'Y-m-d\TH:i' }}"
+                           max="{{ ahora|date:'Y-m-d\TH:i' }}">
+                    <small>
+                        Cuando llegó la solicitud.
+                        <span class="estado-badge badge-recibida">→ RECIBIDA</span>
+                    </small>
                 </div>
-            {% endfor %}
+
+                <!-- Paso 2: Atención → estado ATENDIDA (instructor asignado) -->
+                <div class="form-group">
+                    <label for="fecha_atencion">👨‍🏫 Fecha de Atención (opcional)</label>
+                    <input type="datetime-local"
+                           name="fecha_atencion"
+                           id="fecha_atencion"
+                           value="{% if solicitud.fecha_atencion %}{{ solicitud.fecha_atencion|date:'Y-m-d\TH:i' }}{% endif %}"
+                           max="{{ ahora|date:'Y-m-d\TH:i' }}">
+                    <small>
+                        Cuando se asignó instructor y comenzó la formación.
+                        Debe ser posterior a la recepción.
+                        <span class="estado-badge badge-atendida">→ ATENDIDA</span>
+                    </small>
+                </div>
+
+                <!-- Paso 3: Respuesta → estado RESPONDIDA (correo enviado) -->
+                <div class="form-group">
+                    <label for="fecha_respuesta">📧 Fecha de Respuesta (opcional)</label>
+                    <input type="datetime-local"
+                           name="fecha_respuesta"
+                           id="fecha_respuesta"
+                           value="{% if solicitud.fecha_respuesta %}{{ solicitud.fecha_respuesta|date:'Y-m-d\TH:i' }}{% endif %}"
+                           max="{{ ahora|date:'Y-m-d\TH:i' }}">
+                    <small>
+                        Cuando se notificó a la empresa por correo.
+                        Debe ser posterior a la atención.
+                        <span class="estado-badge badge-respondida">→ RESPONDIDA</span>
+                    </small>
+                </div>
+
+                <!-- Paso 4: Finalización → estado FINALIZADA -->
+                <div class="form-group">
+                    <label for="fecha_finalizacion">🎓 Fecha de Finalización (opcional)</label>
+                    <input type="datetime-local"
+                           name="fecha_finalizacion"
+                           id="fecha_finalizacion"
+                           value="{% if solicitud.fecha_finalizacion %}{{ solicitud.fecha_finalizacion|date:'Y-m-d\TH:i' }}{% endif %}"
+                           max="{{ ahora|date:'Y-m-d\TH:i' }}">
+                    <small>
+                        Cuando concluyó la formación exitosamente.
+                        Debe ser la fecha más reciente de todas.
+                        <span class="estado-badge badge-finalizada">→ FINALIZADA</span>
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Información General -->
+        <div class="section">
+            <h2>📋 Información General</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Empresa Solicitante</label>
+                    <input type="text" value="{{ solicitud.empresa.nombre }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Programa Solicitado</label>
+                    <input type="text" value="{{ solicitud.programa.nombre }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Área de Formación</label>
+                    <input type="text" value="{{ solicitud.programa.area.nombre }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="numero_aprendices">Trabajadores a Capacitar</label>
+                    <input type="number"
+                           name="numero_aprendices"
+                           id="numero_aprendices"
+                           value="{{ solicitud.numero_aprendices|default:'' }}"
+                           min="0"
+                           placeholder="Ej: 25">
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             ESTADO (se oculta en modo migración porque se calcula automáticamente)
+        ====================================================== -->
+        <div class="section" id="estado-section">
+            <h2>⚙️ Estado de la Solicitud</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="estado">Estado <span class="required-mark">*</span></label>
+                    <select name="estado" id="estado" required>
+                        {% for value, label in ESTADO_CHOICES %}
+                            <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small>
+                        Flujo válido:
+                        <strong>Recibida → Atendida → Respondida → Finalizada</strong>.<br>
+                        En modo migración el estado se calcula automáticamente:
+                        sin fechas = Recibida · con atención = Atendida ·
+                        con respuesta = Respondida · con finalización = Finalizada.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor -->
+        <div class="section">
+            <h2>👨‍🏫 Asignación de Instructor</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="instructor_asignado">Instructor Asignado</label>
+                    <select name="instructor_asignado" id="instructor_asignado">
+                        <option value="">Sin asignar</option>
+                        {% if instructores_especializados %}
+                            <optgroup label="🌟 Especializados en {{ solicitud.programa.nombre }}">
+                                {% for instructor in instructores_especializados %}
+                                <option value="{{ instructor.id }}"
+                                        {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
+                                    {{ instructor.nombre }}
+                                </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                        <optgroup label="Todos los Instructores">
+                            {% for instructor in instructores %}
+                            <option value="{{ instructor.id }}"
+                                    {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
+                                {{ instructor.nombre }}
+                            </option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                    <small>
+                        💡 Asignar instructor en estado RECIBIDA cambia automáticamente el estado a
+                        <strong>ATENDIDA</strong>.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="section">
+            <h2>📝 Observaciones</h2>
+            <div class="form-group">
+                <label for="observaciones">Notas y Comentarios</label>
+                <textarea name="observaciones"
+                          id="observaciones"
+                          placeholder="Escribe cualquier observación relevante...">{{ solicitud.observaciones }}</textarea>
+            </div>
+        </div>
+
+        <!-- Documentos actuales -->
+        {% if documentos_actuales %}
+        <div class="section">
+            <div class="documents-header">
+                <h2 class="documents-title">📄 Documentos Actuales</h2>
+                <span class="documents-count">{{ documentos_actuales|length }}/5</span>
+            </div>
+            <div class="documents-grid">
+                {% for documento in documentos_actuales %}
+                <div class="document-card">
+                    <div class="document-icon-wrapper">📄</div>
+                    <div class="document-info">
+                        <div class="document-name" title="{{ documento.nombre_archivo }}">{{ documento.nombre_archivo }}</div>
+                        <div class="document-date">
+                            <span>📅</span>
+                            <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="document-actions">
+                        <a href="{{ documento.archivo.url }}" target="_blank" class="doc-btn doc-btn-view" title="Ver">🔍</a>
+                        <a href="{{ documento.archivo.url }}" download class="doc-btn doc-btn-download" title="Descargar">📥</a>
+                    </div>
+                    <div class="document-delete-box">
+                        <label class="delete-checkbox-label">
+                            <input type="checkbox" name="eliminar_documentos" value="{{ documento.id }}">
+                            <span>🗑️ Eliminar este documento</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
 
-        <!-- 🔄 MODO MIGRACIÓN TOGGLE -->
-        <div class="migration-toggle-section">
-            <div class="migration-toggle-header">
-                <div class="migration-toggle-icon">🔄</div>
-                <div class="migration-toggle-title">
-                    <h3>Modo Migración de Datos</h3>
-                    <p>Permite establecer fechas personalizadas y calcular el estado automáticamente</p>
+        <!-- Agregar documentos -->
+        <div class="section">
+            <h2>➕ Agregar Nuevos Documentos</h2>
+            <div class="upload-box">
+                <h3>Seleccionar Archivos PDF</h3>
+                <input type="file"
+                       id="documentos_pdf"
+                       name="documentos_pdf"
+                       class="upload-input"
+                       multiple
+                       accept=".pdf">
+                <label for="documentos_pdf" class="upload-label">📁 Examinar Archivos</label>
+                <div class="upload-info">
+                    ℹ️ Máximo 5 documentos en total | Formato: PDF | Tamaño máximo: 10MB por archivo
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="migration-mode-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="migration-info">
-                <strong>ℹ️ ¿Cuándo usar el Modo Migración?</strong>
-                <ul>
-                    <li>✅ Para actualizar solicitudes históricas con fechas precisas del pasado</li>
-                    <li>✅ El estado se calculará automáticamente según las fechas ingresadas</li>
-                    <li>✅ Los campos se pre-cargan con las fechas actuales de la solicitud</li>
-                    <li>❌ No usar para edición normal de solicitudes en progreso</li>
-                </ul>
+                <div id="files-preview"></div>
             </div>
         </div>
 
-        <form method="POST" enctype="multipart/form-data" id="edit-form">
-            {% csrf_token %}
-            
-            <!-- Campo oculto para modo migración -->
-            <input type="hidden" name="es_migracion" id="es_migracion" value="false">
+        <!-- Botones -->
+        <div class="action-buttons">
+            <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+            <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">❌ Cancelar</a>
+        </div>
+    </form>
+</div>
 
-            <!-- 🔥 FECHAS PERSONALIZADAS (Modo Migración) -->
-            <div class="dates-section" id="dates-section">
-                <div class="dates-header">
-                    <h2>📅 Fechas Personalizadas (Modo Migración)</h2>
-                </div>
-                
-                <div class="dates-info">
-                    <p><strong>📌 Instrucciones:</strong></p>
-                    <p>1️⃣ Los campos están <strong>pre-cargados con las fechas actuales</strong> de la solicitud</p>
-                    <p>2️⃣ La <strong>Fecha de Recepción</strong> es obligatoria</p>
-                    <p>3️⃣ Las demás fechas son opcionales pero deben seguir el orden cronológico</p>
-                    <p>4️⃣ El <strong>estado se calculará automáticamente</strong> según las fechas que ingreses</p>
-                    <p>5️⃣ Ninguna fecha puede ser futura</p>
-                </div>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="fecha_recepcion">
-                            📥 Fecha de Recepción <span class="required-mark">*</span>
-                        </label>
-                        <input type="datetime-local" 
-                               name="fecha_recepcion" 
-                               id="fecha_recepcion"
-                               value="{{ solicitud.fecha_recepcion|date:'Y-m-d\TH:i' }}"
-                               max="{{ ahora|date:'Y-m-d\TH:i' }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fecha_respuesta">💬 Fecha de Respuesta (opcional)</label>
-                        <input type="datetime-local" 
-                               name="fecha_respuesta" 
-                               id="fecha_respuesta"
-                               value="{% if solicitud.fecha_respuesta %}{{ solicitud.fecha_respuesta|date:'Y-m-d\TH:i' }}{% endif %}"
-                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                               placeholder="Dejar vacío si no aplica">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fecha_atencion">🔄 Fecha de Atención (opcional)</label>
-                        <input type="datetime-local" 
-                               name="fecha_atencion" 
-                               id="fecha_atencion"
-                               value="{% if solicitud.fecha_atencion %}{{ solicitud.fecha_atencion|date:'Y-m-d\TH:i' }}{% endif %}"
-                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                               placeholder="Dejar vacío si no aplica">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fecha_finalizacion">✅ Fecha de Finalización (opcional)</label>
-                        <input type="datetime-local" 
-                               name="fecha_finalizacion" 
-                               id="fecha_finalizacion"
-                               value="{% if solicitud.fecha_finalizacion %}{{ solicitud.fecha_finalizacion|date:'Y-m-d\TH:i' }}{% endif %}"
-                               max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                               placeholder="Dejar vacío si no aplica">
-                    </div>
-                </div>
-            </div>
+<footer>
+    <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+</footer>
 
-            <!-- Información General -->
-            <div class="section">
-                <h2>📋 Información General</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Empresa Solicitante</label>
-                        <input type="text" value="{{ solicitud.empresa.nombre }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Programa Solicitado</label>
-                        <input type="text" value="{{ solicitud.programa.nombre }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Área de Formación</label>
-                        <input type="text" value="{{ solicitud.programa.area.nombre }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="numero_aprendices">Trabajadores a Capacitar</label>
-                        <input type="number" 
-                               name="numero_aprendices" 
-                               id="numero_aprendices" 
-                               value="{{ solicitud.numero_aprendices|default:'' }}"
-                               min="0"
-                               placeholder="Ej: 25">
-                    </div>
-                </div>
-            </div>
+<script>
+    // Auto-cerrar mensajes
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.alert').forEach(function (alert) {
+            setTimeout(function () {
+                alert.style.animation = 'slideOutUp 0.4s ease-out';
+                setTimeout(function () { alert.remove(); }, 400);
+            }, 8000);
+        });
+    });
 
-            <!-- 🔴 ESTADO (se oculta en modo migración) -->
-            <div class="section" id="estado-section">
-                <h2>⚙️ Estado de la Solicitud</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="estado">Estado <span class="required-mark">*</span></label>
-                        <select name="estado" id="estado" required>
-                            {% for value, label in ESTADO_CHOICES %}
-                                <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        <small style="color: #666; margin-top: 8px; display: block;">
-                            ℹ️ En modo migración, el estado se calcula automáticamente según las fechas
-                        </small>
-                    </div>
-                </div>
-            </div>
+    const alertStyle = document.createElement('style');
+    alertStyle.textContent = `
+        @keyframes slideOutUp {
+            from { transform: translateY(0);     opacity: 1; }
+            to   { transform: translateY(-20px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(alertStyle);
 
-            <!-- 👨‍🏫 INSTRUCTOR (siempre visible) -->
-            <div class="section">
-                <h2>👨‍🏫 Asignación de Instructor</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="instructor_asignado">Instructor Asignado</label>
-                        <select name="instructor_asignado" id="instructor_asignado">
-                            <option value="">Sin asignar</option>
-                            {% if instructores_especializados %}
-                                <optgroup label="🌟 Especializados en {{ solicitud.programa.nombre }}">
-                                    {% for instructor in instructores_especializados %}
-                                        <option value="{{ instructor.id }}" 
-                                                {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                            {{ instructor.nombre }}
-                                        </option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endif %}
-                            <optgroup label="Todos los Instructores">
-                                {% for instructor in instructores %}
-                                    <option value="{{ instructor.id }}" 
-                                            {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                        {{ instructor.nombre }}
-                                    </option>
-                                {% endfor %}
-                            </optgroup>
-                        </select>
-                        <small style="color: #666; margin-top: 8px; display: block;">
-                            💡 Puedes asignar o cambiar el instructor en cualquier momento
-                        </small>
-                    </div>
-                </div>
-            </div>
+    // Toggle modo migración
+    const migrationToggle  = document.getElementById('migration-mode-toggle');
+    const datesSection     = document.getElementById('dates-section');
+    const estadoSection    = document.getElementById('estado-section');
+    const esMigracionInput = document.getElementById('es_migracion');
 
-            <!-- Observaciones -->
-            <div class="section">
-                <h2>📝 Observaciones</h2>
-                <div class="form-group">
-                    <label for="observaciones">Notas y Comentarios</label>
-                    <textarea name="observaciones" 
-                              id="observaciones" 
-                              placeholder="Escribe cualquier observación relevante sobre esta solicitud...">{{ solicitud.observaciones }}</textarea>
-                </div>
-            </div>
+    migrationToggle.addEventListener('change', function () {
+        if (this.checked) {
+            datesSection.classList.add('active');
+            estadoSection.style.display = 'none';
+            esMigracionInput.value = 'true';
+        } else {
+            datesSection.classList.remove('active');
+            estadoSection.style.display = 'block';
+            esMigracionInput.value = 'false';
+        }
+    });
 
-            <!-- DOCUMENTOS ACTUALES -->
-            {% if documentos_actuales %}
-            <div class="section">
-                <div class="documents-header">
-                    <h2 class="documents-title">📄 Documentos Actuales</h2>
-                    <span class="documents-count">{{ documentos_actuales|length }}/5</span>
-                </div>
-                
-                <div class="documents-grid">
-                    {% for documento in documentos_actuales %}
-                    <div class="document-card">
-                        <div class="document-icon-wrapper">
-                            📄
-                        </div>
-                        
-                        <div class="document-info">
-                            <div class="document-name" title="{{ documento.nombre_archivo }}">
-                                {{ documento.nombre_archivo }}
-                            </div>
-                            <div class="document-date">
-                                <span>📅</span>
-                                <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="document-actions">
-                            <a href="{{ documento.archivo.url }}" 
-                               target="_blank" 
-                               class="doc-btn doc-btn-view"
-                               title="Ver en nueva pestaña">
-                                <span>🔍</span>
-                            </a>
-                            <a href="{{ documento.archivo.url }}" 
-                               download 
-                               class="doc-btn doc-btn-download"
-                               title="Descargar">
-                                <span>📥</span>
-                            </a>
-                        </div>
-                        
-                        <div class="document-delete-box">
-                            <label class="delete-checkbox-label">
-                                <input type="checkbox" name="eliminar_documentos" value="{{ documento.id }}">
-                                <span>🗑️ Eliminar este documento</span>
-                            </label>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
+    // Preview de archivos
+    document.getElementById('documentos_pdf').addEventListener('change', function (e) {
+        const preview  = document.getElementById('files-preview');
+        const files    = Array.from(e.target.files);
 
-            <!-- AGREGAR NUEVOS DOCUMENTOS -->
-            <div class="section">
-                <h2>➕ Agregar Nuevos Documentos</h2>
-                
-                <div class="upload-box">
-                    <h3>Seleccionar Archivos PDF</h3>
-                    
-                    <input type="file" 
-                           id="documentos_pdf" 
-                           name="documentos_pdf" 
-                           class="upload-input"
-                           multiple 
-                           accept=".pdf">
-                    
-                    <label for="documentos_pdf" class="upload-label">
-                        📁 Examinar Archivos
-                    </label>
-                    
-                    <div class="upload-info">
-                        ℹ️ Puedes agregar hasta {{ 5|add:documentos_actuales.count|add:"-5" }} documentos más | 
-                        Formato: PDF | Tamaño máximo: 10MB por archivo
-                    </div>
-                    
-                    <div id="files-preview"></div>
-                </div>
-            </div>
+        if (files.length === 0) { preview.innerHTML = ''; return; }
 
-            <!-- Botones de Acción -->
-            <div class="action-buttons">
-                <button type="submit" class="btn btn-primary">
-                    💾 Guardar Cambios
-                </button>
-                <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
-                    ❌ Cancelar
-                </a>
-            </div>
-        </form>
-    </div>
+        const documentosActuales = {{ documentos_actuales|length|default:0 }};
+        const maxNuevos = 5 - documentosActuales;
 
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>
+        if (files.length > maxNuevos) {
+            alert(`❌ Solo puedes agregar ${maxNuevos} documento(s) más. Actualmente tienes ${documentosActuales}.`);
+            e.target.value = '';
+            preview.innerHTML = '';
+            return;
+        }
 
-    <script>
-        // Auto-cerrar mensajes después de 8 segundos
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.animation = 'slideOutUp 0.4s ease-out';
-                    setTimeout(() => alert.remove(), 400);
-                }, 8000);
-            });
+        let valid = true;
+        files.forEach(function (file) {
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert(`❌ ${file.name} no es un archivo PDF`);
+                valid = false;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`❌ ${file.name} supera los 10MB`);
+                valid = false;
+            }
         });
 
-        // Animación de salida
-        const alertStyle = document.createElement('style');
-        alertStyle.textContent = `
-            @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(alertStyle);
+        if (!valid) { e.target.value = ''; preview.innerHTML = ''; return; }
 
-        // 🔥 TOGGLE MODO MIGRACIÓN
-        const migrationToggle = document.getElementById('migration-mode-toggle');
-        const datesSection = document.getElementById('dates-section');
-        const estadoSection = document.getElementById('estado-section');
-        const esMigracionInput = document.getElementById('es_migracion');
-        
-        migrationToggle.addEventListener('change', function() {
-            if (this.checked) {
-                // ✅ ACTIVAR MODO MIGRACIÓN
-                datesSection.classList.add('active');  // Mostrar fechas personalizadas
-                estadoSection.style.display = 'none';   // Ocultar SOLO estado (instructor sigue visible)
-                esMigracionInput.value = 'true';
-            } else {
-                // ❌ DESACTIVAR MODO MIGRACIÓN (Modo Normal)
-                datesSection.classList.remove('active'); // Ocultar fechas personalizadas
-                estadoSection.style.display = 'block';   // Mostrar estado
-                esMigracionInput.value = 'false';
-            }
-        });
-        
-        // Preview de archivos seleccionados
-        document.getElementById('documentos_pdf').addEventListener('change', function(e) {
-            const preview = document.getElementById('files-preview');
-            const files = Array.from(e.target.files);
-            
-            if (files.length === 0) {
-                preview.innerHTML = '';
-                return;
-            }
-            
-            // Validar número de archivos
-            const documentosActuales = {{ documentos_actuales|length|default:0 }};
-            const maxNuevos = 5 - documentosActuales;
-            
-            if (files.length > maxNuevos) {
-                alert(`❌ Solo puedes agregar ${maxNuevos} documento(s) más. Actualmente tienes ${documentosActuales} documentos.`);
-                e.target.value = '';
-                preview.innerHTML = '';
-                return;
-            }
-            
-            // Validar cada archivo
-            let valid = true;
-            files.forEach(file => {
-                if (!file.name.toLowerCase().endsWith('.pdf')) {
-                    alert(`❌ ${file.name} no es un archivo PDF`);
-                    valid = false;
-                }
-                if (file.size > 10 * 1024 * 1024) {
-                    alert(`❌ ${file.name} supera los 10MB`);
-                    valid = false;
-                }
-            });
-            
-            if (!valid) {
-                e.target.value = '';
-                preview.innerHTML = '';
-                return;
-            }
-            
-            // Mostrar preview
-            preview.innerHTML = files.map(file => `
-                <div class="preview-item">
-                    <div class="preview-icon">✅</div>
-                    <div class="preview-info">
-                        <div class="preview-name">${file.name}</div>
-                        <div class="preview-size">${(file.size / 1024).toFixed(2)} KB</div>
-                    </div>
-                </div>
-            `).join('');
-        });
-    </script>
+        preview.innerHTML = files.map(function (file) {
+            return `<div class="preview-item">
+                        <div class="preview-icon">✅</div>
+                        <div class="preview-info">
+                            <div class="preview-name">${file.name}</div>
+                            <div class="preview-size">${(file.size / 1024).toFixed(2)} KB</div>
+                        </div>
+                    </div>`;
+        }).join('');
+    });
+</script>
 </body>
 </html>

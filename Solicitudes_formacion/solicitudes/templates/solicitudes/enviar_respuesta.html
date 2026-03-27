@@ -44,6 +44,7 @@
         .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
         .breadcrumb span { color: #999; }
 
+        /* ── Banners de estado ── */
         .info-banner {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -51,13 +52,14 @@
             border-radius: 8px;
             margin-bottom: 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 15px;
         }
 
-        .info-banner-icon { font-size: 1.5em; }
-        .info-banner-content strong { display: block; color: #1976d2; margin-bottom: 5px; }
-        .info-banner-content p { color: #666; font-size: 0.9em; margin: 0; }
+        .info-banner-icon { font-size: 1.5em; flex-shrink: 0; margin-top: 2px; }
+        .info-banner-content strong { display: block; color: #1565c0; margin-bottom: 5px; font-size: 1em; }
+        .info-banner-content p { color: #555; font-size: 0.92em; margin: 0; line-height: 1.6; }
+        .info-banner-content a { color: #1565c0; font-weight: 600; }
 
         .warning-banner {
             background: #fff8e1;
@@ -66,15 +68,50 @@
             border-radius: 8px;
             margin-bottom: 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 15px;
         }
 
-        .warning-banner-icon { font-size: 1.5em; }
-        .warning-banner-content strong { display: block; color: #f57f17; margin-bottom: 4px; }
-        .warning-banner-content p { color: #666; font-size: 0.9em; margin: 0; }
-        .warning-banner-content a { color: #e65100; font-weight: 600; }
+        .warning-banner-icon { font-size: 1.5em; flex-shrink: 0; margin-top: 2px; }
+        .warning-banner-content strong { display: block; color: #f57f17; margin-bottom: 5px; font-size: 1em; }
+        .warning-banner-content p { color: #555; font-size: 0.92em; margin: 0; line-height: 1.6; }
+        .warning-banner-content a { color: #e65100; font-weight: 600; text-decoration: none; }
+        .warning-banner-content a:hover { text-decoration: underline; }
 
+        /* Banner de bloqueo (rojo) — estado RECIBIDA */
+        .blocked-banner {
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .blocked-banner-icon { font-size: 1.5em; flex-shrink: 0; margin-top: 2px; }
+        .blocked-banner-content strong { display: block; color: #b71c1c; margin-bottom: 5px; font-size: 1em; }
+        .blocked-banner-content p { color: #555; font-size: 0.92em; margin: 0; line-height: 1.6; }
+        .blocked-banner-content a { color: #c62828; font-weight: 600; text-decoration: none; }
+        .blocked-banner-content a:hover { text-decoration: underline; }
+
+        .success-banner {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .success-banner-icon { font-size: 1.5em; flex-shrink: 0; margin-top: 2px; }
+        .success-banner-content strong { display: block; color: #1b5e20; margin-bottom: 5px; font-size: 1em; }
+        .success-banner-content p { color: #555; font-size: 0.92em; margin: 0; line-height: 1.6; }
+
+        /* ── Instructor card ── */
         .instructor-card {
             background: #e8f5e9;
             border: 1px solid #a5d6a7;
@@ -86,11 +123,12 @@
             gap: 14px;
         }
 
-        .instructor-card-icon { font-size: 2em; }
+        .instructor-card-icon { font-size: 2em; flex-shrink: 0; }
         .instructor-card-body { flex: 1; }
         .instructor-card-body strong { display: block; color: #1b5e20; font-size: 1.05em; margin-bottom: 6px; }
-        .instructor-card-body span  { display: block; color: #444; font-size: 0.92em; line-height: 1.8; }
+        .instructor-card-body span   { display: block; color: #444; font-size: 0.92em; line-height: 1.8; }
 
+        /* ── Mensajes ── */
         .messages-container { margin-bottom: 25px; }
 
         .alert {
@@ -115,26 +153,24 @@
 
         .alert::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
         .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
-        .alert-success::before { background: #fff; }
         .alert-success .alert-icon { font-size: 1.8em; animation: scaleIn 0.5s ease-out; }
 
         @keyframes scaleIn {
-            0%   { transform: scale(0); }
+            0%   { transform: scale(0);   }
             50%  { transform: scale(1.2); }
-            100% { transform: scale(1); }
+            100% { transform: scale(1);   }
         }
 
         .alert-error { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
         .alert-error .alert-icon { font-size: 1.8em; animation: shake 0.5s ease-out; }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
+            0%, 100% { transform: translateX(0);   }
             25%      { transform: translateX(-10px); }
-            75%      { transform: translateX(10px); }
+            75%      { transform: translateX(10px);  }
         }
 
         .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
-        .alert-warning::before { background: #fff; }
         .alert-icon    { font-size: 1.5em; flex-shrink: 0; }
         .alert-content { flex: 1; line-height: 1.5; }
 
@@ -156,6 +192,7 @@
 
         .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
 
+        /* ── Formulario ── */
         .form-card {
             background: white;
             padding: 40px;
@@ -163,6 +200,30 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-top: 4px solid #2e7d32;
         }
+
+        /* Overlay de bloqueo sobre el formulario cuando estado es RECIBIDA */
+        .form-blocked {
+            position: relative;
+        }
+
+        .form-blocked-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.75);
+            border-radius: 15px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 1.1em;
+            color: #b71c1c;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .form-blocked-overlay span { font-size: 2.5em; }
 
         .solicitud-info {
             background: #f9f9f9;
@@ -206,11 +267,7 @@
 
         .form-group input:disabled { background: #f5f5f5; cursor: not-allowed; color: #999; }
 
-        .form-group textarea {
-            min-height: 340px;
-            resize: vertical;
-            line-height: 1.7;
-        }
+        .form-group textarea { min-height: 340px; resize: vertical; line-height: 1.7; }
 
         .form-group input:focus,
         .form-group textarea:focus {
@@ -247,16 +304,6 @@
             box-shadow: 0 4px 12px rgba(46,125,50,0.3);
         }
 
-        .template-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            background: #f0f0f0;
-            border-color: #ccc;
-            color: #aaa;
-        }
-
         .form-actions {
             display: flex;
             gap: 15px;
@@ -288,6 +335,17 @@
         }
 
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
+
+        /* Botón bloqueado */
+        .btn-primary-blocked {
+            background: #bdbdbd;
+            color: #fff;
+            flex: 1;
+            cursor: not-allowed;
+            opacity: 0.65;
+            box-shadow: none;
+        }
+
         .btn-secondary { background: white; color: #666; border: 2px solid #e0e0e0; flex: 1; }
         .btn-secondary:hover { background: #f5f5f5; border-color: #bdbdbd; }
 
@@ -314,13 +372,13 @@
         footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.8em; }
-            .form-card { padding: 25px; }
-            .form-actions { flex-direction: column; }
-            .btn { width: 100%; }
+            .header h1      { font-size: 1.8em; }
+            .form-card      { padding: 25px; }
+            .form-actions   { flex-direction: column; }
+            .btn            { width: 100%; }
             .template-buttons { flex-direction: column; }
-            .info-grid { grid-template-columns: 1fr; }
-            footer { font-size: 0.85rem; padding: 15px; }
+            .info-grid      { grid-template-columns: 1fr; }
+            footer          { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
@@ -342,13 +400,84 @@
         <span>Enviar Respuesta</span>
     </div>
 
-    <div class="info-banner">
-        <div class="info-banner-icon">ℹ️</div>
-        <div class="info-banner-content">
-            <strong>Importante</strong>
-            <p>Al enviar esta respuesta, el estado de la solicitud cambiará automáticamente a "RESPONDIDA" y se registrará la fecha de respuesta.</p>
+    <!-- =====================================================
+         BANNER CONDICIONAL SEGÚN ESTADO
+         Flujo: RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
+    ====================================================== -->
+
+    {% if solicitud.estado == 'RECIBIDA' %}
+        <!-- BLOQUEADO: no tiene instructor, no se puede enviar -->
+        <div class="blocked-banner">
+            <div class="blocked-banner-icon">🔒</div>
+            <div class="blocked-banner-content">
+                <strong>Acción bloqueada — debes seguir el flujo correcto</strong>
+                <p>
+                    No puedes enviar la respuesta porque la solicitud está en estado
+                    <strong>RECIBIDA</strong> y no tiene instructor asignado.<br>
+                    Flujo obligatorio:
+                    <strong>Recibida → Atendida → Respondida → Finalizada</strong>.<br>
+                    <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}">
+                        👉 Ve a editar la solicitud y asigna un instructor primero.
+                    </a>
+                    Al guardar, el estado pasará automáticamente a <strong>ATENDIDA</strong>
+                    y podrás enviar la respuesta.
+                </p>
+            </div>
         </div>
-    </div>
+
+    {% elif solicitud.estado == 'ATENDIDA' %}
+        <!-- Camino feliz: estado correcto para enviar respuesta -->
+        <div class="info-banner">
+            <div class="info-banner-icon">ℹ️</div>
+            <div class="info-banner-content">
+                <strong>Paso 2 del flujo: Notificar a la empresa</strong>
+                <p>
+                    Al enviar este correo el estado cambiará automáticamente a
+                    <strong>RESPONDIDA</strong> y se registrará la fecha de respuesta.<br>
+                    Siguiente paso después de esto: finalizar la formación cuando concluya.
+                </p>
+            </div>
+        </div>
+
+        {% if solicitud.instructor_asignado %}
+        <div class="instructor-card">
+            <div class="instructor-card-icon">👨‍🏫</div>
+            <div class="instructor-card-body">
+                <strong>Instructor asignado: {{ solicitud.instructor_asignado.nombre }}</strong>
+                <span>📧 {{ solicitud.instructor_asignado.correo }}</span>
+                <span>📞 {{ solicitud.instructor_asignado.telefono }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+    {% elif solicitud.estado == 'RESPONDIDA' %}
+        <div class="success-banner">
+            <div class="success-banner-icon">✅</div>
+            <div class="success-banner-content">
+                <strong>Reenvío de correo</strong>
+                <p>
+                    Esta solicitud ya está en estado <strong>RESPONDIDA</strong>.
+                    El correo se enviará, pero el estado no cambiará.<br>
+                    Si deseas finalizar la formación, ve a
+                    <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}"
+                       style="color:#1b5e20; font-weight:600;">editar la solicitud</a>.
+                </p>
+            </div>
+        </div>
+
+    {% elif solicitud.estado == 'FINALIZADA' %}
+        <div class="success-banner">
+            <div class="success-banner-icon">🎓</div>
+            <div class="success-banner-content">
+                <strong>Solicitud finalizada</strong>
+                <p>
+                    Esta formación ya fue completada y cerrada.
+                    Puedes enviar un correo adicional si lo necesitas,
+                    pero el estado no cambiará.
+                </p>
+            </div>
+        </div>
+    {% endif %}
 
     {% if messages %}
     <div class="messages-container">
@@ -364,9 +493,15 @@
     </div>
     {% endif %}
 
-    <div class="form-card">
+    <div class="form-card {% if solicitud.estado == 'RECIBIDA' %}form-blocked{% endif %}">
 
-        <!-- Info solicitud -->
+        {% if solicitud.estado == 'RECIBIDA' %}
+        <div class="form-blocked-overlay">
+            <span>🔒</span>
+            Asigna un instructor primero
+        </div>
+        {% endif %}
+
         <div class="solicitud-info">
             <h3>📋 Información de la Solicitud</h3>
             <div class="info-grid">
@@ -398,14 +533,12 @@
 
             <div class="form-group">
                 <label for="destinatario" class="required">Destinatario</label>
-                <input
-                    type="email"
-                    id="destinatario"
-                    name="destinatario"
-                    value="{% if solicitud.correo_remitente %}{{solicitud.correo_remitente}}{% else %}{{solicitud.empresa.correo}}{% endif %}"
-                    readonly
-                    disabled
-                >
+                <input type="email"
+                       id="destinatario"
+                       name="destinatario"
+                       value="{% if solicitud.correo_remitente %}{{solicitud.correo_remitente}}{% else %}{{solicitud.empresa.correo}}{% endif %}"
+                       readonly
+                       disabled>
                 <small>
                     📧 Respuesta enviada a:
                     {% if solicitud.correo_remitente %}
@@ -429,12 +562,10 @@
                         ❌ Solicitud Rechazada
                     </button>
                 </div>
-                <textarea
-                    id="mensaje"
-                    name="mensaje"
-                    required
-                    placeholder="Selecciona una plantilla arriba o escribe el mensaje aquí..."
-                ></textarea>
+                <textarea id="mensaje"
+                          name="mensaje"
+                          required
+                          placeholder="Selecciona una plantilla arriba o escribe el mensaje aquí..."></textarea>
                 <small>Puedes editar el texto libremente después de insertar una plantilla.</small>
             </div>
 
@@ -442,9 +573,20 @@
                 <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">
                     ✕ Cancelar
                 </a>
-                <button type="submit" class="btn btn-primary">
-                    📧 Enviar Respuesta
-                </button>
+
+                {% if solicitud.estado == 'RECIBIDA' %}
+                    {# Botón bloqueado — el backend también rechaza el POST #}
+                    <button type="button"
+                            class="btn btn-primary-blocked"
+                            disabled
+                            title="Asigna un instructor primero para avanzar a ATENDIDA">
+                        🔒 Enviar Respuesta
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary">
+                        📧 Enviar Respuesta
+                    </button>
+                {% endif %}
             </div>
         </form>
     </div>
@@ -456,7 +598,6 @@
 
 {% include 'core/accessibility.html' %}
 
-<!-- Datos desde Django para las plantillas JS -->
 <script>
     const DATOS = {
         empresa:            "{{ solicitud.empresa.nombre|escapejs }}",
@@ -465,7 +606,6 @@
         instructorNombre:   "{{ solicitud.instructor_asignado.nombre|default:''|escapejs }}",
         instructorCorreo:   "{{ solicitud.instructor_asignado.correo|default:''|escapejs }}",
         instructorTelefono: "{{ solicitud.instructor_asignado.telefono|default:''|escapejs }}",
-        // fecha_atencion formateada en español (ej: "18 de noviembre de 2025")
         semanaProgamada:    "{{ fecha_inicio_texto|default:''|escapejs }}",
     };
 
@@ -481,14 +621,18 @@
                 : 'A partir de la semana del [INDICAR FECHA].';
 
             texto = 'Reciba un cordial saludo.\n\n'
-                + 'Por medio de la presente, y de manera atenta, nos dirigimos a usted para confirmar que su solicitud para el curso de ' + DATOS.programa + ' ha sido debidamente tramitada.\n\n'
+                + 'Por medio de la presente, y de manera atenta, nos dirigimos a usted para confirmar '
+                + 'que su solicitud para el curso de ' + DATOS.programa + ' ha sido debidamente tramitada.\n\n'
                 + 'Le informamos que el instructor asignado para impartir esta capacitación es el señor ' + nombre + '.\n\n'
-                + 'Para su conocimiento y coordinación, a continuación, se detallan los datos de contacto del instructor y la fecha tentativa de inicio:\n\n'
+                + 'Para su conocimiento y coordinación, a continuación, se detallan los datos de contacto '
+                + 'del instructor y la fecha tentativa de inicio:\n\n'
                 + 'Instructor: ' + nombre + '\n'
                 + 'Correo Electrónico: ' + correo + '\n'
                 + 'Número de Celular: ' + telefono + '\n'
                 + 'Semana Programada: ' + semana + '\n\n'
-                + 'Agradecemos su interés en esta importante formación y le solicitamos estar atento a futuras comunicaciones para recibir los detalles finales sobre la logística y horarios específicos del curso.\n\n'
+                + 'Agradecemos su interés en esta importante formación y le solicitamos estar atento '
+                + 'a futuras comunicaciones para recibir los detalles finales sobre la logística '
+                + 'y horarios específicos del curso.\n\n'
                 + 'Cordialmente,\n\n'
                 + 'Sebastián Camilo González.\n'
                 + 'Coordinador Académico Programas Especiales, Formación Complementaria.\n'
@@ -496,7 +640,6 @@
                 + 'Regional Boyacá.';
 
         } else if (tipo === 'informacion') {
-
             texto =
 `Cordial saludo,
 
@@ -518,7 +661,6 @@ Centro Minero.
 Regional Boyacá.`;
 
         } else if (tipo === 'rechazada') {
-
             texto =
 `Estimados ${DATOS.empresa},
 
@@ -544,14 +686,19 @@ Regional Boyacá.`;
         document.getElementById('mensaje').focus();
     }
 
-    // Auto-cerrar alertas a los 8 segundos
     document.addEventListener('DOMContentLoaded', function () {
+        // Auto-cerrar alertas a los 8 segundos
         document.querySelectorAll('.alert').forEach(function (alert) {
             setTimeout(function () {
                 alert.style.animation = 'slideOutUp 0.4s ease-out';
                 setTimeout(function () { alert.remove(); }, 400);
             }, 8000);
         });
+
+        // Pre-cargar plantilla "Solicitud Aceptada" al abrir (solo si no está bloqueado)
+        {% if solicitud.estado != 'RECIBIDA' %}
+        cargarTemplate('aceptada');
+        {% endif %}
     });
 
     const _style = document.createElement('style');
@@ -562,11 +709,6 @@ Regional Boyacá.`;
         }
     `;
     document.head.appendChild(_style);
-
-    // Pre-cargar plantilla "Solicitud Aceptada" al abrir la página
-    document.addEventListener('DOMContentLoaded', function () {
-        cargarTemplate('aceptada');
-    });
 </script>
 </body>
 </html>
