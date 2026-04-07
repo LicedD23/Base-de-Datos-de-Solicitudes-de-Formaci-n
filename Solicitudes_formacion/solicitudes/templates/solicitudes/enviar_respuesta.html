@@ -78,7 +78,6 @@
         .warning-banner-content a { color: #e65100; font-weight: 600; text-decoration: none; }
         .warning-banner-content a:hover { text-decoration: underline; }
 
-        /* Banner de bloqueo (rojo) — estado RECIBIDA */
         .blocked-banner {
             background: #ffebee;
             border-left: 4px solid #c62828;
@@ -151,25 +150,8 @@
             to   { transform: translateY(0);     opacity: 1; }
         }
 
-        .alert::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
         .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
-        .alert-success .alert-icon { font-size: 1.8em; animation: scaleIn 0.5s ease-out; }
-
-        @keyframes scaleIn {
-            0%   { transform: scale(0);   }
-            50%  { transform: scale(1.2); }
-            100% { transform: scale(1);   }
-        }
-
-        .alert-error { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
-        .alert-error .alert-icon { font-size: 1.8em; animation: shake 0.5s ease-out; }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0);   }
-            25%      { transform: translateX(-10px); }
-            75%      { transform: translateX(10px);  }
-        }
-
+        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
         .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
         .alert-icon    { font-size: 1.5em; flex-shrink: 0; }
         .alert-content { flex: 1; line-height: 1.5; }
@@ -201,10 +183,7 @@
             border-top: 4px solid #2e7d32;
         }
 
-        /* Overlay de bloqueo sobre el formulario cuando estado es RECIBIDA */
-        .form-blocked {
-            position: relative;
-        }
+        .form-blocked { position: relative; }
 
         .form-blocked-overlay {
             position: absolute;
@@ -295,6 +274,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
 
         .template-btn:hover {
@@ -336,7 +316,6 @@
 
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
 
-        /* Botón bloqueado */
         .btn-primary-blocked {
             background: #bdbdbd;
             color: #fff;
@@ -400,13 +379,7 @@
         <span>Enviar Respuesta</span>
     </div>
 
-    <!-- =====================================================
-         BANNER CONDICIONAL SEGÚN ESTADO
-         Flujo: RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
-    ====================================================== -->
-
     {% if solicitud.estado == 'RECIBIDA' %}
-        <!-- BLOQUEADO: no tiene instructor, no se puede enviar -->
         <div class="blocked-banner">
             <div class="blocked-banner-icon">🔒</div>
             <div class="blocked-banner-content">
@@ -426,7 +399,6 @@
         </div>
 
     {% elif solicitud.estado == 'ATENDIDA' %}
-        <!-- Camino feliz: estado correcto para enviar respuesta -->
         <div class="info-banner">
             <div class="info-banner-icon">ℹ️</div>
             <div class="info-banner-content">
@@ -561,6 +533,9 @@
                     <button type="button" class="template-btn" onclick="cargarTemplate('rechazada')">
                         ❌ Solicitud Rechazada
                     </button>
+                    <a href="{% url 'solicitudes:guia_solicitud' %}?from={{ solicitud.id }}" class="template-btn" target="_blank">
+                        📋 Ver guía para empresas
+                    </a>
                 </div>
                 <textarea id="mensaje"
                           name="mensaje"
@@ -575,7 +550,6 @@
                 </a>
 
                 {% if solicitud.estado == 'RECIBIDA' %}
-                    {# Botón bloqueado — el backend también rechaza el POST #}
                     <button type="button"
                             class="btn btn-primary-blocked"
                             disabled
@@ -687,7 +661,6 @@ Regional Boyacá.`;
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Auto-cerrar alertas a los 8 segundos
         document.querySelectorAll('.alert').forEach(function (alert) {
             setTimeout(function () {
                 alert.style.animation = 'slideOutUp 0.4s ease-out';
@@ -695,7 +668,6 @@ Regional Boyacá.`;
             }, 8000);
         });
 
-        // Pre-cargar plantilla "Solicitud Aceptada" al abrir (solo si no está bloqueado)
         {% if solicitud.estado != 'RECIBIDA' %}
         cargarTemplate('aceptada');
         {% endif %}

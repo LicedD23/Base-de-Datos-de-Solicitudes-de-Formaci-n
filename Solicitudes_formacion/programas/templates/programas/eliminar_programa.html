@@ -363,6 +363,9 @@
                 width: 100%;
                 justify-content: center;
             }
+            .modal-footer { flex-direction: column; }
+            .btn-modal-cancel,
+            .btn-modal-confirm-danger { width: 100%; justify-content: center; }
         }
         /* FOOTER STYLES */
         footer {
@@ -392,9 +395,282 @@
         .container > * {
             animation: slideIn 0.3s ease-out;
         }
+
+        /* ══════════════════════════════════════════════════════
+           MODAL DE CONFIRMACIÓN — TEMA ROJO (Eliminar)
+        ══════════════════════════════════════════════════════ */
+        .modal-overlay {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.58);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+
+        .confirm-modal {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.92);
+            width: 90%;
+            max-width: 560px;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+            overflow: hidden;
+            z-index: 9999;
+            transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+        }
+        .confirm-modal.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            padding: 26px 32px 22px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .modal-header-icon { font-size: 2.2em; flex-shrink: 0; }
+        .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
+        .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
+
+        .modal-accent-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #ef9a9a, #e53935, #b71c1c, #7f0000);
+        }
+
+        .modal-body {
+            padding: 28px 32px 20px;
+            background: #fff8f8;
+        }
+
+        .irreversible-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #b71c1c;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .modal-info-card {
+            background: #ffebee;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+        .modal-info-card-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7f0000;
+            margin-bottom: 12px;
+        }
+        .modal-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcdd2;
+            font-size: 0.93em;
+        }
+        .modal-info-row:last-child { border-bottom: none; }
+        .modal-info-row .mrow-label { color: #c62828; min-width: 100px; font-weight: 600; }
+        .modal-info-row .mrow-value { color: #3e2723; font-weight: 500; }
+
+        .modal-delete-list {
+            background: #fff3f3;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .modal-delete-list-title {
+            font-size: 0.82em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #b71c1c;
+            margin-bottom: 10px;
+        }
+        .modal-delete-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 0.9em;
+            color: #c62828;
+        }
+        .modal-delete-item::before { content: '✗'; font-weight: 700; color: #b71c1c; flex-shrink: 0; }
+
+        .modal-solicitudes-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 0.9em;
+            color: #e65100;
+            line-height: 1.5;
+        }
+        .modal-solicitudes-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
+
+        .modal-critical-note {
+            background: #ffebee;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.88em;
+            color: #7f0000;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .modal-footer {
+            padding: 18px 32px 28px;
+            background: #fff8f8;
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            border-top: 1px solid #ffcdd2;
+        }
+        .btn-modal-cancel {
+            padding: 12px 26px;
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
+
+        .btn-modal-confirm-danger {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(198,40,40,0.42);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-confirm-danger:hover  { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(198,40,40,0.52); }
+        .btn-modal-confirm-danger:active { transform: translateY(0); }
+        .btn-modal-confirm-danger:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     </style>
 </head>
 <body>
+
+    <!-- ══ Overlay del modal ══ -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- ══ Modal rojo de confirmación ══ -->
+    <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <span class="modal-header-icon">🚨</span>
+            <div class="modal-header-text">
+                <h3 id="modalTitle">Confirmar Eliminación Permanente</h3>
+                <p>Esta acción NO puede revertirse</p>
+            </div>
+        </div>
+
+        <div class="modal-accent-bar"></div>
+
+        <div class="modal-body">
+
+            <div>
+                <span class="irreversible-badge">⛔ Acción Irreversible</span>
+            </div>
+
+            <div class="modal-info-card">
+                <div class="modal-info-card-title">🗑️ Programa a eliminar</div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📚 Nombre</span>
+                    <span class="mrow-value">{{ programa.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🔑 Código</span>
+                    <span class="mrow-value">{{ programa.codigo|default:"No especificado" }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🏷️ Área</span>
+                    <span class="mrow-value">{{ programa.area.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📋 Solicitudes</span>
+                    <span class="mrow-value">{{ total_solicitudes }} asociada(s)</span>
+                </div>
+            </div>
+
+            <div class="modal-delete-list">
+                <div class="modal-delete-list-title">Se eliminará permanentemente</div>
+                <div class="modal-delete-item">Todos los datos del programa</div>
+                <div class="modal-delete-item">Información histórica y estadísticas</div>
+                {% if total_solicitudes > 0 %}
+                <div class="modal-delete-item">{{ total_solicitudes }} solicitud(es) serán eliminadas</div>
+                {% endif %}
+                <div class="modal-delete-item">Registro completo en el sistema</div>
+            </div>
+
+            {% if total_solicitudes > 0 %}
+            <div class="modal-solicitudes-alert">
+                <span class="alert-icon-big">🔔</span>
+                <div>
+                    Se detectaron <strong>{{ total_solicitudes }} solicitud(es)</strong> asociadas.
+                    Al confirmar, serán <strong>eliminadas permanentemente</strong> junto con toda su información histórica.
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="modal-critical-note">
+                🔴 Esta acción es definitiva e irreversible. ¿Estás absolutamente seguro?
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" onclick="cerrarModal()">⬅️ Cancelar</button>
+            <button class="btn-modal-confirm-danger" id="btnConfirmarEliminar" onclick="confirmarEliminacion()">
+                🗑️ Sí, eliminar definitivamente
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ Contenido principal ══ -->
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -544,48 +820,57 @@
 
         <!-- Form -->
         <div class="form-card">
-            <form method="POST" id="deleteForm">
+            <!-- Formulario oculto que se envía desde el modal -->
+            <form method="POST" id="deleteForm" style="display:none;">
                 {% csrf_token %}
-
                 {% if total_solicitudes > 0 %}
-                <div class="radio-container">
-                    <h3>⚙️ ¿Qué deseas hacer con las solicitudes asociadas?</h3>
-                    
-                    <label class="radio-option">
-                        <input type="radio" name="accion_solicitudes" value="eliminar" id="eliminar">
-                        <div class="radio-content">
-                            <label for="eliminar">
-                                🗑️ Eliminar también las solicitudes
-                            </label>
-                            <div class="radio-description">
-                                Se eliminarán permanentemente las {{ total_solicitudes }} solicitud(es) y toda su información histórica (empresas, instructores, seguimientos, etc.)
-                            </div>
-                        </div>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="accion_solicitudes" value="cancelar" id="cancelar">
-                        <div class="radio-content">
-                            <label for="cancelar">
-                                ⬅️ Cancelar la eliminación
-                            </label>
-                            <div class="radio-description">
-                                No se eliminará nada y regresarás a la página de detalle del programa
-                            </div>
-                        </div>
-                    </label>
-                </div>
+                    <input type="hidden" name="accion_solicitudes" id="hiddenAccion" value="eliminar">
                 {% endif %}
-
-                <div class="form-actions">
-                    <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-cancel">
-                        ⬅️ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-danger" {% if total_solicitudes > 0 %}disabled id="btnEliminar"{% endif %}>
-                        🗑️ Eliminar Permanentemente
-                    </button>
-                </div>
             </form>
+
+            {% if total_solicitudes > 0 %}
+            <div class="radio-container">
+                <h3>⚙️ ¿Qué deseas hacer con las solicitudes asociadas?</h3>
+                
+                <label class="radio-option">
+                    <input type="radio" name="accion_solicitudes_ui" value="eliminar" id="eliminar" onchange="actualizarAccion(this.value)">
+                    <div class="radio-content">
+                        <label for="eliminar">
+                            🗑️ Eliminar también las solicitudes
+                        </label>
+                        <div class="radio-description">
+                            Se eliminarán permanentemente las {{ total_solicitudes }} solicitud(es) y toda su información histórica (empresas, instructores, seguimientos, etc.)
+                        </div>
+                    </div>
+                </label>
+
+                <label class="radio-option">
+                    <input type="radio" name="accion_solicitudes_ui" value="cancelar" id="cancelar" onchange="actualizarAccion(this.value)">
+                    <div class="radio-content">
+                        <label for="cancelar">
+                            ⬅️ Cancelar la eliminación
+                        </label>
+                        <div class="radio-description">
+                            No se eliminará nada y regresarás a la página de detalle del programa
+                        </div>
+                    </div>
+                </label>
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-cancel">
+                    ⬅️ Cancelar
+                </a>
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="btnEliminarPrincipal"
+                    {% if total_solicitudes > 0 %}disabled{% endif %}
+                    onclick="abrirModal()">
+                    🗑️ Eliminar Permanentemente
+                </button>
+            </div>
         </div>
     </div>
 
@@ -596,64 +881,53 @@
 
     {% include 'core/accessibility.html' %}
 
-    {% if total_solicitudes > 0 %}
     <script>
-        // Habilitar botón de eliminar solo si se selecciona una opción
-        const radioButtons = document.querySelectorAll('input[name="accion_solicitudes"]');
-        const btnEliminar = document.getElementById('btnEliminar');
-        
-        radioButtons.forEach(radio => {
-            radio.addEventListener('change', function() {
-                btnEliminar.disabled = false;
-            });
-        });
+        var modal   = document.getElementById('confirmModal');
+        var overlay = document.getElementById('modalOverlay');
 
-        // Confirmación adicional antes de enviar
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const accionSeleccionada = document.querySelector('input[name="accion_solicitudes"]:checked');
-            
-            if (!accionSeleccionada) {
-                e.preventDefault();
-                alert('⚠️ Debes seleccionar una opción antes de continuar');
-                return false;
-            }
+        var accionSeleccionada = null;
 
-            if (accionSeleccionada.value === 'eliminar') {
-                const confirmacion = confirm(
-                    '🚨 CONFIRMACIÓN FINAL\n\n' +
-                    '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente:\n\n' +
-                    '• El programa: {{ programa.nombre }}\n' +
-                    '• Las {{ total_solicitudes }} solicitud(es) asociada(s)\n' +
-                    '• Toda la información histórica\n\n' +
-                    'ESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
-                    '¿Deseas continuar?'
-                );
-                
-                if (!confirmacion) {
-                    e.preventDefault();
-                    return false;
-                }
+        function actualizarAccion(valor) {
+            accionSeleccionada = valor;
+            var btn = document.getElementById('btnEliminarPrincipal');
+            if (btn) btn.disabled = false;
+            if (valor === 'cancelar') {
+                window.location.href = "{% url 'programas:detalle_programa' programa.id %}";
             }
+        }
+
+        function abrirModal() {
+            {% if total_solicitudes > 0 %}
+            if (!accionSeleccionada || accionSeleccionada === 'cancelar') return;
+            {% endif %}
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function confirmarEliminacion() {
+            var btn = document.getElementById('btnConfirmarEliminar');
+            btn.disabled = true;
+            btn.innerHTML = '🔄 Eliminando...';
+            {% if total_solicitudes > 0 %}
+            var hidden = document.getElementById('hiddenAccion');
+            if (hidden) hidden.value = accionSeleccionada || 'eliminar';
+            {% endif %}
+            document.getElementById('deleteForm').submit();
+        }
+
+        overlay.addEventListener('click', cerrarModal);
+        modal.addEventListener('click', function(e) { e.stopPropagation(); });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal();
         });
     </script>
-    {% else %}
-    <script>
-        // Confirmación para programas sin solicitudes
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const confirmacion = confirm(
-                '🚨 CONFIRMACIÓN FINAL\n\n' +
-                '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente el programa "{{ programa.nombre }}"?\n\n' +
-                'Se perderá toda la información histórica.\n\n' +
-                'ESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
-                '¿Deseas continuar?'
-            );
-            
-            if (!confirmacion) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    </script>
-    {% endif %}
 </body>
 </html>

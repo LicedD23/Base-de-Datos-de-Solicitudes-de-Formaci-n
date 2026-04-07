@@ -212,7 +212,6 @@ def editar_solicitud(request, solicitud_id):
         try:
             es_migracion = request.POST.get('es_migracion') == 'true'
 
-            # ── Datos del formulario ─────────────────────────────────────
             estado             = request.POST.get('estado')
             instructor_id      = request.POST.get('instructor_asignado')
             observaciones      = request.POST.get('observaciones', '')
@@ -227,11 +226,7 @@ def editar_solicitud(request, solicitud_id):
 
             from datetime import datetime
 
-            # ================================================================
-            # MODO MIGRACIÓN — fechas y estado personalizados
-            # ================================================================
             if es_migracion:
-                # Fecha de Recepción (obligatoria)
                 fecha_recepcion_str = request.POST.get('fecha_recepcion')
                 if not fecha_recepcion_str:
                     messages.error(request, '❌ En modo migración, la fecha de recepción es obligatoria')
@@ -248,7 +243,6 @@ def editar_solicitud(request, solicitud_id):
                     messages.error(request, '❌ Formato de fecha de recepción inválido')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-                # Fecha de Atención (opcional)
                 fecha_atencion = None
                 fecha_atencion_str = request.POST.get('fecha_atencion')
                 if fecha_atencion_str:
@@ -265,7 +259,6 @@ def editar_solicitud(request, solicitud_id):
                     except ValueError:
                         messages.warning(request, '⚠️ Formato de fecha de atención inválido, se omitirá')
 
-                # Fecha de Respuesta (opcional)
                 fecha_respuesta = None
                 fecha_respuesta_str = request.POST.get('fecha_respuesta')
                 if fecha_respuesta_str:
@@ -287,7 +280,6 @@ def editar_solicitud(request, solicitud_id):
                     except ValueError:
                         messages.warning(request, '⚠️ Formato de fecha de respuesta inválido, se omitirá')
 
-                # Fecha de Finalización (opcional)
                 fecha_finalizacion = None
                 fecha_finalizacion_str = request.POST.get('fecha_finalizacion')
                 if fecha_finalizacion_str:
@@ -316,9 +308,6 @@ def editar_solicitud(request, solicitud_id):
                 else:
                     estado = 'RECIBIDA'
 
-            # ================================================================
-            # MODO NORMAL — validaciones del flujo real
-            # ================================================================
             else:
                 fecha_recepcion    = solicitud.fecha_recepcion
                 fecha_atencion     = solicitud.fecha_atencion
@@ -359,8 +348,7 @@ def editar_solicitud(request, solicitud_id):
                     )
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-            # ── Validación de documentos ─────────────────────────────────
-            documentos_actuales       = solicitud.documentos.count()
+            documentos_actuales         = solicitud.documentos.count()
             documentos_a_eliminar_count = len(documentos_a_eliminar)
             nuevos_documentos_count     = len(nuevos_documentos_pdf)
             total_documentos = documentos_actuales - documentos_a_eliminar_count + nuevos_documentos_count
@@ -382,9 +370,6 @@ def editar_solicitud(request, solicitud_id):
                     messages.error(request, f'❌ {doc.name} supera 10MB')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-            # ================================================================
-            # TRANSACCIÓN ATÓMICA
-            # ================================================================
             with transaction.atomic():
                 solicitud.estado        = estado
                 solicitud.observaciones = observaciones
@@ -499,7 +484,6 @@ def editar_solicitud(request, solicitud_id):
             traceback.print_exc()
             return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-    # ── GET: mostrar formulario ──────────────────────────────────────────────
     instructores               = Instructor.objects.filter(activo=True).order_by('nombre')
     instructores_especializados = instructores.filter(especialidad=solicitud.programa)
     programas                  = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
@@ -508,33 +492,23 @@ def editar_solicitud(request, solicitud_id):
     documentos_actuales = DocumentoSolicitud.objects.filter(solicitud=solicitud).order_by('-fecha_subida')
 
     context = {
-        'solicitud':                 solicitud,
-        'instructores':              instructores,
+        'solicitud':                  solicitud,
+        'instructores':               instructores,
         'instructores_especializados': instructores_especializados,
-        'programas':                 programas,
-        'ESTADO_CHOICES':            Solicitud.ESTADO_CHOICES,
-        'documentos_actuales':       documentos_actuales,
-        'ahora':                     timezone.now(),
+        'programas':                  programas,
+        'ESTADO_CHOICES':             Solicitud.ESTADO_CHOICES,
+        'documentos_actuales':        documentos_actuales,
+        'ahora':                      timezone.now(),
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
 
 
 # ---------------------------------------------------------------------------
 # ENVIAR RESPUESTA
-# Flujo: la solicitud debe estar ATENDIDA (con instructor) para poder enviar
-# el correo y pasar a RESPONDIDA. Es el único punto donde ocurre esa transición.
 # ---------------------------------------------------------------------------
 
 @puede_editar_requerido
 def enviar_respuesta(request, solicitud_id):
-    """
-    Envía correo de respuesta a la empresa y avanza el estado de
-    ATENDIDA → RESPONDIDA.
-
-    Requisitos obligatorios antes de enviar:
-      1. La solicitud debe estar en estado ATENDIDA (no RECIBIDA).
-      2. Debe tener un instructor asignado.
-    """
     solicitud = get_object_or_404(
         Solicitud.objects.select_related(
             'empresa', 'programa', 'programa__area', 'instructor_asignado',
@@ -544,11 +518,6 @@ def enviar_respuesta(request, solicitud_id):
 
     if request.method == 'POST':
         try:
-            # ================================================================
-            # GUARDIA 1: el estado debe ser ATENDIDA, RESPONDIDA o FINALIZADA.
-            # Si es RECIBIDA se bloquea el envío — el usuario debe asignar
-            # instructor primero para que el sistema avance a ATENDIDA.
-            # ================================================================
             if solicitud.estado == 'RECIBIDA':
                 messages.error(
                     request,
@@ -558,10 +527,6 @@ def enviar_respuesta(request, solicitud_id):
                 )
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
 
-            # ================================================================
-            # GUARDIA 2: aunque el estado sea ATENDIDA, debe haber instructor.
-            # (Salvaguarda ante datos inconsistentes en BD.)
-            # ================================================================
             if solicitud.estado == 'ATENDIDA' and not solicitud.instructor_asignado:
                 messages.error(
                     request,
@@ -569,9 +534,6 @@ def enviar_respuesta(request, solicitud_id):
                     'Asigna un instructor antes de enviar la respuesta.'
                 )
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
-            # ── A partir de aquí el estado es ATENDIDA (con instructor),
-            #    RESPONDIDA o FINALIZADA — se puede enviar el correo ─────────
 
             asunto  = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
             mensaje = request.POST.get('mensaje')
@@ -601,9 +563,7 @@ def enviar_respuesta(request, solicitud_id):
                 fail_silently=False,
             )
 
-            # ── Transición de estado ─────────────────────────────────────
             if solicitud.estado == 'ATENDIDA':
-                # Camino feliz: ATENDIDA → RESPONDIDA
                 solicitud.estado          = 'RESPONDIDA'
                 solicitud.fecha_respuesta = timezone.now()
                 solicitud.save()
@@ -614,7 +574,6 @@ def enviar_respuesta(request, solicitud_id):
                     f'Siguiente paso: finalizar la formación cuando concluya.'
                 )
             else:
-                # Reenvío de correo en estado RESPONDIDA o FINALIZADA
                 messages.success(request, f'✅ Correo reenviado a {correo_destino}')
 
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
@@ -623,7 +582,6 @@ def enviar_respuesta(request, solicitud_id):
             messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
             return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
 
-    # ── GET: preparar contexto del formulario ────────────────────────────────
     MESES = {
         1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril',
         5: 'mayo', 6: 'junio', 7: 'julio', 8: 'agosto',
@@ -842,9 +800,6 @@ def crear_solicitud(request):
 
             from datetime import datetime
 
-            # ================================================================
-            # MODO MIGRACIÓN — fechas y estado personalizados
-            # ================================================================
             if es_migracion:
                 fecha_recepcion_str = request.POST.get('fecha_recepcion')
                 if not fecha_recepcion_str:
@@ -935,9 +890,6 @@ def crear_solicitud(request):
                     except Instructor.DoesNotExist:
                         messages.warning(request, '⚠️ Instructor no encontrado, se creará sin instructor')
 
-            # ================================================================
-            # MODO NORMAL — todo automático, estado inicial RECIBIDA
-            # ================================================================
             else:
                 fecha_recepcion    = timezone.now()
                 fecha_atencion     = None
@@ -1014,7 +966,6 @@ def crear_solicitud(request):
             traceback.print_exc()
             return redirect('solicitudes:crear_solicitud')
 
-    # ── GET: mostrar formulario ──────────────────────────────────────────────
     empresas     = Empresa.objects.all().order_by('nombre')
     programas    = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
     instructores = Instructor.objects.filter(activo=True).order_by('nombre')
@@ -1026,3 +977,18 @@ def crear_solicitud(request):
         'ahora':       timezone.now(),
     }
     return render(request, 'solicitudes/crear_solicitud.html', context)
+
+
+# ---------------------------------------------------------------------------
+# GUÍA PARA EMPRESAS
+# Página con instrucciones para que las empresas sepan cómo redactar
+# correctamente sus solicitudes de formación por correo.
+# Es pública — no requiere login — para que el coordinador pueda
+# compartir el enlace directamente con cualquier empresa.
+# ---------------------------------------------------------------------------
+
+def guia_solicitud(request):
+    from_solicitud = request.GET.get('from')
+    return render(request, 'solicitudes/guia_solicitud_formacion.html', {
+        'from_solicitud_id': from_solicitud,
+    })

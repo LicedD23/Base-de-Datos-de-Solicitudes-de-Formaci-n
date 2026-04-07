@@ -16,16 +16,9 @@
             min-height: 100vh;
             padding: 20px;
         }
-        
-        a {
-            text-decoration: none;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
+        a { text-decoration: none; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
@@ -34,57 +27,27 @@
             margin-bottom: 30px;
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; display: flex; align-items: center; gap: 15px; }
+        .header p  { font-size: 1.1em; opacity: 0.95; }
 
         .breadcrumb {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
             flex-wrap: wrap;
         }
-        
-        .breadcrumb a {
-            color: #2e7d32;
-            transition: color 0.3s ease;
-        }
-        
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-        
-        .breadcrumb span {
-            color: #999;
-        }
-        
-        .breadcrumb .current {
-            color: #2e7d32;
-            font-weight: 600;
-        }
-        
-        .messages-container {
-            margin-bottom: 25px;
-        }
-        
+        .breadcrumb a { color: #2e7d32; transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb span { color: #999; }
+        .breadcrumb .current { color: #2e7d32; font-weight: 600; }
+
+        .messages-container { margin-bottom: 25px; }
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -94,266 +57,94 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
             overflow: hidden;
         }
-        
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
         }
-        
-        .alert::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-        }
-        
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            border: 2px solid #1b5e20;
-        }
-        
-        .alert-success::before {
-            background: #fff;
-        }
-        
-        .alert-success .alert-icon {
-            font-size: 1.8em;
-            animation: scaleIn 0.5s ease-out;
-        }
-        
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-            border: 2px solid #b71c1c;
-        }
-        
-        .alert-error .alert-icon {
-            font-size: 1.8em;
-            animation: shake 0.5s ease-out;
-        }
-        
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
-        }
-        
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-            border: 2px solid #e65100;
-        }
-        
-        .alert-warning::before {
-            background: #fff;
-        }
-        
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-        
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
-        }
-        
+        .alert::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+        .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
+        .alert-success::before { background: #fff; }
+        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
+        .alert-warning::before { background: #fff; }
+        .alert-icon    { font-size: 1.8em; flex-shrink: 0; }
+        .alert-content { flex: 1; line-height: 1.5; }
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white; width: 28px; height: 28px;
+            border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2em;
+            transition: all 0.3s ease; flex-shrink: 0;
         }
-        
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
-        }
-        
+        .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+
         .warning-box {
             background: #ffebee;
             border-left: 4px solid #c62828;
             border-radius: 10px;
             padding: 25px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(198, 40, 40, 0.1);
+            box-shadow: 0 2px 8px rgba(198,40,40,0.1);
         }
-        
-        .warning-box h3 {
-            color: #c62828;
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .warning-box p {
-            color: #c62828;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-        
-        .warning-box strong {
-            color: #c62828;
-        }
-        
+        .warning-box h3 { color: #c62828; font-size: 1.3em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .warning-box p  { color: #c62828; line-height: 1.6; margin-bottom: 10px; }
+        .warning-box strong { color: #b71c1c; }
+
         .info-box-blue {
             background: #e3f2fd;
             border-left: 4px solid #1976d2;
             border-radius: 10px;
             padding: 25px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+            box-shadow: 0 2px 8px rgba(25,118,210,0.1);
         }
-        
-        .info-box-blue h3 {
-            color: #1565c0;
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .info-box-blue ul {
-            color: #1976d2;
-            line-height: 1.8;
-            margin-left: 20px;
-        }
-        
-        .info-box-blue li {
-            margin-bottom: 8px;
-        }
-        
+        .info-box-blue h3 { color: #1565c0; font-size: 1.3em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .info-box-blue ul { color: #1976d2; line-height: 1.8; margin-left: 20px; }
+        .info-box-blue li { margin-bottom: 8px; }
+
         .info-card {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             margin-bottom: 30px;
             overflow: hidden;
         }
-        
         .info-card-header {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             border-left: 4px solid #2e7d32;
             padding: 20px 30px;
         }
-        
-        .info-card-header h2 {
-            color: #1b5e20;
-            font-size: 1.5em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .info-card-body {
-            padding: 30px;
-        }
-        
+        .info-card-header h2 { color: #1b5e20; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .info-card-body { padding: 30px; }
+
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 20px;
         }
-        
         .info-item {
             padding: 15px;
             background: #f9f9f9;
             border-radius: 8px;
             border-left: 3px solid #2e7d32;
         }
-        
-        .info-item label {
-            display: block;
-            font-size: 0.85em;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .info-item .value {
-            font-size: 1.1em;
-            color: #333;
-            font-weight: 600;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-recibida {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        
-        .status-respondida {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .status-atendida {
-            background: #f3e5f5;
-            color: #6a1b9a;
-        }
-        
-        .status-finalizada {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-        
+        .info-item label { display: block; font-size: 0.85em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 600; }
+        .info-item .value { font-size: 1.1em; color: #333; font-weight: 600; }
+
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; text-transform: uppercase; }
+        .status-recibida  { background: #fff3e0; color: #e65100; }
+        .status-respondida{ background: #e3f2fd; color: #1565c0; }
+        .status-atendida  { background: #f3e5f5; color: #6a1b9a; }
+        .status-finalizada{ background: #c8e6c9; color: #1b5e20; }
+
         .pdf-section {
             background: #fff8e1;
             border-left: 4px solid #ffa726;
@@ -361,134 +152,27 @@
             padding: 20px;
             margin-top: 20px;
         }
-        
-        .pdf-section h3 {
-            color: #e65100;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .pdf-count-badge {
-            background: #ff6f00;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-        
-        .pdf-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .pdf-card {
-            background: white;
-            border: 2px solid #ffd54f;
-            border-radius: 8px;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .pdf-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(255, 111, 0, 0.2);
-        }
-        
-        .pdf-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-        
-        .pdf-icon {
-            font-size: 2em;
-            flex-shrink: 0;
-        }
-        
-        .pdf-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .pdf-name {
-            font-weight: 600;
-            color: #e65100;
-            margin-bottom: 4px;
-            word-break: break-word;
-            font-size: 0.95em;
-        }
-        
-        .pdf-metadata {
-            display: flex;
-            gap: 10px;
-            font-size: 0.85em;
-            color: #666;
-        }
-        
-        .pdf-size {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .pdf-date {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .pdf-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .pdf-link {
-            flex: 1;
-            background: #ff6f00;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-        
-        .pdf-link:hover {
-            background: #e65100;
-        }
-        
-        .no-pdf {
-            color: #999;
-            font-style: italic;
-            padding: 15px;
-            text-align: center;
-            background: white;
-            border-radius: 8px;
-            border: 2px dashed #ffd54f;
-        }
+        .pdf-section h3 { color: #e65100; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .pdf-count-badge { background: #ff6f00; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
 
-        
+        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .pdf-card { background: white; border: 2px solid #ffd54f; border-radius: 8px; padding: 15px; transition: all 0.3s ease; }
+        .pdf-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(255,111,0,0.2); }
+        .pdf-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .pdf-icon { font-size: 2em; flex-shrink: 0; }
+        .pdf-info { flex: 1; min-width: 0; }
+        .pdf-name { font-weight: 600; color: #e65100; margin-bottom: 4px; word-break: break-word; font-size: 0.95em; }
+        .pdf-metadata { display: flex; gap: 10px; font-size: 0.85em; color: #666; }
+        .pdf-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .pdf-link { flex: 1; background: #ff6f00; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.3s ease; }
+        .pdf-link:hover { background: #e65100; }
+        .no-pdf { color: #999; font-style: italic; padding: 15px; text-align: center; background: white; border-radius: 8px; border: 2px dashed #ffd54f; }
+
         .form-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: transparent;
+            padding: 0;
             margin-bottom: 30px;
         }
-        
         .checkbox-container {
             background: #fff3e0;
             border: 2px solid #f57c00;
@@ -496,40 +180,12 @@
             padding: 20px;
             margin-bottom: 20px;
         }
-        
-        .checkbox-option {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 15px;
-            cursor: pointer;
-        }
-        
-        .checkbox-option input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #c62828;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        
-        .checkbox-content label {
-            font-size: 1em;
-            color: #e65100;
-            font-weight: 600;
-            cursor: pointer;
-            display: block;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-        }
-        
+        .checkbox-option { display: flex; align-items: flex-start; gap: 12px; padding: 15px; cursor: pointer; }
+        .checkbox-option input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #c62828; margin-top: 2px; flex-shrink: 0; }
+        .checkbox-content label { font-size: 1em; color: #e65100; font-weight: 600; cursor: pointer; display: block; }
+
+        .form-actions { display: flex; gap: 15px; justify-content: center; }
+
         .btn {
             padding: 12px 30px;
             border: none;
@@ -543,35 +199,12 @@
             gap: 8px;
             text-decoration: none;
         }
-        
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-        
-        .btn-cancel:hover {
-            background: #e0e0e0;
-            border-color: #bdbdbd;
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(183, 28, 28, 0.4);
-        }
-        
-        .btn-danger:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
+        .btn-cancel { background: #f5f5f5; color: #666; border: 2px solid #e0e0e0; }
+        .btn-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
+        .btn-danger { background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%); color: white; box-shadow: 0 4px 12px rgba(183,28,28,0.3); }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(183,28,28,0.4); }
+        .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
         footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
@@ -579,32 +212,323 @@
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
-        
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
+
+        @keyframes slideOutUp {
+            from { transform: translateY(0);     opacity: 1; }
+            to   { transform: translateY(-20px); opacity: 0; }
         }
-        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .container > * { animation: slideIn 0.3s ease-out; }
+
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .form-actions {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .header h1 { font-size: 1.8em; }
+            .info-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .modal-footer { flex-direction: column; }
+            .btn-modal-cancel,
+            .btn-modal-confirm-danger { width: 100%; justify-content: center; }
         }
+
+        /* ══════════════════════════════════════════════════════
+           MODAL DE CONFIRMACIÓN — TEMA ROJO (Eliminar)
+        ══════════════════════════════════════════════════════ */
+        .modal-overlay {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.58);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+
+        .confirm-modal {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.92);
+            width: 90%;
+            max-width: 560px;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+            overflow: hidden;
+            z-index: 9999;
+            transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+        }
+        .confirm-modal.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            padding: 26px 32px 22px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .modal-header-icon { font-size: 2.2em; flex-shrink: 0; }
+        .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
+        .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
+
+        .modal-accent-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #ef9a9a, #e53935, #b71c1c, #7f0000);
+        }
+
+        .modal-body {
+            padding: 28px 32px 20px;
+            background: #fff8f8;
+        }
+
+        .irreversible-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #b71c1c;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .modal-info-card {
+            background: #ffebee;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+        .modal-info-card-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7f0000;
+            margin-bottom: 12px;
+        }
+        .modal-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcdd2;
+            font-size: 0.93em;
+        }
+        .modal-info-row:last-child { border-bottom: none; }
+        .modal-info-row .mrow-label { color: #c62828; min-width: 110px; font-weight: 600; }
+        .modal-info-row .mrow-value { color: #3e2723; font-weight: 500; }
+
+        .modal-delete-list {
+            background: #fff3f3;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .modal-delete-list-title {
+            font-size: 0.82em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #b71c1c;
+            margin-bottom: 10px;
+        }
+        .modal-delete-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 0.9em;
+            color: #c62828;
+        }
+        .modal-delete-item::before { content: '✗'; font-weight: 700; color: #b71c1c; flex-shrink: 0; }
+
+        .modal-docs-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 0.9em;
+            color: #e65100;
+            line-height: 1.5;
+        }
+        .modal-docs-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
+
+        .modal-critical-note {
+            background: #ffebee;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.88em;
+            color: #7f0000;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .modal-footer {
+            padding: 18px 32px 28px;
+            background: #fff8f8;
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            border-top: 1px solid #ffcdd2;
+        }
+        .btn-modal-cancel {
+            padding: 12px 26px;
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        .btn-modal-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
+
+        .btn-modal-confirm-danger {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(198,40,40,0.42);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        .btn-modal-confirm-danger:hover  { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(198,40,40,0.52); }
+        .btn-modal-confirm-danger:active { transform: translateY(0); }
+        .btn-modal-confirm-danger:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     </style>
 </head>
 <body>
+
+    <!-- ══ Overlay del modal ══ -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- ══════════════════════════════════════
+         MODAL ROJO — CONFIRMAR ELIMINACIÓN
+    ══════════════════════════════════════ -->
+    <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <span class="modal-header-icon">🚨</span>
+            <div class="modal-header-text">
+                <h3 id="modalTitle">Confirmar Eliminación Permanente</h3>
+                <p>Esta acción NO puede revertirse</p>
+            </div>
+        </div>
+
+        <div class="modal-accent-bar"></div>
+
+        <div class="modal-body">
+
+            <div>
+                <span class="irreversible-badge">⛔ Acción Irreversible</span>
+            </div>
+
+            <div class="modal-info-card">
+                <div class="modal-info-card-title">🗑️ Solicitud a eliminar</div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📋 ID</span>
+                    <span class="mrow-value">#{{ solicitud.id }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🏢 Empresa</span>
+                    <span class="mrow-value">{{ solicitud.empresa.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📚 Programa</span>
+                    <span class="mrow-value">{{ solicitud.programa.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🔘 Estado</span>
+                    <span class="mrow-value">{{ solicitud.get_estado_display }}</span>
+                </div>
+                {% if solicitud.instructor_asignado %}
+                <div class="modal-info-row">
+                    <span class="mrow-label">👤 Instructor</span>
+                    <span class="mrow-value">{{ solicitud.instructor_asignado.nombre }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="modal-delete-list">
+                <div class="modal-delete-list-title">Se eliminará permanentemente</div>
+                <div class="modal-delete-item">Todos los datos de la solicitud</div>
+                <div class="modal-delete-item">El historial completo de estados y fechas</div>
+                <div class="modal-delete-item">Las observaciones registradas</div>
+                {% if solicitud.documentos.exists %}
+                <div class="modal-delete-item">{{ solicitud.documentos.count }} documento(s) PDF adjunto(s)</div>
+                {% elif solicitud.documento_pdf %}
+                <div class="modal-delete-item">El documento PDF adjunto (legacy)</div>
+                {% endif %}
+                <div class="modal-delete-item">El registro completo en el sistema</div>
+            </div>
+
+            {% if solicitud.documentos.exists or solicitud.documento_pdf %}
+            <div class="modal-docs-alert">
+                <span class="alert-icon-big">📄</span>
+                <div>
+                    {% if solicitud.documentos.exists %}
+                        Se detectaron <strong>{{ solicitud.documentos.count }} documento(s) PDF</strong> adjuntos.
+                        Serán <strong>eliminados permanentemente del servidor</strong>.
+                    {% else %}
+                        Se detectó <strong>1 documento PDF</strong> adjunto.
+                        Será <strong>eliminado permanentemente del servidor</strong>.
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="modal-critical-note">
+                🔴 Esta acción es definitiva e irreversible. ¿Estás absolutamente seguro?
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" onclick="cerrarModal()">⬅️ Cancelar</button>
+            <button class="btn-modal-confirm-danger" id="btnConfirmarEliminar" onclick="confirmarEliminacion()">
+                🗑️ Sí, eliminar definitivamente
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ Contenido principal ══ -->
     <div class="container">
         <div class="header">
             <h1>🗑️ Eliminar Solicitud #{{ solicitud.id }}</h1>
@@ -621,11 +545,23 @@
             <span class="current">Eliminar Solicitud</span>
         </div>
 
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+                    <div class="alert-icon">
+                        {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
+                    </div>
+                    <div class="alert-content">{{ message }}</div>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="warning-box">
             <h3>🚨 ADVERTENCIA CRÍTICA</h3>
-            <p>
-                <strong>Esta acción es IRREVERSIBLE y eliminará permanentemente:</strong>
-            </p>
+            <p><strong>Esta acción es IRREVERSIBLE y eliminará permanentemente:</strong></p>
             <p>
                 ✗ Todos los datos de la solicitud #{{ solicitud.id }}<br>
                 ✗ El historial completo de estados<br>
@@ -642,29 +578,24 @@
             <div class="info-card-header">
                 <h2>📋 Información de la Solicitud</h2>
             </div>
-
             <div class="info-card-body">
                 <div class="info-grid">
                     <div class="info-item">
                         <label>ID Solicitud</label>
                         <div class="value">#{{ solicitud.id }}</div>
                     </div>
-
                     <div class="info-item">
                         <label>Empresa</label>
                         <div class="value">{{ solicitud.empresa.nombre }}</div>
                     </div>
-
                     <div class="info-item">
                         <label>Programa</label>
                         <div class="value">{{ solicitud.programa.nombre }}</div>
                     </div>
-
                     <div class="info-item">
                         <label>Área</label>
                         <div class="value">{{ solicitud.programa.area.nombre }}</div>
                     </div>
-
                     <div class="info-item">
                         <label>Estado Actual</label>
                         <div class="value">
@@ -677,38 +608,32 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="info-item">
                         <label>Instructor Asignado</label>
                         <div class="value">{{ solicitud.instructor_asignado.nombre|default:"Sin asignar" }}</div>
                     </div>
-
                     <div class="info-item">
                         <label>Fecha de Recepción</label>
                         <div class="value">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
                     </div>
-
                     {% if solicitud.fecha_respuesta %}
                     <div class="info-item">
                         <label>Fecha de Respuesta</label>
                         <div class="value">{{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}</div>
                     </div>
                     {% endif %}
-
                     {% if solicitud.fecha_atencion %}
                     <div class="info-item">
                         <label>Fecha de Atención</label>
                         <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
                     </div>
                     {% endif %}
-
                     {% if solicitud.fecha_finalizacion %}
                     <div class="info-item">
                         <label>Fecha de Finalización</label>
                         <div class="value">{{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}</div>
                     </div>
                     {% endif %}
-
                     {% if solicitud.numero_aprendices %}
                     <div class="info-item">
                         <label>Trabajadores a Capacitar</label>
@@ -724,7 +649,6 @@
                 </div>
                 {% endif %}
 
-                <!-- Sección de múltiples documentos PDF -->
                 <div class="pdf-section">
                     <h3>
                         📄 Documentos Adjuntos
@@ -740,65 +664,46 @@
                                     <div class="pdf-card-header">
                                         <div class="pdf-icon">📄</div>
                                         <div class="pdf-info">
-                                            <div class="pdf-name">
-                                                {{ documento.nombre_archivo|truncatechars:30 }}
-                                            </div>
+                                            <div class="pdf-name">{{ documento.nombre_archivo|truncatechars:30 }}</div>
                                             <div class="pdf-metadata">
-                                                <span class="pdf-size">
-                                                    📦 {{ documento.archivo.size|filesizeformat }}
-                                                </span>
-                                                <span class="pdf-date">
-                                                    🕒 {{ documento.fecha_subida|date:"d/m/y" }}
-                                                </span>
+                                                <span>📦 {{ documento.archivo.size|filesizeformat }}</span>
+                                                <span>🕒 {{ documento.fecha_subida|date:"d/m/y" }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="pdf-actions">
-                                        <a href="{{ documento.archivo.url }}" target="_blank" class="pdf-link">
-                                            🔗 Ver Documento
-                                        </a>
+                                        <a href="{{ documento.archivo.url }}" target="_blank" class="pdf-link">🔗 Ver Documento</a>
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
-
-                        <!-- Mostrar si hay documento legacy -->
                         {% if solicitud.documento_pdf %}
-                            <div style="margin-top: 15px; padding: 12px; background: #f3e5f5; border-left: 3px solid #9c27b0; border-radius: 6px;">
-                                <p style="color:#6a1b9a; font-size: 0.9em; margin:0;">
+                            <div style="margin-top:15px;padding:12px;background:#f3e5f5;border-left:3px solid #9c27b0;border-radius:6px;">
+                                <p style="color:#6a1b9a;font-size:0.9em;margin:0;">
                                     ℹ️ <strong>Nota:</strong> Esta solicitud también tiene un documento PDF en el campo legacy que será eliminado.
                                 </p>
                             </div>
                         {% endif %}
                     {% else %}
-                        <!-- Si no hay documentos nuevos pero hay documento_pdf legacy -->
                         {% if solicitud.documento_pdf %}
                             <div class="pdf-grid">
                                 <div class="pdf-card">
                                     <div class="pdf-card-header">
                                         <div class="pdf-icon">📄</div>
                                         <div class="pdf-info">
-                                            <div class="pdf-name">
-                                                {{ solicitud.documento_pdf.name|slice:"11:"|truncatechars:30 }}
-                                            </div>
+                                            <div class="pdf-name">{{ solicitud.documento_pdf.name|slice:"11:"|truncatechars:30 }}</div>
                                             <div class="pdf-metadata">
-                                                <span class="pdf-size">
-                                                    📦 {{ solicitud.documento_pdf.size|filesizeformat }}
-                                                </span>
+                                                <span>📦 {{ solicitud.documento_pdf.size|filesizeformat }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="pdf-actions">
-                                        <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="pdf-link">
-                                            🔗 Ver documento
-                                        </a>
+                                        <a href="{{ solicitud.documento_pdf.url }}" target="_blank" class="pdf-link">🔗 Ver documento</a>
                                     </div>
                                 </div>
                             </div>
                         {% else %}
-                            <div class="no-pdf">
-                                ℹ️ Esta solicitud no tiene documentos PDF adjuntos
-                            </div>
+                            <div class="no-pdf">ℹ️ Esta solicitud no tiene documentos PDF adjuntos</div>
                         {% endif %}
                     {% endif %}
                 </div>
@@ -821,32 +726,41 @@
             </ul>
         </div>
 
+        <!-- Formulario oculto enviado desde el modal -->
+        <form method="POST" id="deleteForm" style="display:none;">
+            {% csrf_token %}
+            {% if solicitud.estado == 'FINALIZADA' %}
+                <input type="hidden" name="confirmar_finalizada" value="confirmar">
+            {% endif %}
+        </form>
+
         <div class="form-card">
-            <form method="POST" id="deleteForm">
-                {% csrf_token %}
+            {% if solicitud.estado == 'FINALIZADA' %}
+            <div class="checkbox-container">
+                <label class="checkbox-option">
+                    <input type="checkbox" id="confirmarCheckbox">
+                    <div class="checkbox-content">
+                        <label for="confirmarCheckbox">
+                            ⚠️ Confirmo que deseo eliminar esta solicitud FINALIZADA
+                        </label>
+                    </div>
+                </label>
+            </div>
+            {% endif %}
 
-                {% if solicitud.estado == 'FINALIZADA' %}
-                <div class="checkbox-container">
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="confirmar_finalizada" value="confirmar" id="confirmarCheckbox">
-                        <div class="checkbox-content">
-                            <label for="confirmarCheckbox">
-                                ⚠️ Confirmo que deseo eliminar esta solicitud FINALIZADA
-                            </label>
-                        </div>
-                    </label>
-                </div>
-                {% endif %}
-
-                <div class="form-actions">
-                    <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-cancel">
-                        ⬅️ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-danger" {% if solicitud.estado == 'FINALIZADA' %}disabled id="btnEliminar"{% endif %}>
-                        🗑️ Eliminar Permanentemente
-                    </button>
-                </div>
-            </form>
+            <div class="form-actions" style="margin-top: {% if solicitud.estado == 'FINALIZADA' %}0{% else %}0{% endif %};">
+                <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-cancel">
+                    ⬅️ Cancelar
+                </a>
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="btnEliminarPrincipal"
+                    {% if solicitud.estado == 'FINALIZADA' %}disabled{% endif %}
+                    onclick="abrirModal()">
+                    🗑️ Eliminar Permanentemente
+                </button>
+            </div>
         </div>
     </div>
 
@@ -855,72 +769,60 @@
     </footer>
 
     {% include 'core/accessibility.html' %}
-    
+
     <script>
-        // Auto-cerrar mensajes después de 8 segundos
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
+        var modal   = document.getElementById('confirmModal');
+        var overlay = document.getElementById('modalOverlay');
+
+        /* ── Auto-cerrar alertas a los 8 s ── */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                setTimeout(function () {
                     alert.style.animation = 'slideOutUp 0.4s ease-out';
-                    setTimeout(() => alert.remove(), 400);
+                    setTimeout(function () { alert.remove(); }, 400);
                 }, 8000);
             });
         });
 
-        // Animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
+        /* ── Checkbox para solicitudes FINALIZADAS ── */
         {% if solicitud.estado == 'FINALIZADA' %}
-        // Habilitar botón solo si se marca el checkbox
-        const checkbox = document.getElementById('confirmarCheckbox');
-        const btnEliminar = document.getElementById('btnEliminar');
-        
-        checkbox.addEventListener('change', function() {
-            btnEliminar.disabled = !this.checked;
+        var checkbox = document.getElementById('confirmarCheckbox');
+        var btnPrincipal = document.getElementById('btnEliminarPrincipal');
+
+        checkbox.addEventListener('change', function () {
+            btnPrincipal.disabled = !this.checked;
         });
         {% endif %}
 
-        // Confirmación antes de enviar
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const documentosCount = {{ solicitud.documentos.count|default:0 }};
-            let documentosMsg = '';
+        /* ── Abrir modal ── */
+        function abrirModal() {
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-            if (documentosCount > 0) {
-                documentosMsg = `• ${documentosCount} documento(s) PDF adjunto(s)\n`;
-            } {% if solicitud.documento_pdf and not solicitud.documentos.exists %}else {
-                documentosMsg = '• 1 documento PDF adjunto (legacy)\n';
-            }{% endif %}
+        /* ── Cerrar modal ── */
+        function cerrarModal() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-            const confirmacion = confirm(
-                '🚨 CONFIRMACIÓN FINAL\n\n' +
-                '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente:\n\n' +
-                '• Solicitud #{{ solicitud.id }}\n' +
-                '• Empresa: {{ solicitud.empresa.nombre }}\n' +
-                '• Programa: {{ solicitud.programa.nombre }}\n' +
-                '• Estado: {{ solicitud.get_estado_display }}\n' +
-                documentosMsg +
-                '\nESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
-                '¿Deseas continuar?'
-            );
+        /* ── Confirmar eliminación ── */
+        function confirmarEliminacion() {
+            var btn = document.getElementById('btnConfirmarEliminar');
+            btn.disabled = true;
+            btn.innerHTML = '🔄 Eliminando...';
+            document.getElementById('deleteForm').submit();
+        }
 
-            if (!confirmacion) {
-                e.preventDefault();
-                return false;
-            }
+        /* ── Cerrar al hacer clic en overlay ── */
+        overlay.addEventListener('click', cerrarModal);
+        modal.addEventListener('click', function (e) { e.stopPropagation(); });
+
+        /* ── Cerrar con ESC ── */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarModal();
         });
     </script>
 </body>

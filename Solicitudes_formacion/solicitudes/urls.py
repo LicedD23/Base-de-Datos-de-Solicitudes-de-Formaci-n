@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:solicitud_id>/enviar-respuesta/', views.enviar_respuesta, name='enviar_respuesta'),
     path('procesar-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),
     path('procesar-correos-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),
+    path('guia/', views.guia_solicitud, name='guia_solicitud'),
     path('crear/',views.crear_solicitud, name='crear_solicitud'),
     
 ]

@@ -635,9 +635,191 @@
                 padding: 15px;
             }
         }
+
+        /* ════════════════════════════════════════
+           MODALES DE CONFIRMACIÓN
+        ════════════════════════════════════════ */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.52);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-overlay.open { display: flex; }
+
+        .confirm-modal {
+            background: white;
+            border-radius: 22px;
+            width: 92%;
+            max-width: 440px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.28);
+            animation: confirmIn 0.32s cubic-bezier(.34, 1.36, .64, 1);
+        }
+        @keyframes confirmIn {
+            from { transform: scale(0.84) translateY(-20px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);     opacity: 1; }
+        }
+
+        .confirm-header {
+            padding: 28px 30px 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: white;
+        }
+        .confirm-header.naranja { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+        .confirm-header.rojo    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); }
+
+        .confirm-header-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7em;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .confirm-header-text h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .confirm-header-text p {
+            font-size: 0.84em;
+            opacity: 0.88;
+            font-weight: 400;
+        }
+
+        .confirm-body {
+            padding: 26px 30px;
+        }
+
+        .confirm-pregunta {
+            font-size: 1em;
+            color: #333;
+            line-height: 1.6;
+            padding: 16px 18px;
+            border-radius: 12px;
+            border-left: 4px solid;
+            font-weight: 500;
+        }
+        .confirm-pregunta.naranja { background: #fff8f2; border-color: #ef6c00; color: #4a2600; }
+        .confirm-pregunta.rojo    { background: #fff5f5; border-color: #c62828; color: #3b0000; }
+
+        .confirm-footer {
+            padding: 14px 30px 28px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-cancelar {
+            padding: 12px 26px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #666;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-cancelar:hover { background: #f5f5f5; border-color: #bbb; color: #333; }
+
+        .btn-confirmar {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-confirmar.naranja {
+            background: linear-gradient(135deg, #ef6c00, #e65100);
+            box-shadow: 0 6px 18px rgba(239,108,0,0.35);
+        }
+        .btn-confirmar.naranja:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(239,108,0,0.45);
+        }
+        .btn-confirmar.rojo {
+            background: linear-gradient(135deg, #c62828, #b71c1c);
+            box-shadow: 0 6px 18px rgba(198,40,40,0.35);
+        }
+        .btn-confirmar.rojo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(198,40,40,0.45);
+        }
+
+        @media (max-width: 480px) {
+            .confirm-modal { width: 96%; }
+            .confirm-footer { flex-direction: column-reverse; }
+            .btn-cancelar, .btn-confirmar { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- ══════════════════════════════════════
+         MODAL DESACTIVAR (naranja)
+    ══════════════════════════════════════ -->
+    <div class="confirm-overlay" id="overlayDesactivar">
+        <div class="confirm-modal">
+            <div class="confirm-header naranja">
+                <div class="confirm-header-icon">🚫</div>
+                <div class="confirm-header-text">
+                    <h3>Desactivar empresa</h3>
+                    <p>Esta acción puede revertirse</p>
+                </div>
+            </div>
+            <div class="confirm-body">
+                <div class="confirm-pregunta naranja">
+                    ¿Desactivar esta empresa?
+                </div>
+            </div>
+            <div class="confirm-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('overlayDesactivar')">Cancelar</button>
+                <button class="btn-confirmar naranja" id="btnConfirmarDesactivar" onclick="ejecutar('overlayDesactivar')">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         MODAL ELIMINAR (rojo)
+    ══════════════════════════════════════ -->
+    <div class="confirm-overlay" id="overlayEliminar">
+        <div class="confirm-modal">
+            <div class="confirm-header rojo">
+                <div class="confirm-header-icon">🗑️</div>
+                <div class="confirm-header-text">
+                    <h3>Eliminar empresa</h3>
+                    <p>Esta acción es permanente e irreversible</p>
+                </div>
+            </div>
+            <div class="confirm-body">
+                <div class="confirm-pregunta rojo">
+                    ⚠️ ¿Eliminar permanentemente esta empresa?
+                </div>
+            </div>
+            <div class="confirm-footer">
+                <button class="btn-cancelar" onclick="cerrarModal('overlayEliminar')">Cancelar</button>
+                <button class="btn-confirmar rojo" id="btnConfirmarEliminar" onclick="ejecutar('overlayEliminar')">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- HEADER -->
         <div class="header">
@@ -802,8 +984,14 @@
                     <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn-action btn-view">👁️ Ver</a>
                     {% if es_administrador or es_asistente%}
                     <a href="{% url 'empresas:editar_empresa' empresa.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                    <a href="{% url 'empresas:desactivar_empresa' empresa.id %}" class="btn-action btn-delete" onclick="return confirm('¿Desactivar esta empresa?')">🚫 Desactivar</a>
-                    <a href="{% url 'empresas:eliminar_empresa' empresa.id %}" class="btn-action btn-eliminate" onclick="return confirm('⚠️ ¿Eliminar permanentemente esta empresa?')">🗑️ Eliminar</a>
+                    <button class="btn-action btn-delete"
+                        onclick="abrirModal('overlayDesactivar', '{% url "empresas:desactivar_empresa" empresa.id %}')">
+                        🚫 Desactivar
+                    </button>
+                    <button class="btn-action btn-eliminate"
+                        onclick="abrirModal('overlayEliminar', '{% url "empresas:eliminar_empresa" empresa.id %}')">
+                        🗑️ Eliminar
+                    </button>
                     {% endif %}
                 </div>
             </div>
@@ -850,17 +1038,43 @@
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
+                from { transform: translateY(0); opacity: 1; }
+                to   { transform: translateY(-20px); opacity: 0; }
             }
         `;
         document.head.appendChild(style);
+
+        /* ── Lógica modales de confirmación ── */
+        let _urlPendiente = null;
+        let _overlayActivo = null;
+
+        function abrirModal(overlayId, url) {
+            _urlPendiente  = url;
+            _overlayActivo = overlayId;
+            document.getElementById(overlayId).classList.add('open');
+        }
+
+        function cerrarModal(overlayId) {
+            document.getElementById(overlayId).classList.remove('open');
+            _urlPendiente  = null;
+            _overlayActivo = null;
+        }
+
+        function ejecutar(overlayId) {
+            if (_urlPendiente) window.location.href = _urlPendiente;
+        }
+
+        // Cerrar al hacer clic en el fondo
+        document.querySelectorAll('.confirm-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) cerrarModal(this.id);
+            });
+        });
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && _overlayActivo) cerrarModal(_overlayActivo);
+        });
     </script>
 
     {% include 'core/accessibility.html' %}

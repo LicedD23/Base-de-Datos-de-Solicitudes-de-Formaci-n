@@ -6,54 +6,105 @@ from programas.models import Programa
 from django.db.models import Count, Q
 from core.management.decorators import puede_ver_requerido, puede_editar_requerido
 
+
+
 @puede_ver_requerido
 def listar_instructores(request):
     """Vista para listar todos los instructores"""
     search = request.GET.get('search', '')
     especialidad_id = request.GET.get('especialidad', '')
     activo = request.GET.get('activo', '')
-    
-    # Consulta base con anotaciones (contar solicitudes asignadas)
+    disponibilidad_filter = request.GET.get('disponibilidad', '')
+
+    # Consulta base
     instructores = Instructor.objects.prefetch_related('especialidad').annotate(
         total_solicitudes=Count('solicitud')
     )
-    
-    # Aplicar filtros
+
     if search:
         instructores = instructores.filter(
             Q(nombre__icontains=search) |
             Q(correo__icontains=search) |
             Q(telefono__icontains=search)
         )
-    
+
     if especialidad_id:
         instructores = instructores.filter(especialidad__id=especialidad_id)
-    
+
     if activo:
         instructores = instructores.filter(activo=(activo == 'true'))
-    
-    # Ordenar por nombre
+
     instructores = instructores.order_by('nombre')
-    
-    # Obtener todas las especialidades (programas) para el filtro
+
+    # ── Calcular disponibilidad de cada instructor ───────────────────────────
+    from django.utils import timezone
+    hoy = timezone.now().date()
+
+    instructores_con_disponibilidad = []
+    for instructor in instructores:
+        # Solicitudes con fecha_atencion registrada (formación en curso o futura)
+        solicitudes_programadas = instructor.solicitud_set.filter(
+            fecha_atencion__isnull=False,
+        ).exclude(estado='FINALIZADA')
+
+        ocupado_hoy = False
+        formaciones_activas = []
+
+        for sol in solicitudes_programadas.select_related('empresa', 'programa'):
+            fecha_inicio = sol.fecha_atencion.date()
+            fecha_fin    = sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+
+            # Está ocupado hoy si: inicio <= hoy y (sin fin aún O fin >= hoy)
+            if fecha_inicio <= hoy and (fecha_fin is None or fecha_fin >= hoy):
+                ocupado_hoy = True
+                formaciones_activas.append(sol)
+
+        # Próxima formación futura (para mostrar en la tarjeta cuando está libre)
+        proxima = None
+        if not ocupado_hoy:
+            proxima = instructor.solicitud_set.filter(
+                fecha_atencion__isnull=False,
+                fecha_atencion__date__gt=hoy,
+            ).exclude(estado='FINALIZADA').order_by('fecha_atencion').first()
+
+        instructores_con_disponibilidad.append({
+            'instructor':         instructor,
+            'ocupado':            ocupado_hoy,
+            'formaciones_activas': formaciones_activas,
+            'proxima':            proxima,
+        })
+
+    # Filtro por disponibilidad (después de calcular)
+    if disponibilidad_filter == 'libre':
+        instructores_con_disponibilidad = [d for d in instructores_con_disponibilidad if not d['ocupado']]
+    elif disponibilidad_filter == 'ocupado':
+        instructores_con_disponibilidad = [d for d in instructores_con_disponibilidad if d['ocupado']]
+
     especialidades = Programa.objects.filter(activo=True).order_by('nombre')
-    
-    # Calcular estadísticas
-    total_instructores = instructores.count()
-    instructores_activos = instructores.filter(activo=True).count()
-    total_solicitudes = sum(instructor.total_solicitudes for instructor in instructores)
-    
+
+    total_instructores   = len(instructores_con_disponibilidad)
+    instructores_activos = sum(1 for d in instructores_con_disponibilidad if d['instructor'].activo)
+    total_solicitudes    = sum(d['instructor'].total_solicitudes for d in instructores_con_disponibilidad)
+    disponibles_hoy      = sum(1 for d in instructores_con_disponibilidad if not d['ocupado'] and d['instructor'].activo)
+    ocupados_hoy         = sum(1 for d in instructores_con_disponibilidad if d['ocupado'])
+
     context = {
-        'instructores': instructores,
-        'especialidades': especialidades,
-        'search': search,
-        'especialidad_filter': especialidad_id,
-        'activo_filter': activo,
-        'total_instructores': total_instructores,
-        'instructores_activos': instructores_activos,
-        'total_solicitudes': total_solicitudes,
+        'instructores_con_disponibilidad': instructores_con_disponibilidad,
+        'especialidades':        especialidades,
+        'search':                search,
+        'especialidad_filter':   especialidad_id,
+        'activo_filter':         activo,
+        'disponibilidad_filter': disponibilidad_filter,
+        'total_instructores':    total_instructores,
+        'instructores_activos':  instructores_activos,
+        'total_solicitudes':     total_solicitudes,
+        'disponibles_hoy':       disponibles_hoy,
+        'ocupados_hoy':          ocupados_hoy,
+        'hoy':                   hoy,
     }
     return render(request, 'instructores/listar_instructores.html', context)
+
+
 
 @puede_ver_requerido
 def detalle_instructor(request, instructor_id):
@@ -64,28 +115,68 @@ def detalle_instructor(request, instructor_id):
         ),
         id=instructor_id
     )
-    
+
     # Obtener todas las solicitudes asignadas a este instructor
     solicitudes = instructor.solicitud_set.select_related(
         'empresa',
         'programa__area'
     ).order_by('-fecha_recepcion')
-    
+
     # Separar por estado
-    solicitudes_activas = solicitudes.exclude(estado='FINALIZADA')
+    solicitudes_activas    = solicitudes.exclude(estado='FINALIZADA')
     solicitudes_finalizadas = solicitudes.filter(estado='FINALIZADA')
-    
-    #Obtener especialidades del instructor
+
+    # ── Programaciones: solicitudes que tienen fecha_atencion (fecha de inicio)
+    # Ordenadas por fecha_atencion para mostrar como agenda cronológica
+    from django.utils import timezone
+    hoy = timezone.now().date()
+
+    programaciones = solicitudes.filter(
+        fecha_atencion__isnull=False
+    ).order_by('fecha_atencion')
+
+    # Separar en activas (en curso hoy), futuras y pasadas
+    programaciones_activas  = []
+    programaciones_futuras  = []
+    programaciones_pasadas  = []
+
+    for sol in programaciones:
+        fecha_inicio = sol.fecha_atencion.date() if sol.fecha_atencion else None
+        fecha_fin    = sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+
+        if not fecha_inicio:
+            continue
+
+        if fecha_fin:
+            if fecha_inicio <= hoy <= fecha_fin:
+                programaciones_activas.append(sol)
+            elif fecha_inicio > hoy:
+                programaciones_futuras.append(sol)
+            else:
+                programaciones_pasadas.append(sol)
+        else:
+            # Sin fecha fin: si la fecha de inicio ya pasó y no está finalizada → activa
+            if fecha_inicio <= hoy:
+                programaciones_activas.append(sol)
+            else:
+                programaciones_futuras.append(sol)
+
+    # Especialidades del instructor
     especialidades = instructor.especialidad.all()
-    
+
     context = {
-        'instructor': instructor,
-        'especialidades': especialidades,
-        'solicitudes_activas': solicitudes_activas,
+        'instructor':             instructor,
+        'especialidades':         especialidades,
+        'solicitudes_activas':    solicitudes_activas,
         'solicitudes_finalizadas': solicitudes_finalizadas,
-        'total_solicitudes': solicitudes.count(),
+        'total_solicitudes':      solicitudes.count(),
+        # Programaciones
+        'programaciones_activas': programaciones_activas,
+        'programaciones_futuras': programaciones_futuras,
+        'programaciones_pasadas': programaciones_pasadas,
+        'hoy':                    hoy,
     }
-    return render(request, 'instructores/detalle_instructor.html',context)
+    return render(request, 'instructores/detalle_instructor.html', context)
 
 @puede_editar_requerido
 def crear_instructor(request):

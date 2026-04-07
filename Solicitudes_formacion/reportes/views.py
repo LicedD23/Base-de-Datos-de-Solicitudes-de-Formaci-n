@@ -716,10 +716,15 @@ def historial_reportes(request):
         )
 
     # ── Estadísticas ─────────────────────────────────────────────────────────
+    # IMPORTANTE: se calculan DESPUÉS de aplicar todos los filtros
+    # y se fuerza la evaluación con list() para obtener valores agrupados correctamente.
     stats = {
-        'total':       logs.count(),
-        'por_tipo':    logs.values('tipo').annotate(count=Count('id')),
-        'por_formato': logs.values('formato').annotate(count=Count('id')),
+        'total':    logs.count(),
+        'por_tipo': list(
+            logs.values('tipo')
+                .annotate(count=Count('id'))
+                .order_by('tipo')
+        ),
     }
 
     # ── Paginación ───────────────────────────────────────────────────────────

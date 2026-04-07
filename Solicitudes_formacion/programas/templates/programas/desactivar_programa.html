@@ -286,19 +286,16 @@
 
         /* Form */
         .form-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: transparent;
+            padding: 0;
             margin-bottom: 30px;
         }
 
         .form-actions {
             display: flex;
             gap: 15px;
-            justify-content: flex-end;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
+            justify-content: center;
+            padding-top: 0;
         }
 
         .btn {
@@ -326,16 +323,17 @@
             border-color: #bdbdbd;
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+        .btn-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+            box-shadow: 0 4px 12px rgba(239,108,0,0.35);
         }
 
-        .btn-danger:hover {
+        .btn-warning:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+            box-shadow: 0 6px 18px rgba(239,108,0,0.45);
         }
+
         /*FOOTER STYLES*/
         footer{
             background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
@@ -346,23 +344,175 @@
             margin-top:30px;
             box-shadow:0 -4px 20px rgba(27,94,32,0.2);
         }
+
+        /* ══════════════════════════════════════════════════════
+           MODAL DE CONFIRMACIÓN — TEMA NARANJA (Desactivar)
+        ══════════════════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.52);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+        .modal-overlay.active { display: block; }
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 540px;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.30);
+            overflow: hidden;
+            z-index: 1000;
+        }
+        .confirm-modal.active {
+            display: block;
+            animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translate(-50%,-58%) scale(0.88); }
+            to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        }
+
+        .modal-header {
+            padding: 26px 32px 22px;
+            background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .modal-header-icon { font-size: 2.2em; flex-shrink: 0; }
+        .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
+        .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
+
+        .modal-accent-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #ffb74d, #ff9800, #ef6c00, #e65100);
+        }
+
+        .modal-body {
+            padding: 28px 32px 20px;
+            background: #fffaf5;
+        }
+
+        .modal-info-card {
+            background: #fff3e0;
+            border: 1.5px solid #ffcc80;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+        .modal-info-card-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #bf360c;
+            margin-bottom: 12px;
+        }
+        .modal-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffe0b2;
+            font-size: 0.93em;
+        }
+        .modal-info-row:last-child { border-bottom: none; }
+        .modal-info-row .mrow-label { color: #e65100; min-width: 90px; font-weight: 600; }
+        .modal-info-row .mrow-value { color: #4e342e; font-weight: 500; }
+
+        .modal-solicitudes-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 0.9em;
+            color: #e65100;
+            line-height: 1.5;
+        }
+        .modal-solicitudes-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
+
+        .modal-consequence {
+            font-size: 0.9em;
+            color: #6d4c41;
+            background: #fbe9e7;
+            border-radius: 10px;
+            padding: 12px 16px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 18px 32px 28px;
+            background: #fffaf5;
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            border-top: 1px solid #ffe0b2;
+        }
+
+        .btn-modal-cancel {
+            padding: 12px 26px;
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
+
+        .btn-modal-confirm-warning {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(239,108,0,0.40);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-confirm-warning:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(239,108,0,0.50); }
+        .btn-modal-confirm-warning:active { transform: translateY(0); }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
             }
-
             .info-grid {
                 grid-template-columns: 1fr;
             }
-
             .form-actions {
                 flex-direction: column;
             }
-
             .btn {
                 width: 100%;
                 justify-content: center;
             }
+            .modal-footer { flex-direction: column; }
+            .btn-modal-cancel,
+            .btn-modal-confirm-warning { width: 100%; justify-content: center; }
             .page-wrapper{
                 padding.15px;
             }
@@ -390,6 +540,69 @@
     </style>
 </head>
 <body>
+
+    <!-- ══ Overlay del modal ══ -->
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
+
+    <!-- ══ Modal naranja de confirmación ══ -->
+    <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <span class="modal-header-icon">⚠️</span>
+            <div class="modal-header-text">
+                <h3 id="modalTitle">Confirmar Desactivación</h3>
+                <p>Esta acción puede revertirse en cualquier momento</p>
+            </div>
+        </div>
+
+        <div class="modal-accent-bar"></div>
+
+        <div class="modal-body">
+
+            <div class="modal-info-card">
+                <div class="modal-info-card-title">📋 Programa a desactivar</div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📚 Nombre</span>
+                    <span class="mrow-value">{{ programa.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🔑 Código</span>
+                    <span class="mrow-value">{{ programa.codigo|default:"No especificado" }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🏷️ Área</span>
+                    <span class="mrow-value">{{ programa.area.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">🔘 Estado</span>
+                    <span class="mrow-value">Activo → Inactivo</span>
+                </div>
+            </div>
+
+            {% if solicitudes_activas > 0 %}
+            <div class="modal-solicitudes-alert">
+                <span class="alert-icon-big">🔔</span>
+                <div>
+                    Se detectaron <strong>solicitudes de formación activas</strong> asociadas a este programa.
+                    Al confirmar, las solicitudes <strong>no se verán afectadas</strong> y continuarán su proceso normal.
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="modal-consequence">
+                🔄 El programa <strong>no será eliminado</strong>. Sus datos históricos se conservan íntegros.
+                Podrás reactivarlo en cualquier momento desde la opción de edición.
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" onclick="cerrarModal()">⬅️ Cancelar</button>
+            <button class="btn-modal-confirm-warning" onclick="confirmarDesactivacion()">⏸️ Sí, desactivar</button>
+        </div>
+    </div>
+
+    <!-- ══ Contenido principal ══ -->
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -518,26 +731,49 @@
             </ul>
         </div>
 
-        <!-- Form -->
-        <div class="form-card">
-            <form method="POST">
-                {% csrf_token %}
+        <!-- Formulario oculto que se envía desde el modal -->
+        <form method="POST" id="desactivarForm" style="display:none;">
+            {% csrf_token %}
+        </form>
 
-                <div class="form-actions">
-                    <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-cancel">
-                        ⬅️ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-danger">
-                        🗑️ Desactivar Programa
-                    </button>
-                </div>
-            </form>
+        <div class="form-card">
+            <div class="form-actions">
+                <a href="{% url 'programas:detalle_programa' programa.id %}" class="btn btn-cancel">⬅️ Cancelar</a>
+                <button type="button" class="btn btn-warning" onclick="abrirModal()">⏸️ Desactivar Programa</button>
+            </div>
         </div>
     </div>
+
     <!--FOOTER-->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
     {% include 'core/accessibility.html'%}
+
+    <script>
+        function abrirModal() {
+            document.getElementById('confirmModal').classList.add('active');
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function confirmarDesactivacion() {
+            const btn = document.querySelector('.btn-modal-confirm-warning');
+            btn.disabled = true;
+            btn.innerHTML = '🔄 Procesando...';
+            document.getElementById('desactivarForm').submit();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal();
+        });
+    </script>
 </body>
 </html>

@@ -12,7 +12,6 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* ✅ Fondo verde claro SENA */
             background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             min-height: 100vh;
             padding: 20px;
@@ -24,15 +23,12 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-        /* Header de advertencia */
         .header {
-            /* ✅ Header con colores verde SENA */
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            /* ✅ Sombra verde */
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
         }
         .header h1 {
@@ -47,7 +43,6 @@
             font-size: 1.1em;
             opacity: 0.95;
         }
-        /* Breadcrumb */
         .breadcrumb {
             background: white;
             padding: 15px 20px;
@@ -68,21 +63,12 @@
             color: #1b5e20;
             text-decoration: underline;
         }
-        .breadcrumb span {
-            color: #999;
-        }
+        .breadcrumb span { color: #999; }
         .breadcrumb .current {
-            /* ✅ Color verde */
             color: #2e7d32;
             font-weight: 600;
         }
-        
-        /* ✅ Contenedor de mensajes */
-        .messages-container {
-            margin-bottom: 25px;
-        }
-        
-        /* ✅ Estilos mejorados de alertas con animaciones */
+        .messages-container { margin-bottom: 25px; }
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -92,134 +78,33 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
             overflow: hidden;
         }
-        
-        /* Animación de entrada */
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
         }
-        
-        /* Borde lateral */
-        .alert::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-        }
-        
-        /* Alerta de éxito (verde) */
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            border: 2px solid #1b5e20;
-        }
-        
-        .alert-success::before {
-            background: #fff;
-        }
-        
-        .alert-success .alert-icon {
-            font-size: 1.8em;
-            animation: scaleIn 0.5s ease-out;
-        }
-        
-        /* Animación del ícono de éxito */
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        /* Alerta de error (rojo) */
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-            border: 2px solid #b71c1c;
-        }
-        
-        .alert-error .alert-icon {
-            font-size: 1.8em;
-            animation: shake 0.5s ease-out;
-        }
-        
-        /* Animación de shake para errores */
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
-        }
-        
-        /* Alerta de advertencia (naranja) */
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-            border: 2px solid #e65100;
-        }
-        
-        .alert-warning::before {
-            background: #fff;
-        }
-        
-        /* Elementos internos de la alerta */
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-        
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
-        }
-        
-        /* Botón de cerrar alerta */
+        .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
+        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
+        .alert-icon    { font-size: 1.8em; flex-shrink: 0; }
+        .alert-content { flex: 1; line-height: 1.5; }
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2em;
+            transition: all 0.3s ease; flex-shrink: 0;
         }
-        
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
-        }
-        
-        /* Warning boxes - MANTENER EN ROJO (advertencia de eliminación) */
+        .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+
         .warning-box {
             background: #ffebee;
             border-left: 4px solid #b71c1c;
@@ -241,9 +126,8 @@
             line-height: 1.6;
             margin-bottom: 10px;
         }
-        .warning-box strong {
-            color: #b71c1c;
-        }
+        .warning-box strong { color: #b71c1c; }
+
         .info-box-yellow {
             background: #fff3e0;
             border-left: 4px solid #f57c00;
@@ -252,19 +136,9 @@
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(245, 124, 0, 0.1);
         }
-        .info-box-yellow h3 {
-            color: #e65100;
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-box-yellow p {
-            color: #ef6c00;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
+        .info-box-yellow h3 { color: #e65100; font-size: 1.3em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .info-box-yellow p  { color: #ef6c00; line-height: 1.6; margin-bottom: 15px; }
+
         .info-box-blue {
             background: #e3f2fd;
             border-left: 4px solid #1976d2;
@@ -273,23 +147,10 @@
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
         }
-        .info-box-blue h3 {
-            color: #1565c0;
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-box-blue ul {
-            color: #1976d2;
-            line-height: 1.8;
-            margin-left: 20px;
-        }
-        .info-box-blue li {
-            margin-bottom: 8px;
-        }
-        /* Info card */
+        .info-box-blue h3 { color: #1565c0; font-size: 1.3em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .info-box-blue ul  { color: #1976d2; line-height: 1.8; margin-left: 20px; }
+        .info-box-blue li  { margin-bottom: 8px; }
+
         .info-card {
             background: white;
             border-radius: 15px;
@@ -298,23 +159,13 @@
             overflow: hidden;
         }
         .info-card-header {
-            /* ✅ Header de card con colores verdes */
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             border-left: 4px solid #2e7d32;
             padding: 20px 30px;
         }
-        .info-card-header h2 {
-            /* ✅ Texto verde oscuro */
-            color: #1b5e20;
-            font-size: 1.5em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-card-body {
-            padding: 30px;
-        }
+        .info-card-header h2 { color: #1b5e20; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .info-card-body { padding: 30px; }
+
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -325,56 +176,18 @@
             padding: 15px;
             background: #f9f9f9;
             border-radius: 8px;
-            /* ✅ Borde verde */
             border-left: 3px solid #2e7d32;
         }
-        .info-item label {
-            display: block;
-            font-size: 0.85em;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        .info-item .value {
-            font-size: 1.1em;
-            color: #333;
-            font-weight: 600;
-        }
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-        .status-active {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-        .status-inactive {
-            background: #ffcdd2;
-            color: #c62828;
-        }
-        /* Radio buttons de confirmación */
-        .radio-container {
-            background: white;
-            border: 2px solid #c62828;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .radio-container h3 {
-            color: #b71c1c;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .info-item label { display: block; font-size: 0.85em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 600; }
+        .info-item .value { font-size: 1.1em; color: #333; font-weight: 600; }
+
+        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .status-active   { background: #c8e6c9; color: #1b5e20; }
+        .status-inactive { background: #ffcdd2; color: #c62828; }
+
+        /* Radio buttons */
+        .radio-container { background: white; border: 2px solid #c62828; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .radio-container h3 { color: #b71c1c; font-size: 1.2em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .radio-option {
             display: flex;
             align-items: flex-start;
@@ -386,41 +199,12 @@
             transition: all 0.3s ease;
             border: 2px solid transparent;
         }
-        .radio-option:hover {
-            background: #fff5f5;
-        }
-        .radio-option input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #c62828;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        .radio-option input[type="radio"]:checked + .radio-content {
-            color: #b71c1c;
-        }
-        .radio-option:has(input:checked) {
-            background: #ffebee;
-            border-color: #c62828;
-        }
-        .radio-content {
-            flex: 1;
-        }
-        .radio-content label {
-            font-size: 1em;
-            color: #333;
-            font-weight: 600;
-            cursor: pointer;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .radio-description {
-            font-size: 0.9em;
-            color: #666;
-            line-height: 1.4;
-        }
-        /* Form */
+        .radio-option:hover { background: #fff5f5; }
+        .radio-option input[type="radio"] { width: 20px; height: 20px; cursor: pointer; accent-color: #c62828; margin-top: 2px; flex-shrink: 0; }
+        .radio-option:has(input:checked) { background: #ffebee; border-color: #c62828; }
+        .radio-content label { font-size: 1em; color: #333; font-weight: 600; cursor: pointer; display: block; margin-bottom: 5px; }
+        .radio-description { font-size: 0.9em; color: #666; line-height: 1.4; }
+
         .form-card {
             background: white;
             padding: 30px;
@@ -448,85 +232,349 @@
             gap: 8px;
             text-decoration: none;
         }
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-        .btn-cancel:hover {
-            background: #e0e0e0;
-            border-color: #bdbdbd;
-        }
+        .btn-cancel { background: #f5f5f5; color: #666; border: 2px solid #e0e0e0; }
+        .btn-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
         .btn-danger {
             background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
         }
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(183, 28, 28, 0.4);
-        }
-        .btn-danger:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .form-actions {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        /* FOOTER STYLES */
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(183, 28, 28, 0.4); }
+        .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
         footer {
-            /* ✅ Footer con colores verde SENA */
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
             text-align: center;
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            /* ✅ Sombra verde */
             box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
+
+        /* ══════════════════════════════════════════════════════
+           MODAL DE CONFIRMACIÓN — TEMA ROJO (Eliminar)
+        ══════════════════════════════════════════════════════ */
+        .modal-overlay {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.58);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
         }
-        /* Animations */
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .confirm-modal {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.92);
+            width: 90%;
+            max-width: 560px;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+            overflow: hidden;
+            z-index: 9999;
+            transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+        }
+        .confirm-modal.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Cabecera roja */
+        .modal-header {
+            padding: 26px 32px 22px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .modal-header-icon { font-size: 2.2em; flex-shrink: 0; }
+        .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
+        .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
+
+        /* Barra de acento rojo */
+        .modal-accent-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #ef9a9a, #e53935, #b71c1c, #7f0000);
+        }
+
+        /* Cuerpo */
+        .modal-body {
+            padding: 28px 32px 20px;
+            background: #fff8f8;
+        }
+
+        /* Etiqueta IRREVERSIBLE */
+        .irreversible-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #b71c1c;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        /* Tarjeta de datos del área */
+        .modal-info-card {
+            background: #ffebee;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+        }
+        .modal-info-card-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7f0000;
+            margin-bottom: 12px;
+        }
+        .modal-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcdd2;
+            font-size: 0.93em;
+        }
+        .modal-info-row:last-child { border-bottom: none; }
+        .modal-info-row .mrow-label { color: #c62828; min-width: 110px; font-weight: 600; }
+        .modal-info-row .mrow-value { color: #3e2723; font-weight: 500; }
+
+        /* Lista de lo que se elimina */
+        .modal-delete-list {
+            background: #fff3f3;
+            border: 1.5px solid #ef9a9a;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .modal-delete-list-title {
+            font-size: 0.82em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #b71c1c;
+            margin-bottom: 10px;
+        }
+        .modal-delete-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 0.9em;
+            color: #c62828;
+        }
+        .modal-delete-item::before {
+            content: '✗';
+            font-weight: 700;
+            color: #b71c1c;
+            flex-shrink: 0;
+        }
+
+        /* Aviso de programas */
+        .modal-programas-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 0.9em;
+            color: #e65100;
+            line-height: 1.5;
+        }
+        .modal-programas-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
+
+        /* Nota crítica */
+        .modal-critical-note {
+            background: #ffebee;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.88em;
+            color: #7f0000;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        /* Pie del modal */
+        .modal-footer {
+            padding: 18px 32px 28px;
+            background: #fff8f8;
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            border-top: 1px solid #ffcdd2;
+        }
+        .btn-modal-cancel {
+            padding: 12px 26px;
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-cancel:hover { background: #e0e0e0; border-color: #bdbdbd; }
+
+        .btn-modal-confirm-danger {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(198,40,40,0.42);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-modal-confirm-danger:hover  { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(198,40,40,0.52); }
+        .btn-modal-confirm-danger:active { transform: translateY(0); }
+        .btn-modal-confirm-danger:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        .container > * {
-            animation: slideIn 0.3s ease-out;
+        .container > * { animation: slideIn 0.3s ease-out; }
+
+        @keyframes slideOutUp {
+            from { transform: translateY(0);    opacity: 1; }
+            to   { transform: translateY(-20px); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .info-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .modal-footer { flex-direction: column; }
+            .btn-modal-cancel,
+            .btn-modal-confirm-danger { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ══ Overlay del modal ══ -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- ══ Modal rojo de confirmación ══ -->
+    <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <span class="modal-header-icon">🚨</span>
+            <div class="modal-header-text">
+                <h3 id="modalTitle">Confirmar Eliminación Permanente</h3>
+                <p>Esta acción NO puede revertirse</p>
+            </div>
+        </div>
+
+        <div class="modal-accent-bar"></div>
+
+        <div class="modal-body">
+
+            <!-- Etiqueta irreversible -->
+            <div>
+                <span class="irreversible-badge">⛔ Acción Irreversible</span>
+            </div>
+
+            <!-- Datos del área -->
+            <div class="modal-info-card">
+                <div class="modal-info-card-title">🗑️ Área a eliminar</div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📚 Nombre</span>
+                    <span class="mrow-value">{{ area.nombre }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📅 Creación</span>
+                    <span class="mrow-value">{{ area.fecha_creacion|date:"d/m/Y" }}</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="mrow-label">📦 Programas</span>
+                    <span class="mrow-value">{{ total_programas }} asociado(s)</span>
+                </div>
+            </div>
+
+            <!-- Lo que se eliminará -->
+            <div class="modal-delete-list">
+                <div class="modal-delete-list-title">Se eliminará permanentemente</div>
+                <div class="modal-delete-item">Todos los datos del área</div>
+                <div class="modal-delete-item">Toda la información histórica</div>
+                <div class="modal-delete-item">Todas las estadísticas asociadas</div>
+                {% if total_programas > 0 %}
+                <div class="modal-delete-item">{{ total_programas }} programa(s) asociado(s)</div>
+                {% endif %}
+                <div class="modal-delete-item">Registro completo en el sistema</div>
+            </div>
+
+            <!-- Aviso de programas si aplica -->
+            {% if total_programas > 0 %}
+            <div class="modal-programas-alert">
+                <span class="alert-icon-big">🔔</span>
+                <div>
+                    Se detectaron <strong>{{ total_programas }} programa(s)</strong> asociados.
+                    Al confirmar, serán <strong>eliminados permanentemente</strong> junto con el área.
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Nota crítica -->
+            <div class="modal-critical-note">
+                🔴 Esta acción es definitiva e irreversible. ¿Estás absolutamente seguro?
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" onclick="cerrarModal()">⬅️ Cancelar</button>
+            <button class="btn-modal-confirm-danger" id="btnConfirmarEliminar" onclick="confirmarEliminacion()">
+                🗑️ Sí, eliminar definitivamente
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ Contenido principal ══ -->
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <h1>🗑️ Eliminar Área Permanentemente</h1>
             <p>¿Estás seguro de que deseas eliminar permanentemente el área: <strong>{{ area.nombre }}</strong>?</p>
         </div>
 
-        <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
             <span>›</span>
@@ -537,30 +585,20 @@
             <span class="current">Eliminar Área</span>
         </div>
 
-        <!-- ✅ Mensajes mejorados con animaciones y botón cerrar -->
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
-                        {% endif %}
+                        {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
                     </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
+                    <div class="alert-content">{{ message }}</div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- Critical Warning Box -->
         <div class="warning-box">
             <h3>🚨 ADVERTENCIA CRÍTICA</h3>
             <p>
@@ -573,39 +611,30 @@
                 ✗ No podrás recuperar esta información
             </p>
             <p style="margin-top: 15px;">
-                <strong>💡 Alternativa recomendada:</strong> Si solo deseas que el área no esté disponible 
-                temporalmente, considera usar la opción de <a href="{% url 'area_formacion:desactivar_area' area.id %}" 
+                <strong>💡 Alternativa recomendada:</strong> Si solo deseas que el área no esté disponible
+                temporalmente, considera usar la opción de <a href="{% url 'area_formacion:desactivar_area' area.id %}"
                 style="color: #1b5e20; text-decoration: underline; font-weight: bold;">desactivar</a> en lugar de eliminar.
             </p>
         </div>
 
-        <!-- Information Card -->
         <div class="info-card">
             <div class="info-card-header">
                 <h2>📚 Información del Área</h2>
             </div>
-
             <div class="info-card-body">
                 <div class="info-grid">
-                    <!-- Nombre del Área -->
                     <div class="info-item">
                         <label>Nombre del Área</label>
                         <div class="value">{{ area.nombre }}</div>
                     </div>
-
-                    <!-- Fecha de Creación -->
                     <div class="info-item">
                         <label>Fecha de Creación</label>
                         <div class="value">{{ area.fecha_creacion|date:"d/m/Y H:i" }}</div>
                     </div>
-
-                    <!-- Total Programas -->
                     <div class="info-item">
                         <label>Programas Asociados</label>
                         <div class="value">{{ total_programas }}</div>
                     </div>
-
-                    <!-- Estado Actual -->
                     <div class="info-item">
                         <label>Estado Actual</label>
                         <div class="value">
@@ -615,8 +644,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Descripción -->
                 {% if area.descripcion %}
                 <div class="info-item" style="border-left: 3px solid #2e7d32;">
                     <label>Descripción</label>
@@ -626,7 +653,6 @@
             </div>
         </div>
 
-        <!-- Warning about programs -->
         {% if total_programas > 0 %}
         <div class="info-box-yellow">
             <h3>⚠️ Programas Asociados Detectados</h3>
@@ -635,168 +661,145 @@
                 Debes decidir qué hacer con ellos antes de continuar.
             </p>
             <p>
-                <strong>Importante:</strong> Si eliminas los programas, también se perderán todos sus datos 
+                <strong>Importante:</strong> Si eliminas los programas, también se perderán todos sus datos
                 históricos y estadísticas de manera permanente.
             </p>
         </div>
         {% endif %}
 
-        <!-- Impact Information -->
         <div class="info-box-blue">
             <h3>ℹ️ Consecuencias de la eliminación permanente</h3>
             <ul>
                 <li>Se eliminarán todos los datos del área de forma irreversible</li>
                 <li>No podrás recuperar la información histórica ni estadísticas</li>
                 {% if total_programas > 0 %}
-                <li>Los {{ total_programas }} programa(s) asociado(s) pueden ser eliminados o la acción puede ser cancelada</li>
+                <li>Los {{ total_programas }} programa(s) asociado(s) serán eliminados junto con el área</li>
                 {% endif %}
                 <li>Esta acción no se puede deshacer</li>
                 <li>Se perderá el registro completo del área en el sistema</li>
             </ul>
         </div>
 
-        <!-- Form -->
+        <!-- Formulario real que se envía desde el modal -->
+        <form method="POST" id="deleteForm" style="display:none;">
+            {% csrf_token %}
+            {% if total_programas > 0 %}
+                <input type="hidden" name="accion_programas" id="hiddenAccion" value="eliminar">
+            {% endif %}
+        </form>
+
         <div class="form-card">
-            <form method="POST" id="deleteForm">
-                {% csrf_token %}
+            {% if total_programas > 0 %}
+            <div class="radio-container">
+                <h3>⚙️ ¿Qué deseas hacer con los programas asociados?</h3>
 
-                {% if total_programas > 0 %}
-                <div class="radio-container">
-                    <h3>⚙️ ¿Qué deseas hacer con los programas asociados?</h3>
-                    
-                    <label class="radio-option">
-                        <input type="radio" name="accion_programas" value="eliminar" id="eliminar">
-                        <div class="radio-content">
-                            <label for="eliminar">
-                                🗑️ Eliminar también los programas
-                            </label>
-                            <div class="radio-description">
-                                Se eliminarán permanentemente los {{ total_programas }} programa(s) y toda su información histórica
-                            </div>
+                <label class="radio-option">
+                    <input type="radio" name="accion_programas_ui" value="eliminar" id="eliminar" onchange="actualizarAccion(this.value)">
+                    <div class="radio-content">
+                        <label for="eliminar">🗑️ Eliminar también los programas</label>
+                        <div class="radio-description">
+                            Se eliminarán permanentemente los {{ total_programas }} programa(s) y toda su información histórica
                         </div>
-                    </label>
+                    </div>
+                </label>
 
-                    <label class="radio-option">
-                        <input type="radio" name="accion_programas" value="cancelar" id="cancelar">
-                        <div class="radio-content">
-                            <label for="cancelar">
-                                ⬅️ Cancelar la eliminación
-                            </label>
-                            <div class="radio-description">
-                                No se eliminará nada y regresarás a la página de detalle del área
-                            </div>
+                <label class="radio-option">
+                    <input type="radio" name="accion_programas_ui" value="cancelar" id="cancelar" onchange="actualizarAccion(this.value)">
+                    <div class="radio-content">
+                        <label for="cancelar">⬅️ Cancelar la eliminación</label>
+                        <div class="radio-description">
+                            No se eliminará nada y regresarás a la página de detalle del área
                         </div>
-                    </label>
-                </div>
-                {% endif %}
+                    </div>
+                </label>
+            </div>
+            {% endif %}
 
-                <div class="form-actions">
-                    <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn btn-cancel">
-                        ⬅️ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-danger" {% if total_programas > 0 %}disabled id="btnEliminar"{% endif %}>
-                        🗑️ Eliminar Permanentemente
-                    </button>
-                </div>
-            </form>
+            <div class="form-actions">
+                <a href="{% url 'area_formacion:detalle_area' area.id %}" class="btn btn-cancel">
+                    ⬅️ Cancelar
+                </a>
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="btnEliminarPrincipal"
+                    {% if total_programas > 0 %}disabled{% endif %}
+                    onclick="abrirModal()">
+                    🗑️ Eliminar Permanentemente
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
 
     {% include 'core/accessibility.html' %}
 
-    <!-- ✅ Script para auto-cerrar mensajes -->
     <script>
-        // Auto-cerrar mensajes después de 8 segundos
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
+        var modal   = document.getElementById('confirmModal');
+        var overlay = document.getElementById('modalOverlay');
+
+        /* ── Auto-cerrar alertas a los 8 s ── */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                setTimeout(function () {
                     alert.style.animation = 'slideOutUp 0.4s ease-out';
-                    setTimeout(() => alert.remove(), 400);
+                    setTimeout(function () { alert.remove(); }, 400);
                 }, 8000);
             });
         });
 
-        // Animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+        /* ── Lógica de radios (solo si hay programas) ── */
+        var accionSeleccionada = null;
 
-    {% if total_programas > 0 %}
-    <script>
-        // Habilitar botón de eliminar solo si se selecciona una opción
-        const radioButtons = document.querySelectorAll('input[name="accion_programas"]');
-        const btnEliminar = document.getElementById('btnEliminar');
-        
-        radioButtons.forEach(radio => {
-            radio.addEventListener('change', function() {
-                btnEliminar.disabled = false;
-            });
-        });
-
-        // Confirmación adicional antes de enviar
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const accionSeleccionada = document.querySelector('input[name="accion_programas"]:checked');
-            
-            if (!accionSeleccionada) {
-                e.preventDefault();
-                alert('⚠️ Debes seleccionar una opción antes de continuar');
-                return false;
+        function actualizarAccion(valor) {
+            accionSeleccionada = valor;
+            var btn = document.getElementById('btnEliminarPrincipal');
+            if (btn) btn.disabled = false;
+            if (valor === 'cancelar') {
+                window.location.href = "{% url 'area_formacion:detalle_area' area.id %}";
             }
+        }
 
-            if (accionSeleccionada.value === 'eliminar') {
-                const confirmacion = confirm(
-                    '🚨 CONFIRMACIÓN FINAL\n\n' +
-                    '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente:\n\n' +
-                    '• El área: {{ area.nombre }}\n' +
-                    '• Los {{ total_programas }} programa(s) asociado(s)\n' +
-                    '• Toda la información histórica\n\n' +
-                    'ESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
-                    '¿Deseas continuar?'
-                );
-                
-                if (!confirmacion) {
-                    e.preventDefault();
-                    return false;
-                }
-            }
+        /* ── Modal ── */
+        function abrirModal() {
+            {% if total_programas > 0 %}
+            if (!accionSeleccionada || accionSeleccionada === 'cancelar') return;
+            {% endif %}
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function confirmarEliminacion() {
+            var btn = document.getElementById('btnConfirmarEliminar');
+            btn.disabled = true;
+            btn.innerHTML = '🔄 Eliminando...';
+            {% if total_programas > 0 %}
+            var hidden = document.getElementById('hiddenAccion');
+            if (hidden) hidden.value = accionSeleccionada || 'eliminar';
+            {% endif %}
+            document.getElementById('deleteForm').submit();
+        }
+
+        // Cerrar al hacer clic en el overlay
+        overlay.addEventListener('click', cerrarModal);
+
+        // Evitar que el clic dentro del modal cierre el overlay
+        modal.addEventListener('click', function(e) { e.stopPropagation(); });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarModal();
         });
     </script>
-    {% else %}
-    <script>
-        // Confirmación para áreas sin programas
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const confirmacion = confirm(
-                '🚨 CONFIRMACIÓN FINAL\n\n' +
-                '¿Estás ABSOLUTAMENTE SEGURO de que deseas eliminar permanentemente el área "{{ area.nombre }}"?\n\n' +
-                'Se perderá toda la información histórica.\n\n' +
-                'ESTA ACCIÓN NO SE PUEDE DESHACER.\n\n' +
-                '¿Deseas continuar?'
-            );
-            
-            if (!confirmacion) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    </script>
-    {% endif %}
 </body>
 </html>
