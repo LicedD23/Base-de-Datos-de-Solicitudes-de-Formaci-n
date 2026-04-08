@@ -504,7 +504,13 @@
                         <tbody>
                             {% for solicitud in ultimas_solicitudes %}
                             <tr>
-                                <td><strong>#{{ solicitud.empresa.nit }}</strong></td>
+                                <td>
+                                    {% if solicitud.empresa.nit and solicitud.empresa.nit != 'None' %}
+                                        <strong class="nit-value">{{ solicitud.empresa.nit }}</strong>
+                                    {% else %}
+                                        <span class="badge-sin-nit">➖ Sin NIT</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ solicitud.empresa.nombre }}</td>
                                 <td>{{ solicitud.programa.nombre }}</td>
                                 <td>

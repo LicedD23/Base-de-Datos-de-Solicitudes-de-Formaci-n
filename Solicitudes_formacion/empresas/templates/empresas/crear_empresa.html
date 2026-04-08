@@ -429,7 +429,8 @@
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="nit">NIT (Número de Identificación Tributaria)</label>
+                            <!-- ✅ CAMBIO: NIT ahora es obligatorio -->
+                            <label for="nit" class="required">NIT (Número de Identificación Tributaria)</label>
                             <input
                                 type="text"
                                 id="nit"
@@ -437,6 +438,7 @@
                                 value="{{ nit }}"
                                 placeholder="900123456 o 900123456-7"
                                 maxlength="20"
+                                required
                             >
                             <small>NIT de la empresa sin puntos (mínimo 9 dígitos)</small>
                         </div>
@@ -475,7 +477,8 @@
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="correo">Correo Electrónico</label>
+                            <!-- ✅ CAMBIO: Correo ahora es obligatorio -->
+                            <label for="correo" class="required">Correo Electrónico</label>
                             <input
                                 type="email"
                                 id="correo"
@@ -483,11 +486,13 @@
                                 value="{{ correo }}"
                                 placeholder="ejemplo@empresa.com"
                                 maxlength="100"
+                                required
                             >
                             <small>Dirección de correo electrónico</small>
                         </div>
                         <div class="form-group">
-                            <label for="telefono">Teléfono</label>
+                            <!-- ✅ CAMBIO: Teléfono ahora es obligatorio -->
+                            <label for="telefono" class="required">Teléfono</label>
                             <input
                                 type="tel"
                                 id="telefono"
@@ -495,6 +500,7 @@
                                 value="{{ telefono }}"
                                 placeholder="3001234567"
                                 maxlength="20"
+                                required
                             >
                             <small>Número de teléfono o celular</small>
                         </div>

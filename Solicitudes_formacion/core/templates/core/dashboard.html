@@ -56,7 +56,15 @@
                 <tbody>
                     {% for s in ultimas_solicitudes %}
                     <tr>
-                        <td><strong>{{ s.empresa.nit }}</strong></td>
+                        <td>
+                            {% if s.empresa.nit and s.empresa.nit != 'None' %}
+                                <strong>{{ s.empresa.nit }}</strong>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-dash-circle me-1"></i>Sin NIT
+                                </span>
+                            {% endif %}
+                        </td>
                         <td><strong>{{ s.empresa.nombre }}</strong></td>
                         <td>{{ s.programa.nombre }}</td>
                         <td>

@@ -284,6 +284,30 @@
             box-shadow: 0 4px 12px rgba(46,125,50,0.3);
         }
 
+        /* ── Botón catálogo (variante azul-índigo) ── */
+        .template-btn-catalogo {
+            padding: 10px 20px;
+            background: #e8eaf6;
+            color: #283593;
+            border: 2px solid #3949ab;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .template-btn-catalogo:hover {
+            background: #3949ab;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(57,73,171,0.3);
+        }
+
         .form-actions {
             display: flex;
             gap: 15px;
@@ -535,6 +559,10 @@
                     </button>
                     <a href="{% url 'solicitudes:guia_solicitud' %}?from={{ solicitud.id }}" class="template-btn" target="_blank">
                         📋 Ver guía para empresas
+                    </a>
+                    {# ── NUEVO BOTÓN: Catálogo de Programas ── #}
+                    <a href="{% url 'solicitudes:catalogo_programas' %}" class="template-btn-catalogo" target="_blank">
+                        📚 Ver catálogo de programas
                     </a>
                 </div>
                 <textarea id="mensaje"

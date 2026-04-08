@@ -15,6 +15,7 @@ urlpatterns = [
     path('procesar-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),
     path('procesar-correos-ajax/', views.procesar_correos_ajax, name='procesar_correos_ajax'),
     path('guia/', views.guia_solicitud, name='guia_solicitud'),
+    path('catalogo/', views.catalogo_programas, name='catalogo_programas'),
     path('crear/',views.crear_solicitud, name='crear_solicitud'),
     
 ]

@@ -58,29 +58,171 @@
         .alert-warning { background: #fff3e0; color: #e65100; border-left: 4px solid #ef6c00; }
         .alert-info    { background: #e1f5fe; color: #01579b; border-left: 4px solid #0288d1; }
 
-        /* Filtros */
+        /* ══════════════════════════════════════════
+           SECCIÓN DE FILTROS
+           ══════════════════════════════════════════ */
         .filters-section {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 28px;
+            border-radius: 16px;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
-        .filters-section h3 { color: #2e7d32; margin-bottom: 20px; font-size: 1.2em; display: flex; align-items: center; gap: 10px; font-weight: 700; }
-        .filters-container  { display: flex; align-items: flex-end; gap: 15px; flex-wrap: wrap; }
-        .filters-grid       { display: flex; gap: 15px; flex: 1; min-width: 0; }
-        .filter-group       { flex: 1; min-width: 200px; }
-        .filter-group label { display: block; font-size: 0.85em; color: #666; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .filter-group input,
-        .filter-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.95em; font-family: 'Segoe UI', sans-serif; transition: all 0.3s; background: white; height: 48px; }
-        .filter-group input:focus,
-        .filter-group select:focus { outline: none; border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
-        .filter-actions { display: flex; gap: 10px; flex-shrink: 0; }
-        .btn-filter { padding: 12px 25px; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-family: 'Segoe UI', sans-serif; border: none; height: 48px; white-space: nowrap; }
-        .btn-filter.primary   { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
+        .filters-section h3 {
+            color: #2e7d32;
+            margin-bottom: 22px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        /* Fila 1: nombre + período predefinido */
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.82em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input[type="text"],
+        .filter-group input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s;
+            background: white;
+        }
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+        }
+
+        /* ── Bloque de rango de fechas exacto (igual que en reportes) ── */
+        .date-range-block {
+            background: #f9fbe7;
+            border: 2px solid #c5e1a5;
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 20px;
+        }
+
+        .date-range-title {
+            font-size: 0.82em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #558b2f;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .date-range-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #c5e1a5;
+        }
+
+        .date-range-inner {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .date-separator {
+            display: flex;
+            align-items: center;
+            padding-bottom: 14px;
+            color: #558b2f;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .filter-group input[type="date"] {
+            border-color: #c5e1a5;
+            background: #fff;
+        }
+        .filter-group input[type="date"]:focus {
+            border-color: #2e7d32;
+        }
+
+        .btn-clear-dates {
+            padding: 13px 16px;
+            background: white;
+            border: 2px solid #c5e1a5;
+            border-radius: 10px;
+            color: #558b2f;
+            font-size: 0.88em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .btn-clear-dates:hover { background: #c5e1a5; color: #1b5e20; }
+
+        /* Nota de conflicto */
+        .date-conflict-note {
+            font-size: 0.8em;
+            color: #8d6e00;
+            background: #fff8e1;
+            border-left: 3px solid #fbc02d;
+            border-radius: 0 6px 6px 0;
+            padding: 8px 12px;
+            margin-top: 12px;
+            display: none;
+        }
+        .date-conflict-note.visible { display: block; }
+
+        /* Botones de acción del filtro */
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+        .btn-filter {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+            border: none;
+        }
+        .btn-filter.primary   { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; }
         .btn-filter.secondary { background: white; color: #666; border: 2px solid #e0e0e0; }
-        .btn-filter:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-filter.primary:hover { box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
+        .btn-filter:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
 
         /* Controls */
         .controls-section { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
@@ -146,10 +288,8 @@
         .empty-state p  { color: #999; margin-bottom: 20px; }
 
         /* ═══════════════════════════════════════════════════════════
-           MODALES PERSONALIZADOS — reemplazo de confirm() y alert()
+           MODALES
            ═══════════════════════════════════════════════════════════ */
-
-        /* Fondo oscuro compartido */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -162,7 +302,6 @@
         }
         .modal-overlay.open { display: flex; }
 
-        /* Contenedor base de todos los modales */
         .sena-modal {
             background: white;
             border-radius: 20px;
@@ -177,7 +316,6 @@
             to   { transform: scale(1)    translateY(0);     opacity: 1; }
         }
 
-        /* Header del modal — color varía por tipo */
         .sena-modal-header {
             padding: 26px 32px 20px;
             display: flex;
@@ -192,19 +330,10 @@
         .sena-modal-header-icon { font-size: 2em; flex-shrink: 0; }
         .sena-modal-header h3   { font-size: 1.25em; font-weight: 700; }
 
-        /* Cuerpo del modal */
-        .sena-modal-body {
-            padding: 24px 32px;
-        }
-        .sena-modal-body p {
-            color: #555;
-            line-height: 1.7;
-            font-size: 0.97em;
-            margin-bottom: 12px;
-        }
+        .sena-modal-body { padding: 24px 32px; }
+        .sena-modal-body p { color: #555; line-height: 1.7; font-size: 0.97em; margin-bottom: 12px; }
         .sena-modal-body p:last-child { margin-bottom: 0; }
 
-        /* Nombre del archivo destacado */
         .modal-filename {
             background: #f5f5f5;
             border-left: 3px solid #2e7d32;
@@ -217,12 +346,7 @@
             margin: 10px 0 0;
         }
 
-        /* Lista de consecuencias */
-        .modal-list {
-            list-style: none;
-            padding: 0;
-            margin: 12px 0 0;
-        }
+        .modal-list { list-style: none; padding: 0; margin: 12px 0 0; }
         .modal-list li {
             padding: 7px 0;
             border-bottom: 1px solid #f0f0f0;
@@ -234,7 +358,6 @@
         }
         .modal-list li:last-child { border-bottom: none; }
 
-        /* Pie del modal con botones */
         .sena-modal-footer {
             padding: 16px 32px 26px;
             display: flex;
@@ -242,29 +365,16 @@
             gap: 12px;
         }
 
-        /* Botones del modal */
-        .modal-btn {
-            padding: 12px 28px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.97em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+        .modal-btn { padding: 12px 28px; border: none; border-radius: 10px; font-size: 0.97em; font-weight: 700; cursor: pointer; transition: all 0.3s; }
         .modal-btn-cancel { background: #eeeeee; color: #555; }
         .modal-btn-cancel:hover { background: #e0e0e0; }
-
         .modal-btn-orange { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); color: white; box-shadow: 0 4px 14px rgba(239,108,0,0.35); }
         .modal-btn-orange:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,108,0,0.4); }
-
         .modal-btn-red    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); color: white; box-shadow: 0 4px 14px rgba(198,40,40,0.35); }
         .modal-btn-red:hover    { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(198,40,40,0.4); }
-
         .modal-btn-green  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 14px rgba(46,125,50,0.35); }
         .modal-btn-green:hover  { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
 
-        /* Footer */
         footer { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 20px; border-radius: 16px; margin-top: 30px; box-shadow: 0 -4px 20px rgba(27,94,32,0.2); }
         footer p { font-weight: 500; letter-spacing: 0.5px; }
 
@@ -273,12 +383,17 @@
             .actions-row { flex-direction: column; align-items: stretch; }
             .backups-grid { grid-template-columns: 1fr; }
             .stats-bar { flex-direction: column; }
-            .filters-container { flex-direction: column; }
-            .filters-grid { flex-direction: column; width: 100%; }
-            .filter-group { min-width: 100%; }
-            .filter-actions { width: 100%; flex-direction: column; }
+            .filters-grid { grid-template-columns: 1fr; }
+            .date-range-inner { grid-template-columns: 1fr 1fr; }
+            .date-separator { display: none; }
+            .btn-clear-dates { grid-column: 1 / -1; justify-content: center; }
+            .filter-actions { flex-direction: column; }
             .btn-filter { width: 100%; justify-content: center; }
             footer { font-size: 0.85rem; padding: 15px; }
+        }
+        @media (max-width: 480px) {
+            .date-range-inner { grid-template-columns: 1fr; }
+            .date-separator, .btn-clear-dates { display: none; }
         }
     </style>
 </head>
@@ -382,38 +497,69 @@
         </div>
         {% endif %}
 
-        <!-- Filtros -->
+        <!-- ══════════════════════════════════════════
+             FILTROS — con rango de fechas exacto
+             ══════════════════════════════════════════ -->
         <div class="filters-section">
             <h3>🔍 Filtros de Búsqueda</h3>
             <form method="get" id="filtrosForm">
-                <div class="filters-container">
-                    <div class="filters-grid">
-                        <div class="filter-group">
-                            <label>Nombre del Backup</label>
-                            <input type="text" name="nombre" id="filtro_nombre"
-                                   value="{{ nombre_filtro }}"
-                                   placeholder="Ej: backup_20250101">
-                        </div>
-                        <div class="filter-group">
-                            <label>📅 Período</label>
-                            <select name="rango_fecha" id="filtro_rango_fecha">
-                                <option value="">Todas las fechas</option>
-                                <option value="hoy"            {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
-                                <option value="ayer"           {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
-                                <option value="esta_semana"    {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
-                                <option value="semana_pasada"  {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
-                                <option value="este_mes"       {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
-                                <option value="mes_pasado"     {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
-                                <option value="ultimos_7_dias" {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
-                                <option value="ultimos_30_dias"{% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
-                                <option value="este_año"       {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
-                            </select>
-                        </div>
+
+                <!-- Fila 1: nombre + período predefinido -->
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label>Nombre del Backup</label>
+                        <input type="text" name="nombre" id="filtro_nombre"
+                               value="{{ nombre_filtro }}"
+                               placeholder="Ej: backup_20250101">
                     </div>
-                    <div class="filter-actions">
-                        <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">🔄 Limpiar</button>
-                        <button type="submit"  class="btn-filter primary">🔍 Buscar</button>
+                    <div class="filter-group">
+                        <label>📅 Período predefinido</label>
+                        <select name="rango_fecha" id="filtro_rango_fecha" onchange="onRangoPredefinidoChange()">
+                            <option value="">Todas las fechas</option>
+                            <option value="hoy"             {% if rango_fecha == 'hoy' %}selected{% endif %}>Hoy</option>
+                            <option value="ayer"            {% if rango_fecha == 'ayer' %}selected{% endif %}>Ayer</option>
+                            <option value="esta_semana"     {% if rango_fecha == 'esta_semana' %}selected{% endif %}>Esta semana</option>
+                            <option value="semana_pasada"   {% if rango_fecha == 'semana_pasada' %}selected{% endif %}>Semana pasada</option>
+                            <option value="este_mes"        {% if rango_fecha == 'este_mes' %}selected{% endif %}>Este mes</option>
+                            <option value="mes_pasado"      {% if rango_fecha == 'mes_pasado' %}selected{% endif %}>Mes pasado</option>
+                            <option value="ultimos_7_dias"  {% if rango_fecha == 'ultimos_7_dias' %}selected{% endif %}>Últimos 7 días</option>
+                            <option value="ultimos_30_dias" {% if rango_fecha == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                            <option value="este_año"        {% if rango_fecha == 'este_año' %}selected{% endif %}>Este año</option>
+                        </select>
                     </div>
+                </div>
+
+                <!-- Fila 2: rango de fechas exacto -->
+                <div class="date-range-block">
+                    <div class="date-range-title">
+                        📆 Rango de fechas exacto
+                    </div>
+                    <div class="date-range-inner">
+                        <div class="filter-group">
+                            <label>Fecha inicio</label>
+                            <input type="date" id="filtro_fecha_inicio" name="fecha_inicio"
+                                   value="{{ fecha_inicio_filter }}"
+                                   onchange="onFechaExactaChange()">
+                        </div>
+                        <div class="date-separator">→</div>
+                        <div class="filter-group">
+                            <label>Fecha fin</label>
+                            <input type="date" id="filtro_fecha_fin" name="fecha_fin"
+                                   value="{{ fecha_fin_filter }}"
+                                   onchange="onFechaExactaChange()">
+                        </div>
+                        <button type="button" class="btn-clear-dates" onclick="limpiarFechasExactas()">
+                            ✕ Limpiar fechas
+                        </button>
+                    </div>
+                    <div class="date-conflict-note" id="conflictNote">
+                        ⚠️ Tienes un período predefinido seleccionado. Al buscar se usará el <strong>rango de fechas exacto</strong> y se ignorará el período predefinido.
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="button" class="btn-filter secondary" onclick="limpiarFiltros()">🔄 Limpiar todo</button>
+                    <button type="submit" class="btn-filter primary">🔍 Buscar</button>
                 </div>
             </form>
         </div>
@@ -426,7 +572,6 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary">➕ Crear Nuevo Backup</button>
                     </form>
-                    <!-- ✅ Reemplazado: antes usaba onclick="return confirm(...)" -->
                     <button type="button" class="btn btn-danger"
                             onclick="abrirModal('overlayLimpiar')">
                         🗑️ Limpiar Antiguos
@@ -507,7 +652,6 @@
                 <div class="backup-actions">
                     <a href="{% url 'backups:descargar_backup' backup.nombre %}"
                        class="btn-action btn-download">⬇️ Descargar</a>
-                    <!-- ✅ Reemplazados: antes usaban funciones que llamaban confirm() -->
                     <button onclick="abrirRestore('{{ backup.nombre }}')"
                             class="btn-action btn-restore">🔄 Restaurar</button>
                     <button onclick="abrirDelete('{{ backup.nombre }}')"
@@ -537,12 +681,9 @@
         function abrirModal(overlayId) {
             document.getElementById(overlayId).classList.add('open');
         }
-
         function cerrarModal(overlayId) {
             document.getElementById(overlayId).classList.remove('open');
         }
-
-        // Cerrar al hacer clic fuera del modal
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
                 if (e.target === this) cerrarModal(this.id);
@@ -565,12 +706,44 @@
             abrirModal('overlayDelete');
         }
 
-        /* ── Limpiar filtros ────────────────────────────────────────────── */
+        /* ── Lógica del filtro de fechas (igual que en reportes) ────────── */
+        function onRangoPredefinidoChange() {
+            verificarConflicto();
+        }
+
+        function onFechaExactaChange() {
+            verificarConflicto();
+            const ini = document.getElementById('filtro_fecha_inicio').value;
+            const fin = document.getElementById('filtro_fecha_fin').value;
+            // Evitar que fecha_fin sea anterior a fecha_inicio
+            if (ini && fin && fin < ini) {
+                document.getElementById('filtro_fecha_fin').value = ini;
+            }
+        }
+
+        function verificarConflicto() {
+            const rango  = document.getElementById('filtro_rango_fecha').value;
+            const inicio = document.getElementById('filtro_fecha_inicio').value;
+            const fin    = document.getElementById('filtro_fecha_fin').value;
+            document.getElementById('conflictNote').classList.toggle(
+                'visible', !!(rango && (inicio || fin))
+            );
+        }
+
+        function limpiarFechasExactas() {
+            document.getElementById('filtro_fecha_inicio').value = '';
+            document.getElementById('filtro_fecha_fin').value = '';
+            verificarConflicto();
+        }
+
         function limpiarFiltros() {
             document.getElementById('filtro_nombre').value = '';
             document.getElementById('filtro_rango_fecha').value = '';
+            limpiarFechasExactas();
             document.getElementById('filtrosForm').submit();
         }
+
+        document.addEventListener('DOMContentLoaded', verificarConflicto);
     </script>
 </body>
 </html>

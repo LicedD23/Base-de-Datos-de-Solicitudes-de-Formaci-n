@@ -136,14 +136,18 @@ def crear_empresa(request):
         
         errores = []
         
+        # Validación: Nombre obligatorio
         if not nombre:
             errores.append('⚠️ El nombre de la empresa es obligatorio')
         elif len(nombre) < 3:
             errores.append('⚠️ El nombre debe tener al menos 3 caracteres')
         elif Empresa.objects.filter(nombre__iexact=nombre).exists():
             errores.append(f'❌ Ya existe una empresa con el nombre "{nombre}"')
-        
-        if nit:
+
+        # ✅ CAMBIO: NIT ahora es obligatorio
+        if not nit:
+            errores.append('⚠️ El NIT de la empresa es obligatorio')
+        else:
             nit_limpio = nit.replace(' ', '').replace('-', '')
             if not nit_limpio.isdigit():
                 errores.append('❌ El NIT solo debe contener números')
@@ -153,12 +157,18 @@ def crear_empresa(request):
                 errores.append(f'❌ Ya existe una empresa con el NIT "{nit}"')
             else:
                 nit = nit_limpio
-        
-        if correo:
+
+        # ✅ CAMBIO: Correo ahora es obligatorio
+        if not correo:
+            errores.append('⚠️ El correo electrónico es obligatorio')
+        else:
             if '@' not in correo or '.' not in correo:
                 errores.append('❌ El correo electrónico no es válido')
-        
-        if telefono:
+
+        # ✅ CAMBIO: Teléfono ahora es obligatorio
+        if not telefono:
+            errores.append('⚠️ El teléfono es obligatorio')
+        else:
             telefono_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
             if not telefono_limpio.isdigit():
                 errores.append('❌ El teléfono solo debe contener números')

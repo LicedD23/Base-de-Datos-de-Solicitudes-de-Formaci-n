@@ -11,7 +11,7 @@ from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
-# ✅ AGREGAR ESTAS IMPORTACIONES PARA EL EMAIL
+# ✅ IMPORTACIONES PARA EL EMAIL
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -59,7 +59,7 @@ def dashboard(request):
     # Variables adicionales
     solicitudes_pendientes = None
     solicitudes_finalizadas = None
-    ultimas_solicitudes = []
+    ultimas_solicitudes_qs = []
     
     # --- ADMINISTRADOR Y ASISTENTE: Ven TODO ---
     if es_administrador or es_asistente:
@@ -67,20 +67,31 @@ def dashboard(request):
         solicitudes_finalizadas = Solicitud.objects.filter(estado='FINALIZADA').count()
         
         # Últimas 15 solicitudes
-        ultimas_solicitudes = Solicitud.objects.select_related(
+        ultimas_solicitudes_qs = Solicitud.objects.select_related(
             'empresa', 'programa', 'instructor_asignado'
         ).order_by('-fecha_recepcion')[:15]
     
     # --- COORDINADOR: Solo lectura básica ---
     elif es_coordinador:
         solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
-        # NO ve finalizadas
         
         # Solo 10 solicitudes
-        ultimas_solicitudes = Solicitud.objects.select_related(
+        ultimas_solicitudes_qs = Solicitud.objects.select_related(
             'empresa', 'programa', 'instructor_asignado'
         ).order_by('-fecha_recepcion')[:10]
-    
+
+    # ========================================
+    # ✅ FIX NIT: Limpiar valores 'None' en Python
+    # antes de enviar al template
+    # ========================================
+    ultimas_solicitudes = []
+    for s in ultimas_solicitudes_qs:
+        # Si el NIT es el string 'None' o None, lo dejamos en None
+        # para que el template lo maneje con {% if %}
+        if s.empresa.nit and str(s.empresa.nit).strip().lower() == 'none':
+            s.empresa.nit = None
+        ultimas_solicitudes.append(s)
+
     # ========================================
     # CONSTRUIR MÉTRICAS PARA EL TEMPLATE
     # ========================================
@@ -120,26 +131,26 @@ def home(request):
 
 def login_view(request):
     """Vista para iniciar sesion"""
-    #Si el usuario ya esta auntenticado, redirigir al  dashboard
+    # Si el usuario ya está autenticado, redirigir al dashboard
     if request.user.is_authenticated:
         return redirect('core:dashboard')
     
-    if request.method=='POST':
-        username= request.POST.get('username','').strip()
-        password = request.POST.get('password','')
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
         
-        user= authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password)
         
         if user is not None:
             login(request, user)
             nombre = user.get_full_name() or user.username
             messages.success(request, f'¡Bienvenido {nombre}!')
             
-            #Redirigir a la pagina solicitada o  al  dashboard
-            next_url = request.GET.get('next','core:dashboard')
+            # Redirigir a la página solicitada o al dashboard
+            next_url = request.GET.get('next', 'core:dashboard')
             return redirect(next_url)
         else:
-            messages.error(request, 'Usuario o  contraseña incorrectos')
+            messages.error(request, 'Usuario o contraseña incorrectos')
     
     return render(request, 'core/login.html')
 
@@ -222,21 +233,20 @@ def register_user_view(request):
     return render(request, 'core/register_user.html')
         
 def logout_view(request):
-    """vista para cerrar sesion"""
+    """Vista para cerrar sesión"""
     nombre = request.user.get_full_name() or request.user.username
     logout(request)
-    messages.success(request,f'Hasta pronto {nombre}! Has cerrado sesion exitosamente')
+    messages.success(request, f'Hasta pronto {nombre}! Has cerrado sesión exitosamente')
     return redirect('core:home')
 
 @login_required
 def profile_view(request):
     """Vista para ver el perfil del usuario"""
-    #Estadisticas del  usuario si es staff
     context = {
-        'user':request.user
+        'user': request.user
     }
     if request.user.is_staff:
-        #Metricas del  sistema para el  administrador
+        # Métricas del sistema para el administrador
         context['total_solicitudes'] = Solicitud.objects.count()
         context['total_empresas'] = Empresa.objects.count()
         context['total_programas'] = Programa.objects.count()
@@ -251,23 +261,22 @@ def profile_edit(request):
     if request.method == 'POST':
         user = request.user
         
-        #Obtener datos del formulario
-        first_name = request.POST.get('first_name','').strip()
-        last_name = request.POST.get('last_name','').strip()
-        email = request.POST.get('email','').strip()
+        # Obtener datos del formulario
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
         
-        #Validaciones
+        # Validaciones
         if not email:
-            messages.error(request,'El correo electronico es obligatorio')
+            messages.error(request, 'El correo electrónico es obligatorio')
             return render(request, 'core/profile_edit.html')
     
-        # ✅ CORRECCIÓN 1: User con mayúscula
         if User.objects.filter(email=email).exclude(id=user.id).exists():
-            messages.error(request, 'Este correo electronico ya esta en uso')
+            messages.error(request, 'Este correo electrónico ya está en uso')
             return render(request, 'core/profile_edit.html')
         
         try:
-            #Actualizar datos del usuario
+            # Actualizar datos del usuario
             user.first_name = first_name
             user.last_name = last_name
             user.email = email
@@ -277,7 +286,7 @@ def profile_edit(request):
             return redirect('core:profile')
         except Exception as e:
             messages.error(request, f'Error al actualizar el perfil: {str(e)}')
-            return render(request,'core/profile_edit.html')
+            return render(request, 'core/profile_edit.html')
     return render(request, 'core/profile_edit.html')
 
 @login_required
@@ -286,37 +295,36 @@ def change_password(request):
     
     if request.method == 'POST':
         user = request.user
-        current_password = request.POST.get('current_password','')
-        # ✅ CORRECCIÓN 2: new_password en lugar de nex_password
-        new_password = request.POST.get('new_password','')
-        confirm_password = request.POST.get('confirm_password','')
+        current_password = request.POST.get('current_password', '')
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
         
-        #Validaciones
+        # Validaciones
         if not all([current_password, new_password, confirm_password]):
             messages.error(request, 'Todos los campos son obligatorios')
             return render(request, 'core/change_password.html')
         
-        #Verificar contraseña actual
+        # Verificar contraseña actual
         if not user.check_password(current_password):
             messages.error(request, 'La contraseña actual es incorrecta')
             return render(request, 'core/change_password.html')
         
-        #Verificar que las contraseñas coincidan
+        # Verificar que las contraseñas coincidan
         if new_password != confirm_password:
             messages.error(request, 'Las contraseñas nuevas no coinciden')
             return render(request, 'core/change_password.html')
         
-        #Verificar longitud minima
+        # Verificar longitud mínima
         if len(new_password) < 8:
             messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
             return render(request, 'core/change_password.html')
         
         try:
-            #Cambiar contraseña
+            # Cambiar contraseña
             user.set_password(new_password)
             user.save()
             
-            # Mantener la sesion activa despues de cambiar la contraseña
+            # Mantener la sesión activa después de cambiar la contraseña
             update_session_auth_hash(request, user)
             
             messages.success(request, '¡Contraseña cambiada exitosamente!')
@@ -332,7 +340,7 @@ def accessibility(request):
 
 
 # ============================================
-# ✅ NUEVA CLASE PARA ENVIAR HTML EN EMAILS
+# ✅ CLASE PARA ENVIAR HTML EN EMAILS
 # ============================================
 class CustomPasswordResetView(PasswordResetView):
     """
@@ -343,7 +351,6 @@ class CustomPasswordResetView(PasswordResetView):
         """
         Sobrescribe form_valid para personalizar el envío del email.
         """
-        # Obtener los datos del formulario
         opts = {
             'use_https': self.request.is_secure(),
             'token_generator': self.token_generator,
@@ -386,10 +393,10 @@ class CustomPasswordResetView(PasswordResetView):
             email_message.attach_alternative(html_content, "text/html")
             email_message.send(fail_silently=False)
         
-        # ✅ Redirigir manualmente sin llamar a super() para evitar envío duplicado
+        # Redirigir manualmente sin llamar a super() para evitar envío duplicado
         return HttpResponseRedirect(self.success_url)
     
 @login_required
 def manual_usuario(request):
-    """Vista parac mostrar el manual de usuario"""
+    """Vista para mostrar el manual de usuario"""
     return render(request, 'core/manual_usuario.html')

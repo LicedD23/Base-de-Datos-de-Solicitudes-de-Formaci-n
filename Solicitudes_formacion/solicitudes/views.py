@@ -992,3 +992,5 @@ def guia_solicitud(request):
     return render(request, 'solicitudes/guia_solicitud_formacion.html', {
         'from_solicitud_id': from_solicitud,
     })
+def catalogo_programas(request):
+    return render(request, 'solicitudes/catalogo_programas.html')
