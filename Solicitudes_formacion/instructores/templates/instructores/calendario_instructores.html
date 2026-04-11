@@ -1,0 +1,527 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Instructores - SENA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet"/>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background: linear-gradient(135deg, rgba(46,125,50,0.95) 0%, rgba(27,94,32,0.95) 100%);
+            backdrop-filter: blur(20px);
+            color: white; padding: 40px; border-radius: 24px;
+            margin-bottom: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+        }
+        .header h1 { font-size: 2.5em; font-weight: 800; margin-bottom: 8px; }
+        .header p  { font-size: 1em; opacity: 0.85; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+
+        .breadcrumb {
+            background: rgba(255,255,255,0.95); padding: 18px 24px; border-radius: 16px;
+            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .breadcrumb a { color: #2e7d32; text-decoration: none; font-weight: 600; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { color: #999; }
+
+        .messages-container { margin-bottom: 20px; }
+        .alert {
+            padding: 16px 22px; border-radius: 14px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 14px; font-size: 0.97em; font-weight: 500;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1); animation: slideInDown 0.4s ease-out;
+        }
+        @keyframes slideInDown { from { transform: translateY(-16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert-success { background: linear-gradient(135deg,#2e7d32,#43a047); color:white; }
+        .alert-error   { background: linear-gradient(135deg,#c62828,#e53935); color:white; }
+        .alert-warning { background: linear-gradient(135deg,#ef6c00,#f57c00); color:white; }
+        .alert-close {
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1em; margin-left: auto; transition: all 0.2s;
+        }
+        .alert-close:hover { background: rgba(255,255,255,0.4); }
+
+        .btn {
+            padding: 0 22px; height: 44px; border: none; border-radius: 12px;
+            font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 8px;
+            text-decoration: none; white-space: nowrap; font-family: inherit;
+        }
+        .btn-white {
+            background: rgba(255,255,255,0.18); color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+        .btn-white:hover { background: rgba(255,255,255,0.32); }
+        .btn-primary { background: linear-gradient(135deg,#2e7d32,#1b5e20); color: white; box-shadow: 0 6px 20px rgba(46,125,50,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(46,125,50,0.4); }
+
+        /* ── LAYOUT PRINCIPAL ── */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ── PANEL LATERAL ── */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; }
+
+        .panel {
+            background: rgba(255,255,255,0.97); border-radius: 20px;
+            padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        .panel-title {
+            font-size: 0.75em; font-weight: 700; color: #888;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px;
+        }
+
+        /* Leyenda de instructores */
+        .leyenda-list { display: flex; flex-direction: column; gap: 10px; }
+        .leyenda-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; border: 2px solid transparent;
+        }
+        .leyenda-item:hover { background: #f5f5f5; }
+        .leyenda-item.inactivo { opacity: 0.35; }
+        .leyenda-dot {
+            width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+        }
+        .leyenda-nombre {
+            font-size: 0.9em; font-weight: 600; color: #333; flex: 1;
+        }
+        .leyenda-count {
+            font-size: 0.78em; font-weight: 700; padding: 3px 9px; border-radius: 10px;
+            background: #f0f0f0; color: #666;
+        }
+
+        /* Stats rápidos */
+        .stats-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-mini-card {
+            background: #f8f9fa; border-radius: 14px; padding: 16px 12px;
+            text-align: center;
+        }
+        .stat-mini-num { font-size: 1.9em; font-weight: 800; color: #2e7d32; }
+        .stat-mini-num.rojo   { color: #c62828; }
+        .stat-mini-num.azul   { color: #1565c0; }
+        .stat-mini-num.naranja{ color: #ef6c00; }
+        .stat-mini-lbl { font-size: 0.72em; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+        /* Filtro de vista */
+        .view-toggle {
+            display: flex; gap: 6px; background: #f0f0f0; padding: 5px; border-radius: 12px;
+        }
+        .view-btn {
+            flex: 1; padding: 8px 6px; border: none; border-radius: 9px;
+            font-size: 0.82em; font-weight: 600; cursor: pointer; transition: all 0.22s;
+            background: transparent; color: #888; font-family: inherit;
+        }
+        .view-btn.activo { background: white; color: #2e7d32; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* ── CALENDARIO ── */
+        .calendar-wrapper {
+            background: rgba(255,255,255,0.97); border-radius: 20px;
+            padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+
+        /* Override estilos FullCalendar */
+        .fc .fc-toolbar-title {
+            font-size: 1.4em; font-weight: 800; color: #2e7d32; font-family: 'Inter', sans-serif;
+        }
+        .fc .fc-button {
+            background: linear-gradient(135deg,#2e7d32,#1b5e20) !important;
+            border: none !important; border-radius: 10px !important;
+            font-family: 'Inter', sans-serif !important; font-weight: 600 !important;
+            padding: 8px 16px !important; box-shadow: 0 4px 12px rgba(46,125,50,0.25) !important;
+        }
+        .fc .fc-button:hover { opacity: 0.9 !important; }
+        .fc .fc-button-active, .fc .fc-button:active { opacity: 0.85 !important; }
+        .fc .fc-col-header-cell { background: #f1f8e9; }
+        .fc .fc-col-header-cell-cushion {
+            color: #2e7d32; font-weight: 700; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+        .fc .fc-daygrid-day-number { color: #555; font-weight: 600; text-decoration: none; }
+        .fc .fc-daygrid-day.fc-day-today { background: rgba(46,125,50,0.07) !important; }
+        .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+            background: #2e7d32; color: white; border-radius: 50%;
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+        }
+        .fc-event {
+            border-radius: 8px !important; border: none !important;
+            font-size: 0.82em !important; font-weight: 600 !important;
+            padding: 3px 7px !important; cursor: pointer !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important;
+        }
+        .fc-event:hover { opacity: 0.88 !important; transform: translateY(-1px); }
+        .fc .fc-timegrid-slot-label { color: #888; font-size: 0.8em; }
+        .fc .fc-list-event-title a { color: white; }
+        .fc .fc-list-day-cushion { background: #e8f5e9; }
+        .fc .fc-list-day-text, .fc .fc-list-day-side-text { color: #2e7d32; font-weight: 700; }
+        .fc .fc-list-event:hover td { background: rgba(46,125,50,0.06); }
+        .fc-theme-standard td, .fc-theme-standard th { border-color: #e8f0e8; }
+
+        /* ── TOOLTIP POPUP ── */
+        .tooltip-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.42); z-index: 9000;
+            align-items: center; justify-content: center;
+        }
+        .tooltip-overlay.open { display: flex; }
+        .tooltip-card {
+            background: white; border-radius: 20px; width: 92%; max-width: 420px;
+            overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+            animation: popIn 0.28s cubic-bezier(.34,1.36,.64,1);
+        }
+        @keyframes popIn { from{transform:scale(0.86);opacity:0;} to{transform:scale(1);opacity:1;} }
+        .tooltip-header {
+            padding: 22px 26px 18px; color: white;
+        }
+        .tooltip-header h3 { font-size: 1.1em; font-weight: 800; margin-bottom: 4px; }
+        .tooltip-header p  { font-size: 0.84em; opacity: 0.88; }
+        .tooltip-body { padding: 22px 26px; }
+        .tooltip-row {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9em;
+        }
+        .tooltip-row:last-child { border-bottom: none; }
+        .tooltip-icon { font-size: 1.1em; flex-shrink: 0; margin-top: 1px; }
+        .tooltip-label { color: #888; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tooltip-value { font-weight: 600; color: #222; }
+        .tooltip-footer { padding: 14px 26px 22px; display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-cerrar {
+            padding: 10px 22px; border: 2px solid #e0e0e0; background: white;
+            color: #666; border-radius: 10px; font-size: 0.9em; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .btn-cerrar:hover { background: #f5f5f5; }
+        .btn-ir {
+            padding: 10px 22px; background: linear-gradient(135deg,#2e7d32,#1b5e20);
+            color: white; border: none; border-radius: 10px;
+            font-size: 0.9em; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all 0.2s; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-ir:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        footer {
+            background: linear-gradient(90deg, #1b5e20, #2e7d32); color: white;
+            text-align: center; padding: 22px; border-radius: 20px;
+            margin-top: 32px; font-weight: 600; letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+        }
+        @media (max-width: 768px) {
+            .header { padding: 24px; }
+            .header h1 { font-size: 1.8em; }
+            .calendar-wrapper { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── TOOLTIP MODAL ── -->
+    <div class="tooltip-overlay" id="tooltipOverlay">
+        <div class="tooltip-card">
+            <div class="tooltip-header" id="tooltipHeader">
+                <h3 id="tooltipInstructor">—</h3>
+                <p id="tooltipPrograma">—</p>
+            </div>
+            <div class="tooltip-body">
+                <div class="tooltip-row">
+                    <span class="tooltip-icon">🏢</span>
+                    <div>
+                        <div class="tooltip-label">Empresa</div>
+                        <div class="tooltip-value" id="tooltipEmpresa">—</div>
+                    </div>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-icon">📅</span>
+                    <div>
+                        <div class="tooltip-label">Inicio formación</div>
+                        <div class="tooltip-value" id="tooltipInicio">—</div>
+                    </div>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-icon">🏁</span>
+                    <div>
+                        <div class="tooltip-label">Fin formación</div>
+                        <div class="tooltip-value" id="tooltipFin">—</div>
+                    </div>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-icon">📋</span>
+                    <div>
+                        <div class="tooltip-label">Estado</div>
+                        <div class="tooltip-value" id="tooltipEstado">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tooltip-footer">
+                <button class="btn-cerrar" onclick="cerrarTooltip()">Cerrar</button>
+                <a class="btn-ir" id="tooltipLink" href="#">🔗 Ver solicitud</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="header">
+            <div>
+                <h1>📅 Calendario</h1>
+                <p>Visualización de formaciones por instructor en tiempo real</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'instructores:listar_instructores' %}" class="btn btn-white">👨‍🏫 Instructores</a>
+                {% if es_administrador or es_asistente %}
+                <a href="{% url 'instructores:crear_instructor' %}" class="btn btn-white">➕ Nuevo</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+            <span>›</span>
+            <a href="{% url 'instructores:listar_instructores' %}">Instructores</a>
+            <span>›</span>
+            <span style="color:#2e7d32; font-weight:600;">Calendario</span>
+        </div>
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}">
+                {{ message }}
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="main-layout">
+
+            <!-- ── SIDEBAR ── -->
+            <aside class="sidebar">
+
+                <!-- Stats rápidos -->
+                <div class="panel">
+                    <div class="panel-title">📊 Resumen del mes</div>
+                    <div class="stats-mini">
+                        <div class="stat-mini-card">
+                            <div class="stat-mini-num">{{ total_instructores }}</div>
+                            <div class="stat-mini-lbl">Instructores</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <div class="stat-mini-num rojo">{{ ocupados_hoy }}</div>
+                            <div class="stat-mini-lbl">Ocupados hoy</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <div class="stat-mini-num azul">{{ total_formaciones }}</div>
+                            <div class="stat-mini-lbl">Formaciones</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <div class="stat-mini-num naranja">{{ sin_fecha_fin }}</div>
+                            <div class="stat-mini-lbl">Sin fecha fin</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista -->
+                <div class="panel">
+                    <div class="panel-title">🗓️ Vista del calendario</div>
+                    <div class="view-toggle">
+                        <button class="view-btn activo" onclick="cambiarVista(this, 'dayGridMonth')">Mes</button>
+                        <button class="view-btn" onclick="cambiarVista(this, 'timeGridWeek')">Semana</button>
+                        <button class="view-btn" onclick="cambiarVista(this, 'listMonth')">Lista</button>
+                    </div>
+                </div>
+
+                <!-- Leyenda instructores -->
+                <div class="panel">
+                    <div class="panel-title">👨‍🏫 Instructores <span style="font-weight:400;color:#bbb;">(clic para filtrar)</span></div>
+                    <div class="leyenda-list" id="leyendaList">
+                        {% for item in leyenda_instructores %}
+                        <div class="leyenda-item"
+                             data-instructor-id="{{ item.id }}"
+                             onclick="toggleInstructor(this, {{ item.id }})">
+                            <div class="leyenda-dot" style="background: {{ item.color }};"></div>
+                            <span class="leyenda-nombre">{{ item.nombre }}</span>
+                            <span class="leyenda-count">{{ item.total }}</span>
+                        </div>
+                        {% empty %}
+                        <p style="color:#bbb; font-size:0.88em;">Sin instructores activos</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Ir a hoy -->
+                <button class="btn btn-primary" onclick="irAHoy()" style="width:100%; justify-content:center; height:48px; border-radius:14px;">
+                    📍 Ir a hoy
+                </button>
+
+            </aside>
+
+            <!-- ── CALENDARIO ── -->
+            <div class="calendar-wrapper">
+                <div id="calendar"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+    </footer>
+
+    {% include 'core/accessibility.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+    <script>
+        // ── Eventos desde Django ──────────────────────────────────────────────
+        const EVENTOS_RAW = {{ eventos_json|safe }};
+
+        // ── Estado de filtros ─────────────────────────────────────────────────
+        const instructoresOcultos = new Set();
+        let calendar;
+
+        // ── Inicializar calendario ────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            const el = document.getElementById('calendar');
+
+            calendar = new FullCalendar.Calendar(el, {
+                locale: 'es',
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left:   'prev,next',
+                    center: 'title',
+                    right:  ''
+                },
+                height: 'auto',
+                events: EVENTOS_RAW,
+                eventClick: function(info) {
+                    abrirTooltip(info.event);
+                },
+                eventMouseEnter: function(info) {
+                    info.el.style.transform = 'translateY(-2px)';
+                    info.el.style.transition = 'transform 0.15s';
+                },
+                eventMouseLeave: function(info) {
+                    info.el.style.transform = '';
+                },
+                dayMaxEvents: 3,
+                moreLinkText: n => `+${n} más`,
+                moreLinkClassNames: ['text-green'],
+                nowIndicator: true,
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week:  'Semana',
+                    list:  'Lista',
+                },
+            });
+
+            calendar.render();
+        });
+
+        // ── Tooltip ───────────────────────────────────────────────────────────
+        function abrirTooltip(event) {
+            const p = event.extendedProps;
+
+            document.getElementById('tooltipHeader').style.background = event.backgroundColor;
+            document.getElementById('tooltipInstructor').textContent  = p.instructor || '—';
+            document.getElementById('tooltipPrograma').textContent    = p.programa   || '—';
+            document.getElementById('tooltipEmpresa').textContent     = p.empresa    || '—';
+            document.getElementById('tooltipEstado').textContent      = p.estado     || '—';
+
+            const fmtFecha = iso => {
+                if (!iso) return 'Sin fecha';
+                const [y, m, d] = iso.split('-');
+                const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+                return `${parseInt(d)} de ${meses[parseInt(m)-1]} de ${y}`;
+            };
+
+            document.getElementById('tooltipInicio').textContent = fmtFecha(p.fecha_inicio);
+            document.getElementById('tooltipFin').textContent    = p.fecha_fin ? fmtFecha(p.fecha_fin) : 'Sin fecha de fin';
+
+            const link = document.getElementById('tooltipLink');
+            link.href = `/solicitudes/${p.solicitud_id}/detalle/`;
+
+            document.getElementById('tooltipOverlay').classList.add('open');
+        }
+
+        function cerrarTooltip() {
+            document.getElementById('tooltipOverlay').classList.remove('open');
+        }
+
+        document.getElementById('tooltipOverlay').addEventListener('click', function(e) {
+            if (e.target === this) cerrarTooltip();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') cerrarTooltip();
+        });
+
+        // ── Cambiar vista ─────────────────────────────────────────────────────
+        function cambiarVista(btn, vista) {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('activo'));
+            btn.classList.add('activo');
+            calendar.changeView(vista);
+        }
+
+        // ── Ir a hoy ──────────────────────────────────────────────────────────
+        function irAHoy() {
+            calendar.today();
+        }
+
+        // ── Filtrar por instructor ────────────────────────────────────────────
+        function toggleInstructor(el, instructorId) {
+            if (instructoresOcultos.has(instructorId)) {
+                instructoresOcultos.delete(instructorId);
+                el.classList.remove('inactivo');
+            } else {
+                instructoresOcultos.add(instructorId);
+                el.classList.add('inactivo');
+            }
+
+            const eventosFiltrados = EVENTOS_RAW.filter(
+                ev => !instructoresOcultos.has(ev.extendedProps.instructor_id)
+            );
+
+            calendar.removeAllEvents();
+            calendar.addEventSource(eventosFiltrados);
+        }
+
+        // ── Auto-cerrar alertas ───────────────────────────────────────────────
+        document.querySelectorAll('.alert').forEach(a => {
+            setTimeout(() => {
+                a.style.transition = 'opacity 0.4s';
+                a.style.opacity    = '0';
+                setTimeout(() => a.remove(), 400);
+            }, 7000);
+        });
+    </script>
+</body>
+</html>

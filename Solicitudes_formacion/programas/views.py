@@ -29,18 +29,19 @@ def listar_programas(request):
     if area_id:
         programas = programas.filter(area_id=area_id)
     if activo:
-        programas = programas.filter(activo=activo =='true')
-    #filtro por programa especifico
+        programas = programas.filter(activo=activo == 'true')
+    # filtro por programa especifico
     if programa_id:
         programas = programas.filter(id=programa_id)
     # Ordenar por area y nombre
-    programas = programas.order_by('area__nombre','nombre')
+    programas = programas.order_by('area__nombre', 'nombre')
     
     # Obtener todas las areas para el filtro
     areas = Area.objects.filter(activo=True).order_by('nombre')
     
-    #obtener todos los programas para el  desplegable de filtro
+    # obtener todos los programas para el desplegable de filtro
     todos_programas = Programa.objects.all().order_by('nombre')
+
     # Calcular estadísticas
     total_programas = Programa.objects.count()
     programas_activos = Programa.objects.filter(activo=True).count()
@@ -58,6 +59,7 @@ def listar_programas(request):
         'total_areas': total_areas,
     }
     return render(request, 'programas/listar_programas.html', context)
+
 
 @puede_ver_requerido
 def detalle_programa(request, programa_id):
@@ -79,37 +81,46 @@ def detalle_programa(request, programa_id):
     context = {
         'programa': programa,
         'solicitudes_recientes': solicitudes_recientes,
-        'instructores': instructores,   
+        'instructores': instructores,
     }
     return render(request, 'programas/detalle_programa.html', context)
 
 
-@puede_editar_requerido    
+@puede_editar_requerido
 def crear_programa(request):
     """Vista para crear un nuevo programa"""
     areas = Area.objects.filter(activo=True).order_by('nombre')
 
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
+        nombre = request.POST.get('nombre', '').strip()
         codigo = request.POST.get('codigo', '').strip()
         area_id = request.POST.get('area')
         descripcion = request.POST.get('descripcion', '')
         duracion_horas = request.POST.get('duracion_horas', '')
         activo = request.POST.get('activo') == 'on'
 
-        # Validaciones
+        # ── Validación 1: campos obligatorios básicos ──────────────────────────
         if not nombre or not area_id:
-            messages.error(request, 'El nombre y el área son obligatorios.')
-            return render(request, 'programas/crear_programa.html', {
-                'areas': areas,
-            })
+            messages.error(request, '❌ El nombre y el área son obligatorios.')
+            return render(request, 'programas/crear_programa.html', {'areas': areas})
 
-        # ✅ Validar código duplicado (solo si se proporciona un código)
-        if codigo and Programa.objects.filter(codigo=codigo).exists():
-            messages.error(request, f'Ya existe un programa con el código "{codigo}". Por favor, usa otro código.')
-            return render(request, 'programas/crear_programa.html', {
-                'areas': areas,
-            })
+        # ── Validación 2: código obligatorio ───────────────────────────────────
+        if not codigo:
+            messages.error(request, '❌ El código del programa es obligatorio.')
+            return render(request, 'programas/crear_programa.html', {'areas': areas})
+
+        # ── Validación 3: código solo numérico ─────────────────────────────────
+        if not codigo.isdigit():
+            messages.error(request, '❌ El código del programa solo puede contener números. No se permiten letras ni caracteres especiales.')
+            return render(request, 'programas/crear_programa.html', {'areas': areas})
+
+        # ── Validación 4: código duplicado ─────────────────────────────────────
+        if Programa.objects.filter(codigo=codigo).exists():
+            messages.error(
+                request,
+                f'❌ Ya existe un programa con el código "{codigo}". Por favor, usa otro código.'
+            )
+            return render(request, 'programas/crear_programa.html', {'areas': areas})
 
         try:
             area = Area.objects.get(id=area_id)
@@ -123,18 +134,19 @@ def crear_programa(request):
                 activo=activo
             )
 
-            messages.success(request, f'✅ Programa "{programa.nombre}" creado exitosamente')
+            messages.success(request, f'✅ Programa "{programa.nombre}" creado exitosamente.')
             return redirect('programas:listar_programas')
 
         except Area.DoesNotExist:
-            messages.error(request, 'El área seleccionada no existe')
+            messages.error(request, '❌ El área seleccionada no existe.')
 
         except Exception as e:
-            messages.error(request, f'Error al crear el programa: {str(e)}')
+            messages.error(request, f'❌ Error al crear el programa: {str(e)}')
 
     return render(request, 'programas/crear_programa.html', {'areas': areas})
 
-@puede_editar_requerido            
+
+@puede_editar_requerido
 def editar_programa(request, programa_id):
     """vista para editar un programa existente"""
     programa = get_object_or_404(Programa, id=programa_id)
@@ -143,26 +155,45 @@ def editar_programa(request, programa_id):
     areas = Area.objects.filter(activo=True).order_by('nombre')
     
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
+        nombre = request.POST.get('nombre', '').strip()
         codigo = request.POST.get('codigo', '').strip()
         area_id = request.POST.get('area')
         descripcion = request.POST.get('descripcion', '')
         duracion_horas = request.POST.get('duracion_horas', '')
         activo = request.POST.get('activo') == 'on'
         
-        # validaciones 
+        # ── Validación 1: campos obligatorios básicos ──────────────────────────
         if not nombre or not area_id:
-            messages.error(request, "El nombre y el área son obligatorios")
+            messages.error(request, '❌ El nombre y el área son obligatorios.')
             return render(request, 'programas/editar_programa.html', {
                 'programa': programa,
                 'areas': areas
             })
-            
-        #codigo  duplicado
-        if codigo and Programa.objects.filter(codigo=codigo).exclude(id=programa_id).exists():
-            messages.error(request, f'Ya existe otro programa con el  codigo "{codigo}".')
-            return render(request, 'programas/editar_programa.html',{
-                'programa':programa,
+
+        # ── Validación 2: código obligatorio ───────────────────────────────────
+        if not codigo:
+            messages.error(request, '❌ El código del programa es obligatorio.')
+            return render(request, 'programas/editar_programa.html', {
+                'programa': programa,
+                'areas': areas
+            })
+
+        # ── Validación 3: código solo numérico ─────────────────────────────────
+        if not codigo.isdigit():
+            messages.error(
+                request,
+                '❌ El código del programa solo puede contener números. No se permiten letras ni caracteres especiales.'
+            )
+            return render(request, 'programas/editar_programa.html', {
+                'programa': programa,
+                'areas': areas
+            })
+
+        # ── Validación 4: código duplicado (excluyendo el programa actual) ──────
+        if Programa.objects.filter(codigo=codigo).exclude(id=programa_id).exists():
+            messages.error(request, f'❌ Ya existe otro programa con el código "{codigo}".')
+            return render(request, 'programas/editar_programa.html', {
+                'programa': programa,
                 'areas': areas
             })
         
@@ -178,11 +209,11 @@ def editar_programa(request, programa_id):
             programa.activo = activo
             programa.save()
             
-            messages.success(request, f' ✅Programa "{programa.nombre}" actualizado exitosamente')
+            messages.success(request, f'✅ Programa "{programa.nombre}" actualizado exitosamente.')
             return redirect('programas:detalle_programa', programa_id=programa.id)
         
         except Area.DoesNotExist:
-            messages.error(request, 'El área seleccionada no existe')
+            messages.error(request, '❌ El área seleccionada no existe.')
         except Exception as e:
             messages.error(request, f'❌ Error al actualizar el programa: {str(e)}')
     
@@ -191,6 +222,7 @@ def editar_programa(request, programa_id):
         'programa': programa,
         'areas': areas
     })
+
 
 @puede_editar_requerido
 def desactivar_programa(request, programa_id):
@@ -209,8 +241,8 @@ def desactivar_programa(request, programa_id):
         programa.save()
         
         messages.success(
-            request, 
-            f'Programa "{programa.nombre}" desactivado exitosamente'
+            request,
+            f'✅ Programa "{programa.nombre}" desactivado exitosamente.'
         )
         return redirect('programas:listar_programas')
     
@@ -221,6 +253,7 @@ def desactivar_programa(request, programa_id):
     }
     return render(request, 'programas/desactivar_programa.html', context)
 
+
 @puede_editar_requerido
 def eliminar_programa(request, programa_id):
     """Vista para eliminar permanentemente un programa"""
@@ -230,13 +263,13 @@ def eliminar_programa(request, programa_id):
     total_solicitudes = programa.solicitud_set.count()
     
     if request.method == 'POST':
-        #verificar si  tiene solicitudes asociadas 
+        # verificar si tiene solicitudes asociadas
         if total_solicitudes > 0:
-            #Verificar que hacer con las solicitudes
+            # Verificar que hacer con las solicitudes
             accion_solicitudes = request.POST.get('accion_solicitudes')
             
             if accion_solicitudes == 'eliminar':
-                #Eliminar tambien las solicitudes
+                # Eliminar tambien las solicitudes
                 nombre_programa = programa.nombre
                 solicitudes_eliminadas = total_solicitudes
                 programa.solicitud_set.all().delete()
@@ -244,40 +277,38 @@ def eliminar_programa(request, programa_id):
                 
                 messages.success(
                     request,
-                    f'✅ Programa "{nombre_programa}" y sus {solicitudes_eliminadas} solicitud(es) eliminados permanentemente'
+                    f'✅ Programa "{nombre_programa}" y sus {solicitudes_eliminadas} solicitud(es) eliminados permanentemente.'
                 )
             elif accion_solicitudes == 'cancelar':
-                #Cancelar la eliminacion
+                # Cancelar la eliminacion
                 messages.warning(
                     request,
-                    f'⚠️ Eliminacion cancelada. El programa"{programa.nombre}" no se elimino'
+                    f'⚠️ Eliminación cancelada. El programa "{programa.nombre}" no se eliminó.'
                 )
                 return redirect('programas:detalle_programa', programa_id=programa.id)
             else:
-                #No se selecciono ninguna opcion
+                # No se selecciono ninguna opcion
                 messages.error(
                     request,
-                    '❌ Debes seleccionar que hacer con las solicitudes asociadas'
+                    '❌ Debes seleccionar qué hacer con las solicitudes asociadas.'
                 )
                 return render(request, 'programas/eliminar_programa.html', {
-                    'programa':programa,
+                    'programa': programa,
                     'total_solicitudes': total_solicitudes
                 })
         else:
-            #No tiene solicitudes, eliminar directamente
+            # No tiene solicitudes, eliminar directamente
             nombre_programa = programa.nombre
             programa.delete()
             messages.success(
                 request,
-                f'✅ Programa "{nombre_programa}" eliminado exitosamente'
+                f'✅ Programa "{nombre_programa}" eliminado exitosamente.'
             )
         
         return redirect('programas:listar_programas')
     
     context = {
-        'programa':programa,
+        'programa': programa,
         'total_solicitudes': total_solicitudes,
-        
     }
     return render(request, 'programas/eliminar_programa.html', context)
-        

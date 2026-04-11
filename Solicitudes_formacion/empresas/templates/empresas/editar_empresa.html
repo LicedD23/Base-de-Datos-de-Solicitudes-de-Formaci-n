@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar {{ empresa.nombre }} - SENA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,10 +14,7 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .container { max-width: 900px; margin: 0 auto; }
 
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -29,51 +22,30 @@
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 8px 20px rgba(46,125,50,0.3);
         }
 
-        .header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1em;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 700; }
+        .header p  { font-size: 1em; opacity: 0.95; }
 
         .breadcrumb {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
         }
 
-        .breadcrumb a {
-            color: #2e7d32;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-
-        .breadcrumb span {
-            color: #999;
-        }
+        .breadcrumb a { color: #2e7d32; text-decoration: none; transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb span { color: #999; }
 
         /* Mensajes */
-        .messages-container {
-            margin-bottom: 25px;
-        }
+        .messages-container { margin-bottom: 25px; }
 
         .alert {
             padding: 18px 25px;
@@ -84,108 +56,33 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
             overflow: hidden;
         }
 
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
         }
 
-        .alert::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-        }
+        .alert::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
 
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            border: 2px solid #1b5e20;
-        }
+        .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
+        .alert-success::before { background: #fff; }
+        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
+        .alert-warning::before { background: #fff; }
 
-        .alert-success::before {
-            background: #fff;
-        }
-
-        .alert-success .alert-icon {
-            font-size: 1.8em;
-            animation: scaleIn 0.5s ease-out;
-        }
-
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-            border: 2px solid #b71c1c;
-        }
-
-        .alert-error .alert-icon {
-            font-size: 1.8em;
-            animation: shake 0.5s ease-out;
-        }
-
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
-        }
-
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-            border: 2px solid #e65100;
-        }
-
-        .alert-warning::before {
-            background: #fff;
-        }
-
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
-        }
+        .alert-icon    { font-size: 1.5em; flex-shrink: 0; }
+        .alert-content { flex: 1; line-height: 1.5; }
 
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -197,11 +94,9 @@
             flex-shrink: 0;
         }
 
-        .alert-close:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
-        }
+        .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
 
+        /* Banner informativo */
         .info-banner {
             background: #e8f5e9;
             border-left: 4px solid #2e7d32;
@@ -213,37 +108,34 @@
             gap: 15px;
         }
 
-        .info-banner-icon {
-            font-size: 1.5em;
-        }
+        .info-banner-icon { font-size: 1.5em; }
 
-        .info-banner-content {
-            flex: 1;
-        }
+        .info-banner-content strong { display: block; color: #2e7d32; margin-bottom: 5px; }
+        .info-banner-content p { color: #666; font-size: 0.9em; margin: 0; }
 
-        .info-banner-content strong {
-            display: block;
-            color: #2e7d32;
-            margin-bottom: 5px;
-        }
-
-        .info-banner-content p {
-            color: #666;
-            font-size: 0.9em;
-            margin: 0;
-        }
-
+        /* Tarjeta */
         .form-card {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-top: 4px solid #2e7d32;
         }
 
-        .form-group {
-            margin-bottom: 25px;
+        .form-section { margin-bottom: 35px; }
+
+        .form-section-title {
+            font-size: 1.3em;
+            color: #2e7d32;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+            font-weight: 600;
         }
+
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        .form-group { margin-bottom: 20px; }
 
         .form-group label {
             display: block;
@@ -254,10 +146,7 @@
             letter-spacing: 0.3px;
         }
 
-        .form-group label.required::after {
-            content: " *";
-            color: #c62828;
-        }
+        .form-group label.required::after { content: " *"; color: #c62828; }
 
         .form-group input[type="text"],
         .form-group input[type="email"],
@@ -274,23 +163,16 @@
             background: #fafafa;
         }
 
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="tel"]:focus,
-        .form-group input[type="number"]:focus,
+        .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+            box-shadow: 0 0 0 4px rgba(46,125,50,0.15);
             background: white;
             transform: translateY(-1px);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-            line-height: 1.6;
-        }
+        .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 
         .form-group small {
             display: block;
@@ -299,6 +181,21 @@
             font-size: 0.88em;
             font-style: italic;
             padding-left: 5px;
+        }
+
+        /* Nota informativa (azul) */
+        .info-note {
+            background: #e3f2fd;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 0.88em;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-style: normal;
         }
 
         .checkbox-group {
@@ -312,26 +209,58 @@
         }
 
         .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             cursor: pointer;
             accent-color: #2e7d32;
         }
 
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 500;
-            color: #333;
+        .checkbox-group label { margin: 0; cursor: pointer; font-weight: 500; color: #333; }
+
+        /* Metadatos */
+        .metadata-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 3px solid #2e7d32;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 5px;
+        .metadata-section h3 { color: #2e7d32; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        .metadata-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+
+        .metadata-item { display: flex; flex-direction: column; gap: 5px; }
+        .metadata-item label { font-size: 0.85em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .metadata-item .value { font-size: 1.1em; color: #333; font-weight: 600; }
+
+        /* Aviso solicitudes */
+        .warning-box {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
 
+        .warning-box-icon { font-size: 1.5em; color: #ef6c00; }
+        .warning-box-content strong { display: block; color: #ef6c00; margin-bottom: 5px; }
+        .warning-box-content p { color: #666; margin: 5px 0; font-size: 0.9em; }
+
+        /* Nota obligatorios */
+        .required-note {
+            background: #fff3e0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            color: #ef6c00;
+            border-left: 4px solid #ef6c00;
+        }
+
+        /* Botones */
         .form-actions {
             display: flex;
             gap: 15px;
@@ -359,13 +288,10 @@
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             flex: 1;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
         }
 
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
-        }
+        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
 
         .btn-secondary {
             background: white;
@@ -374,412 +300,254 @@
             flex: 1;
         }
 
-        .btn-secondary:hover {
-            background: #f5f5f5;
-            border-color: #bdbdbd;
-        }
+        .btn-secondary:hover { background: #f5f5f5; border-color: #bdbdbd; }
 
-        .required-note {
-            background: #e8f5e9;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
-        }
-
-        .metadata-section {
-            background: #f9f9f9;
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
             padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border-left: 3px solid #2e7d32;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
-        .metadata-section h3 {
-            color: #2e7d32;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .metadata-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .metadata-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .metadata-item label {
-            font-size: 0.85em;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metadata-item .value {
-            font-size: 1.1em;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .warning-box {
-            background: #fff3e0;
-            border: 2px solid #ffb74d;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .warning-box-icon {
-            font-size: 1.5em;
-            color: #ef6c00;
-        }
-
-        .warning-box-content {
-            flex: 1;
-        }
-
-        .warning-box-content strong {
-            display: block;
-            color: #ef6c00;
-            margin-bottom: 5px;
-        }
-
-        .warning-box-content p {
-            color: #666;
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-
-        /* FOOTER STYLES */
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
-        }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
-        }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .form-card {
-                padding: 25px;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .metadata-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .page-wrapper {
-                padding: 15px;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
+            .header h1 { font-size: 1.8em; }
+            .form-card  { padding: 25px; }
+            .form-grid  { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; }
+            .metadata-grid { grid-template-columns: 1fr; }
+            footer { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>✏️ Editar Empresa</h1>
-            <p>Modifica la información de la empresa: <strong>{{ empresa.nombre }}</strong></p>
-        </div>
+<div class="container">
 
-        <div class="breadcrumb">
-            <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
-            <span>›</span>
-            <a href="{% url 'empresas:listar_empresas' %}">Empresas</a>
-            <span>›</span>
-            <a href="{% url 'empresas:detalle_empresa' empresa.id %}">{{ empresa.nombre }}</a>
-            <span>›</span>
-            <span>Editar</span>
-        </div>
+    <div class="header">
+        <h1>✏️ Editar Empresa</h1>
+        <p>Modifica la información de la empresa: <strong>{{ empresa.nombre }}</strong></p>
+    </div>
 
-        <div class="info-banner">
-            <div class="info-banner-icon">ℹ️</div>
-            <div class="info-banner-content">
-                <strong>Editando Empresa</strong>
-                <p>Los cambios afectarán a todas las solicitudes asociadas a esta empresa. Verifica la información antes de guardar.</p>
+    <div class="breadcrumb">
+        <a href="{% url 'core:dashboard' %}">🏠 Dashboard</a>
+        <span>›</span>
+        <a href="{% url 'empresas:listar_empresas' %}">Empresas</a>
+        <span>›</span>
+        <a href="{% url 'empresas:detalle_empresa' empresa.id %}">{{ empresa.nombre }}</a>
+        <span>›</span>
+        <span>Editar</span>
+    </div>
+
+    <div class="info-banner">
+        <div class="info-banner-icon">ℹ️</div>
+        <div class="info-banner-content">
+            <strong>Editando Empresa</strong>
+            <p>Los cambios afectarán a todas las solicitudes asociadas a esta empresa. Verifica la información antes de guardar.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+            <div class="alert-icon">
+                {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
             </div>
+            <div class="alert-content">{{ message }}</div>
+            <button class="alert-close" onclick="this.parentElement.remove()">×</button>
         </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-        <!-- Mensajes mejorados -->
-        {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
-                    <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
-                        {% endif %}
-                    </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
-                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    <div class="form-card">
+
+        <div class="metadata-section">
+            <h3>📊 Información Actual</h3>
+            <div class="metadata-grid">
+                <div class="metadata-item">
+                    <label>Fecha de Registro</label>
+                    <div class="value">{{ empresa.fecha_registro|date:"d/m/Y H:i" }}</div>
                 </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        <div class="form-card">
-            <div class="metadata-section">
-                <h3>📊 Información Actual</h3>
-                <div class="metadata-grid">
-                    <div class="metadata-item">
-                        <label>Fecha de Registro</label>
-                        <div class="value">{{ empresa.fecha_registro|date:"d/m/Y H:i" }}</div>
-                    </div>
-                    <div class="metadata-item">
-                        <label>Total Solicitudes</label>
-                        <div class="value">{{ empresa.solicitud_set.count }}</div>
-                    </div>
-                    <div class="metadata-item">
-                        <label>Municipio Actual</label>
-                        <div class="value">{{ empresa.municipio|default:"No especificado" }}</div>
-                    </div>
-                    <div class="metadata-item">
-                        <label>Estado</label>
-                        <div class="value">{% if empresa.activo %}✓ Activo{% else %}○ Inactivo{% endif %}</div>
-                    </div>
+                <div class="metadata-item">
+                    <label>Total Solicitudes</label>
+                    <div class="value">{{ empresa.solicitud_set.count }}</div>
+                </div>
+                <div class="metadata-item">
+                    <label>Municipio Actual</label>
+                    <div class="value">{{ empresa.municipio|default:"No especificado" }}</div>
+                </div>
+                <div class="metadata-item">
+                    <label>Estado</label>
+                    <div class="value">{% if empresa.activo %}✓ Activo{% else %}○ Inactivo{% endif %}</div>
                 </div>
             </div>
+        </div>
 
-            <div class="required-note">
-                ⚠️ Los campos marcados con asterisco (*) son obligatorios
-            </div>
+        <div class="required-note">
+            ⚠️ Todos los campos marcados con asterisco (*) son obligatorios
+        </div>
 
-            <form method="POST" action="{% url 'empresas:editar_empresa' empresa.id %}">
-                {% csrf_token %}
+        <form method="POST" action="{% url 'empresas:editar_empresa' empresa.id %}">
+            {% csrf_token %}
+
+            <!-- Información Básica -->
+            <div class="form-section">
+                <h3 class="form-section-title">📋 Información Básica</h3>
 
                 <div class="form-group">
                     <label for="nombre" class="required">Nombre de la Empresa</label>
-                    <input 
-                        type="text" 
-                        id="nombre" 
-                        name="nombre" 
-                        value="{{ empresa.nombre }}"
-                        placeholder="Ejemplo: Constructora ABC S.A.S."
-                        required
-                        maxlength="200"
-                    >
-                    <small>Razón social o nombre comercial de la empresa (máximo 200 caracteres)</small>
+                    <input type="text" id="nombre" name="nombre"
+                           value="{{ empresa.nombre }}"
+                           placeholder="Ejemplo: Constructora ABC S.A.S."
+                           required maxlength="200">
+                    <small>Razón social o nombre comercial (máximo 200 caracteres)</small>
                 </div>
 
-                <div class="form-row">
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="nit">NIT (Número de Identificación Tributaria)</label>
-                        <input 
-                            type="text" 
-                            id="nit" 
-                            name="nit" 
-                            value="{{ empresa.nit }}"
-                            placeholder="900123456 o 900123456-7"
-                            maxlength="20"
-                        >
-                        <small>NIT de la empresa sin puntos (mínimo 9 dígitos)</small>
+                        <label for="nit" class="required">NIT</label>
+                        <input type="text" id="nit" name="nit"
+                               value="{{ empresa.nit }}"
+                               placeholder="900123456 o 900123456-7"
+                               maxlength="20" required>
+                        <small>NIT sin puntos (mínimo 9 dígitos)</small>
                     </div>
 
                     <div class="form-group">
                         <label for="numero_trabajadores" class="required">Número de Trabajadores</label>
-                        <input 
-                            type="number" 
-                            id="numero_trabajadores" 
-                            name="numero_trabajadores" 
-                            value="{{ empresa.numero_trabajadores }}"
-                            placeholder="Ejemplo: 50"
-                            required
-                            min="1"
-                        >
+                        <input type="number" id="numero_trabajadores" name="numero_trabajadores"
+                               value="{{ empresa.numero_trabajadores }}"
+                               placeholder="Mínimo 20"
+                               min="20" required>
                         <small>Cantidad de empleados</small>
+                        <div class="info-note">ℹ️ La empresa debe tener mínimo 20 trabajadores.</div>
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-group">
+                    <label for="contacto" class="required">Persona de Contacto</label>
+                    <input type="text" id="contacto" name="contacto"
+                           value="{{ empresa.contacto }}"
+                           placeholder="Nombre Completo"
+                           maxlength="100" required>
+                    <small>Nombre del responsable o contacto principal</small>
+                </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="form-section">
+                <h3 class="form-section-title">📞 Información de Contacto</h3>
+
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="contacto" class="required">Nombre del Contacto</label>
-                        <input 
-                            type="text" 
-                            id="contacto" 
-                            name="contacto" 
-                            value="{{ empresa.contacto }}"
-                            placeholder="Ejemplo: Juan Pérez"
-                            required
-                            maxlength="100"
-                        >
-                        <small>Persona de contacto en la empresa</small>
+                        <label for="correo" class="required">Correo Electrónico</label>
+                        <input type="email" id="correo" name="correo"
+                               value="{{ empresa.correo }}"
+                               placeholder="ejemplo@empresa.com"
+                               maxlength="100" required>
+                        <small>Dirección de correo electrónico</small>
                     </div>
 
                     <div class="form-group">
                         <label for="telefono" class="required">Teléfono</label>
-                        <input 
-                            type="tel" 
-                            id="telefono" 
-                            name="telefono" 
-                            value="{{ empresa.telefono }}"
-                            placeholder="Ejemplo: 3001234567"
-                            required
-                            maxlength="20"
-                        >
+                        <input type="tel" id="telefono" name="telefono"
+                               value="{{ empresa.telefono }}"
+                               placeholder="3001234567"
+                               maxlength="20" required>
                         <small>Número de contacto</small>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="correo" class="required">Correo Electrónico</label>
-                    <input 
-                        type="email" 
-                        id="correo" 
-                        name="correo" 
-                        value="{{ empresa.correo }}"
-                        placeholder="Ejemplo: contacto@empresa.com"
-                        required
-                    >
-                    <small>Correo electrónico de contacto</small>
-                </div>
+            <!-- Ubicación -->
+            <div class="form-section">
+                <h3 class="form-section-title">📍 Ubicación</h3>
 
-                <div class="form-row">
+                <div class="form-grid">
                     <div class="form-group">
                         <label for="municipio" class="required">Municipio</label>
-                        <input 
-                            type="text" 
-                            id="municipio" 
-                            name="municipio" 
-                            value="{{ empresa.municipio }}"
-                            placeholder="Ejemplo: Bogotá"
-                            required
-                            maxlength="100"
-                        >
-                        <small>Municipio donde opera la empresa</small>
+                        <input type="text" id="municipio" name="municipio"
+                               value="{{ empresa.municipio }}"
+                               placeholder="Ejemplo: Bogotá"
+                               maxlength="100" required>
+                        <small>Ciudad o municipio donde opera la empresa</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="direccion">Dirección</label>
-                        <input 
-                            type="text" 
-                            id="direccion" 
-                            name="direccion" 
-                            value="{{ empresa.direccion }}"
-                            placeholder="Calle 123 #45-67"
-                            maxlength="250"
-                        >
-                        <small>Dirección física de la empresa (opcional)</small>
+                        <label for="direccion" class="required">Dirección</label>
+                        <input type="text" id="direccion" name="direccion"
+                               value="{{ empresa.direccion }}"
+                               placeholder="Calle 123 #45-67"
+                               maxlength="250" required>
+                        <small>Dirección física de la empresa</small>
                     </div>
                 </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="form-section">
+                <h3 class="form-section-title">⚙️ Estado</h3>
 
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <input 
-                            type="checkbox" 
-                            id="activo" 
-                            name="activo"
-                            {% if empresa.activo %}checked{% endif %}
-                        >
-                        <label for="activo">
-                            ✓ Empresa activa (disponible para asociar solicitudes)
-                        </label>
+                        <input type="checkbox" id="activo" name="activo"
+                               {% if empresa.activo %}checked{% endif %}>
+                        <label for="activo">✓ Empresa activa (disponible para asociar solicitudes)</label>
                     </div>
-                    <small style="margin-left: 15px; margin-top: 10px;">
+                    <small style="margin-left: 15px; margin-top: 10px; display: block;">
                         Si está inactiva, la empresa no aparecerá en los listados de selección.
                     </small>
                 </div>
+            </div>
 
-                {% if empresa.solicitud_set.count > 0 %}
-                <div class="warning-box">
-                    <div class="warning-box-icon">⚠️</div>
-                    <div class="warning-box-content">
-                        <strong>Importante</strong>
-                        <p>Esta empresa tiene <strong>{{ empresa.solicitud_set.count }} solicitud(es)</strong> asociada(s).</p>
-                        <p>Cambiar la información afectará a todas las referencias del sistema en estas solicitudes.</p>
-                    </div>
+            {% if empresa.solicitud_set.count > 0 %}
+            <div class="warning-box">
+                <div class="warning-box-icon">⚠️</div>
+                <div class="warning-box-content">
+                    <strong>Importante</strong>
+                    <p>Esta empresa tiene <strong>{{ empresa.solicitud_set.count }} solicitud(es)</strong> asociada(s).</p>
+                    <p>Cambiar la información afectará a todas las referencias del sistema en estas solicitudes.</p>
                 </div>
-                {% endif %}
+            </div>
+            {% endif %}
 
-                <div class="form-actions">
-                    <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn btn-secondary">
-                        ✕ Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-warning">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="form-actions">
+                <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="btn btn-secondary">✕ Cancelar</a>
+                <button type="submit" class="btn btn-warning">💾 Guardar Cambios</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    
-    <footer>
-        <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-    </footer>
-    <script>
-        // Auto-cerrar mensajes después de 8 segundos
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.animation = 'slideOutUp 0.4s ease-out';
-                    setTimeout(() => alert.remove(), 400);
-                }, 8000);
-            });
+<footer>
+    <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.alert').forEach(function (alert) {
+            setTimeout(function () {
+                alert.style.animation = 'slideOutUp 0.4s ease-out';
+                setTimeout(function () { alert.remove(); }, 400);
+            }, 8000);
         });
+    });
 
-        // Animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-
-    {% include 'core/accessibility.html' %}
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOutUp {
+            from { transform: translateY(0);     opacity: 1; }
+            to   { transform: translateY(-20px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% include 'core/accessibility.html' %}
 </body>
 </html>

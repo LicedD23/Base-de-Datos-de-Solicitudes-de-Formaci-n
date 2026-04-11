@@ -15,7 +15,6 @@ class Solicitud(models.Model):
     ]
 
     # Flujo válido de transiciones como constante de clase
-    # Definido aquí para que sea la única fuente de verdad en todo el proyecto
     FLUJO_VALIDO = {
         'RECIBIDA':   ['ATENDIDA'],
         'ATENDIDA':   ['RESPONDIDA'],
@@ -49,6 +48,16 @@ class Solicitud(models.Model):
     fecha_respuesta    = models.DateTimeField(null=True, blank=True)
     fecha_atencion     = models.DateTimeField(null=True, blank=True)
     fecha_finalizacion = models.DateTimeField(null=True, blank=True)
+
+    # ── NUEVO: rango real de la formación dictada por el instructor ──────
+    fecha_fin_formacion = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha fin de formación",
+        help_text="Fecha en que el instructor termina de dictar la formación. "
+                  "Al cumplirse, la solicitud se finaliza automáticamente.",
+    )
+
     estado = models.CharField(
         max_length=20,
         choices=ESTADO_CHOICES,
@@ -85,52 +94,62 @@ class Solicitud(models.Model):
     # ------------------------------------------------------------------
 
     def puede_cambiar_a_estado(self, nuevo_estado):
-        """
-        Valida si la transición al nuevo_estado es permitida.
-
-        Flujo único aceptado:
-            RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
-
-        - RECIBIDA  → ATENDIDA:   se asigna instructor, comienza la formación.
-        - ATENDIDA  → RESPONDIDA: se envía correo a la empresa notificando.
-        - RESPONDIDA→ FINALIZADA: la formación concluye exitosamente.
-        """
         return nuevo_estado in self.FLUJO_VALIDO.get(self.estado, [])
 
     def siguiente_estado(self):
-        """Retorna el código del siguiente estado esperado, o None si es terminal."""
         return self.SIGUIENTE_ESTADO.get(self.estado)
 
     def siguiente_accion(self):
-        """
-        Describe en lenguaje natural qué acción debe realizar el usuario
-        para avanzar la solicitud al siguiente estado.
-        Retorna None cuando la solicitud está finalizada.
-        """
         return self.SIGUIENTE_ACCION.get(self.estado)
 
     def get_siguiente_accion_display(self):
-        """Alias legible para usar directamente en templates."""
         return self.siguiente_accion()
 
     # ------------------------------------------------------------------
-    # Helpers de estado para templates (evitan lógica en el HTML)
+    # Helpers de estado para templates
     # ------------------------------------------------------------------
 
     def esta_finalizada(self):
         return self.estado == 'FINALIZADA'
 
     def requiere_instructor(self):
-        """True cuando aún no tiene instructor y está en RECIBIDA."""
         return self.estado == 'RECIBIDA' and not self.instructor_asignado
 
     def puede_enviar_respuesta(self):
-        """True cuando la solicitud está ATENDIDA y puede recibir un correo de respuesta."""
         return self.estado == 'ATENDIDA'
 
     def puede_finalizar(self):
-        """True cuando la empresa ya fue notificada y se puede cerrar la solicitud."""
         return self.estado == 'RESPONDIDA'
+
+    # ------------------------------------------------------------------
+    # Helpers de formación
+    # ------------------------------------------------------------------
+
+    def formacion_en_rango(self, fecha=None):
+        """
+        Retorna True si hoy (o la fecha dada) cae dentro del rango
+        de formación del instructor asignado.
+        """
+        if not self.fecha_atencion:
+            return False
+        fecha = fecha or timezone.now().date()
+        inicio = self.fecha_atencion.date()
+        fin    = self.fecha_fin_formacion  # puede ser None
+        if fin:
+            return inicio <= fecha <= fin
+        return inicio <= fecha
+
+    def formacion_finalizada_por_fecha(self):
+        """
+        True cuando la fecha_fin_formacion ya se cumplió y la solicitud
+        aún no está marcada como FINALIZADA.
+        """
+        if not self.fecha_fin_formacion:
+            return False
+        return (
+            self.fecha_fin_formacion <= timezone.now().date()
+            and self.estado != 'FINALIZADA'
+        )
 
 
 class DocumentoSolicitud(models.Model):

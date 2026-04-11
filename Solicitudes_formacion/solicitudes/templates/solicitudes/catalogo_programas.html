@@ -22,8 +22,18 @@
             --white:        #ffffff;
             --border:       #dde8dd;
             --shadow-g:     rgba(26,92,42,0.13);
-            --rojo:         #c0392b;
-            --azul:         #1565c0;
+        }
+
+        /* Paleta de colores por área (se aplica por índice) */
+        :root {
+            --color-1-a: #1a5c2a; --color-1-b: #2e7d32;
+            --color-2-a: #00695c; --color-2-b: #00897b;
+            --color-3-a: #1565c0; --color-3-b: #1976d2;
+            --color-4-a: #b71c1c; --color-4-b: #e53935;
+            --color-5-a: #e65100; --color-5-b: #f57c00;
+            --color-6-a: #6a1b9a; --color-6-b: #9c27b0;
+            --color-7-a: #37474f; --color-7-b: #546e7a;
+            --color-8-a: #4a148c; --color-8-b: #7b1fa2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,7 +46,7 @@
         }
 
         /* ══════════════════════════════
-           TOOLBAR FIJA (solo pantalla)
+           TOOLBAR FIJA
         ══════════════════════════════ */
         .toolbar {
             position: fixed;
@@ -59,16 +69,9 @@
             color: rgba(255,255,255,0.85);
             font-size: 0.9em;
             font-weight: 500;
-            font-family: 'DM Sans', sans-serif;
         }
 
         .toolbar-left span { font-size: 1.3em; }
-
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
 
         .btn-pdf {
             display: inline-flex;
@@ -84,44 +87,19 @@
             cursor: pointer;
             text-decoration: none;
             transition: all 0.25s ease;
-            letter-spacing: 0.3px;
             font-family: 'DM Sans', sans-serif;
         }
 
         .btn-pdf:hover {
             background: var(--verde-pale);
-            color: var(--verde);
-            border-color: var(--verde-pale);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.9);
-            border: 1.5px solid rgba(255,255,255,0.25);
-            padding: 9px 18px;
-            border-radius: 8px;
-            font-size: 0.88em;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .btn-back:hover {
-            background: rgba(255,255,255,0.22);
-            border-color: rgba(255,255,255,0.5);
         }
 
         body { padding-top: 56px; }
 
         /* ══════════════════════════════
-           HERO — igualado a guía
+           HERO
         ══════════════════════════════ */
         .hero {
             background: var(--verde);
@@ -134,14 +112,12 @@
             content: '';
             position: absolute;
             inset: 0;
-            background-image:
-                repeating-linear-gradient(
-                    60deg,
-                    transparent,
-                    transparent 38px,
-                    rgba(255,255,255,0.03) 38px,
-                    rgba(255,255,255,0.03) 39px
-                );
+            background-image: repeating-linear-gradient(
+                60deg,
+                transparent, transparent 38px,
+                rgba(255,255,255,0.03) 38px,
+                rgba(255,255,255,0.03) 39px
+            );
             pointer-events: none;
         }
 
@@ -182,7 +158,6 @@
             font-weight: 700;
             color: var(--white);
             line-height: 1.15;
-            margin-bottom: 0;
         }
 
         .hero h1 em {
@@ -202,10 +177,6 @@
             display: flex;
             gap: 36px;
             flex-wrap: wrap;
-        }
-
-        .stat {
-            text-align: center;
         }
 
         .stat-num {
@@ -231,7 +202,6 @@
             transform: translateY(-50%);
             font-size: 9em;
             opacity: 0.06;
-            line-height: 1;
             pointer-events: none;
             user-select: none;
         }
@@ -261,53 +231,6 @@
             transform: translateY(-1px);
         }
 
-        /* ══════════════════════════════
-           BREADCRUMB — idéntico a guía
-        ══════════════════════════════ */
-        .breadcrumb-wrapper {
-            padding: 16px 24px 0;
-        }
-
-        .breadcrumb {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin: 0 auto;
-            max-width: 1100px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95em;
-            flex-wrap: wrap;
-        }
-
-        .breadcrumb a {
-            color: #2e7d32;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .breadcrumb a:hover {
-            color: #1b5e20;
-            text-decoration: underline;
-        }
-
-        .breadcrumb span { color: #999; }
-
-        /* ══════════════════════════════
-           MAIN WRAPPER
-        ══════════════════════════════ */
-        .main {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 24px 64px;
-        }
-
-        /* ══════════════════════════════
-           PORTADA SECTION (intro)
-        ══════════════════════════════ */
         .portada-footer-bar {
             background: rgba(0,0,0,0.18);
             border-radius: 12px;
@@ -337,6 +260,43 @@
             font-size: 2em;
             font-weight: 700;
             color: rgba(255,255,255,0.18);
+        }
+
+        /* ══════════════════════════════
+           BREADCRUMB
+        ══════════════════════════════ */
+        .breadcrumb-wrapper { padding: 16px 24px 0; }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 1100px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { color: #999; }
+
+        /* ══════════════════════════════
+           MAIN
+        ══════════════════════════════ */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 64px;
         }
 
         /* ══════════════════════════════
@@ -420,17 +380,14 @@
             height: 1px;
             background: repeating-linear-gradient(
                 90deg,
-                var(--border) 0,
-                var(--border) 4px,
-                transparent 4px,
-                transparent 10px
+                var(--border) 0, var(--border) 4px,
+                transparent 4px, transparent 10px
             );
             margin: 0 12px;
         }
 
         .indice-count {
             font-size: 0.82em;
-            color: var(--ink-soft);
             font-weight: 600;
             background: var(--verde-pale);
             border: 1px solid var(--verde-border);
@@ -439,6 +396,21 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+
+        /* ══════════════════════════════
+           ALERTA VACÍO
+        ══════════════════════════════ */
+        .indice-vacio {
+            background: white;
+            border: 1.5px dashed var(--border);
+            border-radius: 14px;
+            padding: 48px 32px;
+            text-align: center;
+            color: var(--ink-soft);
+        }
+
+        .indice-vacio-icon { font-size: 3em; margin-bottom: 16px; }
+        .indice-vacio h3 { font-family: 'Fraunces', serif; color: var(--ink-mid); margin-bottom: 8px; }
 
         .indice-nota {
             margin-top: 20px;
@@ -472,12 +444,15 @@
             box-shadow: 0 4px 24px rgba(0,0,0,0.08);
         }
 
-        .cat-section:nth-child(2) { animation-delay: 0.06s; }
-        .cat-section:nth-child(3) { animation-delay: 0.12s; }
-        .cat-section:nth-child(4) { animation-delay: 0.18s; }
-        .cat-section:nth-child(5) { animation-delay: 0.24s; }
-        .cat-section:nth-child(6) { animation-delay: 0.30s; }
-        .cat-section:nth-child(7) { animation-delay: 0.36s; }
+        /* Delays escalonados */
+        .cat-section:nth-child(1)  { animation-delay: 0.05s; }
+        .cat-section:nth-child(2)  { animation-delay: 0.10s; }
+        .cat-section:nth-child(3)  { animation-delay: 0.15s; }
+        .cat-section:nth-child(4)  { animation-delay: 0.20s; }
+        .cat-section:nth-child(5)  { animation-delay: 0.25s; }
+        .cat-section:nth-child(6)  { animation-delay: 0.30s; }
+        .cat-section:nth-child(7)  { animation-delay: 0.35s; }
+        .cat-section:nth-child(8)  { animation-delay: 0.40s; }
 
         .cat-hero {
             padding: 32px 36px 28px;
@@ -485,12 +460,15 @@
             overflow: hidden;
         }
 
-        .cat-hero-mineria    { background: linear-gradient(135deg, #1a5c2a 0%, #2e7d32 100%); }
-        .cat-hero-ambiental  { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); }
-        .cat-hero-maquinaria { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); }
-        .cat-hero-sst        { background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); }
-        .cat-hero-alturas    { background: linear-gradient(135deg, #e65100 0%, #f57c00 100%); }
-        .cat-hero-bilinguismo{ background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%); }
+        /* Colores por posición (hasta 8 áreas; repite el ciclo si hay más) */
+        .cat-color-1 { background: linear-gradient(135deg, var(--color-1-a), var(--color-1-b)); }
+        .cat-color-2 { background: linear-gradient(135deg, var(--color-2-a), var(--color-2-b)); }
+        .cat-color-3 { background: linear-gradient(135deg, var(--color-3-a), var(--color-3-b)); }
+        .cat-color-4 { background: linear-gradient(135deg, var(--color-4-a), var(--color-4-b)); }
+        .cat-color-5 { background: linear-gradient(135deg, var(--color-5-a), var(--color-5-b)); }
+        .cat-color-6 { background: linear-gradient(135deg, var(--color-6-a), var(--color-6-b)); }
+        .cat-color-7 { background: linear-gradient(135deg, var(--color-7-a), var(--color-7-b)); }
+        .cat-color-8 { background: linear-gradient(135deg, var(--color-8-a), var(--color-8-b)); }
 
         .cat-hero::before {
             content: '';
@@ -498,8 +476,7 @@
             inset: 0;
             background-image: repeating-linear-gradient(
                 60deg,
-                transparent,
-                transparent 40px,
+                transparent, transparent 40px,
                 rgba(255,255,255,0.04) 40px,
                 rgba(255,255,255,0.04) 41px
             );
@@ -532,8 +509,6 @@
             margin-bottom: 8px;
         }
 
-        .cat-title em { font-style: italic; color: rgba(255,255,255,0.7); }
-
         .cat-desc {
             font-size: 0.92em;
             color: rgba(255,255,255,0.72);
@@ -556,14 +531,8 @@
         ══════════════════════════════ */
         .section-divider {
             height: 3px;
-            background: linear-gradient(90deg, var(--verde), var(--verde-vivo), transparent);
+            background: linear-gradient(90deg, rgba(26,92,42,0.8), rgba(67,160,71,0.5), transparent);
         }
-
-        .section-divider-teal     { background: linear-gradient(90deg, #00695c, #00897b, transparent); }
-        .section-divider-blue     { background: linear-gradient(90deg, #1565c0, #1976d2, transparent); }
-        .section-divider-red      { background: linear-gradient(90deg, #b71c1c, #e53935, transparent); }
-        .section-divider-orange   { background: linear-gradient(90deg, #e65100, #f57c00, transparent); }
-        .section-divider-purple   { background: linear-gradient(90deg, #6a1b9a, #9c27b0, transparent); }
 
         /* ══════════════════════════════
            GRID DE PROGRAMAS
@@ -600,7 +569,6 @@
             font-size: 0.9em;
             color: var(--ink);
             line-height: 1.45;
-            letter-spacing: 0.2px;
         }
 
         .programa-meta {
@@ -633,25 +601,13 @@
             font-size: 0.70em;
         }
 
-        /* Colores de acento por categoría */
-        .programa-card.mineria    .chip-horas { background: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
-        .programa-card.ambiental  .chip-horas { background: #e0f2f1; color: #00695c; border-color: #80cbc4; }
-        .programa-card.maquinaria .chip-horas { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
-        .programa-card.sst        .chip-horas { background: #ffebee; color: #b71c1c; border-color: #ef9a9a; }
-        .programa-card.alturas    .chip-horas { background: #fff3e0; color: #e65100; border-color: #ffcc80; }
-        .programa-card.bilinguismo .chip-horas { background: #f3e5f5; color: #6a1b9a; border-color: #ce93d8; }
-
-        /* ══════════════════════════════
-           NOTA AL PIE DE CATEGORÍA
-        ══════════════════════════════ */
-        .cat-footer-note {
-            margin: 0;
-            padding: 14px 28px;
-            background: var(--oro-pale);
-            border-top: 1.5px solid #e0c97a;
-            font-size: 0.84em;
-            color: #7a5c10;
-            line-height: 1.6;
+        /* Vacío dentro del grid */
+        .programas-vacio {
+            grid-column: 1 / -1;
+            padding: 32px;
+            text-align: center;
+            color: var(--ink-soft);
+            font-size: 0.9em;
         }
 
         /* ══════════════════════════════
@@ -669,7 +625,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-            animation: fadeUp 0.5s 0.42s ease both;
+            animation: fadeUp 0.5s 0.45s ease both;
         }
 
         .contraportada::before {
@@ -678,19 +634,13 @@
             inset: 0;
             background-image: repeating-linear-gradient(
                 60deg,
-                transparent,
-                transparent 40px,
+                transparent, transparent 40px,
                 rgba(255,255,255,0.03) 40px,
                 rgba(255,255,255,0.03) 41px
             );
         }
 
-        .contra-inner {
-            position: relative;
-            z-index: 1;
-            max-width: 560px;
-        }
-
+        .contra-inner { position: relative; z-index: 1; max-width: 560px; }
         .contra-icon { font-size: 3.5em; margin-bottom: 20px; }
 
         .contra-title {
@@ -790,13 +740,13 @@
         ══════════════════════════════ */
         @media print {
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .toolbar              { display: none !important; }
-            .breadcrumb-wrapper   { display: none !important; }
-            .btn-descargar        { display: none !important; }
-            body                  { padding-top: 0 !important; }
-            .cat-section          { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
-            .contraportada        { box-shadow: none; }
-            .programa-card        { page-break-inside: avoid; }
+            .toolbar            { display: none !important; }
+            .breadcrumb-wrapper { display: none !important; }
+            .btn-descargar      { display: none !important; }
+            body                { padding-top: 0 !important; }
+            .cat-section        { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .contraportada      { box-shadow: none; }
+            .programa-card      { page-break-inside: avoid; }
         }
 
         /* ══════════════════════════════
@@ -805,7 +755,6 @@
         @media (max-width: 768px) {
             .hero { padding: 40px 22px 36px; }
             .hero-title-row { flex-direction: column; gap: 12px; }
-            .btn-descargar { align-self: flex-start; }
             .breadcrumb-wrapper { padding: 12px 18px 0; }
             .main { padding: 24px 16px 48px; }
             .programas-grid { grid-template-columns: 1fr; padding: 18px; }
@@ -825,6 +774,7 @@
         <span>⛏️</span>
         Catálogo de Programas Complementarios — SENA Centro Minero 2025
     </div>
+    <button class="btn-pdf" onclick="imprimirCatalogo()">⬇️ Descargar PDF</button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -843,19 +793,23 @@
         </p>
         <div class="hero-stats">
             <div class="stat">
-                <div class="stat-num">60+</div>
+                <div class="stat-num">{{ total_programas }}</div>
                 <div class="stat-label">Programas</div>
             </div>
             <div class="stat">
-                <div class="stat-num">6</div>
+                <div class="stat-num">{{ total_areas }}</div>
                 <div class="stat-label">Áreas</div>
             </div>
             <div class="stat">
-                <div class="stat-num">24h</div>
+                <div class="stat-num">
+                    {% if duracion_min %}{{ duracion_min }}h{% else %}—{% endif %}
+                </div>
                 <div class="stat-label">Duración mín.</div>
             </div>
             <div class="stat">
-                <div class="stat-num">260h</div>
+                <div class="stat-num">
+                    {% if duracion_max %}{{ duracion_max }}h{% else %}—{% endif %}
+                </div>
                 <div class="stat-label">Duración máx.</div>
             </div>
         </div>
@@ -871,7 +825,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     BREADCRUMB — idéntico a guía
+     BREADCRUMB
 ══════════════════════════════════════════════════════════ -->
 <div class="breadcrumb-wrapper">
     <div class="breadcrumb">
@@ -888,50 +842,36 @@
 ══════════════════════════════════════════════════════════ -->
 <div class="main">
 
-    <!-- ÍNDICE -->
+    <!-- ══ ÍNDICE ══ -->
     <div class="indice-section">
         <div class="section-eyebrow">🗂️ Contenido</div>
         <h2 class="section-title">Tabla de Contenido</h2>
-        <p class="section-sub">Explore las seis áreas de formación disponibles. Cada programa incluye duración en horas y código oficial SENA.</p>
+        <p class="section-sub">
+            Explore las {{ total_areas }} área{% if total_areas != 1 %}s{% endif %} de formación disponibles.
+            Cada programa incluye duración en horas y código oficial SENA.
+        </p>
 
-        <div class="indice-list">
-            <div class="indice-item">
-                <div class="indice-icon">⛏️</div>
-                <div class="indice-nombre">Programas de Minería</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">24 programas</div>
+        {% if areas %}
+            <div class="indice-list">
+                {% for area in areas %}
+                <div class="indice-item">
+                    <div class="indice-icon">📋</div>
+                    <div class="indice-nombre">{{ area.nombre }}</div>
+                    <div class="indice-dots"></div>
+                    <div class="indice-count">
+                        {{ area.programas_activos|length }}
+                        programa{% if area.programas_activos|length != 1 %}s{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            <div class="indice-item">
-                <div class="indice-icon">🌿</div>
-                <div class="indice-nombre">Programa Ambiental</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">16 programas</div>
+        {% else %}
+            <div class="indice-vacio">
+                <div class="indice-vacio-icon">📭</div>
+                <h3>Sin áreas registradas</h3>
+                <p>Aún no hay áreas de formación activas en el sistema. Agrégalas desde el administrador.</p>
             </div>
-            <div class="indice-item">
-                <div class="indice-icon">🚜</div>
-                <div class="indice-nombre">Operación de Maquinaria</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">10 programas</div>
-            </div>
-            <div class="indice-item">
-                <div class="indice-icon">🦺</div>
-                <div class="indice-nombre">Seguridad y Salud en el Trabajo (SST)</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">12 programas</div>
-            </div>
-            <div class="indice-item">
-                <div class="indice-icon">🧗</div>
-                <div class="indice-nombre">Programas de Alturas</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">2 programas</div>
-            </div>
-            <div class="indice-item">
-                <div class="indice-icon">🌐</div>
-                <div class="indice-nombre">Programas de Bilingüismo</div>
-                <div class="indice-dots"></div>
-                <div class="indice-count">3 programas</div>
-            </div>
-        </div>
+        {% endif %}
 
         <div class="indice-nota">
             <div class="indice-nota-titulo">ℹ️ ¿Cómo solicitar un programa?</div>
@@ -939,567 +879,70 @@
         </div>
     </div>
 
-    <!-- ══ CATEGORÍA 1: MINERÍA ══ -->
+    <!-- ══ CATEGORÍAS — loop dinámico ══ -->
+    {% for area in areas %}
+
+    {# Clase de color: cicla entre 1 y 8 según la posición del loop #}
+    {% with color_idx=forloop.counter %}
+
     <div class="cat-section">
-        <div class="cat-hero cat-hero-mineria">
+
+        {# ── Cabecera del área ── #}
+        <div class="cat-hero
+            {% if color_idx == 1 %}cat-color-1
+            {% elif color_idx == 2 %}cat-color-2
+            {% elif color_idx == 3 %}cat-color-3
+            {% elif color_idx == 4 %}cat-color-4
+            {% elif color_idx == 5 %}cat-color-5
+            {% elif color_idx == 6 %}cat-color-6
+            {% elif color_idx == 7 %}cat-color-7
+            {% else %}cat-color-8{% endif %}">
             <div class="cat-hero-inner">
-                <div class="cat-badge">⛏️ Área 1 de 6</div>
-                <h2 class="cat-title">Programas de <em>Minería</em></h2>
-                <p class="cat-desc">Formación técnica especializada para el sector minero. Explosivos, ventilación, seguridad subterránea, legislación y operaciones en minas de carbón y minerales.</p>
+                <div class="cat-badge">
+                    📋 Área {{ forloop.counter }} de {{ total_areas }}
+                </div>
+                <h2 class="cat-title">{{ area.nombre }}</h2>
+                {% if area.descripcion %}
+                    <p class="cat-desc">{{ area.descripcion }}</p>
+                {% endif %}
             </div>
-            <div class="cat-deco">⛏️</div>
+            <div class="cat-deco">📋</div>
         </div>
+
         <div class="section-divider"></div>
+
+        {# ── Grid de programas ── #}
         <div class="programas-grid">
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Manejo de Explosivos y Accesorios de Voladura</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">84420026</span>
+            {% for programa in area.programas_activos %}
+                <div class="programa-card">
+                    <div class="programa-nombre">{{ programa.nombre }}</div>
+                    <div class="programa-meta">
+                        <span class="meta-chip chip-horas">
+                            ⏱ {% if programa.duracion_horas %}{{ programa.duracion_horas }} horas{% else %}Consultar{% endif %}
+                        </span>
+                        {% if programa.codigo %}
+                            <span class="meta-chip chip-codigo">{{ programa.codigo }}</span>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Fundamentos de Ventilación en Minas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73110065</span>
+            {% empty %}
+                <div class="programas-vacio">
+                    No hay programas activos registrados en esta área.
                 </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Medición y Control de las Condiciones Ambientales en Explotaciones Mineras Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73130083</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Seguridad Básica en Minas Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73130073</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Seguridad Ocupacional en las Labores Mineras</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 80 horas</span>
-                    <span class="meta-chip chip-codigo">21430006</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Introducción a la Legislación Mineroambiental</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">76110094</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Fundamentos en Unidades de Producción Minera (UPM)</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">76110095</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Fundamentos de Topografía en Minas Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73130089</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Actualización en Manipulación de Sustancias Explosivas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73110062</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Descripción de Rocas y Minerales</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">22120000</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Sostenimiento de Minas Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">73130076</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Monitoreo de las Condiciones de Ventilación en Minas Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">06000021</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Operaciones de Minería Subterránea</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ Consultar</span>
-                    <span class="meta-chip chip-codigo">Consultar</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Obtención de Muestras de Aguas y Suelos en Procesos Mineros</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 60 horas</span>
-                    <span class="meta-chip chip-codigo">22230010</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Arranque con Martillo Picador</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">73130078</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Principios para la Identificación de Peligros y Valoración de Riesgos en Labores Mineras Bajo Tierra</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73130085</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación del Reglamento de Higiene y Seguridad en Labores Mineras a Cielo Abierto por Profesional Administrativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 24 horas</span>
-                    <span class="meta-chip chip-codigo">72110021</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación del Reglamento de Higiene y Seguridad en Labores Mineras a Cielo Abierto por Profesional Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">72110022</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación del Reglamento de Higiene y Seguridad en Labores Mineras Subterráneas por Trabajador Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">73130094</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación del Reglamento de Higiene y Seguridad en Labores Mineras Subterráneas por Profesional Administrativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 24 horas</span>
-                    <span class="meta-chip chip-codigo">72110023</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación del Reglamento de Seguridad en Labores Mineras Subterráneas por Personal Profesional Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">72110024</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Aplicación de la Normatividad y Estándares de Seguridad e Higiene en Procesos de Minería a Cielo Abierto</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">76110096</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Gestión de Seguridad e Higiene en Procesos Mineros Bajo Tierra y Beneficio del Carbón</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 60 horas</span>
-                    <span class="meta-chip chip-codigo">72110016</span>
-                </div>
-            </div>
-            <div class="programa-card mineria">
-                <div class="programa-nombre">Análisis Fisicoquímico de Hidrocarburos y Derivados</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 120 horas</span>
-                    <span class="meta-chip chip-codigo">22110021</span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+
     </div>
 
-    <!-- ══ CATEGORÍA 2: AMBIENTAL ══ -->
-    <div class="cat-section">
-        <div class="cat-hero cat-hero-ambiental">
-            <div class="cat-hero-inner">
-                <div class="cat-badge">🌿 Área 2 de 6</div>
-                <h2 class="cat-title">Programa <em>Ambiental</em></h2>
-                <p class="cat-desc">Gestión y educación ambiental, manejo de residuos, tratamiento de aguas, bioseguridad y legislación medioambiental para empresas y organizaciones.</p>
-            </div>
-            <div class="cat-deco">🌿</div>
+    {% endwith %}
+    {% empty %}
+        {# Mensaje global si no hay ningún área #}
+        <div class="indice-vacio" style="margin-bottom: 48px;">
+            <div class="indice-vacio-icon">🗂️</div>
+            <h3>Sin programas disponibles</h3>
+            <p>No hay áreas ni programas activos en este momento. Agrega contenido desde el panel de administración.</p>
         </div>
-        <div class="section-divider section-divider-teal"></div>
-        <div class="programas-grid">
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Fontanería, Acueductos y Plantas de Tratamiento de Agua Potable</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 260 horas</span>
-                    <span class="meta-chip chip-codigo">86110493</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Fontanería para Acueductos Municipales</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 120 horas</span>
-                    <span class="meta-chip chip-codigo">83310004</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Manejo de Productos Químicos</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">23120000</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Evaluación de Impactos Ambientales en Actividades, Productos y Servicios</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">22620430</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Desarrollo de Acciones Encaminadas a la Bioseguridad</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">22620437</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Inducción a los Sistemas de Gestión Ambiental</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">22230006</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Fundamentos para la Potabilización de Agua</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 80 horas</span>
-                    <span class="meta-chip chip-codigo">93240131</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Toma de Muestras de Agua de Acuerdo con los Protocolos Establecidos</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">93240130</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Ejecución de Operaciones para el Manejo Integral de Residuos Sólidos</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">66330105</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Tratamiento Primario de Residuos Sólidos</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 60 horas</span>
-                    <span class="meta-chip chip-codigo">93240137</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Manipulación de Residuos Peligrosos</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">22230016</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Gestión y Educación Ambiental</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 96 horas</span>
-                    <span class="meta-chip chip-codigo">22220002</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Implementación de la Responsabilidad Social Empresarial</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">41311339</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Manejo de Residuos Sólidos en Construcción</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">66330114</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Introducción a la Legislación Mineroambiental</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">76110094</span>
-                </div>
-            </div>
-            <div class="programa-card ambiental">
-                <div class="programa-nombre">Montaje y Mantenimiento de Instalaciones para la Producción de Cuy</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 60 horas</span>
-                    <span class="meta-chip chip-codigo">73320381</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══ CATEGORÍA 3: MAQUINARIA ══ -->
-    <div class="cat-section">
-        <div class="cat-hero cat-hero-maquinaria">
-            <div class="cat-hero-inner">
-                <div class="cat-badge">🚜 Área 3 de 6</div>
-                <h2 class="cat-title">Operación de <em>Maquinaria</em></h2>
-                <p class="cat-desc">Formación para operadores de maquinaria pesada y de construcción: retrocargadores, excavadoras, minicargadores, montacargas, motoniveladora y más.</p>
-            </div>
-            <div class="cat-deco">🚜</div>
-        </div>
-        <div class="section-divider section-divider-blue"></div>
-        <div class="programas-grid">
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operador en Retrocargador</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420020</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operador en Excavadora</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420022</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operar Cargador en Explotaciones Mineras y Obras Civiles de Acuerdo con el Manual del Equipo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420023</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operador de Minicargador</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420021</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operador en Montacargas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420019</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operación de Motoniveladora en Explotaciones Mineras y Obras Civiles de Acuerdo con el Manual del Equipo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">84420024</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Actualización en Operación de Máquina Montacargas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">84510093</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Sistemas Hidráulicos en Maquinaria Pesada</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">83730048</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Básico en Operación y Mantenimiento de Maquinaria Pesada (Retrocargador)</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">84710024</span>
-                </div>
-            </div>
-            <div class="programa-card maquinaria">
-                <div class="programa-nombre">Operar Montacargas de Acuerdo al Manual del Equipo y Normas de Seguridad Establecidas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 140 horas</span>
-                    <span class="meta-chip chip-codigo">13710110</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══ CATEGORÍA 4: SST ══ -->
-    <div class="cat-section">
-        <div class="cat-hero cat-hero-sst">
-            <div class="cat-hero-inner">
-                <div class="cat-badge">🦺 Área 4 de 6</div>
-                <h2 class="cat-title">Seguridad y <em>Salud en el Trabajo</em></h2>
-                <p class="cat-desc">Programas de formación en SST para entornos mineros y laborales. Sistemas de gestión ISO 45001, primeros auxilios, salud ocupacional y reentrenamiento.</p>
-            </div>
-            <div class="cat-deco">🦺</div>
-        </div>
-        <div class="section-divider section-divider-red"></div>
-        <div class="programas-grid">
-            <div class="programa-card sst">
-                <div class="programa-nombre">Seguridad Ocupacional en las Labores Mineras</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 80 horas</span>
-                    <span class="meta-chip chip-codigo">21430006</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Reentrenamiento en Seguridad y Salud en Labores Mineras Subterráneas – Avanzado para Personal Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">73110070</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Fundamentos Básicos en Salud Ocupacional</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">13710069</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Sistemas de Gestión de la Seguridad y Salud en el Trabajo Bajo Fundamentos ISO 45001 — Avanzado para Personal Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">22670008</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Seguridad y Salud en Labores Mineras Subterráneas — Avanzado para Personal Operativo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">73110000</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Implementación del Sistema de Gestión de la Seguridad y Salud en el Trabajo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 50 horas</span>
-                    <span class="meta-chip chip-codigo">22620456</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Fundamentos del Sistema de Gestión de Seguridad y Salud en el Trabajo</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 40 horas</span>
-                    <span class="meta-chip chip-codigo">02000072</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Primeros Auxilios</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">63720047</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Primeros Auxilios</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">33110272</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Primeros Auxilios</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">33110233</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Seguridad y Salud en el Trabajo en Labores Mineras Subterráneas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 60 horas</span>
-                    <span class="meta-chip chip-codigo">73110067</span>
-                </div>
-            </div>
-            <div class="programa-card sst">
-                <div class="programa-nombre">Entrenador en Seguridad y Salud en Labores Mineras Subterráneas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 144 horas</span>
-                    <span class="meta-chip chip-codigo">41311440</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══ CATEGORÍA 5: ALTURAS ══ -->
-    <div class="cat-section">
-        <div class="cat-hero cat-hero-alturas">
-            <div class="cat-hero-inner">
-                <div class="cat-badge">🧗 Área 5 de 6</div>
-                <h2 class="cat-title">Programas de <em>Alturas</em></h2>
-                <p class="cat-desc">Formación y reentrenamiento para trabajo en alturas, conforme a la normativa vigente colombiana. Certificación de trabajadores autorizados.</p>
-            </div>
-            <div class="cat-deco">🧗</div>
-        </div>
-        <div class="section-divider section-divider-orange"></div>
-        <div class="programas-grid">
-            <div class="programa-card alturas">
-                <div class="programa-nombre">Trabajador Autorizado en Alturas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 32 horas</span>
-                    <span class="meta-chip chip-codigo">22620489</span>
-                </div>
-            </div>
-            <div class="programa-card alturas">
-                <div class="programa-nombre">Reentrenamiento en Trabajador Autorizado en Alturas</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 16 horas</span>
-                    <span class="meta-chip chip-codigo">22620491</span>
-                </div>
-            </div>
-        </div>
-        <div class="cat-footer-note">
-            <strong style="color: #7a5c10;">ℹ️ Nota:</strong> Los programas de alturas deben renovarse periódicamente según la normativa colombiana (Resolución 4272 de 2021). El reentrenamiento está diseñado para quienes ya cuentan con certificación vigente.
-        </div>
-    </div>
-
-    <!-- ══ CATEGORÍA 6: BILINGÜISMO ══ -->
-    <div class="cat-section">
-        <div class="cat-hero cat-hero-bilinguismo">
-            <div class="cat-hero-inner">
-                <div class="cat-badge">🌐 Área 6 de 6</div>
-                <h2 class="cat-title">Programas de <em>Bilingüismo</em></h2>
-                <p class="cat-desc">Inglés técnico y básico en tres niveles para trabajadores del sector. Herramienta clave para acceder a documentación técnica internacional y proyectos con operadores extranjeros.</p>
-            </div>
-            <div class="cat-deco">🌐</div>
-        </div>
-        <div class="section-divider section-divider-purple"></div>
-        <div class="programas-grid">
-            <div class="programa-card bilinguismo">
-                <div class="programa-nombre">Inglés Básico — Nivel 1</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">51240078</span>
-                </div>
-            </div>
-            <div class="programa-card bilinguismo">
-                <div class="programa-nombre">Inglés Básico — Nivel 2</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">51240080</span>
-                </div>
-            </div>
-            <div class="programa-card bilinguismo">
-                <div class="programa-nombre">Inglés Básico — Nivel 3</div>
-                <div class="programa-meta">
-                    <span class="meta-chip chip-horas">⏱ 48 horas</span>
-                    <span class="meta-chip chip-codigo">51240079</span>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 
     <!-- ══ CONTRAPORTADA ══ -->
     <div class="contraportada">
@@ -1542,7 +985,7 @@
         </div>
     </div>
 
-</div>
+</div><!-- /main -->
 
 <!-- PIE -->
 <div class="pie">

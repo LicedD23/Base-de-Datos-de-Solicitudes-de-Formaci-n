@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Solicitud - SENA</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,10 +14,7 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
 
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
@@ -29,37 +22,26 @@
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 8px 20px rgba(46,125,50,0.3);
         }
 
-        .header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 700; }
 
         .breadcrumb {
             background: white;
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
         }
 
-        .breadcrumb a {
-            color: #2e7d32;
-            text-decoration: none;
-        }
+        .breadcrumb a { color: #2e7d32; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
 
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        /* MENSAJES */
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
@@ -67,41 +49,30 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .alert-success {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color: white;
-        }
-
-        .alert-warning {
-            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color: white;
-        }
+        .alert-success { background: linear-gradient(135deg, #2e7d32, #43a047); color: white; }
+        .alert-error   { background: linear-gradient(135deg, #c62828, #e53935); color: white; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00, #f57c00); color: white; }
 
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
             font-weight: bold;
+            margin-left: auto;
+            flex-shrink: 0;
         }
 
-        /* FORMULARIO */
         .form-card {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-top: 4px solid #2e7d32;
         }
 
@@ -114,55 +85,30 @@
             border-left: 4px solid #ef6c00;
         }
 
-        /* 🆕 MODO MIGRACIÓN TOGGLE */
+        /* TOGGLE MIGRACIÓN */
         .migration-mode-toggle {
-            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            background: linear-gradient(135deg, #1976d2, #1565c0);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+            box-shadow: 0 4px 15px rgba(25,118,210,0.3);
         }
 
-        .migration-mode-info {
-            color: white;
-            flex: 1;
-        }
+        .migration-mode-info { color: white; flex: 1; }
+        .migration-mode-info h3 { font-size: 1.2em; margin-bottom: 5px; }
+        .migration-mode-info p  { opacity: 0.9; font-size: 0.95em; }
 
-        .migration-mode-info h3 {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-
-        .migration-mode-info p {
-            opacity: 0.9;
-            font-size: 0.95em;
-        }
-
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.3);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.3);
             transition: .4s;
             border-radius: 34px;
         }
@@ -170,25 +116,18 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: #4caf50;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
+        input:checked + .slider { background-color: #4caf50; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
         .section-header {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            background: linear-gradient(135deg, #2e7d32, #43a047);
             color: white;
             padding: 15px 20px;
             border-radius: 10px;
@@ -198,10 +137,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .section-header:first-of-type {
-            margin-top: 0;
         }
 
         .help-box {
@@ -215,42 +150,15 @@
             gap: 10px;
         }
 
-        .help-box p {
-            margin: 0;
-            color: #1565c0;
-            font-weight: 500;
-            font-size: 0.95em;
-        }
+        .help-box p  { margin: 0; color: #1565c0; font-weight: 500; font-size: 0.95em; }
+        .help-box a  { color: #0d47a1; text-decoration: underline; font-weight: 600; }
 
-        .help-box a {
-            color: #0d47a1;
-            text-decoration: underline;
-            font-weight: 600;
-        }
-
-        .help-box a:hover {
-            color: #1976d2;
-        }
-
-        /* 🆕 SECCIÓN DE FECHAS (OCULTA POR DEFECTO) */
-        .migration-section {
-            display: none;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        .migration-section.active {
-            display: block;
-        }
+        .migration-section { display: none; animation: slideDown 0.3s ease-out; }
+        .migration-section.active { display: block; }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .dates-info-box {
@@ -261,17 +169,9 @@
             border-left: 4px solid #f9a825;
         }
 
-        .dates-info-box p {
-            margin: 0;
-            color: #f57f17;
-            font-weight: 500;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
+        .dates-info-box p { margin: 0; color: #f57f17; font-weight: 500; font-size: 0.95em; line-height: 1.6; }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
 
         .form-group label {
             display: block;
@@ -280,10 +180,7 @@
             margin-bottom: 8px;
         }
 
-        .form-group label.required::after {
-            content: " *";
-            color: #c62828;
-        }
+        .form-group label.required::after { content: " *"; color: #c62828; }
 
         .form-group select,
         .form-group input[type="text"],
@@ -305,23 +202,97 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
 
-        .form-group small {
-            display: block;
-            color: #666;
-            margin-top: 5px;
-            font-size: 0.9em;
+        .form-group small { display: block; color: #666; margin-top: 5px; font-size: 0.9em; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* ══ BLOQUEO DURO: CAMPESENA < 15 ══ */
+        .aviso-bloqueo {
+            display: none;
+            margin-top: 10px;
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+            border-radius: 8px;
+            padding: 13px 16px;
+            animation: fadeIn 0.25s ease;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .aviso-bloqueo.active { display: block; }
+
+        .aviso-bloqueo p {
+            margin: 0;
+            color: #b71c1c;
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
-        /* ESTILOS PARA MÚLTIPLES ARCHIVOS */
+        /* ══ FLEXIBLE: OTRAS ÁREAS < 20 — botones de razón ══ */
+        .aviso-flex {
+            display: none;
+            margin-top: 10px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 8px;
+            padding: 14px 16px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .aviso-flex.active { display: block; }
+
+        .aviso-flex-titulo {
+            color: #e65100;
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .aviso-flex-subtitulo {
+            color: #bf360c;
+            font-size: 0.88em;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .razones-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .razon-btn {
+            background: white;
+            border: 2px solid #ffa000;
+            color: #e65100;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.88em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .razon-btn:hover {
+            background: #ffa000;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .razon-btn.selected {
+            background: #e65100;
+            border-color: #e65100;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ARCHIVOS */
         .file-upload-section {
             background: #f9f9f9;
             padding: 25px;
@@ -337,10 +308,7 @@
             margin-bottom: 15px;
         }
 
-        .file-upload-header h3 {
-            color: #2e7d32;
-            margin: 0;
-        }
+        .file-upload-header h3 { color: #2e7d32; margin: 0; }
 
         .file-counter {
             background: #2e7d32;
@@ -351,17 +319,12 @@
             font-weight: 600;
         }
 
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
+        .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
 
         .file-input-wrapper input[type="file"] {
             position: absolute;
             opacity: 0;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             cursor: pointer;
         }
 
@@ -380,19 +343,10 @@
             transition: all 0.3s ease;
         }
 
-        .file-input-label:hover {
-            background: #2e7d32;
-            color: white;
-        }
+        .file-input-label:hover { background: #2e7d32; color: white; }
 
-        .files-list {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .files-list.active {
-            display: block;
-        }
+        .files-list { margin-top: 20px; display: none; }
+        .files-list.active { display: block; }
 
         .file-item {
             background: white;
@@ -406,37 +360,13 @@
             transition: all 0.3s ease;
         }
 
-        .file-item:hover {
-            border-color: #2e7d32;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
-        }
+        .file-item:hover { border-color: #2e7d32; box-shadow: 0 2px 8px rgba(46,125,50,0.1); }
 
-        .file-item-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .file-icon {
-            font-size: 1.5em;
-        }
-
-        .file-details {
-            flex: 1;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: #333;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .file-size {
-            color: #666;
-            font-size: 0.85em;
-        }
+        .file-item-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .file-icon { font-size: 1.5em; }
+        .file-details { flex: 1; }
+        .file-name { font-weight: 600; color: #333; display: block; margin-bottom: 3px; }
+        .file-size { color: #666; font-size: 0.85em; }
 
         .file-remove-btn {
             background: #ffebee;
@@ -449,10 +379,7 @@
             transition: all 0.2s ease;
         }
 
-        .file-remove-btn:hover {
-            background: #c62828;
-            color: white;
-        }
+        .file-remove-btn:hover { background: #c62828; color: white; }
 
         .file-limit-warning {
             background: #fff3e0;
@@ -465,9 +392,7 @@
             display: none;
         }
 
-        .file-limit-warning.active {
-            display: block;
-        }
+        .file-limit-warning.active { display: block; }
 
         /* BOTONES */
         .form-actions {
@@ -494,21 +419,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
             color: white;
             flex: 1;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .btn-secondary {
             background: white;
@@ -518,7 +436,7 @@
         }
 
         footer {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
             color: white;
             text-align: center;
             padding: 20px;
@@ -527,45 +445,23 @@
             box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
-        footer p {
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
+        footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
-
-            .file-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .file-remove-btn {
-                width: 100%;
-            }
-
-            .migration-mode-toggle {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
+            .form-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            footer { font-size: 0.85rem; padding: 15px; }
+            .file-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .file-remove-btn { width: 100%; }
+            .migration-mode-toggle { flex-direction: column; gap: 15px; text-align: center; }
+            .razones-grid { flex-direction: column; }
+            .razon-btn { border-radius: 8px; text-align: left; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+
         <div class="header">
             <h1>📋 Crear Nueva Solicitud</h1>
             <p>Registra una solicitud de formación de manera rápida y sencilla</p>
@@ -595,7 +491,7 @@
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
             </div>
 
-            <!-- 🆕 TOGGLE MODO MIGRACIÓN -->
+            <!-- TOGGLE MODO MIGRACIÓN -->
             <div class="migration-mode-toggle">
                 <div class="migration-mode-info">
                     <h3>📦 Registrar Solicitudes Antiguas</h3>
@@ -609,14 +505,12 @@
 
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
+                <!-- Campos ocultos de control -->
+                <input type="hidden" id="esMigracion"      name="es_migracion" value="false">
+                <input type="hidden" id="razon_cupo_input" name="razon_cupo"   value="">
 
-                <!-- Campo oculto para indicar si es migración -->
-                <input type="hidden" id="esMigracion" name="es_migracion" value="false">
-
-                <!-- SECCIÓN 1: EMPRESA -->
-                <div class="section-header">
-                    🏢 Información de la Empresa
-                </div>
+                <!-- ══ SECCIÓN 1: EMPRESA ══ -->
+                <div class="section-header">🏢 Información de la Empresa</div>
 
                 <div class="form-group">
                     <label for="empresa" class="required">Seleccionar Empresa</label>
@@ -632,20 +526,16 @@
                 </div>
 
                 <div class="help-box">
-                    <span style="font-size: 1.5em;">ℹ️</span>
+                    <span style="font-size:1.5em;">ℹ️</span>
                     <p>
-                        ¿No encuentras la empresa? 
-                        <a href="{% url 'empresas:crear_empresa' %}" target="_blank">
-                            Créala aquí
-                        </a> 
+                        ¿No encuentras la empresa?
+                        <a href="{% url 'empresas:crear_empresa' %}" target="_blank">Créala aquí</a>
                         y luego recarga esta página para seleccionarla.
                     </p>
                 </div>
 
-                <!-- SECCIÓN 2: PROGRAMA -->
-                <div class="section-header">
-                    📚 Programa de Formación
-                </div>
+                <!-- ══ SECCIÓN 2: PROGRAMA ══ -->
+                <div class="section-header">📚 Programa de Formación</div>
 
                 <div class="form-group">
                     <label for="programa" class="required">Programa Solicitado</label>
@@ -662,58 +552,79 @@
                     </select>
                 </div>
 
-                <!-- SECCIÓN 3: DATOS DE CONTACTO -->
-                <div class="section-header">
-                    📧 Datos de Contacto
-                </div>
+                <!-- ══ SECCIÓN 3: DATOS DE CONTACTO ══ -->
+                <div class="section-header">📧 Datos de Contacto</div>
 
                 <div class="form-row">
+
+                    <!-- Correo OBLIGATORIO -->
                     <div class="form-group">
-                        <label for="correo_remitente">Correo del Remitente</label>
-                        <input type="email" id="correo_remitente" name="correo_remitente" placeholder="ejemplo@empresa.com" maxlength="255">
+                        <label for="correo_remitente" class="required">Correo del Remitente</label>
+                        <input
+                            type="email"
+                            id="correo_remitente"
+                            name="correo_remitente"
+                            placeholder="ejemplo@empresa.com"
+                            maxlength="255"
+                            required>
                         <small>Email desde donde se envió la solicitud</small>
                     </div>
+
+                    <!-- Trabajadores OBLIGATORIO -->
                     <div class="form-group">
-                        <label for="numero_aprendices">Trabajadores a Capacitar</label>
-                        <input type="number" id="numero_aprendices" name="numero_aprendices" placeholder="Ej: 25" min="1" max="1000">
+                        <label for="numero_aprendices" class="required">Trabajadores a Capacitar</label>
+                        <input
+                            type="number"
+                            id="numero_aprendices"
+                            name="numero_aprendices"
+                            placeholder="Ej: 25"
+                            min="1"
+                            max="1000"
+                            required>
                         <small>Cantidad estimada de personas a capacitar</small>
+
+                        <!-- BLOQUEO DURO: CAMPESENA con menos de 15 -->
+                        <div class="aviso-bloqueo" id="aviso-campesena">
+                            <p>🚫 El área <strong>CAMPESENA</strong> requiere mínimo <strong>15 aprendices</strong>.
+                               Corrige la cantidad para poder continuar.</p>
+                        </div>
+
+                        <!-- FLEXIBLE: otras áreas con menos de 20 → botones de razón -->
+                        <div class="aviso-flex" id="aviso-otras">
+                            <div class="aviso-flex-titulo" id="aviso-otras-titulo"></div>
+                            <div class="aviso-flex-subtitulo">Selecciona el motivo para continuar:</div>
+                            <div class="razones-grid">
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Empresa pequeña')">🏢 Empresa pequeña</button>
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Grupo piloto')">🧪 Grupo piloto</button>
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Área especializada con pocos técnicos')">⚙️ Área especializada</button>
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Capacitación de directivos')">👔 Capacitación de directivos</button>
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Solicitud de prueba / diagnóstico')">📋 Solicitud de prueba</button>
+                                <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Empresa en inicio de operaciones')">🚀 Empresa nueva</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 🆕 SECCIÓN 4: FECHAS (SOLO EN MODO MIGRACIÓN) -->
+                <!-- ══ SECCIÓN 4: FECHAS — SOLO MODO MIGRACIÓN ══ -->
                 <div class="migration-section" id="migrationSection">
-                    <div class="section-header">
-                        📅 Fechas Históricas (Modo Migración)
-                    </div>
+                    <div class="section-header">📅 Fechas Históricas (Modo Migración)</div>
 
                     <div class="dates-info-box">
-                        <p>
-                            💡 <strong>Estás en modo migración:</strong> Establece las fechas históricas según tus registros de Excel. El sistema calculará automáticamente el estado correcto según las fechas que completes.
-                        </p>
+                        <p>💡 <strong>Estás en modo migración:</strong> Establece las fechas históricas según tus
+                        registros de Excel. El sistema calculará automáticamente el estado correcto.</p>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="fecha_recepcion">📥 Fecha de Recepción *</label>
-                            <input 
-                                type="datetime-local" 
-                                id="fecha_recepcion_migracion" 
-                                name="fecha_recepcion" 
-                                class="form-control"
-                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                            >
+                            <label for="fecha_recepcion_migracion">📥 Fecha de Recepción *</label>
+                            <input type="datetime-local" id="fecha_recepcion_migracion"
+                                   name="fecha_recepcion" max="{{ ahora|date:'Y-m-d\TH:i' }}">
                             <small>Fecha en que se recibió la solicitud</small>
                         </div>
-
                         <div class="form-group">
                             <label for="fecha_respuesta">📧 Fecha de Respuesta (opcional)</label>
-                            <input 
-                                type="datetime-local" 
-                                id="fecha_respuesta" 
-                                name="fecha_respuesta" 
-                                class="form-control"
-                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                            >
+                            <input type="datetime-local" id="fecha_respuesta"
+                                   name="fecha_respuesta" max="{{ ahora|date:'Y-m-d\TH:i' }}">
                             <small>Solo completa si ya respondiste</small>
                         </div>
                     </div>
@@ -721,30 +632,18 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="fecha_atencion">✅ Fecha de Atención (opcional)</label>
-                            <input 
-                                type="datetime-local" 
-                                id="fecha_atencion" 
-                                name="fecha_atencion" 
-                                class="form-control"
-                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                            >
+                            <input type="datetime-local" id="fecha_atencion"
+                                   name="fecha_atencion" max="{{ ahora|date:'Y-m-d\TH:i' }}">
                             <small>Solo completa si ya se atendió</small>
                         </div>
-
                         <div class="form-group">
                             <label for="fecha_finalizacion">🎓 Fecha de Finalización (opcional)</label>
-                            <input 
-                                type="datetime-local" 
-                                id="fecha_finalizacion" 
-                                name="fecha_finalizacion" 
-                                class="form-control"
-                                max="{{ ahora|date:'Y-m-d\TH:i' }}"
-                            >
+                            <input type="datetime-local" id="fecha_finalizacion"
+                                   name="fecha_finalizacion" max="{{ ahora|date:'Y-m-d\TH:i' }}">
                             <small>Solo completa si ya finalizó</small>
                         </div>
                     </div>
 
-                    <!-- 🆕 INSTRUCTOR (solo en modo migración) -->
                     <div class="form-group">
                         <label for="instructor_asignado">👨‍🏫 Instructor Asignado (opcional)</label>
                         <select id="instructor_asignado" name="instructor_asignado">
@@ -757,44 +656,33 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN 5: OBSERVACIONES -->
-                <div class="section-header">
-                    📝 Información Adicional
-                </div>
+                <!-- ══ SECCIÓN 5: OBSERVACIONES ══ -->
+                <div class="section-header">📝 Información Adicional</div>
 
                 <div class="form-group">
                     <label for="observaciones">Observaciones</label>
-                    <textarea id="observaciones" name="observaciones" placeholder="Detalles adicionales sobre la solicitud..." rows="4"></textarea>
+                    <textarea id="observaciones" name="observaciones"
+                              placeholder="Detalles adicionales sobre la solicitud..." rows="4"></textarea>
                     <small>Información relevante que complementa la solicitud</small>
                 </div>
 
-                <!-- SECCIÓN 6: DOCUMENTOS MÚLTIPLES -->
+                <!-- ══ SECCIÓN 6: DOCUMENTOS ══ -->
                 <div class="file-upload-section">
                     <div class="file-upload-header">
                         <h3>📄 Documentos Adjuntos (opcional)</h3>
                         <span class="file-counter" id="fileCounter">0 / 5</span>
                     </div>
-                    
-                    <small style="display: block; margin-bottom: 15px; color: #666;">
+                    <small style="display:block; margin-bottom:15px; color:#666;">
                         Puedes adjuntar hasta <strong>5 documentos PDF</strong> (máximo 10MB cada uno)
                     </small>
-                    
                     <div class="file-input-wrapper">
-                        <input 
-                            type="file" 
-                            id="documentos_pdf" 
-                            name="documentos_pdf" 
-                            accept=".pdf" 
-                            multiple
-                            onchange="handleMultipleFiles(event)">
+                        <input type="file" id="documentos_pdf" name="documentos_pdf"
+                               accept=".pdf" multiple onchange="handleMultipleFiles(event)">
                         <label for="documentos_pdf" class="file-input-label">
-                            <span>📎</span>
-                            <span>Seleccionar archivos PDF</span>
+                            <span>📎</span><span>Seleccionar archivos PDF</span>
                         </label>
                     </div>
-
                     <div class="files-list" id="filesList"></div>
-
                     <div class="file-limit-warning" id="fileLimitWarning">
                         ⚠️ Has alcanzado el límite máximo de 5 archivos. Elimina alguno para agregar más.
                     </div>
@@ -818,60 +706,181 @@
     </footer>
 
     <script>
-        // 🆕 TOGGLE MODO MIGRACIÓN
+        // ════════════════════════════════════════════════════════
+        // CONFIGURACIÓN DE CUPOS
+        // Ajusta AREAS_CAMPESENA con el nombre exacto de tu BD
+        // ════════════════════════════════════════════════════════
+        const AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
+        const CUPO_MIN_CAMPESENA = 15;   // DURO — no se puede enviar con menos
+        const CUPO_MIN_OTROS     = 20;   // FLEXIBLE — requiere elegir una razón
+
+        let areaProgramaSeleccionada = '';
+        let razonSeleccionada        = '';
+
+        function esCampesena(area) {
+            return AREAS_CAMPESENA.some(function(n) { return area.includes(n); });
+        }
+
+        // Al cambiar el programa, guardar su área
+        document.getElementById('programa').addEventListener('change', function () {
+            var opt = this.options[this.selectedIndex];
+            var grp = opt.closest('optgroup');
+            areaProgramaSeleccionada = grp ? grp.label.toLowerCase().trim() : '';
+            razonSeleccionada = '';
+            limpiarBotonesRazon();
+            document.getElementById('razon_cupo_input').value = '';
+            validarCupo();
+        });
+
+        // Al cambiar la cantidad de aprendices
+        document.getElementById('numero_aprendices').addEventListener('input', function () {
+            razonSeleccionada = '';
+            limpiarBotonesRazon();
+            document.getElementById('razon_cupo_input').value = '';
+            validarCupo();
+        });
+
+        function validarCupo() {
+            var numInput       = document.getElementById('numero_aprendices');
+            var cantidad       = parseInt(numInput.value) || 0;
+            var avisoCampesena = document.getElementById('aviso-campesena');
+            var avisoOtras     = document.getElementById('aviso-otras');
+            var avisoTitulo    = document.getElementById('aviso-otras-titulo');
+            var area           = areaProgramaSeleccionada;
+
+            // Resetear
+            avisoCampesena.classList.remove('active');
+            avisoOtras.classList.remove('active');
+            numInput.style.borderColor = '#e0e0e0';
+
+            if (!area || cantidad === 0) return;
+
+            if (esCampesena(area)) {
+                // ── CAMPESENA: bloqueo duro si viene con menos de 15 ──
+                if (cantidad < CUPO_MIN_CAMPESENA) {
+                    avisoCampesena.classList.add('active');
+                    numInput.style.borderColor = '#c62828';
+                }
+            } else {
+                // ── OTRAS ÁREAS: advertencia + botones de razón si viene con menos de 20 ──
+                if (cantidad < CUPO_MIN_OTROS) {
+                    avisoTitulo.textContent =
+                        '⚠️ El mínimo recomendado para esta área es ' + CUPO_MIN_OTROS +
+                        ' aprendices. Estás registrando ' + cantidad + '.';
+                    avisoOtras.classList.add('active');
+                    numInput.style.borderColor = '#ffa000';
+                }
+            }
+        }
+
+        // El usuario hace clic en un botón de razón
+        function seleccionarRazon(btn, razon) {
+            limpiarBotonesRazon();
+            btn.classList.add('selected');
+            razonSeleccionada = razon;
+            document.getElementById('razon_cupo_input').value = razon;
+        }
+
+        function limpiarBotonesRazon() {
+            document.querySelectorAll('.razon-btn').forEach(function(b) {
+                b.classList.remove('selected');
+            });
+        }
+
+        // ════════════════════════════════════════════════════════
+        // VALIDACIÓN AL ENVIAR
+        // ════════════════════════════════════════════════════════
+        document.getElementById('solicitudForm').addEventListener('submit', function (e) {
+            var submitBtn = document.getElementById('submitBtn');
+            var numInput  = document.getElementById('numero_aprendices');
+            var cantidad  = parseInt(numInput.value) || 0;
+            var area      = areaProgramaSeleccionada;
+
+            if (area && cantidad > 0) {
+
+                // Bloqueo duro CAMPESENA
+                if (esCampesena(area) && cantidad < CUPO_MIN_CAMPESENA) {
+                    e.preventDefault();
+                    alert('🚫 El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
+                          ' aprendices. Corrige la cantidad antes de continuar.');
+                    numInput.focus();
+                    return;
+                }
+
+                // Flexible: otras áreas sin razón elegida
+                if (!esCampesena(area) && cantidad < CUPO_MIN_OTROS && !razonSeleccionada) {
+                    e.preventDefault();
+                    alert('⚠️ Debes seleccionar el motivo por el que hay menos de ' +
+                          CUPO_MIN_OTROS + ' aprendices.');
+                    document.getElementById('aviso-otras').scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
+
+            // Todo OK → deshabilitar botón para evitar doble envío
+            submitBtn.disabled  = true;
+            submitBtn.innerHTML = '⏳ Guardando...';
+
+            if (selectedFiles.length > 0) {
+                var dt = new DataTransfer();
+                selectedFiles.forEach(function(f) { dt.items.add(f); });
+                document.getElementById('documentos_pdf').files = dt.files;
+            }
+        });
+
+        // ════════════════════════════════════════════════════════
+        // MODO MIGRACIÓN
+        // ════════════════════════════════════════════════════════
         function toggleMigrationMode() {
-            const toggle = document.getElementById('migrationToggle');
-            const migrationSection = document.getElementById('migrationSection');
-            const esMigracionInput = document.getElementById('esMigracion');
-            const fechaRecepcionMigracion = document.getElementById('fecha_recepcion_migracion');
+            var toggle   = document.getElementById('migrationToggle');
+            var section  = document.getElementById('migrationSection');
+            var hidden   = document.getElementById('esMigracion');
+            var fechaRec = document.getElementById('fecha_recepcion_migracion');
 
             if (toggle.checked) {
-                // Activar modo migración
-                migrationSection.classList.add('active');
-                esMigracionInput.value = 'true';
-                fechaRecepcionMigracion.required = true;
+                section.classList.add('active');
+                hidden.value      = 'true';
+                fechaRec.required = true;
             } else {
-                // Desactivar modo migración
-                migrationSection.classList.remove('active');
-                esMigracionInput.value = 'false';
-                fechaRecepcionMigracion.required = false;
-                
-                // Limpiar campos de fechas
-                document.getElementById('fecha_recepcion_migracion').value = '';
-                document.getElementById('fecha_respuesta').value = '';
-                document.getElementById('fecha_atencion').value = '';
-                document.getElementById('fecha_finalizacion').value = '';
+                section.classList.remove('active');
+                hidden.value      = 'false';
+                fechaRec.required = false;
+                ['fecha_recepcion_migracion', 'fecha_respuesta',
+                 'fecha_atencion', 'fecha_finalizacion'].forEach(function(id) {
+                    document.getElementById(id).value = '';
+                });
                 document.getElementById('instructor_asignado').value = '';
             }
         }
 
+        // ════════════════════════════════════════════════════════
         // MANEJO DE MÚLTIPLES ARCHIVOS
-        let selectedFiles = [];
-        const MAX_FILES = 5;
-        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        // ════════════════════════════════════════════════════════
+        var selectedFiles = [];
+        var MAX_FILES     = 5;
+        var MAX_SIZE      = 10 * 1024 * 1024; // 10 MB
 
         function handleMultipleFiles(event) {
-            const newFiles = Array.from(event.target.files);
-            
+            var newFiles = Array.from(event.target.files);
+
             if (selectedFiles.length + newFiles.length > MAX_FILES) {
-                alert(`⚠️ Solo puedes subir máximo ${MAX_FILES} archivos`);
+                alert('⚠️ Solo puedes subir máximo ' + MAX_FILES + ' archivos');
                 event.target.value = '';
                 return;
             }
 
-            for (let file of newFiles) {
+            for (var i = 0; i < newFiles.length; i++) {
+                var file = newFiles[i];
                 if (!file.name.toLowerCase().endsWith('.pdf')) {
-                    alert(`❌ ${file.name} no es un archivo PDF`);
+                    alert('❌ ' + file.name + ' no es un archivo PDF');
                     event.target.value = '';
                     return;
                 }
-
                 if (file.size > MAX_SIZE) {
-                    alert(`❌ ${file.name} supera 10MB`);
+                    alert('❌ ' + file.name + ' supera 10MB');
                     event.target.value = '';
                     return;
                 }
-
                 selectedFiles.push(file);
             }
 
@@ -881,29 +890,27 @@
         }
 
         function updateFilesList() {
-            const filesList = document.getElementById('filesList');
-            
+            var list = document.getElementById('filesList');
+
             if (selectedFiles.length === 0) {
-                filesList.classList.remove('active');
-                filesList.innerHTML = '';
+                list.classList.remove('active');
+                list.innerHTML = '';
                 return;
             }
 
-            filesList.classList.add('active');
-            filesList.innerHTML = selectedFiles.map((file, index) => `
-                <div class="file-item">
-                    <div class="file-item-info">
-                        <span class="file-icon">📄</span>
-                        <div class="file-details">
-                            <span class="file-name">${file.name}</span>
-                            <span class="file-size">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                        </div>
-                    </div>
-                    <button type="button" class="file-remove-btn" onclick="removeFile(${index})">
-                        🗑️ Eliminar
-                    </button>
-                </div>
-            `).join('');
+            list.classList.add('active');
+            list.innerHTML = selectedFiles.map(function(file, index) {
+                return '<div class="file-item">' +
+                    '<div class="file-item-info">' +
+                        '<span class="file-icon">📄</span>' +
+                        '<div class="file-details">' +
+                            '<span class="file-name">' + file.name + '</span>' +
+                            '<span class="file-size">(' + (file.size / 1024 / 1024).toFixed(2) + ' MB)</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="file-remove-btn" onclick="removeFile(' + index + ')">🗑️ Eliminar</button>' +
+                '</div>';
+            }).join('');
         }
 
         function removeFile(index) {
@@ -913,11 +920,11 @@
         }
 
         function updateCounter() {
-            const counter = document.getElementById('fileCounter');
-            const warning = document.getElementById('fileLimitWarning');
-            const input = document.getElementById('documentos_pdf');
+            var counter = document.getElementById('fileCounter');
+            var warning = document.getElementById('fileLimitWarning');
+            var input   = document.getElementById('documentos_pdf');
 
-            counter.textContent = `${selectedFiles.length} / ${MAX_FILES}`;
+            counter.textContent = selectedFiles.length + ' / ' + MAX_FILES;
 
             if (selectedFiles.length >= MAX_FILES) {
                 warning.classList.add('active');
@@ -928,31 +935,10 @@
             }
         }
 
-        // PREPARAR ARCHIVOS ANTES DEL SUBMIT
-        document.getElementById('solicitudForm').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submitBtn');
-            
-            // Deshabilitar botón para evitar doble envío
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '⏳ Guardando...';
-            
-            if (selectedFiles.length > 0) {
-                // Crear DataTransfer para asignar archivos al input
-                const dataTransfer = new DataTransfer();
-                selectedFiles.forEach(file => {
-                    dataTransfer.items.add(file);
-                });
-                
-                // Asignar archivos al input file original
-                document.getElementById('documentos_pdf').files = dataTransfer.files;
-            }
-        });
-
-        // Auto-cerrar alertas
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => alert.remove(), 8000);
+        // Auto-cerrar alertas Django después de 8 segundos
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.alert').forEach(function(a) {
+                setTimeout(function() { a.remove(); }, 8000);
             });
         });
     </script>

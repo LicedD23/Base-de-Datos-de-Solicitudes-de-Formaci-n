@@ -111,7 +111,7 @@ def obtener_fechas_exactas(request):
     # Validar coherencia
     if fecha_inicio and fecha_fin and fecha_fin < fecha_inicio:
         errores.append("La fecha fin no puede ser anterior a la fecha inicio.")
-        fecha_fin = None   # descartamos el fin incoherente
+        fecha_fin = None
 
     return fecha_inicio, fecha_fin, errores
 
@@ -163,7 +163,7 @@ def panel_reportes(request):
         'instructores': Instructor.objects.filter(activo=True).order_by('nombre'),
         'estados':      Solicitud.ESTADO_CHOICES,
 
-        # ── Valores actuales de los filtros (para re-pintar el form) ──
+        # Valores actuales de los filtros (para re-pintar el form)
         'estado_filter':      request.GET.get('estado', ''),
         'programa_filter':    request.GET.get('programa', ''),
         'empresa_filter':     request.GET.get('empresa', ''),
@@ -171,7 +171,7 @@ def panel_reportes(request):
         'instructor_filter':  request.GET.get('instructor', ''),
         'rango_fecha':        request.GET.get('rango_fecha', ''),
 
-        # Fechas exactas  (nuevas)
+        # Fechas exactas
         'fecha_inicio_filter': request.GET.get('fecha_inicio', ''),
         'fecha_fin_filter':    request.GET.get('fecha_fin', ''),
     }
@@ -187,36 +187,28 @@ def _filtrar_solicitudes(request):
     """
     Lee todos los parámetros GET y devuelve:
       (queryset_filtrado, filtros_texto: list, filtros_dict: dict)
-
-    Lógica de prioridad de fechas (idéntica al JS del template):
-      1. Si hay fecha_inicio o fecha_fin  → se usan esas fechas exactas.
-      2. Si no hay fechas exactas y hay rango_fecha → se usa el período predefinido.
     """
-    estado       = request.GET.get('estado', '')
-    programa_id  = request.GET.get('programa', '')
-    empresa_id   = request.GET.get('empresa', '')
-    nit          = request.GET.get('nit', '').strip()
-    instructor_id= request.GET.get('instructor', '')
-    rango_fecha  = request.GET.get('rango_fecha', '')
+    estado        = request.GET.get('estado', '')
+    programa_id   = request.GET.get('programa', '')
+    empresa_id    = request.GET.get('empresa', '')
+    nit           = request.GET.get('nit', '').strip()
+    instructor_id = request.GET.get('instructor', '')
+    rango_fecha   = request.GET.get('rango_fecha', '')
 
-    # Leer fechas exactas
     fecha_inicio_exacta, fecha_fin_exacta, _ = obtener_fechas_exactas(request)
     usar_fechas_exactas = bool(fecha_inicio_exacta or fecha_fin_exacta)
 
-    # Queryset base optimizado
     solicitudes = Solicitud.objects.select_related(
         'empresa', 'programa', 'programa__area', 'instructor_asignado'
     ).all()
 
     filtros_texto = []
 
-    # ── Estado ──────────────────────────────────────────────────────────────
     if estado:
         solicitudes = solicitudes.filter(estado=estado)
         nombre_estado = dict(Solicitud.ESTADO_CHOICES).get(estado, estado)
         filtros_texto.append(f"Estado: {nombre_estado}")
 
-    # ── Programa ─────────────────────────────────────────────────────────────
     if programa_id:
         solicitudes = solicitudes.filter(programa_id=programa_id)
         try:
@@ -225,7 +217,6 @@ def _filtrar_solicitudes(request):
         except Programa.DoesNotExist:
             pass
 
-    # ── Empresa ──────────────────────────────────────────────────────────────
     if empresa_id:
         solicitudes = solicitudes.filter(empresa_id=empresa_id)
         try:
@@ -234,12 +225,10 @@ def _filtrar_solicitudes(request):
         except Empresa.DoesNotExist:
             pass
 
-    # ── NIT ──────────────────────────────────────────────────────────────────
     if nit:
         solicitudes = solicitudes.filter(empresa__nit__icontains=nit)
         filtros_texto.append(f"NIT: {nit}")
 
-    # ── Instructor ───────────────────────────────────────────────────────────
     if instructor_id:
         solicitudes = solicitudes.filter(instructor_asignado_id=instructor_id)
         try:
@@ -248,14 +237,11 @@ def _filtrar_solicitudes(request):
         except Instructor.DoesNotExist:
             pass
 
-    # ── Fechas ───────────────────────────────────────────────────────────────
     if usar_fechas_exactas:
-        # PRIORIDAD: rango exacto definido por el usuario
         solicitudes = aplicar_filtro_fecha(
             solicitudes, 'fecha_recepcion',
             fecha_inicio_exacta, fecha_fin_exacta
         )
-
         partes = []
         if fecha_inicio_exacta:
             partes.append(f"desde {fecha_inicio_exacta.strftime('%d/%m/%Y')}")
@@ -264,39 +250,30 @@ def _filtrar_solicitudes(request):
         filtros_texto.append(f"Fechas: {' '.join(partes)}")
 
     elif rango_fecha:
-        # Período predefinido solo si NO hay fechas exactas
         fecha_inicio_pred, fecha_fin_pred = calcular_rango_fechas(rango_fecha)
-
         if fecha_inicio_pred and fecha_fin_pred:
             solicitudes = aplicar_filtro_fecha(
                 solicitudes, 'fecha_recepcion',
                 fecha_inicio_pred, fecha_fin_pred
             )
-
             etiquetas = {
-                'hoy': 'Hoy',
-                'ayer': 'Ayer',
-                'esta_semana': 'Esta semana',
-                'semana_pasada': 'Semana pasada',
-                'este_mes': 'Este mes',
-                'mes_pasado': 'Mes pasado',
-                'ultimos_7_dias': 'Últimos 7 días',
-                'ultimos_30_dias': 'Últimos 30 días',
+                'hoy': 'Hoy', 'ayer': 'Ayer',
+                'esta_semana': 'Esta semana', 'semana_pasada': 'Semana pasada',
+                'este_mes': 'Este mes', 'mes_pasado': 'Mes pasado',
+                'ultimos_7_dias': 'Últimos 7 días', 'ultimos_30_dias': 'Últimos 30 días',
                 'este_año': 'Este año',
             }
             filtros_texto.append(f"Período: {etiquetas.get(rango_fecha, rango_fecha)}")
 
-    # ── Diccionario para historial ────────────────────────────────────────────
     filtros_dict = {
-        'estado':         estado or None,
-        'programa_id':    programa_id or None,
-        'empresa_id':     empresa_id or None,
-        'nit':            nit or None,
-        'instructor_id':  instructor_id or None,
-        'rango_fecha':    rango_fecha or None,
-        # Fechas exactas (nuevas)
-        'fecha_inicio':   str(fecha_inicio_exacta) if fecha_inicio_exacta else None,
-        'fecha_fin':      str(fecha_fin_exacta)    if fecha_fin_exacta    else None,
+        'estado':        estado or None,
+        'programa_id':   programa_id or None,
+        'empresa_id':    empresa_id or None,
+        'nit':           nit or None,
+        'instructor_id': instructor_id or None,
+        'rango_fecha':   rango_fecha or None,
+        'fecha_inicio':  str(fecha_inicio_exacta) if fecha_inicio_exacta else None,
+        'fecha_fin':     str(fecha_fin_exacta)    if fecha_fin_exacta    else None,
     }
 
     return solicitudes.order_by('-fecha_recepcion'), filtros_texto, filtros_dict
@@ -308,10 +285,9 @@ def _filtrar_solicitudes(request):
 
 @login_required
 def generar_reporte_solicitudes_pdf(request):
-    """Genera reporte PDF de solicitudes con filtros avanzados (incluye rango exacto de fechas)"""
+    """Genera reporte PDF de solicitudes con filtros avanzados"""
 
     tiempo_inicio = time.time()
-
     solicitudes, filtros_texto, filtros_dict = _filtrar_solicitudes(request)
 
     generator = PDFReportGenerator()
@@ -322,12 +298,8 @@ def generar_reporte_solicitudes_pdf(request):
 
     tiempo_total = time.time() - tiempo_inicio
     registrar_reporte(
-        request=request,
-        tipo='solicitudes',
-        formato='pdf',
-        filtros_dict=filtros_dict,
-        total_registros=solicitudes.count(),
-        tiempo=tiempo_total
+        request=request, tipo='solicitudes', formato='pdf',
+        filtros_dict=filtros_dict, total_registros=solicitudes.count(), tiempo=tiempo_total
     )
 
     response = HttpResponse(buffer, content_type='application/pdf')
@@ -338,10 +310,9 @@ def generar_reporte_solicitudes_pdf(request):
 
 @login_required
 def generar_reporte_solicitudes_excel(request):
-    """Genera reporte Excel de solicitudes con filtros avanzados (incluye rango exacto de fechas)"""
+    """Genera reporte Excel de solicitudes con filtros avanzados"""
 
     tiempo_inicio = time.time()
-
     solicitudes, _filtros_texto, filtros_dict = _filtrar_solicitudes(request)
 
     generator = ExcelReportGenerator()
@@ -352,20 +323,14 @@ def generar_reporte_solicitudes_excel(request):
 
     tiempo_total = time.time() - tiempo_inicio
     registrar_reporte(
-        request=request,
-        tipo='solicitudes',
-        formato='excel',
-        filtros_dict=filtros_dict,
-        total_registros=solicitudes.count(),
-        tiempo=tiempo_total
+        request=request, tipo='solicitudes', formato='excel',
+        filtros_dict=filtros_dict, total_registros=solicitudes.count(), tiempo=tiempo_total
     )
 
     buffer.seek(0)
     filename = f'solicitudes_{timezone.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
     return FileResponse(
-        buffer,
-        as_attachment=True,
-        filename=filename,
+        buffer, as_attachment=True, filename=filename,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
@@ -476,75 +441,14 @@ def generar_reporte_programas_excel(request):
 
 @login_required
 def generar_reporte_instructores_pdf(request):
-    """Genera reporte PDF de instructores"""
+    """Genera reporte PDF de instructores con columna Disponibilidad"""
 
     tiempo_inicio = time.time()
-
     instructores = Instructor.objects.prefetch_related('especialidad').all().order_by('nombre')
 
+    # ✅ Ahora usa el método del generador que incluye la columna Disponibilidad
     generator = PDFReportGenerator()
-
-    from reportlab.lib import colors
-    from reportlab.lib.pagesizes import letter
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-    from reportlab.lib.units import inch
-    import io
-
-    buffer = io.BytesIO()
-    doc = SimpleDocTemplate(
-        buffer, pagesize=letter,
-        topMargin=80, bottomMargin=50,
-        title="Directorio de Instructores - SENA",
-        author="SENA - Sistema de Gestión",
-        subject="Instructores Activos"
-    )
-
-    elements = []
-
-    title = Paragraph("DIRECTORIO DE INSTRUCTORES", generator.styles['CustomTitle'])
-    elements.append(title)
-    elements.append(Spacer(1, 0.3 * inch))
-
-    total   = instructores.count()
-    activos = instructores.filter(activo=True).count()
-    elements.append(Paragraph(
-        f"<b>Total de instructores:</b> {total} (Activos: {activos})",
-        generator.styles['Normal']
-    ))
-    elements.append(Spacer(1, 0.3 * inch))
-
-    data = [['Instructor', 'Correo', 'Teléfono', 'Especialidades', 'Estado', 'Solicitudes']]
-    for inst in instructores[:50]:
-        data.append([
-            inst.nombre[:30],
-            inst.correo[:30],
-            inst.telefono[:15] if inst.telefono else 'N/A',
-            str(inst.especialidad.count()),
-            'Activo' if inst.activo else 'Inactivo',
-            str(inst.solicitud_set.count())
-        ])
-
-    table = Table(data, colWidths=[
-        1.5*inch, 1.5*inch, 1*inch, 1*inch, 0.8*inch, 0.9*inch
-    ])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
-        ('TEXTCOLOR',  (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN',      (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME',   (0, 0), (-1,  0), 'Helvetica-Bold'),
-        ('FONTSIZE',   (0, 0), (-1,  0), 9),
-        ('FONTSIZE',   (0, 1), (-1, -1), 7),
-        ('GRID',       (0, 0), (-1, -1), 0.5, colors.grey),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
-    ]))
-    elements.append(table)
-
-    doc.build(
-        elements,
-        onFirstPage=generator.add_header_footer,
-        onLaterPages=generator.add_header_footer
-    )
-    buffer.seek(0)
+    buffer = generator.generate_instructores_report(instructores)
 
     tiempo_total = time.time() - tiempo_inicio
     registrar_reporte(
@@ -560,7 +464,7 @@ def generar_reporte_instructores_pdf(request):
 
 @login_required
 def generar_reporte_instructores_excel(request):
-    """Genera reporte Excel de instructores"""
+    """Genera reporte Excel de instructores con columna Disponibilidad"""
 
     tiempo_inicio = time.time()
     instructores = Instructor.objects.prefetch_related('especialidad').all().order_by('nombre')
@@ -607,7 +511,7 @@ def generar_reporte_consolidado_pdf(request):
     tiempo_total = time.time() - tiempo_inicio
     total_registros = (
         solicitudes.count() + empresas.count() +
-        programas.count()  + instructores.count()
+        programas.count()   + instructores.count()
     )
     registrar_reporte(
         request=request, tipo='consolidado', formato='pdf',
@@ -641,7 +545,7 @@ def generar_reporte_consolidado_excel(request):
     tiempo_total = time.time() - tiempo_inicio
     total_registros = (
         solicitudes.count() + empresas.count() +
-        programas.count()  + instructores.count()
+        programas.count()   + instructores.count()
     )
     registrar_reporte(
         request=request, tipo='consolidado', formato='excel',
@@ -671,11 +575,9 @@ def historial_reportes(request):
 
     logs = Reporte.objects.select_related('generado_por').order_by('-fecha_generacion')
 
-    # Asistente: solo ve sus propios reportes
     if not es_administrador and not es_coordinador:
         logs = logs.filter(generado_por=user)
 
-    # ── Filtros ──────────────────────────────────────────────────────────────
     tipo_filter    = request.GET.get('tipo', '')
     formato_filter = request.GET.get('formato', '')
     usuario_filter = request.GET.get('usuario', '')
@@ -715,9 +617,6 @@ def historial_reportes(request):
             Q(generado_por__last_name__icontains=search)
         )
 
-    # ── Estadísticas ─────────────────────────────────────────────────────────
-    # IMPORTANTE: se calculan DESPUÉS de aplicar todos los filtros
-    # y se fuerza la evaluación con list() para obtener valores agrupados correctamente.
     stats = {
         'total':    logs.count(),
         'por_tipo': list(
@@ -727,11 +626,9 @@ def historial_reportes(request):
         ),
     }
 
-    # ── Paginación ───────────────────────────────────────────────────────────
-    paginator  = Paginator(logs, 25)
-    page_obj   = paginator.get_page(request.GET.get('page', 1))
+    paginator = Paginator(logs, 25)
+    page_obj  = paginator.get_page(request.GET.get('page', 1))
 
-    # ── Usuarios disponibles (solo para admin/coordinador) ───────────────────
     usuarios_disponibles = []
     if es_administrador or es_coordinador:
         usuarios_disponibles = Reporte.objects.values(
@@ -748,14 +645,12 @@ def historial_reportes(request):
         'es_administrador': es_administrador,
         'es_coordinador':   es_coordinador,
 
-        # Filtros aplicados
         'tipo_filter':    tipo_filter,
         'formato_filter': formato_filter,
         'usuario_filter': usuario_filter,
         'rango_filter':   rango_filter,
         'search':         search,
 
-        # Datos para selectores
         'usuarios_disponibles': usuarios_disponibles,
         'tipos_reporte':        Reporte.TIPO_CHOICES,
         'formatos_reporte':     Reporte.FORMATO_CHOICES,

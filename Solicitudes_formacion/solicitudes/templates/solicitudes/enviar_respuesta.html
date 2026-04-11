@@ -127,6 +127,21 @@
         .instructor-card-body strong { display: block; color: #1b5e20; font-size: 1.05em; margin-bottom: 6px; }
         .instructor-card-body span   { display: block; color: #444; font-size: 0.92em; line-height: 1.8; }
 
+        /* ── CC badge ── */
+        .cc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f5e9;
+            border: 1px solid #81c784;
+            color: #2e7d32;
+            font-size: 0.82em;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+
         /* ── Mensajes ── */
         .messages-container { margin-bottom: 25px; }
 
@@ -218,6 +233,33 @@
         .info-item { display: flex; flex-direction: column; gap: 5px; }
         .info-item label { font-size: 0.85em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-item .value { font-size: 1.1em; color: #333; font-weight: 600; }
+
+        /* ── Fechas de formación resaltadas ── */
+        .fechas-formacion {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 1px solid #a5d6a7;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .fecha-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #81c784;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95em;
+        }
+
+        .fecha-chip-icon { font-size: 1.3em; }
+        .fecha-chip-label { color: #666; font-size: 0.8em; display: block; }
+        .fecha-chip-value { color: #1b5e20; font-weight: 700; font-size: 1em; display: block; }
 
         .form-group { margin-bottom: 25px; }
 
@@ -381,6 +423,7 @@
             .btn            { width: 100%; }
             .template-buttons { flex-direction: column; }
             .info-grid      { grid-template-columns: 1fr; }
+            .fechas-formacion { flex-direction: column; }
             footer          { font-size: 0.85rem; padding: 15px; }
         }
     </style>
@@ -431,6 +474,11 @@
                     Al enviar este correo el estado cambiará automáticamente a
                     <strong>RESPONDIDA</strong> y se registrará la fecha de respuesta.<br>
                     Siguiente paso después de esto: finalizar la formación cuando concluya.
+                    {% if solicitud.instructor_asignado and solicitud.instructor_asignado.correo %}
+                        <br>📋 Se enviará <strong>copia (CC)</strong> al instructor
+                        <strong>{{ solicitud.instructor_asignado.nombre }}</strong>
+                        ({{ solicitud.instructor_asignado.correo }}).
+                    {% endif %}
                 </p>
             </div>
         </div>
@@ -442,6 +490,9 @@
                 <strong>Instructor asignado: {{ solicitud.instructor_asignado.nombre }}</strong>
                 <span>📧 {{ solicitud.instructor_asignado.correo }}</span>
                 <span>📞 {{ solicitud.instructor_asignado.telefono }}</span>
+                {% if solicitud.instructor_asignado.correo %}
+                    <span class="cc-badge">📋 Recibirá copia de este correo</span>
+                {% endif %}
             </div>
         </div>
         {% endif %}
@@ -454,6 +505,10 @@
                 <p>
                     Esta solicitud ya está en estado <strong>RESPONDIDA</strong>.
                     El correo se enviará, pero el estado no cambiará.<br>
+                    {% if solicitud.instructor_asignado and solicitud.instructor_asignado.correo %}
+                        Se enviará copia al instructor
+                        <strong>{{ solicitud.instructor_asignado.nombre }}</strong>.<br>
+                    {% endif %}
                     Si deseas finalizar la formación, ve a
                     <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}"
                        style="color:#1b5e20; font-weight:600;">editar la solicitud</a>.
@@ -520,6 +575,30 @@
             </div>
         </div>
 
+        {# ── Fechas de formación (solo si existen) ── #}
+        {% if fecha_inicio_texto or fecha_fin_texto %}
+        <div class="fechas-formacion">
+            {% if fecha_inicio_texto %}
+            <div class="fecha-chip">
+                <div class="fecha-chip-icon">📅</div>
+                <div>
+                    <span class="fecha-chip-label">Inicio de Formación</span>
+                    <span class="fecha-chip-value">{{ fecha_inicio_texto }}</span>
+                </div>
+            </div>
+            {% endif %}
+            {% if fecha_fin_texto %}
+            <div class="fecha-chip">
+                <div class="fecha-chip-icon">🏁</div>
+                <div>
+                    <span class="fecha-chip-label">Fin de Formación</span>
+                    <span class="fecha-chip-value">{{ fecha_fin_texto }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <div class="required-note">
             ⚠️ Los campos marcados con asterisco (*) son obligatorios
         </div>
@@ -542,6 +621,9 @@
                     {% else %}
                         <strong>{{solicitud.empresa.correo}}</strong> (correo registrado)
                     {% endif %}
+                    {% if solicitud.instructor_asignado and solicitud.instructor_asignado.correo %}
+                        — CC: <strong>{{ solicitud.instructor_asignado.correo }}</strong> (instructor)
+                    {% endif %}
                 </small>
             </div>
 
@@ -560,7 +642,7 @@
                     <a href="{% url 'solicitudes:guia_solicitud' %}?from={{ solicitud.id }}" class="template-btn" target="_blank">
                         📋 Ver guía para empresas
                     </a>
-                    {# ── NUEVO BOTÓN: Catálogo de Programas ── #}
+                    {# ── Catálogo de Programas ── #}
                     <a href="{% url 'solicitudes:catalogo_programas' %}" class="template-btn-catalogo" target="_blank">
                         📚 Ver catálogo de programas
                     </a>
@@ -586,7 +668,7 @@
                     </button>
                 {% else %}
                     <button type="submit" class="btn btn-primary">
-                        📧 Enviar Respuesta
+                        📧 Enviar Respuesta{% if solicitud.instructor_asignado and solicitud.instructor_asignado.correo %} + CC Instructor{% endif %}
                     </button>
                 {% endif %}
             </div>
@@ -608,7 +690,9 @@
         instructorNombre:   "{{ solicitud.instructor_asignado.nombre|default:''|escapejs }}",
         instructorCorreo:   "{{ solicitud.instructor_asignado.correo|default:''|escapejs }}",
         instructorTelefono: "{{ solicitud.instructor_asignado.telefono|default:''|escapejs }}",
-        semanaProgamada:    "{{ fecha_inicio_texto|default:''|escapejs }}",
+        // ── Fechas de formación pasadas desde la vista ──────────────────────
+        fechaInicio: "{{ fecha_inicio_texto|default:''|escapejs }}",
+        fechaFin:    "{{ fecha_fin_texto|default:''|escapejs }}",
     };
 
     function cargarTemplate(tipo) {
@@ -618,20 +702,28 @@
             const nombre   = DATOS.instructorNombre   || '[NOMBRE DEL INSTRUCTOR]';
             const correo   = DATOS.instructorCorreo   || '[CORREO DEL INSTRUCTOR]';
             const telefono = DATOS.instructorTelefono || '[CELULAR DEL INSTRUCTOR]';
-            const semana   = DATOS.semanaProgamada
-                ? 'A partir de la semana del ' + DATOS.semanaProgamada + '.'
-                : 'A partir de la semana del [INDICAR FECHA].';
+
+            // ── Período de formación: usa fechas reales si existen ──────────
+            let periodoFormacion = '';
+            if (DATOS.fechaInicio && DATOS.fechaFin) {
+                periodoFormacion = 'Fecha de inicio: ' + DATOS.fechaInicio + '\n'
+                                 + 'Fecha de finalización: ' + DATOS.fechaFin;
+            } else if (DATOS.fechaInicio) {
+                periodoFormacion = 'A partir del ' + DATOS.fechaInicio + '.';
+            } else {
+                periodoFormacion = 'Semana programada: [INDICAR FECHA DE INICIO Y FIN]';
+            }
 
             texto = 'Reciba un cordial saludo.\n\n'
                 + 'Por medio de la presente, y de manera atenta, nos dirigimos a usted para confirmar '
                 + 'que su solicitud para el curso de ' + DATOS.programa + ' ha sido debidamente tramitada.\n\n'
                 + 'Le informamos que el instructor asignado para impartir esta capacitación es el señor ' + nombre + '.\n\n'
                 + 'Para su conocimiento y coordinación, a continuación, se detallan los datos de contacto '
-                + 'del instructor y la fecha tentativa de inicio:\n\n'
+                + 'del instructor y el período de formación:\n\n'
                 + 'Instructor: ' + nombre + '\n'
                 + 'Correo Electrónico: ' + correo + '\n'
                 + 'Número de Celular: ' + telefono + '\n'
-                + 'Semana Programada: ' + semana + '\n\n'
+                + periodoFormacion + '\n\n'
                 + 'Agradecemos su interés en esta importante formación y le solicitamos estar atento '
                 + 'a futuras comunicaciones para recibir los detalles finales sobre la logística '
                 + 'y horarios específicos del curso.\n\n'

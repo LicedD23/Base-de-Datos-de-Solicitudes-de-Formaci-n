@@ -69,121 +69,127 @@
         .breadcrumb span {
             color: #999;
         }
-        /* Mensajes*/
-        .messeges-container{
-            margin-bottom:25px;
-        }
-        .alert{
-            padding:18px 25px;
-            border-radius:12px;
-            margin-bottom:15px;
-            display:flex;
-            align-items:center;
-            gap:15px;
-            font-size:1em;
-            font-weight:500;
-            box-shadow:0 4px 15px rgba(0,0,0,0.1);
-            animation:slideInDown 0.4s ease-out;
-            position:relative;
-            overflow:hidden;
-        }
-        @keyframes slideInDown{
-            from{
-                transform:translateY(-20%);
-                opacity:0; 
-            }
-            to{
-                transform:translateY(0);
-                opacity:1;
 
+        /* Mensajes */
+        .messages-container {
+            margin-bottom: 25px;
+        }
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
-        .alert::before{
-            content:'';
-            position:absolute;
-            left:0;
-            top:0;
-            bottom:0;
-            width:5px;
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
         }
-        .alert-success{
-            background:linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color:white;
-            border:2px solid #1b5e20;
+
+        .alert-success {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: 2px solid #1b5e20;
         }
-        .alert-success::before{
-            background:#fff;
+
+        .alert-success::before {
+            background: #fff;
         }
-        .alert-success .alert-icon{
-            font-size:1.8em;
-            animation:scaleIn 0.5s ease-out;
+
+        .alert-success .alert-icon {
+            font-size: 1.8em;
+            animation: scaleIn 0.5s ease-out;
         }
-        @keyframes scaleIn{
-            0%{
-                transform:scale(0);
-            }
-            50%{
-                transform:scale(1.2);
-            }
-            100%{
-                transform:scale(1);
-            } 
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
-        .alert-error{
-            background:linear-gradient(135deg, #c62828 0%, #e53935 100%);
-            color:white;
-            border:2px solid #b71c1c;
-        }  
-        .alert-error -alert-icon{
-            font-size:1.8em;
-            animation:shake 0.5s ease-out;
+
+        .alert-error {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: white;
+            border: 2px solid #b71c1c;
         }
-        @keyframes shake{
-            0%, 100%{
-                transform:translateX(0);
-            }
-            25%{
-                transform:translateX(-10px);
-            }
-            75%{
-                transform:translateX(10px);
-            }
+
+        .alert-error .alert-icon {
+            font-size: 1.8em;
+            animation: shake 0.5s ease-out;
         }
-        .alert-warning{
-            background:linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
-            color:white;
-            border:2px solid #e65100;
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
-        .alert-warning::before{
-            background:#fff;
+
+        .alert-warning {
+            background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%);
+            color: white;
+            border: 2px solid #e65100;
         }
-        .alert-icon{
-            font-size:1.5em;
-            flex-shrink:0;
+
+        .alert-warning::before {
+            background: #fff;
         }
-        .alert-content{
-            flex:1;
-            line-height:1.5;
+
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
         }
-        .alert-close{
-            background: rgba(255,255,255,0.2);
-            border:2px solid rgba(255,255,255,0.3);
-            color:white;
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex,
-            align-items:center;
-            font-weight:bold;
-            font-size:1.2em,
-            transition:all 0.3s ease;
-            flex-shrink:0;
+
+        .alert-content {
+            flex: 1;
+            line-height: 1.5;
         }
-        .alert-close:hover{
-            background:rgba(255,255,255,0.4);
-            transform:scale(1.1);
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
+
+        .alert-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
         .form-card {
             background: white;
             padding: 40px;
@@ -231,6 +237,13 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
         }
 
+        /* Estado de error en campo */
+        .form-group input.input-error,
+        .form-group select.input-error {
+            border-color: #c62828;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+        }
+
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
@@ -246,6 +259,21 @@
             color: #666;
             margin-top: 5px;
             font-size: 0.9em;
+        }
+
+        /* Nota de solo números */
+        .only-numbers-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff8e1;
+            color: #ef6c00;
+            border: 1px solid #ffcc02;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 0.82em;
+            font-weight: 600;
+            margin-top: 5px;
         }
 
         .checkbox-group {
@@ -274,28 +302,6 @@
             margin: 0;
             cursor: pointer;
             font-weight: 500;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95em;
-        }
-
-        .alert-error {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #c62828;
-        }
-
-        .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #2e7d32;
         }
 
         .form-actions {
@@ -391,20 +397,23 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
+
         /* FOOTER STYLES */
-        footer{
+        footer {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -425,12 +434,10 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
-            .page-wrapper{
-                padding:15px;
-            }
-            footer{
-                font-size:0.85rem;
-                padding:15px;
+
+            footer {
+                font-size: 0.85rem;
+                padding: 15px;
             }
         }
     </style>
@@ -449,7 +456,7 @@
             <span>›</span>
             <span>Crear Programa</span>
         </div>
-        
+
         <div class="info-banner">
             <div class="info-banner-icon">💡</div>
             <div class="info-banner-content">
@@ -463,9 +470,9 @@
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
-                        {% if 'error' in message.tags%}
+                        {% if 'error' in message.tags %}
                             ❌
-                        {% elif 'warning' in message.tags%}
+                        {% elif 'warning' in message.tags %}
                             ⚠️
                         {% else %}
                             ✅
@@ -476,16 +483,16 @@
                     </div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
-            {%endfor%}
+            {% endfor %}
         </div>
-        {%endif%}
+        {% endif %}
 
         <div class="form-card">
             <div class="required-note">
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
             </div>
 
-            <form method="POST" action="{% url 'programas:crear_programa' %}">
+            <form method="POST" action="{% url 'programas:crear_programa' %}" id="formCrearPrograma">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -502,10 +509,10 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="nombre" class="required">Nombre del Programa</label>
-                        <input 
-                            type="text" 
-                            id="nombre" 
-                            name="nombre" 
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
                             placeholder="Ejemplo: Operador de Excavadora"
                             required
                             maxlength="200"
@@ -514,22 +521,28 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="codigo">Código del Programa</label>
-                        <input 
-                            type="text" 
-                            id="codigo" 
-                            name="codigo" 
+                        <!-- ACTUALIZADO: código obligatorio y solo numérico -->
+                        <label for="codigo" class="required">Código del Programa</label>
+                        <input
+                            type="text"
+                            id="codigo"
+                            name="codigo"
                             placeholder="Ejemplo: 2874586"
                             maxlength="50"
+                            required
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            oninput="soloNumeros(this)"
                         >
-                        <small>Código interno para identificación (opcional)</small>
+                        <small class="only-numbers-note">🔢 Solo se permiten números</small>
+                        <small>Código numérico obligatorio para identificación del programa</small>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="descripcion">Descripción</label>
-                    <textarea 
-                        id="descripcion" 
+                    <textarea
+                        id="descripcion"
                         name="descripcion"
                         placeholder="Describe el programa: objetivos, contenido, habilidades que desarrolla, requisitos previos, etc."
                     ></textarea>
@@ -539,9 +552,9 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="duracion_horas">Duración (Horas)</label>
-                        <input 
-                            type="number" 
-                            id="duracion_horas" 
+                        <input
+                            type="number"
+                            id="duracion_horas"
                             name="duracion_horas"
                             placeholder="40"
                             min="1"
@@ -553,9 +566,9 @@
                     <div class="form-group">
                         <label>Estado Inicial</label>
                         <div class="checkbox-group">
-                            <input 
-                                type="checkbox" 
-                                id="activo" 
+                            <input
+                                type="checkbox"
+                                id="activo"
                                 name="activo"
                                 checked
                             >
@@ -570,7 +583,7 @@
                     <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
                         <li>El nombre del programa es claro y descriptivo</li>
                         <li>Has seleccionado el área correcta</li>
-                        <li>El código es único (si decides asignarlo)</li>
+                        <li>El código es numérico y único en el catálogo</li>
                         <li>La duración en horas es correcta (si aplica)</li>
                         <li>El programa no existe previamente en el catálogo</li>
                     </ul>
@@ -588,11 +601,44 @@
         </div>
     </div>
     <br>
-    <!--FOOTER-->
+
+    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
     <script>
+        // ✅ Función que elimina cualquier carácter que no sea número en tiempo real
+        function soloNumeros(input) {
+            // Eliminar cualquier carácter que no sea dígito
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        // ✅ Validación adicional al pegar contenido (Ctrl+V)
+        document.getElementById('codigo').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const texto = (e.clipboardData || window.clipboardData).getData('text');
+            const soloNums = texto.replace(/[^0-9]/g, '');
+            this.value = soloNums;
+        });
+
+        // ✅ Bloquear teclas de letras directamente en el campo código
+        document.getElementById('codigo').addEventListener('keydown', function(e) {
+            // Permitir: backspace, delete, tab, escape, enter, flechas, home, end
+            const teclasPerm = [
+                'Backspace','Delete','Tab','Escape','Enter',
+                'ArrowLeft','ArrowRight','ArrowUp','ArrowDown',
+                'Home','End'
+            ];
+            if (teclasPerm.includes(e.key)) return;
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            if ((e.ctrlKey || e.metaKey) && ['a','c','v','x'].includes(e.key.toLowerCase())) return;
+            // Bloquear si no es un dígito
+            if (!/^[0-9]$/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
@@ -608,18 +654,13 @@
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
+                from { transform: translateY(0); opacity: 1; }
+                to   { transform: translateY(-20px); opacity: 0; }
             }
         `;
         document.head.appendChild(style);
     </script>
-    {% include 'core/accessibility.html'%}
+
+    {% include 'core/accessibility.html' %}
 </body>
 </html>

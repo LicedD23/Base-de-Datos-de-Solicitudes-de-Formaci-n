@@ -15,7 +15,6 @@
         }
 
         a { text-decoration: none; }
-
         .container { max-width: 1400px; margin: 0 auto; }
 
         .header {
@@ -24,9 +23,8 @@
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 8px 20px rgba(46,125,50,0.3);
         }
-
         .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
 
         .breadcrumb {
@@ -35,465 +33,424 @@
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 10px;
             font-size: 0.95em;
         }
-
-        .breadcrumb a { color: #2e7d32; transition: color 0.3s ease; }
-        .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
+        .breadcrumb a { color: #2e7d32; }
+        .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #999; }
 
         /* Mensajes */
         .messages-container { margin-bottom: 25px; }
-
         .alert {
             padding: 18px 25px;
             border-radius: 12px;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            font-size: 1em;
-            font-weight: 500;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 15px; font-size: 1em; font-weight: 500;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             animation: slideInDown 0.4s ease-out;
-            position: relative;
         }
-
         @keyframes slideInDown {
             from { transform: translateY(-20px); opacity: 0; }
             to   { transform: translateY(0);     opacity: 1; }
         }
-
-        .alert-success { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; border: 2px solid #1b5e20; }
-        .alert-error   { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; border: 2px solid #b71c1c; }
-        .alert-warning { background: linear-gradient(135deg, #ef6c00 0%, #f57c00 100%); color: white; border: 2px solid #e65100; }
-
+        .alert-success { background: linear-gradient(135deg, #2e7d32, #43a047); color: white; border: 2px solid #1b5e20; }
+        .alert-error   { background: linear-gradient(135deg, #c62828, #e53935); color: white; border: 2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg, #ef6c00, #f57c00); color: white; border: 2px solid #e65100; }
         .alert-content { flex: 1; display: flex; align-items: center; gap: 10px; line-height: 1.5; }
         .alert-icon    { font-size: 1.3em; flex-shrink: 0; }
-
         .alert-close {
-            background: rgba(255,255,255,0.3);
-            border: none;
-            color: white;
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            padding: 0; line-height: 1;
+            background: rgba(255,255,255,0.3); border: none; color: white;
+            width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: bold; transition: all 0.3s; flex-shrink: 0;
         }
-
         .alert-close:hover { background: rgba(255,255,255,0.5); transform: scale(1.1); }
 
         /* Modo Migración */
         .migration-toggle-section {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
             border: 3px solid #ff9800;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            padding: 25px; border-radius: 15px; margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(255,152,0,0.2);
         }
-
         .migration-toggle-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .migration-toggle-icon  { font-size: 2em; }
         .migration-toggle-title { flex: 1; }
         .migration-toggle-title h3 { color: #e65100; font-size: 1.3em; margin-bottom: 5px; }
         .migration-toggle-title p  { color: #ef6c00; font-size: 0.9em; }
-
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-
         .slider {
-            position: absolute;
-            cursor: pointer;
+            position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
+            background-color: #ccc; transition: .4s; border-radius: 34px;
         }
-
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px; width: 26px;
-            left: 4px; bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+            position: absolute; content: "";
+            height: 26px; width: 26px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%;
         }
-
         input:checked + .slider              { background-color: #ff9800; }
         input:checked + .slider:before       { transform: translateX(26px); }
-
         .migration-info {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #ff9800;
-            margin-top: 15px;
+            background: white; padding: 15px; border-radius: 10px;
+            border-left: 4px solid #ff9800; margin-top: 15px;
         }
-
-        .migration-info ul   { margin-left: 20px; color: #666; }
-        .migration-info li   { margin-bottom: 8px; }
+        .migration-info ul { margin-left: 20px; color: #666; }
+        .migration-info li { margin-bottom: 8px; }
 
         /* Sección fechas migración */
         .dates-section {
             display: none;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
             border: 3px solid #2e7d32;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            padding: 25px; border-radius: 15px; margin-bottom: 30px;
         }
-
-        .dates-section.active {
-            display: block;
-            animation: slideDown 0.3s ease-out;
-        }
-
+        .dates-section.active { display: block; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-20px); }
-            to   { opacity: 1; transform: translateY(0);     }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         .dates-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
         .dates-header h2 { color: #1b5e20; margin: 0; }
-
-        /* Info box dentro de fechas */
         .dates-info {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #2e7d32;
+            background: white; padding: 15px; border-radius: 10px;
+            margin-bottom: 20px; border-left: 4px solid #2e7d32;
         }
-
-        .dates-info p      { color: #666; margin-bottom: 8px; font-size: 0.93em; line-height: 1.6; }
+        .dates-info p { color: #666; margin-bottom: 8px; font-size: 0.93em; line-height: 1.6; }
         .dates-info p:last-child { margin-bottom: 0; }
         .dates-info strong { color: #2e7d32; }
-
-        /* Banner flujo dentro de fechas */
         .flujo-banner {
-            background: white;
-            border: 2px solid #2e7d32;
-            border-radius: 10px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.92em;
-            color: #1b5e20;
-            font-weight: 600;
-            flex-wrap: wrap;
+            background: white; border: 2px solid #2e7d32; border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.92em; color: #1b5e20; font-weight: 600; flex-wrap: wrap;
         }
-
-        .flujo-step {
-            background: #e8f5e9;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            white-space: nowrap;
-        }
-
+        .flujo-step { background: #e8f5e9; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; white-space: nowrap; }
         .flujo-arrow { color: #2e7d32; font-size: 1.1em; }
 
-        /* Secciones generales */
+        /* Secciones */
         .section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
+            background: white; padding: 30px; border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px;
         }
-
         .section h2 {
-            color: #2e7d32;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #2e7d32; font-size: 1.5em; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
         }
-
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-
         .form-group { display: flex; flex-direction: column; }
-
-        .form-group label {
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 0.95em;
-        }
-
+        .form-group label { font-weight: 600; color: #555; margin-bottom: 8px; font-size: 0.95em; }
         .form-group input,
         .form-group select,
         .form-group textarea {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-            transition: all 0.3s ease;
+            padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 1em; font-family: inherit; transition: all 0.3s;
         }
-
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            outline: none;
-            border-color: #2e7d32;
+            outline: none; border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
-
         .form-group textarea { resize: vertical; min-height: 120px; }
-
         .form-group input:disabled,
         .form-group select:disabled { background: #f5f5f5; cursor: not-allowed; }
-
         .form-group small {
-            font-size: 0.83em;
-            color: #777;
-            margin-top: 6px;
-            display: block;
-            font-style: italic;
-            line-height: 1.4;
+            font-size: 0.83em; color: #777; margin-top: 6px;
+            display: block; font-style: italic; line-height: 1.4;
         }
-
-        /* Indicador de estado calculado junto a cada campo fecha */
         .estado-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.78em;
-            font-weight: 600;
-            font-style: normal;
-            margin-left: 4px;
-            vertical-align: middle;
+            display: inline-block; padding: 2px 10px; border-radius: 12px;
+            font-size: 0.78em; font-weight: 600; font-style: normal;
+            margin-left: 4px; vertical-align: middle;
         }
-
         .badge-recibida   { background: #fff3e0; color: #e65100; }
         .badge-atendida   { background: #f3e5f5; color: #6a1b9a; }
         .badge-respondida { background: #e3f2fd; color: #1565c0; }
         .badge-finalizada { background: #c8e6c9; color: #1b5e20; }
-
         .required-mark { color: #c62828; font-weight: bold; }
+
+        /* ══ VALIDACIÓN DE CUPO — igual que crear_solicitud ══ */
+        .aviso-bloqueo {
+            display: none;
+            margin-top: 10px;
+            background: #ffebee;
+            border-left: 4px solid #c62828;
+            border-radius: 8px;
+            padding: 13px 16px;
+            animation: fadeIn 0.25s ease;
+        }
+        .aviso-bloqueo.active { display: block; }
+        .aviso-bloqueo p {
+            margin: 0;
+            color: #b71c1c;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .aviso-flex {
+            display: none;
+            margin-top: 10px;
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            border-radius: 8px;
+            padding: 14px 16px;
+            animation: fadeIn 0.25s ease;
+        }
+        .aviso-flex.active { display: block; }
+        .aviso-flex-titulo {
+            color: #e65100;
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .aviso-flex-subtitulo {
+            color: #bf360c;
+            font-size: 0.88em;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .razones-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .razon-btn {
+            background: white;
+            border: 2px solid #ffa000;
+            color: #e65100;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.88em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .razon-btn:hover { background: #ffa000; color: white; transform: translateY(-1px); }
+        .razon-btn.selected { background: #e65100; border-color: #e65100; color: white; }
+
+        /* Nota de razón guardada (cuando hay razon_cupo en observaciones existentes) */
+        .razon-guardada-nota {
+            display: none;
+            margin-top: 8px;
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.88em;
+            color: #1b5e20;
+            font-weight: 500;
+        }
+        .razon-guardada-nota.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Caja de programación de formación ──────────────────────────── */
+        .formacion-rango-box {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f1);
+            border: 2px solid #2e7d32;
+            border-radius: 12px; padding: 22px; margin-top: 25px;
+        }
+        .formacion-rango-title {
+            display: flex; align-items: center; gap: 8px;
+            color: #1b5e20; font-weight: 700; font-size: 1.05em; margin-bottom: 6px;
+        }
+        .formacion-rango-subtitle {
+            font-size: 0.87em; color: #555; margin-bottom: 18px; line-height: 1.5;
+        }
+        .formacion-rango-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+        }
+        .formacion-rango-field { display: flex; flex-direction: column; }
+        .formacion-rango-field label {
+            font-weight: 600; color: #2e7d32; margin-bottom: 6px; font-size: 0.92em;
+        }
+        .formacion-rango-field input {
+            padding: 11px 12px; border: 2px solid #a5d6a7;
+            border-radius: 8px; font-size: 1em; font-family: inherit;
+            transition: all 0.3s; background: white;
+        }
+        .formacion-rango-field input:focus {
+            outline: none; border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.15);
+        }
+        .formacion-rango-field small {
+            font-size: 0.8em; color: #666; margin-top: 5px;
+            font-style: italic; line-height: 1.4;
+        }
+
+        /* Rango actual guardado */
+        .rango-actual {
+            display: flex; align-items: center; gap: 10px;
+            background: white; border: 2px dashed #a5d6a7;
+            border-radius: 8px; padding: 10px 14px; margin-top: 16px;
+            font-size: 0.88em; color: #555; flex-wrap: wrap;
+        }
+        .rango-actual strong { color: #2e7d32; }
+
+        /* Aviso auto-finalización */
+        .auto-fin-warning {
+            background: linear-gradient(135deg, #fff8e1, #fff3cd);
+            border: 2px solid #ff9800; border-radius: 8px;
+            padding: 10px 14px; margin-top: 10px;
+            font-size: 0.87em; color: #e65100; font-weight: 500; display: none;
+        }
+        .auto-fin-warning.visible { display: block; }
+
+        /* ── Selector de instructor ─────────────────────────────────────── */
+        .instructor-select-wrapper { position: relative; }
+        .instructor-select-wrapper select {
+            width: 100%; padding: 12px 14px;
+            border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 1em; font-family: inherit; transition: all 0.3s; appearance: auto;
+        }
+        .instructor-select-wrapper select:focus {
+            outline: none; border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+        }
+        .instructor-preview {
+            margin-top: 12px; border-radius: 10px; overflow: hidden;
+            border: 2px solid transparent; transition: all 0.3s;
+        }
+        .instructor-preview.libre        { border-color: #2e7d32; background: #f1f8f1; }
+        .instructor-preview.ocupado      { border-color: #e53935; background: #fff5f5; }
+        .instructor-preview.sin-seleccion{ border-color: #e0e0e0; background: #fafafa; }
+        .preview-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+        .preview-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .preview-dot.libre   { background: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.2); }
+        .preview-dot.ocupado { background: #e53935; box-shadow: 0 0 0 3px rgba(229,57,53,0.2); }
+        .preview-dot.neutro  { background: #bdbdbd; }
+        .preview-nombre { font-weight: 600; font-size: 1em; color: #333; flex: 1; }
+        .preview-estado-label { font-size: 0.82em; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+        .libre   .preview-estado-label { background: #c8e6c9; color: #1b5e20; }
+        .ocupado .preview-estado-label { background: #ffcdd2; color: #b71c1c; }
+        .preview-detalle { padding: 0 16px 12px; font-size: 0.87em; color: #666; line-height: 1.5; }
+        .preview-formacion-item {
+            background: white; border-left: 3px solid #e53935;
+            padding: 6px 10px; border-radius: 0 6px 6px 0; margin-top: 6px; font-size: 0.9em;
+        }
+        .preview-proxima {
+            background: white; border-left: 3px solid #ff9800;
+            padding: 6px 10px; border-radius: 0 6px 6px 0; margin-top: 6px;
+            font-size: 0.9em; color: #e65100;
+        }
+        .disponibilidad-leyenda { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+        .leyenda-item { display: flex; align-items: center; gap: 5px; font-size: 0.82em; color: #666; }
+        .leyenda-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .leyenda-dot.libre   { background: #2e7d32; }
+        .leyenda-dot.ocupado { background: #e53935; }
 
         /* Documentos */
         .documents-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #f0f0f0;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #f0f0f0;
         }
-
-        .documents-title {
-            color: #2e7d32;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0;
-        }
-
+        .documents-title { color: #2e7d32; font-size: 1.5em; display: flex; align-items: center; gap: 10px; margin: 0; }
         .documents-count {
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; font-weight: 600;
         }
-
-        .documents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
+        .documents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .document-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 18px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border: 2px solid #e9ecef; border-radius: 12px; padding: 18px;
+            transition: all 0.3s; position: relative; overflow: hidden;
         }
-
         .document-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 4px; height: 100%;
-            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: linear-gradient(135deg, #2196f3, #1565c0);
         }
-
-        .document-card:hover {
-            border-color: #2196f3;
-            box-shadow: 0 8px 25px rgba(33,150,243,0.15);
-            transform: translateY(-3px);
-        }
-
+        .document-card:hover { border-color: #2196f3; box-shadow: 0 8px 25px rgba(33,150,243,0.15); transform: translateY(-3px); }
         .document-icon-wrapper {
-            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
-            width: 45px; height: 45px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #2196f3, #1565c0);
+            width: 45px; height: 45px; border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5em;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(33,150,243,0.3);
+            font-size: 1.5em; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(33,150,243,0.3);
         }
-
         .document-info { margin-bottom: 12px; }
-
         .document-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 0.9em;
-            margin-bottom: 6px;
-            word-break: break-word;
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 36px;
+            font-weight: 600; color: #333; font-size: 0.9em; margin-bottom: 6px;
+            word-break: break-word; line-height: 1.3;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; min-height: 36px;
         }
-
         .document-date { display: flex; align-items: center; gap: 5px; font-size: 0.8em; color: #666; }
-
-        .document-actions  { display: flex; gap: 8px; margin-bottom: 12px; }
-
+        .document-actions { display: flex; gap: 8px; margin-bottom: 12px; }
         .doc-btn {
-            flex: 1;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex; align-items: center; justify-content: center;
-            gap: 5px;
-            text-decoration: none;
+            flex: 1; padding: 8px 12px; border: none; border-radius: 6px;
+            font-size: 0.8em; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none;
         }
-
         .doc-btn-view     { background: #e3f2fd; color: #1565c0; border: 2px solid #1565c0; }
         .doc-btn-view:hover { background: #1565c0; color: white; transform: scale(1.05); }
-        .doc-btn-download { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
+        .doc-btn-download { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
         .doc-btn-download:hover { transform: scale(1.05); }
-
         .document-delete-box { padding-top: 12px; border-top: 2px solid #f0f0f0; }
-
-        .delete-checkbox-label {
-            display: flex; align-items: center; gap: 8px;
-            cursor: pointer;
-            color: #d32f2f;
-            font-size: 0.85em; font-weight: 600;
-        }
-
+        .delete-checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #d32f2f; font-size: 0.85em; font-weight: 600; }
         .delete-checkbox-label input { cursor: pointer; width: 16px; height: 16px; }
 
         /* Upload */
-        .upload-box {
-            background: #f9f9f9;
-            border: 3px dashed #2e7d32;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 25px;
-            text-align: center;
-        }
-
+        .upload-box { background: #f9f9f9; border: 3px dashed #2e7d32; border-radius: 12px; padding: 25px; margin-top: 25px; text-align: center; }
         .upload-box h3 { color: #2e7d32; margin-bottom: 15px; font-size: 1.2em; }
-
         .upload-label {
-            display: inline-block;
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-bottom: 10px;
+            display: inline-block; background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white; padding: 12px 25px; border-radius: 8px; cursor: pointer;
+            font-weight: 600; transition: all 0.3s; margin-bottom: 10px;
         }
-
         .upload-label:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
         .upload-input { display: none; }
         .upload-info  { color: #666; font-size: 0.9em; margin-top: 10px; }
-
         #files-preview { margin-top: 20px; }
-
         .preview-item {
-            background: #e8f5e9;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border-left: 4px solid #2e7d32;
-            margin-bottom: 10px;
+            background: #e8f5e9; padding: 12px 15px; border-radius: 8px;
+            border-left: 4px solid #2e7d32; margin-bottom: 10px;
             display: flex; align-items: center; gap: 10px;
         }
-
         .preview-icon { font-size: 1.5em; }
         .preview-info { flex: 1; }
         .preview-name { font-weight: 600; color: #2e7d32; margin-bottom: 3px; }
         .preview-size { font-size: 0.85em; color: #666; }
 
         /* Botones */
-        .action-buttons {
-            display: flex; gap: 15px; flex-wrap: wrap;
-            justify-content: center; margin-top: 20px;
-        }
-
+        .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
         .btn {
-            padding: 12px 25px;
-            border: none; border-radius: 8px;
-            font-size: 1em; font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex; align-items: center; gap: 8px;
-            text-decoration: none;
+            padding: 12px 25px; border: none; border-radius: 8px;
+            font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
         }
-
-        .btn-primary  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
+        .btn-primary   { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; box-shadow: 0 4px 12px rgba(46,125,50,0.3); }
         .btn-primary:hover { transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-secondary { background: white; color: #2e7d32; border: 2px solid #2e7d32; }
         .btn-secondary:hover { background: #2e7d32; color: white; }
 
         footer {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white; text-align: center; padding: 20px;
+            border-radius: 16px; margin-top: 30px; box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
-
         footer p { font-weight: 500; letter-spacing: 0.5px; }
 
         @media (max-width: 768px) {
-            .header h1         { font-size: 1.8em; }
-            .form-grid         { grid-template-columns: 1fr; }
-            .documents-grid    { grid-template-columns: 1fr; }
-            .documents-header  { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .flujo-banner      { font-size: 0.82em; }
+            .header h1            { font-size: 1.8em; }
+            .form-grid            { grid-template-columns: 1fr; }
+            .documents-grid       { grid-template-columns: 1fr; }
+            .documents-header     { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .flujo-banner         { font-size: 0.82em; }
+            .formacion-rango-grid { grid-template-columns: 1fr; }
+            .razones-grid         { flex-direction: column; }
+            .razon-btn            { border-radius: 8px; text-align: left; }
         }
     </style>
 </head>
@@ -502,7 +459,7 @@
 
     <div class="header">
         <h1>✏️ Editar Solicitud #{{ solicitud.id }}</h1>
-        <p style="margin-top:10px; font-size:1.1em;">{{ solicitud.empresa.nombre }} - {{ solicitud.programa.nombre }}</p>
+        <p style="margin-top:10px;font-size:1.1em;">{{ solicitud.empresa.nombre }} — {{ solicitud.programa.nombre }}</p>
     </div>
 
     <div class="breadcrumb">
@@ -518,11 +475,9 @@
     {% if messages %}
     <div class="messages-container">
         {% for message in messages %}
-        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
+        <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}">
             <div class="alert-content">
-                <span class="alert-icon">
-                    {% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}
-                </span>
+                <span class="alert-icon">{% if 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}✅{% endif %}</span>
                 <span>{{ message }}</span>
             </div>
             <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
@@ -557,101 +512,57 @@
 
     <form method="POST" enctype="multipart/form-data" id="edit-form">
         {% csrf_token %}
-        <input type="hidden" name="es_migracion" id="es_migracion" value="false">
+        <input type="hidden" name="es_migracion"    id="es_migracion"    value="false">
+        <input type="hidden" name="razon_cupo"       id="razon_cupo_input" value="">
 
-        <!-- =====================================================
-             FECHAS PERSONALIZADAS (solo modo migración)
-             ORDEN CORRECTO: Recepción → Atención → Respuesta → Finalización
-        ====================================================== -->
+        <!-- Fechas modo migración -->
         <div class="dates-section" id="dates-section">
             <div class="dates-header">
                 <h2>📅 Fechas Personalizadas — Modo Migración</h2>
             </div>
-
-            <!-- Banner visual del flujo -->
             <div class="flujo-banner">
                 <span>Flujo:</span>
-                <span class="flujo-step">📥 Recibida</span>
-                <span class="flujo-arrow">→</span>
-                <span class="flujo-step">👨‍🏫 Atendida</span>
-                <span class="flujo-arrow">→</span>
-                <span class="flujo-step">📧 Respondida</span>
-                <span class="flujo-arrow">→</span>
+                <span class="flujo-step">📥 Recibida</span><span class="flujo-arrow">→</span>
+                <span class="flujo-step">👨‍🏫 Atendida</span><span class="flujo-arrow">→</span>
+                <span class="flujo-step">📧 Respondida</span><span class="flujo-arrow">→</span>
                 <span class="flujo-step">🎓 Finalizada</span>
             </div>
-
             <div class="dates-info">
                 <p><strong>📌 Instrucciones:</strong></p>
-                <p>1️⃣ Los campos están <strong>pre-cargados con las fechas actuales</strong> de la solicitud.</p>
-                <p>2️⃣ La <strong>Fecha de Recepción</strong> es obligatoria.</p>
-                <p>3️⃣ Las demás fechas son opcionales pero deben respetar el orden cronológico del flujo.</p>
-                <p>4️⃣ El <strong>estado se calcula automáticamente</strong>: sin fechas = Recibida · con atención = Atendida · con respuesta = Respondida · con finalización = Finalizada.</p>
-                <p>5️⃣ Ninguna fecha puede ser futura.</p>
+                <p>1️⃣ La <strong>Fecha de Recepción</strong> es obligatoria.</p>
+                <p>2️⃣ Las demás fechas son opcionales pero deben respetar el orden cronológico.</p>
+                <p>3️⃣ El <strong>estado se calcula automáticamente</strong> según las fechas ingresadas.</p>
+                <p>4️⃣ Ninguna fecha puede ser futura.</p>
             </div>
-
             <div class="form-grid">
-
-                <!-- Paso 1: Recepción → estado RECIBIDA -->
                 <div class="form-group">
-                    <label for="fecha_recepcion">
-                        📥 Fecha de Recepción <span class="required-mark">*</span>
-                    </label>
-                    <input type="datetime-local"
-                           name="fecha_recepcion"
-                           id="fecha_recepcion"
+                    <label for="fecha_recepcion">📥 Fecha de Recepción <span class="required-mark">*</span></label>
+                    <input type="datetime-local" name="fecha_recepcion" id="fecha_recepcion"
                            value="{{ solicitud.fecha_recepcion|date:'Y-m-d\TH:i' }}"
                            max="{{ ahora|date:'Y-m-d\TH:i' }}">
-                    <small>
-                        Cuando llegó la solicitud.
-                        <span class="estado-badge badge-recibida">→ RECIBIDA</span>
-                    </small>
+                    <small>Cuando llegó la solicitud. <span class="estado-badge badge-recibida">→ RECIBIDA</span></small>
                 </div>
-
-                <!-- Paso 2: Atención → estado ATENDIDA (instructor asignado) -->
                 <div class="form-group">
-                    <label for="fecha_atencion">👨‍🏫 Fecha de Atención (opcional)</label>
-                    <input type="datetime-local"
-                           name="fecha_atencion"
-                           id="fecha_atencion"
+                    <label for="fecha_atencion_migracion">👨‍🏫 Fecha de Atención (opcional)</label>
+                    <input type="datetime-local" name="fecha_atencion" id="fecha_atencion_migracion"
                            value="{% if solicitud.fecha_atencion %}{{ solicitud.fecha_atencion|date:'Y-m-d\TH:i' }}{% endif %}"
                            max="{{ ahora|date:'Y-m-d\TH:i' }}">
-                    <small>
-                        Cuando se asignó instructor y comenzó la formación.
-                        Debe ser posterior a la recepción.
-                        <span class="estado-badge badge-atendida">→ ATENDIDA</span>
-                    </small>
+                    <small>Cuando se asignó instructor. <span class="estado-badge badge-atendida">→ ATENDIDA</span></small>
                 </div>
-
-                <!-- Paso 3: Respuesta → estado RESPONDIDA (correo enviado) -->
                 <div class="form-group">
                     <label for="fecha_respuesta">📧 Fecha de Respuesta (opcional)</label>
-                    <input type="datetime-local"
-                           name="fecha_respuesta"
-                           id="fecha_respuesta"
+                    <input type="datetime-local" name="fecha_respuesta" id="fecha_respuesta"
                            value="{% if solicitud.fecha_respuesta %}{{ solicitud.fecha_respuesta|date:'Y-m-d\TH:i' }}{% endif %}"
                            max="{{ ahora|date:'Y-m-d\TH:i' }}">
-                    <small>
-                        Cuando se notificó a la empresa por correo.
-                        Debe ser posterior a la atención.
-                        <span class="estado-badge badge-respondida">→ RESPONDIDA</span>
-                    </small>
+                    <small>Cuando se notificó a la empresa. <span class="estado-badge badge-respondida">→ RESPONDIDA</span></small>
                 </div>
-
-                <!-- Paso 4: Finalización → estado FINALIZADA -->
                 <div class="form-group">
                     <label for="fecha_finalizacion">🎓 Fecha de Finalización (opcional)</label>
-                    <input type="datetime-local"
-                           name="fecha_finalizacion"
-                           id="fecha_finalizacion"
+                    <input type="datetime-local" name="fecha_finalizacion" id="fecha_finalizacion"
                            value="{% if solicitud.fecha_finalizacion %}{{ solicitud.fecha_finalizacion|date:'Y-m-d\TH:i' }}{% endif %}"
                            max="{{ ahora|date:'Y-m-d\TH:i' }}">
-                    <small>
-                        Cuando concluyó la formación exitosamente.
-                        Debe ser la fecha más reciente de todas.
-                        <span class="estado-badge badge-finalizada">→ FINALIZADA</span>
-                    </small>
+                    <small>Cuando concluyó la formación. <span class="estado-badge badge-finalizada">→ FINALIZADA</span></small>
                 </div>
-
             </div>
         </div>
 
@@ -669,23 +580,51 @@
                 </div>
                 <div class="form-group">
                     <label>Área de Formación</label>
-                    <input type="text" value="{{ solicitud.programa.area.nombre }}" disabled>
+                    <input type="text" id="area_formacion_display" value="{{ solicitud.programa.area.nombre }}" disabled>
+                    <!-- Campo oculto con el área real para las validaciones JS -->
+                    <input type="hidden" id="area_programa_actual" value="{{ solicitud.programa.area.nombre|lower }}">
                 </div>
+
+                <!-- ══ TRABAJADORES A CAPACITAR con validaciones de cupo ══ -->
                 <div class="form-group">
-                    <label for="numero_aprendices">Trabajadores a Capacitar</label>
-                    <input type="number"
-                           name="numero_aprendices"
-                           id="numero_aprendices"
-                           value="{{ solicitud.numero_aprendices|default:'' }}"
-                           min="0"
-                           placeholder="Ej: 25">
+                    <label for="numero_aprendices">Trabajadores a Capacitar <span class="required-mark">*</span></label>
+                    <input
+                        type="number"
+                        id="numero_aprendices"
+                        name="numero_aprendices"
+                        value="{{ solicitud.numero_aprendices|default:'' }}"
+                        min="1"
+                        max="1000"
+                        placeholder="Ej: 25"
+                        required>
+                    <small>Cantidad estimada de personas a capacitar</small>
+
+                    <!-- BLOQUEO DURO: CAMPESENA con menos de 15 -->
+                    <div class="aviso-bloqueo" id="aviso-campesena">
+                        <p>🚫 El área <strong>CAMPESENA</strong> requiere mínimo <strong>15 aprendices</strong>.
+                           Corrige la cantidad para poder continuar.</p>
+                    </div>
+
+                    <!-- FLEXIBLE: otras áreas con menos de 20 → botones de razón -->
+                    <div class="aviso-flex" id="aviso-otras">
+                        <div class="aviso-flex-titulo" id="aviso-otras-titulo"></div>
+                        <div class="aviso-flex-subtitulo">Selecciona el motivo para continuar:</div>
+                        <div class="razones-grid">
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Empresa pequeña')">🏢 Empresa pequeña</button>
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Grupo piloto')">🧪 Grupo piloto</button>
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Área especializada con pocos técnicos')">⚙️ Área especializada</button>
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Capacitación de directivos')">👔 Capacitación de directivos</button>
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Solicitud de prueba / diagnóstico')">📋 Solicitud de prueba</button>
+                            <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Empresa en inicio de operaciones')">🚀 Empresa nueva</button>
+                        </div>
+                        <!-- Nota cuando ya había una razón guardada -->
+                        <div class="razon-guardada-nota" id="razon-guardada-nota"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- =====================================================
-             ESTADO (se oculta en modo migración porque se calcula automáticamente)
-        ====================================================== -->
+        <!-- Estado -->
         <div class="section" id="estado-section">
             <h2>⚙️ Estado de la Solicitud</h2>
             <div class="form-grid">
@@ -693,53 +632,120 @@
                     <label for="estado">Estado <span class="required-mark">*</span></label>
                     <select name="estado" id="estado" required>
                         {% for value, label in ESTADO_CHOICES %}
-                            <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
+                            <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
-                    <small>
-                        Flujo válido:
-                        <strong>Recibida → Atendida → Respondida → Finalizada</strong>.<br>
-                        En modo migración el estado se calcula automáticamente:
-                        sin fechas = Recibida · con atención = Atendida ·
-                        con respuesta = Respondida · con finalización = Finalizada.
-                    </small>
+                    <small>Flujo válido: <strong>Recibida → Atendida → Respondida → Finalizada</strong>.<br>En modo migración el estado se calcula automáticamente.</small>
                 </div>
             </div>
         </div>
 
-        <!-- Instructor -->
+        <!-- ── Instructor + Programación de formación ─────────────────────── -->
         <div class="section">
             <h2>👨‍🏫 Asignación de Instructor</h2>
+
             <div class="form-grid">
                 <div class="form-group">
                     <label for="instructor_asignado">Instructor Asignado</label>
-                    <select name="instructor_asignado" id="instructor_asignado">
-                        <option value="">Sin asignar</option>
-                        {% if instructores_especializados %}
-                            <optgroup label="🌟 Especializados en {{ solicitud.programa.nombre }}">
-                                {% for instructor in instructores_especializados %}
-                                <option value="{{ instructor.id }}"
-                                        {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                    {{ instructor.nombre }}
+                    <div class="instructor-select-wrapper">
+                        <select name="instructor_asignado" id="instructor_asignado">
+                            <option value="">— Sin asignar —</option>
+
+                            {% if instructores_especializados_info %}
+                            <optgroup label="⭐ Especializados en {{ solicitud.programa.nombre }}">
+                                {% for info in instructores_especializados_info %}
+                                <option value="{{ info.instructor.id }}"
+                                    data-ocupado="{{ info.ocupado|yesno:'true,false' }}"
+                                    data-nombre="{{ info.instructor.nombre }}"
+                                    data-formaciones="{% for f in info.formaciones_activas %}{{ f.empresa.nombre }} ({{ f.programa.nombre }}){% if not forloop.last %} | {% endif %}{% endfor %}"
+                                    data-proxima="{% if info.proxima %}{{ info.proxima.empresa.nombre }} — {{ info.proxima.fecha_atencion|date:'d/m/Y' }}{% endif %}"
+                                    {% if solicitud.instructor_asignado.id == info.instructor.id %}selected{% endif %}>
+                                    {% if info.ocupado %}🔴{% else %}🟢{% endif %} {{ info.instructor.nombre }}{% if info.ocupado %} (Ocupado hoy){% else %} (Disponible){% endif %}
                                 </option>
                                 {% endfor %}
                             </optgroup>
-                        {% endif %}
-                        <optgroup label="Todos los Instructores">
-                            {% for instructor in instructores %}
-                            <option value="{{ instructor.id }}"
-                                    {% if solicitud.instructor_asignado.id == instructor.id %}selected{% endif %}>
-                                {{ instructor.nombre }}
-                            </option>
-                            {% endfor %}
-                        </optgroup>
-                    </select>
-                    <small>
-                        💡 Asignar instructor en estado RECIBIDA cambia automáticamente el estado a
-                        <strong>ATENDIDA</strong>.
-                    </small>
+                            {% endif %}
+
+                            <optgroup label="📋 Todos los instructores activos">
+                                {% for info in instructores_info %}
+                                <option value="{{ info.instructor.id }}"
+                                    data-ocupado="{{ info.ocupado|yesno:'true,false' }}"
+                                    data-nombre="{{ info.instructor.nombre }}"
+                                    data-formaciones="{% for f in info.formaciones_activas %}{{ f.empresa.nombre }} ({{ f.programa.nombre }}){% if not forloop.last %} | {% endif %}{% endfor %}"
+                                    data-proxima="{% if info.proxima %}{{ info.proxima.empresa.nombre }} — {{ info.proxima.fecha_atencion|date:'d/m/Y' }}{% endif %}"
+                                    {% if solicitud.instructor_asignado.id == info.instructor.id %}selected{% endif %}>
+                                    {% if info.ocupado %}🔴{% else %}🟢{% endif %} {{ info.instructor.nombre }}{% if info.ocupado %} (Ocupado hoy){% else %} (Disponible){% endif %}
+                                </option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+
+                        <div id="instructor-preview" class="instructor-preview sin-seleccion">
+                            <div class="preview-header">
+                                <span class="preview-dot neutro" id="preview-dot"></span>
+                                <span class="preview-nombre" id="preview-nombre">Selecciona un instructor para ver su disponibilidad</span>
+                                <span class="preview-estado-label" id="preview-estado-label" style="display:none"></span>
+                            </div>
+                            <div class="preview-detalle" id="preview-detalle" style="display:none"></div>
+                        </div>
+
+                        <div class="disponibilidad-leyenda">
+                            <div class="leyenda-item"><span class="leyenda-dot libre"></span><span>Disponible hoy</span></div>
+                            <div class="leyenda-item"><span class="leyenda-dot ocupado"></span><span>Ocupado hoy</span></div>
+                        </div>
+                    </div>
+                    <small style="margin-top:8px;">💡 Asignar instructor en estado RECIBIDA cambia automáticamente el estado a <strong>ATENDIDA</strong>.</small>
+                </div>
+            </div>
+
+            <!-- ── Programación de fechas de la formación ─────────────────── -->
+            <div class="formacion-rango-box">
+                <div class="formacion-rango-title">📅 Programación de la Formación</div>
+                <p class="formacion-rango-subtitle">
+                    Ingresa manualmente el rango de fechas en que el instructor dictará la formación.
+                    Estas fechas determinan cuándo el instructor aparece como <strong>ocupado</strong> en el sistema.
+                </p>
+
+                <div class="formacion-rango-grid">
+                    <div class="formacion-rango-field">
+                        <label for="fecha_inicio_formacion">🟢 Fecha de inicio de la formación</label>
+                        <input type="date"
+                               name="fecha_inicio_formacion"
+                               id="fecha_inicio_formacion"
+                               value="{{ solicitud.fecha_atencion|date:'Y-m-d' }}">
+                        <small>Día en que el instructor comienza a dictar. Puede ser una fecha futura.</small>
+                    </div>
+
+                    <div class="formacion-rango-field">
+                        <label for="fecha_fin_formacion">🔴 Fecha de fin de la formación</label>
+                        <input type="date"
+                               name="fecha_fin_formacion"
+                               id="fecha_fin_formacion"
+                               value="{{ solicitud.fecha_fin_formacion|date:'Y-m-d' }}">
+                        <small>
+                            Día en que el instructor termina de dictar.<br>
+                            ⚡ Si esta fecha ya pasó o es hoy, la solicitud se
+                            <strong>finalizará automáticamente</strong> al guardar.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Rango actual guardado -->
+                {% if solicitud.fecha_atencion or solicitud.fecha_fin_formacion %}
+                <div class="rango-actual">
+                    <span>📌 Rango guardado actualmente:</span>
+                    <strong>
+                        {% if solicitud.fecha_atencion %}{{ solicitud.fecha_atencion|date:"d/m/Y" }}{% else %}Sin inicio{% endif %}
+                        →
+                        {% if solicitud.fecha_fin_formacion %}{{ solicitud.fecha_fin_formacion|date:"d/m/Y" }}{% else %}Sin fecha fin definida{% endif %}
+                    </strong>
+                </div>
+                {% endif %}
+
+                <!-- Aviso auto-finalización -->
+                <div class="auto-fin-warning" id="auto-fin-warning">
+                    ⚡ La fecha de fin que ingresaste es <strong>hoy o ya pasó</strong>.
+                    Al guardar, la solicitud se <strong>finalizará automáticamente</strong>.
                 </div>
             </div>
         </div>
@@ -749,8 +755,7 @@
             <h2>📝 Observaciones</h2>
             <div class="form-group">
                 <label for="observaciones">Notas y Comentarios</label>
-                <textarea name="observaciones"
-                          id="observaciones"
+                <textarea name="observaciones" id="observaciones"
                           placeholder="Escribe cualquier observación relevante...">{{ solicitud.observaciones }}</textarea>
             </div>
         </div>
@@ -768,14 +773,11 @@
                     <div class="document-icon-wrapper">📄</div>
                     <div class="document-info">
                         <div class="document-name" title="{{ documento.nombre_archivo }}">{{ documento.nombre_archivo }}</div>
-                        <div class="document-date">
-                            <span>📅</span>
-                            <span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span>
-                        </div>
+                        <div class="document-date"><span>📅</span><span>{{ documento.fecha_subida|date:"d/m/Y H:i" }}</span></div>
                     </div>
                     <div class="document-actions">
-                        <a href="{{ documento.archivo.url }}" target="_blank" class="doc-btn doc-btn-view" title="Ver">🔍</a>
-                        <a href="{{ documento.archivo.url }}" download class="doc-btn doc-btn-download" title="Descargar">📥</a>
+                        <a href="{{ documento.archivo.url }}" target="_blank" class="doc-btn doc-btn-view">🔍</a>
+                        <a href="{{ documento.archivo.url }}" download class="doc-btn doc-btn-download">📥</a>
                     </div>
                     <div class="document-delete-box">
                         <label class="delete-checkbox-label">
@@ -794,23 +796,16 @@
             <h2>➕ Agregar Nuevos Documentos</h2>
             <div class="upload-box">
                 <h3>Seleccionar Archivos PDF</h3>
-                <input type="file"
-                       id="documentos_pdf"
-                       name="documentos_pdf"
-                       class="upload-input"
-                       multiple
-                       accept=".pdf">
+                <input type="file" id="documentos_pdf" name="documentos_pdf" class="upload-input" multiple accept=".pdf">
                 <label for="documentos_pdf" class="upload-label">📁 Examinar Archivos</label>
-                <div class="upload-info">
-                    ℹ️ Máximo 5 documentos en total | Formato: PDF | Tamaño máximo: 10MB por archivo
-                </div>
+                <div class="upload-info">ℹ️ Máximo 5 documentos en total | Formato: PDF | Tamaño máximo: 10MB por archivo</div>
                 <div id="files-preview"></div>
             </div>
         </div>
 
         <!-- Botones -->
         <div class="action-buttons">
-            <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Cambios</button>
             <a href="{% url 'solicitudes:detalle_solicitud' solicitud.id %}" class="btn btn-secondary">❌ Cancelar</a>
         </div>
     </form>
@@ -820,31 +815,204 @@
     <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
 </footer>
 {% include 'core/accessibility.html' %}
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     DATOS DE DISPONIBILIDAD DE INSTRUCTORES (desde Django)
+════════════════════════════════════════════════════════════════════ -->
 <script>
-    // Auto-cerrar mensajes
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.alert').forEach(function (alert) {
-            setTimeout(function () {
-                alert.style.animation = 'slideOutUp 0.4s ease-out';
-                setTimeout(function () { alert.remove(); }, 400);
-            }, 8000);
-        });
+const DISPONIBILIDAD = {};
+{% for info in instructores_info %}
+DISPONIBILIDAD[{{ info.instructor.id }}] = {
+    ocupado: {{ info.ocupado|yesno:'true,false' }},
+    nombre: "{{ info.instructor.nombre|escapejs }}",
+    formaciones: [{% for f in info.formaciones_activas %}{"empresa":"{{ f.empresa.nombre|escapejs }}","programa":"{{ f.programa.nombre|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}],
+    proxima: {% if info.proxima %}{"empresa":"{{ info.proxima.empresa.nombre|escapejs }}","fecha":"{{ info.proxima.fecha_atencion|date:'d/m/Y' }}"}{% else %}null{% endif %}
+};
+{% endfor %}
+</script>
+
+<script>
+    // ════════════════════════════════════════════════════════
+    // CONFIGURACIÓN DE CUPOS (igual que crear_solicitud)
+    // ════════════════════════════════════════════════════════
+    var AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
+    var CUPO_MIN_CAMPESENA = 15;   // DURO — no se puede guardar con menos
+    var CUPO_MIN_OTROS     = 20;   // FLEXIBLE — requiere elegir una razón
+
+    // Obtenemos el área desde el campo oculto que Django renderizó
+    var areaProgramaSeleccionada = document.getElementById('area_programa_actual').value.trim();
+    var razonSeleccionada        = '';
+
+    function esCampesena(area) {
+        return AREAS_CAMPESENA.some(function(n) { return area.includes(n); });
+    }
+
+    // ── Detectar si ya existe una razón guardada en observaciones ──
+    (function detectarRazonGuardada() {
+        var obs = document.getElementById('observaciones').value;
+        var match = obs.match(/\[Razón cupo reducido\]:\s*(.+)/);
+        if (match) {
+            var razonGuardada = match[1].trim();
+            razonSeleccionada = razonGuardada;
+            document.getElementById('razon_cupo_input').value = razonGuardada;
+
+            var nota = document.getElementById('razon-guardada-nota');
+            nota.textContent = '✅ Razón guardada anteriormente: "' + razonGuardada + '"';
+            nota.classList.add('active');
+
+            // Marcar visualmente el botón correspondiente si existe
+            document.querySelectorAll('.razon-btn').forEach(function(btn) {
+                var textoBtn = btn.textContent.trim().replace(/^[^\s]+\s/, '');
+                if (razonGuardada.includes(textoBtn) || textoBtn.includes(razonGuardada)) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+    })();
+
+    // ── Validar cupo al cargar y al cambiar la cantidad ──
+    document.getElementById('numero_aprendices').addEventListener('input', function () {
+        razonSeleccionada = '';
+        limpiarBotonesRazon();
+        document.getElementById('razon_cupo_input').value = '';
+        document.getElementById('razon-guardada-nota').classList.remove('active');
+        validarCupo();
     });
 
-    const alertStyle = document.createElement('style');
-    alertStyle.textContent = `
-        @keyframes slideOutUp {
-            from { transform: translateY(0);     opacity: 1; }
-            to   { transform: translateY(-20px); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(alertStyle);
+    function validarCupo() {
+        var numInput       = document.getElementById('numero_aprendices');
+        var cantidad       = parseInt(numInput.value) || 0;
+        var avisoCampesena = document.getElementById('aviso-campesena');
+        var avisoOtras     = document.getElementById('aviso-otras');
+        var avisoTitulo    = document.getElementById('aviso-otras-titulo');
+        var area           = areaProgramaSeleccionada;
 
-    // Toggle modo migración
-    const migrationToggle  = document.getElementById('migration-mode-toggle');
-    const datesSection     = document.getElementById('dates-section');
-    const estadoSection    = document.getElementById('estado-section');
-    const esMigracionInput = document.getElementById('es_migracion');
+        // Resetear
+        avisoCampesena.classList.remove('active');
+        avisoOtras.classList.remove('active');
+        numInput.style.borderColor = '#e0e0e0';
+
+        if (!area || cantidad === 0) return;
+
+        if (esCampesena(area)) {
+            // CAMPESENA: bloqueo duro si menos de 15
+            if (cantidad < CUPO_MIN_CAMPESENA) {
+                avisoCampesena.classList.add('active');
+                numInput.style.borderColor = '#c62828';
+            }
+        } else {
+            // OTRAS ÁREAS: advertencia + botones de razón si menos de 20
+            if (cantidad < CUPO_MIN_OTROS) {
+                avisoTitulo.textContent =
+                    '⚠️ El mínimo recomendado para esta área es ' + CUPO_MIN_OTROS +
+                    ' aprendices. Estás registrando ' + cantidad + '.';
+                avisoOtras.classList.add('active');
+                numInput.style.borderColor = '#ffa000';
+            }
+        }
+    }
+
+    function seleccionarRazon(btn, razon) {
+        limpiarBotonesRazon();
+        btn.classList.add('selected');
+        razonSeleccionada = razon;
+        document.getElementById('razon_cupo_input').value = razon;
+        document.getElementById('razon-guardada-nota').classList.remove('active');
+    }
+
+    function limpiarBotonesRazon() {
+        document.querySelectorAll('.razon-btn').forEach(function(b) {
+            b.classList.remove('selected');
+        });
+    }
+
+    // ════════════════════════════════════════════════════════
+    // VALIDACIÓN AL ENVIAR
+    // ════════════════════════════════════════════════════════
+    document.getElementById('edit-form').addEventListener('submit', function(e) {
+        var submitBtn = document.getElementById('submitBtn');
+        var numInput  = document.getElementById('numero_aprendices');
+        var cantidad  = parseInt(numInput.value) || 0;
+        var area      = areaProgramaSeleccionada;
+
+        if (area && cantidad > 0) {
+
+            // Bloqueo duro CAMPESENA
+            if (esCampesena(area) && cantidad < CUPO_MIN_CAMPESENA) {
+                e.preventDefault();
+                alert('🚫 El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
+                      ' aprendices. Corrige la cantidad antes de continuar.');
+                numInput.focus();
+                return;
+            }
+
+            // Flexible: otras áreas sin razón elegida
+            if (!esCampesena(area) && cantidad < CUPO_MIN_OTROS && !razonSeleccionada) {
+                e.preventDefault();
+                alert('⚠️ Debes seleccionar el motivo por el que hay menos de ' +
+                      CUPO_MIN_OTROS + ' aprendices.');
+                document.getElementById('aviso-otras').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+        }
+
+        // Si hay razón de cupo, agregarla a observaciones si no está ya
+        if (razonSeleccionada) {
+            var obsField = document.getElementById('observaciones');
+            var obsActual = obsField.value;
+            // Limpiar razón anterior si existe y reemplazar
+            obsActual = obsActual.replace(/\n?\[Razón cupo reducido\]:.*/g, '').trim();
+            obsField.value = obsActual
+                ? obsActual + '\n[Razón cupo reducido]: ' + razonSeleccionada
+                : '[Razón cupo reducido]: ' + razonSeleccionada;
+        }
+
+        // Todo OK → deshabilitar botón para evitar doble envío
+        submitBtn.disabled  = true;
+        submitBtn.innerHTML = '⏳ Guardando...';
+    });
+
+    // ════════════════════════════════════════════════════════
+    // AUTO-CERRAR MENSAJES
+    // ════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.alert').forEach(function (a) {
+            setTimeout(function () {
+                a.style.animation = 'slideOutUp 0.4s ease-out';
+                setTimeout(function () { a.remove(); }, 400);
+            }, 8000);
+        });
+        actualizarPreviewInstructor();
+        verificarFechaFin();
+        // Validar cupo al cargar (por si el valor ya está en el campo)
+        validarCupo();
+        // Mostrar razón guardada si la cantidad actual ya está por debajo del mínimo
+        var cantidadActual = parseInt(document.getElementById('numero_aprendices').value) || 0;
+        if (cantidadActual > 0 && cantidadActual < CUPO_MIN_OTROS) {
+            var obs = document.getElementById('observaciones').value;
+            var match = obs.match(/\[Razón cupo reducido\]:\s*(.+)/);
+            if (match) {
+                document.getElementById('aviso-otras').classList.add('active');
+                var avisoTitulo = document.getElementById('aviso-otras-titulo');
+                avisoTitulo.textContent =
+                    '⚠️ El mínimo recomendado para esta área es ' + CUPO_MIN_OTROS +
+                    ' aprendices. Estás registrando ' + cantidadActual + '.';
+                document.getElementById('numero_aprendices').style.borderColor = '#ffa000';
+            }
+        }
+    });
+
+    document.head.insertAdjacentHTML('beforeend',
+        '<style>@keyframes slideOutUp{from{transform:translateY(0);opacity:1}to{transform:translateY(-20px);opacity:0}}</style>'
+    );
+
+    // ════════════════════════════════════════════════════════
+    // TOGGLE MODO MIGRACIÓN
+    // ════════════════════════════════════════════════════════
+    var migrationToggle  = document.getElementById('migration-mode-toggle');
+    var datesSection     = document.getElementById('dates-section');
+    var estadoSection    = document.getElementById('estado-section');
+    var esMigracionInput = document.getElementById('es_migracion');
 
     migrationToggle.addEventListener('change', function () {
         if (this.checked) {
@@ -858,45 +1026,115 @@
         }
     });
 
-    // Preview de archivos
-    document.getElementById('documentos_pdf').addEventListener('change', function (e) {
-        const preview  = document.getElementById('files-preview');
-        const files    = Array.from(e.target.files);
+    // ════════════════════════════════════════════════════════
+    // PANEL DE DISPONIBILIDAD DE INSTRUCTOR
+    // ════════════════════════════════════════════════════════
+    var selectInstructor = document.getElementById('instructor_asignado');
+    var previewBox       = document.getElementById('instructor-preview');
+    var previewDot       = document.getElementById('preview-dot');
+    var previewNombre    = document.getElementById('preview-nombre');
+    var previewEstado    = document.getElementById('preview-estado-label');
+    var previewDetalle   = document.getElementById('preview-detalle');
 
-        if (files.length === 0) { preview.innerHTML = ''; return; }
-
-        const documentosActuales = {{ documentos_actuales|length|default:0 }};
-        const maxNuevos = 5 - documentosActuales;
-
-        if (files.length > maxNuevos) {
-            alert(`❌ Solo puedes agregar ${maxNuevos} documento(s) más. Actualmente tienes ${documentosActuales}.`);
-            e.target.value = '';
-            preview.innerHTML = '';
+    function actualizarPreviewInstructor() {
+        var val = selectInstructor.value;
+        if (!val) {
+            previewBox.className = 'instructor-preview sin-seleccion';
+            previewDot.className = 'preview-dot neutro';
+            previewNombre.textContent = 'Selecciona un instructor para ver su disponibilidad';
+            previewEstado.style.display = 'none';
+            previewDetalle.style.display = 'none';
             return;
         }
+        var info = DISPONIBILIDAD[parseInt(val)];
+        if (!info) return;
 
-        let valid = true;
-        files.forEach(function (file) {
+        previewNombre.textContent = info.nombre;
+        previewEstado.style.display = 'inline-block';
+
+        if (info.ocupado) {
+            previewBox.className = 'instructor-preview ocupado';
+            previewDot.className = 'preview-dot ocupado';
+            previewEstado.textContent = '🔴 OCUPADO HOY';
+            var html = '<strong>Formaciones activas en este momento:</strong>';
+            info.formaciones.forEach(function(f) {
+                html += '<div class="preview-formacion-item">🏢 <strong>' + f.empresa + '</strong> — ' + f.programa + '</div>';
+            });
+            html += '<div style="margin-top:8px;color:#b71c1c;font-size:0.88em;">⚠️ Puedes asignarlo igualmente si es necesario.</div>';
+            previewDetalle.innerHTML = html;
+            previewDetalle.style.display = 'block';
+        } else {
+            previewBox.className = 'instructor-preview libre';
+            previewDot.className = 'preview-dot libre';
+            previewEstado.textContent = '🟢 DISPONIBLE';
+            var html = '<span style="color:#2e7d32;">✅ Sin formaciones activas hoy.</span>';
+            if (info.proxima) {
+                html += '<div class="preview-proxima">📅 Próxima formación: <strong>' + info.proxima.empresa + '</strong> — ' + info.proxima.fecha + '</div>';
+            } else {
+                html += '<div style="margin-top:6px;color:#555;font-size:0.9em;">Sin formaciones programadas próximamente.</div>';
+            }
+            previewDetalle.innerHTML = html;
+            previewDetalle.style.display = 'block';
+        }
+    }
+
+    selectInstructor.addEventListener('change', actualizarPreviewInstructor);
+
+    // ════════════════════════════════════════════════════════
+    // AVISO AUTO-FINALIZACIÓN
+    // ════════════════════════════════════════════════════════
+    var inputFechaFin  = document.getElementById('fecha_fin_formacion');
+    var warningAutoFin = document.getElementById('auto-fin-warning');
+
+    function verificarFechaFin() {
+        var val = inputFechaFin.value;
+        if (!val) { warningAutoFin.classList.remove('visible'); return; }
+        var hoy      = new Date(); hoy.setHours(0,0,0,0);
+        var fechaFin = new Date(val + 'T00:00:00');
+        if (fechaFin <= hoy) {
+            warningAutoFin.classList.add('visible');
+        } else {
+            warningAutoFin.classList.remove('visible');
+        }
+    }
+
+    inputFechaFin.addEventListener('change', verificarFechaFin);
+
+    // ════════════════════════════════════════════════════════
+    // PREVIEW ARCHIVOS PDF
+    // ════════════════════════════════════════════════════════
+    document.getElementById('documentos_pdf').addEventListener('change', function (e) {
+        var preview  = document.getElementById('files-preview');
+        var files    = Array.from(e.target.files);
+        if (files.length === 0) { preview.innerHTML = ''; return; }
+
+        var documentosActuales = {{ documentos_actuales|length|default:0 }};
+        var maxNuevos = 5 - documentosActuales;
+
+        if (files.length > maxNuevos) {
+            alert('❌ Solo puedes agregar ' + maxNuevos + ' documento(s) más.');
+            e.target.value = ''; preview.innerHTML = ''; return;
+        }
+
+        var valid = true;
+        files.forEach(function(file) {
             if (!file.name.toLowerCase().endsWith('.pdf')) {
-                alert(`❌ ${file.name} no es un archivo PDF`);
-                valid = false;
+                alert('❌ ' + file.name + ' no es un PDF'); valid = false;
             }
             if (file.size > 10 * 1024 * 1024) {
-                alert(`❌ ${file.name} supera los 10MB`);
-                valid = false;
+                alert('❌ ' + file.name + ' supera 10MB'); valid = false;
             }
         });
 
         if (!valid) { e.target.value = ''; preview.innerHTML = ''; return; }
 
-        preview.innerHTML = files.map(function (file) {
-            return `<div class="preview-item">
-                        <div class="preview-icon">✅</div>
-                        <div class="preview-info">
-                            <div class="preview-name">${file.name}</div>
-                            <div class="preview-size">${(file.size / 1024).toFixed(2)} KB</div>
-                        </div>
-                    </div>`;
+        preview.innerHTML = files.map(function(file) {
+            return '<div class="preview-item">' +
+                '<div class="preview-icon">✅</div>' +
+                '<div class="preview-info">' +
+                    '<div class="preview-name">' + file.name + '</div>' +
+                    '<div class="preview-size">' + (file.size/1024).toFixed(2) + ' KB</div>' +
+                '</div></div>';
         }).join('');
     });
 </script>

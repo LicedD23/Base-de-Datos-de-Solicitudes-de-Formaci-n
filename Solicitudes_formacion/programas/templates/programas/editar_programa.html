@@ -84,7 +84,7 @@
             gap: 15px;
             font-size: 1em;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             animation: slideInDown 0.4s ease-out;
             position: relative;
             overflow: hidden;
@@ -126,15 +126,9 @@
         }
 
         @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .alert-error {
@@ -149,15 +143,9 @@
         }
 
         @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-10px);
-            }
-            75% {
-                transform: translateX(10px);
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
 
         .alert-warning {
@@ -181,8 +169,8 @@
         }
 
         .alert-close {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
             width: 28px;
             height: 28px;
@@ -198,7 +186,7 @@
         }
 
         .alert-close:hover {
-            background: rgba(255,255,255,0.4);
+            background: rgba(255, 255, 255, 0.4);
             transform: scale(1.1);
         }
 
@@ -267,6 +255,21 @@
             display: block;
             color: #666;
             font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        /* Nota de solo números */
+        .only-numbers-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff8e1;
+            color: #ef6c00;
+            border: 1px solid #ffcc02;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 0.82em;
+            font-weight: 600;
             margin-top: 5px;
         }
 
@@ -401,19 +404,20 @@
             color: #333;
         }
 
-        /* FOOTER STYLES*/
-        footer{
-            background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color:white;
-            text-align:center;
-            padding:20px;
-            border-radius:16px;
-            margin-top:30px;
-            box-shadow:0 -4px 20px rgba(27,94,32,0.2);
+        /* FOOTER STYLES */
+        footer {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
         }
-        footer p{
-            font-weight:500;
-            letter-spacing:0.5px;
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
@@ -518,12 +522,12 @@
 
             <div class="info-box">
                 <p>
-                    ℹ️ <strong>Nota:</strong> Los campos marcados con <span style="color: #c62828;">*</span> son obligatorios. 
+                    ℹ️ <strong>Nota:</strong> Los campos marcados con <span style="color: #c62828;">*</span> son obligatorios.
                     Asegúrate de completar toda la información requerida antes de guardar los cambios.
                 </p>
             </div>
 
-            <form method="POST">
+            <form method="POST" id="formEditarPrograma">
                 {% csrf_token %}
 
                 <div class="form-row">
@@ -531,12 +535,12 @@
                         <label for="nombre">
                             Nombre del Programa <span class="required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="nombre" 
-                            name="nombre" 
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
                             value="{{ programa.nombre }}"
-                            required 
+                            required
                             placeholder="Ej: Maquinaria - operador de excavadora"
                             maxlength="200"
                         >
@@ -544,18 +548,24 @@
                     </div>
 
                     <div class="form-group">
+                        <!-- ACTUALIZADO: código obligatorio y solo numérico -->
                         <label for="codigo">
-                            Código del Programa
+                            Código del Programa <span class="required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="codigo" 
-                            name="codigo" 
+                        <input
+                            type="text"
+                            id="codigo"
+                            name="codigo"
                             value="{{ programa.codigo }}"
                             placeholder="Ej: 2874586"
                             maxlength="50"
+                            required
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            oninput="soloNumeros(this)"
                         >
-                        <small>Código interno para identificación (opcional).</small>
+                        <small class="only-numbers-note">🔢 Solo se permiten números</small>
+                        <small>Código numérico obligatorio para identificación (sin letras).</small>
                     </div>
                 </div>
 
@@ -578,9 +588,9 @@
                     <label for="descripcion">
                         Descripción del Programa
                     </label>
-                    <textarea 
-                        id="descripcion" 
-                        name="descripcion" 
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
                         placeholder="Describe los objetivos, contenido y alcance del programa de formación..."
                         maxlength="1000"
                     >{{ programa.descripcion }}</textarea>
@@ -591,10 +601,10 @@
                     <label for="duracion_horas">
                         Duración (en horas)
                     </label>
-                    <input 
-                        type="number" 
-                        id="duracion_horas" 
-                        name="duracion_horas" 
+                    <input
+                        type="number"
+                        id="duracion_horas"
+                        name="duracion_horas"
                         value="{{ programa.duracion_horas|default:'' }}"
                         min="1"
                         max="10000"
@@ -605,9 +615,9 @@
 
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <input 
-                            type="checkbox" 
-                            id="activo" 
+                        <input
+                            type="checkbox"
+                            id="activo"
                             name="activo"
                             {% if programa.activo %}checked{% endif %}
                         >
@@ -641,6 +651,36 @@
     </footer>
 
     <script>
+        // ✅ Función que elimina cualquier carácter que no sea número en tiempo real
+        function soloNumeros(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        // ✅ Validación adicional al pegar contenido (Ctrl+V)
+        document.getElementById('codigo').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const texto = (e.clipboardData || window.clipboardData).getData('text');
+            const soloNums = texto.replace(/[^0-9]/g, '');
+            this.value = soloNums;
+        });
+
+        // ✅ Bloquear teclas de letras directamente en el campo código
+        document.getElementById('codigo').addEventListener('keydown', function(e) {
+            // Permitir: backspace, delete, tab, escape, enter, flechas, home, end
+            const teclasPerm = [
+                'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                'Home', 'End'
+            ];
+            if (teclasPerm.includes(e.key)) return;
+            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return;
+            // Bloquear si no es un dígito
+            if (!/^[0-9]$/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+
         // Auto-cerrar mensajes después de 8 segundos
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
@@ -656,18 +696,13 @@
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutUp {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
+                from { transform: translateY(0); opacity: 1; }
+                to   { transform: translateY(-20px); opacity: 0; }
             }
         `;
         document.head.appendChild(style);
     </script>
+
     {% include 'core/accessibility.html' %}
 </body>
 </html>

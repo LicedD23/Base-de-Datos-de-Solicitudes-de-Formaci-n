@@ -46,7 +46,6 @@
         .breadcrumb span { color: #999; }
         .breadcrumb .current { color: #2e7d32; font-weight: 600; }
 
-        /* Mensajes */
         .messages-container { margin-bottom: 25px; }
         .alert {
             padding: 18px 25px;
@@ -84,7 +83,6 @@
         }
         .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
 
-        /* Cajas de info */
         .warning-box {
             background: #ffebee;
             border-left: 4px solid #b71c1c;
@@ -157,7 +155,6 @@
         .specialty-tags { display: flex; flex-wrap: wrap; gap: 8px; }
         .specialty-tag  { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 15px; font-size: 0.85em; font-weight: 500; border: 1px solid #c8e6c9; }
 
-        /* Radio buttons */
         .radio-container { background: white; border: 2px solid #c62828; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .radio-container h3 { color: #b71c1c; font-size: 1.2em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .radio-option {
@@ -177,7 +174,6 @@
         .radio-content label { font-size: 1em; color: #333; font-weight: 600; cursor: pointer; display: block; margin-bottom: 5px; }
         .radio-description { font-size: 0.9em; color: #666; line-height: 1.4; }
 
-        /* Botones generales */
         .form-card {
             background: white;
             padding: 30px;
@@ -239,10 +235,7 @@
             z-index: 9998;
             transition: opacity 0.25s ease, visibility 0.25s ease;
         }
-        .modal-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
 
         .confirm-modal {
             visibility: hidden;
@@ -266,7 +259,6 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        /* Cabecera roja */
         .modal-header {
             padding: 26px 32px 22px;
             background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
@@ -279,19 +271,16 @@
         .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
         .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
 
-        /* Barra de acento pulso rojo */
         .modal-accent-bar {
             height: 5px;
             background: linear-gradient(90deg, #ef9a9a, #e53935, #b71c1c, #7f0000);
         }
 
-        /* Cuerpo */
         .modal-body {
             padding: 28px 32px 20px;
             background: #fff8f8;
         }
 
-        /* Etiqueta IRREVERSIBLE */
         .irreversible-badge {
             display: inline-flex;
             align-items: center;
@@ -307,7 +296,6 @@
             margin-bottom: 18px;
         }
 
-        /* Tarjeta de datos del instructor */
         .modal-info-card {
             background: #ffebee;
             border: 1.5px solid #ef9a9a;
@@ -335,7 +323,6 @@
         .modal-info-row .mrow-label { color: #c62828; min-width: 100px; font-weight: 600; }
         .modal-info-row .mrow-value { color: #3e2723; font-weight: 500; }
 
-        /* Lista de lo que se elimina */
         .modal-delete-list {
             background: #fff3f3;
             border: 1.5px solid #ef9a9a;
@@ -359,14 +346,8 @@
             font-size: 0.9em;
             color: #c62828;
         }
-        .modal-delete-item::before {
-            content: '✗';
-            font-weight: 700;
-            color: #b71c1c;
-            flex-shrink: 0;
-        }
+        .modal-delete-item::before { content: '✗'; font-weight: 700; color: #b71c1c; flex-shrink: 0; }
 
-        /* Aviso de solicitudes activas */
         .modal-solicitudes-alert {
             display: flex;
             align-items: flex-start;
@@ -382,7 +363,6 @@
         }
         .modal-solicitudes-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
 
-        /* Aviso final crítico */
         .modal-critical-note {
             background: #ffebee;
             border-radius: 10px;
@@ -395,7 +375,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Pie del modal */
         .modal-footer {
             padding: 18px 32px 28px;
             background: #fff8f8;
@@ -439,14 +418,12 @@
         .btn-modal-confirm-danger:active { transform: translateY(0); }
         .btn-modal-confirm-danger:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-        /* Animación de entrada de contenedor */
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to   { opacity: 1; transform: translateY(0); }
         }
         .container > * { animation: slideIn 0.3s ease-out; }
 
-        /* Animación auto-close alerts */
         @keyframes slideOutUp {
             from { transform: translateY(0);    opacity: 1; }
             to   { transform: translateY(-20px); opacity: 0; }
@@ -465,10 +442,8 @@
 </head>
 <body>
 
-    <!-- ══ Overlay del modal ══ -->
     <div class="modal-overlay" id="modalOverlay"></div>
 
-    <!-- ══ Modal rojo de confirmación ══ -->
     <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 
         <div class="modal-header">
@@ -483,17 +458,20 @@
 
         <div class="modal-body">
 
-            <!-- Etiqueta irreversible -->
             <div>
                 <span class="irreversible-badge">⛔ Acción Irreversible</span>
             </div>
 
-            <!-- Datos del instructor -->
             <div class="modal-info-card">
                 <div class="modal-info-card-title">🗑️ Instructor a eliminar</div>
                 <div class="modal-info-row">
                     <span class="mrow-label">👤 Nombre</span>
                     <span class="mrow-value">{{ instructor.nombre }}</span>
+                </div>
+                <!-- ══ CÉDULA AÑADIDA ══ -->
+                <div class="modal-info-row">
+                    <span class="mrow-label">🪪 Cédula</span>
+                    <span class="mrow-value">{{ instructor.cedula }}</span>
                 </div>
                 <div class="modal-info-row">
                     <span class="mrow-label">📧 Correo</span>
@@ -509,7 +487,6 @@
                 </div>
             </div>
 
-            <!-- Lo que se eliminará -->
             <div class="modal-delete-list">
                 <div class="modal-delete-list-title">Se eliminará permanentemente</div>
                 <div class="modal-delete-item">Todos los datos del instructor</div>
@@ -520,7 +497,6 @@
                 <div class="modal-delete-item">Registro completo en el sistema</div>
             </div>
 
-            <!-- Aviso de solicitudes si aplica -->
             {% if total_solicitudes > 0 %}
             <div class="modal-solicitudes-alert">
                 <span class="alert-icon-big">🔔</span>
@@ -531,7 +507,6 @@
             </div>
             {% endif %}
 
-            <!-- Nota crítica -->
             <div class="modal-critical-note">
                 🔴 Esta acción es definitiva e irreversible. ¿Estás absolutamente seguro?
             </div>
@@ -546,7 +521,6 @@
         </div>
     </div>
 
-    <!-- ══ Contenido principal ══ -->
     <div class="container">
         <div class="header">
             <h1>🗑️ Eliminar Instructor Permanentemente</h1>
@@ -605,6 +579,11 @@
                         <label>Nombre del Instructor</label>
                         <div class="value">{{ instructor.nombre }}</div>
                     </div>
+                    <!-- ══ CÉDULA AÑADIDA ══ -->
+                    <div class="info-item">
+                        <label>Cédula</label>
+                        <div class="value">{{ instructor.cedula }}</div>
+                    </div>
                     <div class="info-item">
                         <label>Correo Electrónico</label>
                         <div class="value">{{ instructor.correo }}</div>
@@ -612,10 +591,6 @@
                     <div class="info-item">
                         <label>Teléfono</label>
                         <div class="value">{{ instructor.telefono }}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Fecha de Registro</label>
-                        <div class="value">{{ instructor.fecha_creacion|date:"d/m/Y H:i" }}</div>
                     </div>
                     <div class="info-item">
                         <label>Solicitudes Asignadas</label>
@@ -671,7 +646,6 @@
             </ul>
         </div>
 
-        <!-- Formulario real que se envía desde el modal -->
         <form method="POST" id="deleteForm" style="display:none;">
             {% csrf_token %}
             {% if total_solicitudes > 0 %}
@@ -727,7 +701,6 @@
         var modal   = document.getElementById('confirmModal');
         var overlay = document.getElementById('modalOverlay');
 
-        /* ── Auto-cerrar alertas a los 8 s ── */
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.alert').forEach(function (alert) {
                 setTimeout(function () {
@@ -737,7 +710,6 @@
             });
         });
 
-        /* ── Lógica de radios (solo si hay solicitudes) ── */
         var accionSeleccionada = null;
 
         function actualizarAccion(valor) {
@@ -749,7 +721,6 @@
             }
         }
 
-        /* ── Modal ── */
         function abrirModal() {
             {% if total_solicitudes > 0 %}
             if (!accionSeleccionada || accionSeleccionada === 'cancelar') return;
@@ -776,13 +747,9 @@
             document.getElementById('deleteForm').submit();
         }
 
-        // Cerrar al hacer clic en el overlay (no en el modal)
         overlay.addEventListener('click', cerrarModal);
-
-        // Evitar que el clic dentro del modal cierre el overlay
         modal.addEventListener('click', function(e) { e.stopPropagation(); });
 
-        // Cerrar con ESC
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') cerrarModal();
         });

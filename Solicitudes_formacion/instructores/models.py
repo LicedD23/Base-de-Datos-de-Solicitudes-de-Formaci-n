@@ -3,6 +3,7 @@ from programas.models import Programa
 
 class Instructor(models.Model):
     nombre = models.CharField(max_length=100)
+    cedula = models.CharField(max_length=10, unique=True, verbose_name="Cédula")
     especialidad = models.ManyToManyField(Programa, related_name='instructores')
     telefono = models.CharField(max_length=20)
     correo = models.EmailField()

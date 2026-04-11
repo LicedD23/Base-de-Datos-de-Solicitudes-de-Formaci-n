@@ -206,7 +206,6 @@
             to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
         }
 
-        /* Cabecera naranja */
         .modal-header {
             padding: 26px 32px 22px;
             background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
@@ -219,19 +218,16 @@
         .modal-header-text h3 { font-size: 1.35em; font-weight: 700; margin: 0 0 4px; }
         .modal-header-text p  { font-size: 0.9em; opacity: 0.88; margin: 0; }
 
-        /* Barra de acento debajo del header */
         .modal-accent-bar {
             height: 5px;
             background: linear-gradient(90deg, #ffb74d, #ff9800, #ef6c00, #e65100);
         }
 
-        /* Cuerpo del modal */
         .modal-body {
             padding: 28px 32px 20px;
             background: #fffaf5;
         }
 
-        /* Tarjeta con datos del instructor */
         .modal-info-card {
             background: #fff3e0;
             border: 1.5px solid #ffcc80;
@@ -259,7 +255,6 @@
         .modal-info-row .mrow-label { color: #e65100; min-width: 90px; font-weight: 600; }
         .modal-info-row .mrow-value { color: #4e342e; font-weight: 500; }
 
-        /* Aviso si hay solicitudes activas */
         .modal-solicitudes-alert {
             display: flex;
             align-items: flex-start;
@@ -275,7 +270,6 @@
         }
         .modal-solicitudes-alert .alert-icon-big { font-size: 1.5em; flex-shrink: 0; }
 
-        /* Mensaje de consecuencias */
         .modal-consequence {
             font-size: 0.9em;
             color: #6d4c41;
@@ -285,7 +279,6 @@
             line-height: 1.6;
         }
 
-        /* Pie del modal con botones */
         .modal-footer {
             padding: 18px 32px 28px;
             background: #fffaf5;
@@ -329,7 +322,6 @@
         .btn-modal-confirm-warning:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(239,108,0,0.50); }
         .btn-modal-confirm-warning:active { transform: translateY(0); }
 
-        /* Animación de entrada de container */
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -349,10 +341,8 @@
 </head>
 <body>
 
-    <!-- ══ Overlay del modal ══ -->
     <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
 
-    <!-- ══ Modal naranja de confirmación ══ -->
     <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 
         <div class="modal-header">
@@ -367,12 +357,16 @@
 
         <div class="modal-body">
 
-            <!-- Datos del instructor -->
             <div class="modal-info-card">
                 <div class="modal-info-card-title">📋 Instructor a desactivar</div>
                 <div class="modal-info-row">
                     <span class="mrow-label">👤 Nombre</span>
                     <span class="mrow-value">{{ instructor.nombre }}</span>
+                </div>
+                <!-- ══ CÉDULA AÑADIDA ══ -->
+                <div class="modal-info-row">
+                    <span class="mrow-label">🪪 Cédula</span>
+                    <span class="mrow-value">{{ instructor.cedula }}</span>
                 </div>
                 <div class="modal-info-row">
                     <span class="mrow-label">📧 Correo</span>
@@ -388,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- Aviso de solicitudes activas (solo si aplica) -->
             {% if solicitudes_activas > 0 %}
             <div class="modal-solicitudes-alert">
                 <span class="alert-icon-big">🔔</span>
@@ -399,7 +392,6 @@
             </div>
             {% endif %}
 
-            <!-- Consecuencia -->
             <div class="modal-consequence">
                 🔄 El instructor <strong>no será eliminado</strong>. Sus datos históricos se conservan íntegros.
                 Podrás reactivarlo en cualquier momento desde la opción de edición.
@@ -413,7 +405,6 @@
         </div>
     </div>
 
-    <!-- ══ Contenido principal ══ -->
     <div class="container">
         <div class="header">
             <h1>⚠️ Desactivar Instructor</h1>
@@ -457,6 +448,11 @@
                     <div class="info-item">
                         <label>Nombre del Instructor</label>
                         <div class="value">{{ instructor.nombre }}</div>
+                    </div>
+                    <!-- ══ CÉDULA AÑADIDA ══ -->
+                    <div class="info-item">
+                        <label>Cédula</label>
+                        <div class="value">{{ instructor.cedula }}</div>
                     </div>
                     <div class="info-item">
                         <label>Teléfono</label>
@@ -512,7 +508,6 @@
             </ul>
         </div>
 
-        <!-- Formulario oculto que se envía desde el modal -->
         <form method="POST" id="desactivarForm" style="display:none;">
             {% csrf_token %}
             {% if solicitudes_activas > 0 %}
@@ -548,13 +543,12 @@
         }
 
         function confirmarDesactivacion() {
-            const btn = document.querySelector('.btn-modal-confirm-warning');
+            var btn = document.querySelector('.btn-modal-confirm-warning');
             btn.disabled = true;
             btn.innerHTML = '🔄 Procesando...';
             document.getElementById('desactivarForm').submit();
         }
 
-        // Cerrar con ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') cerrarModal();
         });

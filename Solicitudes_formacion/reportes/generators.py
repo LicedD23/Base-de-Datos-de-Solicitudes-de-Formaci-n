@@ -32,9 +32,9 @@ def get_disponibilidad_instructor(instructor):
     Devuelve un dict con:
         ocupado   : bool
         etiqueta  : str  → 'Disponible' | 'Ocupado'
-    Replica la misma lógica de instructores/views.py:
-      - Ocupado si tiene solicitudes con fecha_atencion registrada,
-        no finalizadas, cuyo rango inicio-fin abarca el día de hoy.
+    - Ocupado si tiene solicitudes con fecha_atencion registrada,
+      no finalizadas, cuyo rango fecha_atencion → fecha_fin_formacion
+      abarca el día de hoy.
     """
     hoy = timezone.now().date()
 
@@ -43,9 +43,9 @@ def get_disponibilidad_instructor(instructor):
     ).exclude(estado='FINALIZADA')
 
     ocupado = False
-    for sol in solicitudes_programadas.only('fecha_atencion', 'fecha_finalizacion', 'estado'):
+    for sol in solicitudes_programadas.only('fecha_atencion', 'fecha_fin_formacion', 'estado'):
         fecha_inicio = sol.fecha_atencion.date()
-        fecha_fin    = sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+        fecha_fin    = sol.fecha_fin_formacion   # DateField, puede ser None
 
         if fecha_inicio <= hoy and (fecha_fin is None or fecha_fin >= hoy):
             ocupado = True
@@ -57,6 +57,24 @@ def get_disponibilidad_instructor(instructor):
     }
 
 
+# =============================================================================
+# HELPERS: formato seguro de fecha
+# =============================================================================
+
+def _fmt_fecha(fecha, fmt='%d/%m/%Y'):
+    """Retorna la fecha formateada o '—' si es None."""
+    return fecha.strftime(fmt) if fecha else '—'
+
+
+def _fmt_fecha_hora(fecha, fmt='%d/%m/%Y %H:%M'):
+    """Retorna la fecha+hora formateada o '—' si es None."""
+    return fecha.strftime(fmt) if fecha else '—'
+
+
+# =============================================================================
+# PDF
+# =============================================================================
+
 class PDFReportGenerator:
     """Generador de reportes PDF con estilo SENA"""
 
@@ -65,7 +83,6 @@ class PDFReportGenerator:
         self.setup_custom_styles()
 
     def setup_custom_styles(self):
-        """Configura estilos personalizados"""
         self.styles.add(ParagraphStyle(
             name='CustomTitle',
             parent=self.styles['Heading1'],
@@ -75,7 +92,6 @@ class PDFReportGenerator:
             alignment=TA_CENTER,
             fontName='Helvetica-Bold'
         ))
-
         self.styles.add(ParagraphStyle(
             name='CustomSubtitle',
             parent=self.styles['Heading2'],
@@ -84,7 +100,6 @@ class PDFReportGenerator:
             spaceAfter=20,
             fontName='Helvetica-Bold'
         ))
-
         self.styles.add(ParagraphStyle(
             name='SectionHeader',
             parent=self.styles['Heading3'],
@@ -94,7 +109,6 @@ class PDFReportGenerator:
             spaceBefore=15,
             fontName='Helvetica-Bold'
         ))
-
         self.styles.add(ParagraphStyle(
             name='TableCell',
             parent=self.styles['Normal'],
@@ -104,8 +118,6 @@ class PDFReportGenerator:
             wordWrap='CJK',
             fontName='Helvetica'
         ))
-
-        # ── Estilos para la celda de disponibilidad ──────────────────────────
         self.styles.add(ParagraphStyle(
             name='Disponible',
             parent=self.styles['Normal'],
@@ -115,7 +127,6 @@ class PDFReportGenerator:
             textColor=colors.HexColor('#1b5e20'),
             fontName='Helvetica-Bold'
         ))
-
         self.styles.add(ParagraphStyle(
             name='Ocupado',
             parent=self.styles['Normal'],
@@ -127,44 +138,23 @@ class PDFReportGenerator:
         ))
 
     def _disponibilidad_paragraph(self, instructor):
-        """Devuelve un Paragraph coloreado según disponibilidad."""
         info = get_disponibilidad_instructor(instructor)
         style_name = 'Ocupado' if info['ocupado'] else 'Disponible'
         return Paragraph(info['etiqueta'], self.styles[style_name])
 
-    def _disponibilidad_row_colors(self, data_rows):
-        """
-        Genera comandos TableStyle para colorear la celda de disponibilidad
-        (última columna) fila por fila, a partir de la fila 1 (índice 0 = header).
-        data_rows: lista de filas de datos (sin la fila de encabezado).
-        Devuelve lista de tuplas de estilo.
-        """
-        styles_cmd = []
-        for i, row in enumerate(data_rows, start=1):      # fila 1 en adelante
-            last_col = len(row) - 1
-            # El texto ya tiene color vía Paragraph; aquí solo resaltamos el fondo levemente
-            # para distinguirla visualmente
-            pass   # los colores de texto se aplican en el Paragraph; no se necesita nada extra
-        return styles_cmd
-
     def add_header_footer(self, canvas, doc):
-        """Agrega encabezado y pie de página"""
         canvas.saveState()
-
         canvas.setFillColorRGB(0.18, 0.49, 0.20)
         canvas.rect(0, letter[1] - 60, letter[0], 60, fill=1)
-
         canvas.setFillColorRGB(1, 1, 1)
         canvas.setFont('Helvetica-Bold', 16)
         canvas.drawString(50, letter[1] - 35, "SENA - Servicio Nacional de Aprendizaje")
         canvas.setFont('Helvetica', 10)
         canvas.drawString(50, letter[1] - 50, "Sistema de Gestión de Solicitudes de Formación")
-
         canvas.setFillColorRGB(0.5, 0.5, 0.5)
         canvas.setFont('Helvetica', 8)
         canvas.drawString(50, 30, f"Generado: {timezone.now().strftime('%d/%m/%Y %H:%M')}")
         canvas.drawRightString(letter[0] - 50, 30, f"Página {doc.page}")
-
         canvas.restoreState()
 
     # -------------------------------------------------------------------------
@@ -172,29 +162,28 @@ class PDFReportGenerator:
     # -------------------------------------------------------------------------
 
     def generate_solicitudes_report(self, solicitudes, filtros=None):
-        """Genera reporte de solicitudes en PDF con fechas de atención y respuesta"""
+        """
+        Genera reporte PDF de solicitudes.
+        Fechas de formación:
+          • F. Inicio Form. → sol.fecha_atencion   (DateTimeField, ya existe)
+          • F. Fin Form.    → sol.fecha_fin_formacion (DateField, ya existe)
+        """
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
             buffer,
             pagesize=landscape(letter),
-            topMargin=80,
-            bottomMargin=50,
-            leftMargin=36,
-            rightMargin=36,
+            topMargin=80, bottomMargin=50, leftMargin=36, rightMargin=36,
             title="Reporte de Solicitudes - SENA",
             author="SENA - Sistema de Gestión",
             subject="Solicitudes de Formación"
         )
-
         elements = []
 
-        title = Paragraph("REPORTE DE SOLICITUDES DE FORMACIÓN", self.styles['CustomTitle'])
-        elements.append(title)
+        elements.append(Paragraph("REPORTE DE SOLICITUDES DE FORMACIÓN", self.styles['CustomTitle']))
         elements.append(Spacer(1, 0.2 * inch))
 
         if filtros:
-            info_text = f"<b>Filtros aplicados:</b> {filtros}"
-            elements.append(Paragraph(info_text, self.styles['Normal']))
+            elements.append(Paragraph(f"<b>Filtros aplicados:</b> {filtros}", self.styles['Normal']))
             elements.append(Spacer(1, 0.2 * inch))
 
         total       = solicitudes.count()
@@ -207,7 +196,6 @@ class PDFReportGenerator:
             ['Total Solicitudes', 'Recibidas', 'Atendidas', 'Respondidas', 'Finalizadas'],
             [str(total), str(recibidas), str(atendidas), str(respondidas), str(finalizadas)]
         ]
-
         stats_table = Table(stats_data, colWidths=[1.4 * inch] * 5)
         stats_table.setStyle(TableStyle([
             ('BACKGROUND',    (0, 0), (-1, 0), colors.HexColor('#2e7d32')),
@@ -220,40 +208,37 @@ class PDFReportGenerator:
             ('BACKGROUND',    (0, 1), (-1, -1), colors.beige),
             ('GRID',          (0, 0), (-1, -1), 1, colors.grey),
         ]))
-
         elements.append(stats_table)
         elements.append(Spacer(1, 0.3 * inch))
-
         elements.append(Paragraph("Detalle de Solicitudes", self.styles['SectionHeader']))
 
-        # ── Ahora incluye columna Disponibilidad del instructor ───────────────
+        # 10 columnas
         headers = [
-            'NIT Empresa', 'Empresa', 'Programa',
-            'Estado',
-            'F. Recepción', 'F. Atención', 'F. Respuesta',
-            'Instructor', 'Disponibilidad'
+            'NIT Empresa', 'Empresa', 'Programa', 'Estado',
+            'F. Recepción', 'F. Inicio Form.', 'F. Respuesta', 'F. Fin Form.',
+            'Instructor', 'Disponibilidad',
         ]
         data = [headers]
 
         for sol in solicitudes[:50]:
             nit_empresa = (
-                sol.empresa.nit
-                if hasattr(sol.empresa, 'nit') and sol.empresa.nit
+                sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit
                 else 'Sin NIT'
             )
-            if sol.instructor_asignado:
-                disp_cell = self._disponibilidad_paragraph(sol.instructor_asignado)
-            else:
-                disp_cell = Paragraph('—', self.styles['TableCell'])
-
+            disp_cell = (
+                self._disponibilidad_paragraph(sol.instructor_asignado)
+                if sol.instructor_asignado
+                else Paragraph('—', self.styles['TableCell'])
+            )
             data.append([
-                Paragraph(nit_empresa,                                                         self.styles['TableCell']),
-                Paragraph(sol.empresa.nombre,                                                  self.styles['TableCell']),
-                Paragraph(sol.programa.nombre,                                                 self.styles['TableCell']),
-                Paragraph(sol.get_estado_display(),                                            self.styles['TableCell']),
-                Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y')  if sol.fecha_recepcion  else '—', self.styles['TableCell']),
-                Paragraph(sol.fecha_atencion.strftime('%d/%m/%Y')   if sol.fecha_atencion   else '—', self.styles['TableCell']),
-                Paragraph(sol.fecha_respuesta.strftime('%d/%m/%Y')  if sol.fecha_respuesta  else '—', self.styles['TableCell']),
+                Paragraph(nit_empresa,                         self.styles['TableCell']),
+                Paragraph(sol.empresa.nombre,                  self.styles['TableCell']),
+                Paragraph(sol.programa.nombre,                 self.styles['TableCell']),
+                Paragraph(sol.get_estado_display(),            self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_recepcion),     self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_atencion),      self.styles['TableCell']),  # inicio form.
+                Paragraph(_fmt_fecha(sol.fecha_respuesta),     self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_fin_formacion), self.styles['TableCell']),  # fin form.
                 Paragraph(
                     sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',
                     self.styles['TableCell']
@@ -261,7 +246,18 @@ class PDFReportGenerator:
                 disp_cell,
             ])
 
-        col_widths = [0.9*inch, 1.6*inch, 1.8*inch, 0.9*inch, 0.85*inch, 0.85*inch, 0.85*inch, 1.3*inch, 0.9*inch]
+        col_widths = [
+            0.85*inch,  # NIT
+            1.40*inch,  # Empresa
+            1.60*inch,  # Programa
+            0.85*inch,  # Estado
+            0.82*inch,  # F. Recepción
+            0.82*inch,  # F. Inicio Form.
+            0.82*inch,  # F. Respuesta
+            0.82*inch,  # F. Fin Form.
+            1.25*inch,  # Instructor
+            0.87*inch,  # Disponibilidad
+        ]
         table = Table(data, colWidths=col_widths)
         table.setStyle(TableStyle([
             ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
@@ -269,19 +265,18 @@ class PDFReportGenerator:
             ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME',      (0, 0), (-1,  0), 'Helvetica-Bold'),
-            ('FONTSIZE',      (0, 0), (-1,  0), 9),
-            ('TOPPADDING',    (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING',   (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING',  (0, 0), (-1, -1), 4),
+            ('FONTSIZE',      (0, 0), (-1,  0), 8),
+            ('TOPPADDING',    (0, 0), (-1, -1), 5),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+            ('LEFTPADDING',   (0, 0), (-1, -1), 3),
+            ('RIGHTPADDING',  (0, 0), (-1, -1), 3),
             ('BACKGROUND',    (0, 1), (-1, -1), colors.white),
             ('TEXTCOLOR',     (0, 1), (-1, -1), colors.black),
             ('FONTNAME',      (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE',      (0, 1), (-1, -1), 8),
+            ('FONTSIZE',      (0, 1), (-1, -1), 7),
             ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
         ]))
-
         elements.append(table)
 
         if solicitudes.count() > 50:
@@ -300,52 +295,42 @@ class PDFReportGenerator:
     # -------------------------------------------------------------------------
 
     def generate_empresas_report(self, empresas):
-        """Genera reporte de empresas en PDF CON NIT"""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
-            buffer,
-            pagesize=letter,
-            topMargin=80,
-            bottomMargin=50,
-            leftMargin=40,
-            rightMargin=40,
+            buffer, pagesize=letter,
+            topMargin=80, bottomMargin=50, leftMargin=40, rightMargin=40,
             title="Directorio de Empresas - SENA",
             author="SENA - Sistema de Gestión",
             subject="Empresas Registradas"
         )
         elements = []
-
-        title = Paragraph("DIRECTORIO DE EMPRESAS", self.styles['CustomTitle'])
-        elements.append(title)
+        elements.append(Paragraph("DIRECTORIO DE EMPRESAS", self.styles['CustomTitle']))
         elements.append(Spacer(1, 0.3 * inch))
-
-        total = empresas.count()
-        elements.append(Paragraph(f"<b>Total de empresas:</b> {total}", self.styles['Normal']))
+        elements.append(Paragraph(f"<b>Total de empresas:</b> {empresas.count()}", self.styles['Normal']))
         elements.append(Spacer(1, 0.3 * inch))
 
         data = [['NIT', 'Empresa', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'N° Trab.']]
-
         for emp in empresas[:50]:
             nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
             data.append([
-                Paragraph(nit_empresa,                                                  self.styles['TableCell']),
-                Paragraph(emp.nombre,                                                   self.styles['TableCell']),
-                Paragraph(emp.contacto,                                                 self.styles['TableCell']),
-                Paragraph(emp.telefono or 'N/A',                                       self.styles['TableCell']),
-                Paragraph(emp.correo,                                                   self.styles['TableCell']),
-                Paragraph(emp.municipio if emp.municipio else 'N/A',                   self.styles['TableCell']),
+                Paragraph(nit_empresa,                                                       self.styles['TableCell']),
+                Paragraph(emp.nombre,                                                        self.styles['TableCell']),
+                Paragraph(emp.contacto,                                                      self.styles['TableCell']),
+                Paragraph(emp.telefono or 'N/A',                                            self.styles['TableCell']),
+                Paragraph(emp.correo,                                                        self.styles['TableCell']),
+                Paragraph(emp.municipio if emp.municipio else 'N/A',                        self.styles['TableCell']),
                 Paragraph(str(emp.numero_trabajadores) if emp.numero_trabajadores else '0', self.styles['TableCell']),
             ])
 
         table = Table(data, colWidths=[0.9*inch, 1.6*inch, 1.1*inch, 0.85*inch, 1.3*inch, 0.9*inch, 0.75*inch])
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
-            ('TEXTCOLOR',  (0, 0), (-1,  0), colors.whitesmoke),
-            ('ALIGN',      (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN',     (0, 0), (-1, -1), 'MIDDLE'),
-            ('FONTNAME',   (0, 0), (-1,  0), 'Helvetica-Bold'),
-            ('FONTSIZE',   (0, 0), (-1,  0), 9),
-            ('FONTSIZE',   (0, 1), (-1, -1), 8),
+            ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
+            ('TEXTCOLOR',     (0, 0), (-1,  0), colors.whitesmoke),
+            ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME',      (0, 0), (-1,  0), 'Helvetica-Bold'),
+            ('FONTSIZE',      (0, 0), (-1,  0), 9),
+            ('FONTSIZE',      (0, 1), (-1, -1), 8),
             ('TOPPADDING',    (0, 0), (-1, -1), 6),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
             ('LEFTPADDING',   (0, 0), (-1, -1), 3),
@@ -353,7 +338,6 @@ class PDFReportGenerator:
             ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
         ]))
-
         elements.append(table)
         doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
         buffer.seek(0)
@@ -364,35 +348,28 @@ class PDFReportGenerator:
     # -------------------------------------------------------------------------
 
     def generate_programas_report(self, programas):
-        """Genera reporte de programas en PDF"""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
-            buffer,
-            pagesize=letter,
-            topMargin=80,
-            bottomMargin=50,
+            buffer, pagesize=letter,
+            topMargin=80, bottomMargin=50,
             title="Programas de formacion - SENA",
             author="SENA - Sistema de Gestión",
             subject="Programas de Formación"
         )
         elements = []
-
-        title = Paragraph("CATÁLOGO DE PROGRAMAS DE FORMACIÓN", self.styles['CustomTitle'])
-        elements.append(title)
+        elements.append(Paragraph("CATÁLOGO DE PROGRAMAS DE FORMACIÓN", self.styles['CustomTitle']))
         elements.append(Spacer(1, 0.3 * inch))
-
-        total = programas.count()
-        elements.append(Paragraph(f"<b>Total de programas activos:</b> {total}", self.styles['Normal']))
+        elements.append(Paragraph(f"<b>Total de programas activos:</b> {programas.count()}", self.styles['Normal']))
         elements.append(Spacer(1, 0.3 * inch))
 
         data = [['Código', 'Nombre del Programa', 'Área', 'Duración', 'Estado']]
         for prog in programas[:50]:
             data.append([
-                Paragraph(prog.codigo or 'N/A',                                 self.styles['TableCell']),
-                Paragraph(prog.nombre,                                           self.styles['TableCell']),
-                Paragraph(prog.area.nombre,                                      self.styles['TableCell']),
-                Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A', self.styles['TableCell']),
-                Paragraph('Activo' if prog.activo else 'Inactivo',              self.styles['TableCell']),
+                Paragraph(prog.codigo or 'N/A',                                         self.styles['TableCell']),
+                Paragraph(prog.nombre,                                                   self.styles['TableCell']),
+                Paragraph(prog.area.nombre,                                              self.styles['TableCell']),
+                Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A',  self.styles['TableCell']),
+                Paragraph('Activo' if prog.activo else 'Inactivo',                      self.styles['TableCell']),
             ])
 
         table = Table(data, colWidths=[0.9*inch, 3*inch, 1.5*inch, 0.8*inch, 0.8*inch])
@@ -411,7 +388,6 @@ class PDFReportGenerator:
             ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
         ]))
-
         elements.append(table)
 
         if programas.count() > 50:
@@ -426,42 +402,107 @@ class PDFReportGenerator:
         return buffer
 
     # -------------------------------------------------------------------------
+    # INSTRUCTORES — PDF
+    # -------------------------------------------------------------------------
+
+    def generate_instructores_report(self, instructores):
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer, pagesize=landscape(letter),
+            topMargin=80, bottomMargin=50, leftMargin=40, rightMargin=40,
+            title="Directorio de Instructores - SENA",
+            author="SENA - Sistema de Gestión",
+            subject="Instructores"
+        )
+        elements = []
+        elements.append(Paragraph("DIRECTORIO DE INSTRUCTORES", self.styles['CustomTitle']))
+        elements.append(Spacer(1, 0.2 * inch))
+
+        total        = instructores.count()
+        activos      = instructores.filter(activo=True).count()
+        activos_qs   = instructores.filter(activo=True)
+        disponibles_hoy = sum(1 for i in activos_qs if not get_disponibilidad_instructor(i)['ocupado'])
+        ocupados_hoy    = activos_qs.count() - disponibles_hoy
+
+        elements.append(Paragraph(
+            f"<b>Total de instructores:</b> {total} &nbsp;&nbsp;|&nbsp;&nbsp; "
+            f"<b>Activos:</b> {activos} &nbsp;&nbsp;|&nbsp;&nbsp; "
+            f"<b>Disponibles hoy:</b> {disponibles_hoy} &nbsp;&nbsp;|&nbsp;&nbsp; "
+            f"<b>Ocupados hoy:</b> {ocupados_hoy}",
+            self.styles['Normal']
+        ))
+        elements.append(Spacer(1, 0.3 * inch))
+
+        headers = ['Instructor', 'Cédula', 'Correo', 'Teléfono', 'Estado', 'Especialidades', 'Solicitudes', 'Disponibilidad']
+        data = [headers]
+        for inst in instructores[:50]:
+            data.append([
+                Paragraph(inst.nombre,                                self.styles['TableCell']),
+                Paragraph(inst.cedula if inst.cedula else 'N/A',     self.styles['TableCell']),
+                Paragraph(inst.correo,                                self.styles['TableCell']),
+                Paragraph(inst.telefono if inst.telefono else 'N/A', self.styles['TableCell']),
+                Paragraph('Activo' if inst.activo else 'Inactivo',   self.styles['TableCell']),
+                Paragraph(str(inst.especialidad.count()),             self.styles['TableCell']),
+                Paragraph(str(inst.solicitud_set.count()),            self.styles['TableCell']),
+                self._disponibilidad_paragraph(inst),
+            ])
+
+        col_widths = [1.5*inch, 1.0*inch, 1.9*inch, 0.95*inch, 0.8*inch, 0.95*inch, 0.85*inch, 1.05*inch]
+        table = Table(data, colWidths=col_widths)
+        table.setStyle(TableStyle([
+            ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
+            ('TEXTCOLOR',     (0, 0), (-1,  0), colors.whitesmoke),
+            ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME',      (0, 0), (-1,  0), 'Helvetica-Bold'),
+            ('FONTSIZE',      (0, 0), (-1,  0), 9),
+            ('TOPPADDING',    (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING',   (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING',  (0, 0), (-1, -1), 4),
+            ('BACKGROUND',    (0, 1), (-1, -1), colors.white),
+            ('FONTNAME',      (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE',      (0, 1), (-1, -1), 8),
+            ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
+        ]))
+        elements.append(table)
+
+        if instructores.count() > 50:
+            elements.append(Spacer(1, 0.2 * inch))
+            elements.append(Paragraph(
+                f"<i>Nota: Mostrando los primeros 50 instructores de {instructores.count()} totales</i>",
+                self.styles['Normal']
+            ))
+
+        doc.build(elements, onFirstPage=self.add_header_footer, onLaterPages=self.add_header_footer)
+        buffer.seek(0)
+        return buffer
+
+    # -------------------------------------------------------------------------
     # CONSOLIDADO — PDF
     # -------------------------------------------------------------------------
 
     def generate_consolidated_report(self, solicitudes, empresas, programas, instructores):
-        """Genera reporte consolidado de todo el sistema"""
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(
-            buffer,
-            pagesize=letter,
-            topMargin=80,
-            bottomMargin=50,
-            leftMargin=50,
-            rightMargin=50,
+            buffer, pagesize=letter,
+            topMargin=80, bottomMargin=50, leftMargin=50, rightMargin=50,
             title="Reporte Consolidado - SENA",
             author="SENA - Sistema de Gestión",
             subject="Reporte Consolidado"
         )
         elements = []
 
-        title = Paragraph("REPORTE CONSOLIDADO DEL SISTEMA", self.styles['CustomTitle'])
-        elements.append(title)
+        elements.append(Paragraph("REPORTE CONSOLIDADO DEL SISTEMA", self.styles['CustomTitle']))
         elements.append(Spacer(1, 0.1 * inch))
-
-        subtitle = Paragraph(
-            "Sistema de Gestión de Solicitudes de Formación SENA",
-            self.styles['CustomSubtitle']
-        )
-        elements.append(subtitle)
+        elements.append(Paragraph("Sistema de Gestión de Solicitudes de Formación SENA", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.3 * inch))
-
         elements.append(Paragraph(
             f"<b>Fecha de generación:</b> {timezone.now().strftime('%d/%m/%Y %H:%M')}",
             self.styles['Normal']
         ))
         elements.append(Spacer(1, 0.5 * inch))
-
         elements.append(Paragraph("RESUMEN EJECUTIVO", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
 
@@ -477,7 +518,6 @@ class PDFReportGenerator:
             ['Instructores', str(instructores.count()),
              f"Activos: {instructores.filter(activo=True).count()}"],
         ]
-
         summary_table = Table(summary_data, colWidths=[1.5*inch, 1*inch, 4*inch])
         summary_table.setStyle(TableStyle([
             ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
@@ -494,7 +534,6 @@ class PDFReportGenerator:
             ('LEFTPADDING',   (0, 0), (-1, -1), 4),
             ('RIGHTPADDING',  (0, 0), (-1, -1), 4),
         ]))
-
         elements.append(summary_table)
         elements.append(PageBreak())
 
@@ -513,7 +552,6 @@ class PDFReportGenerator:
             ['Finalizadas', str(solicitudes.filter(estado='FINALIZADA').count()),
              f"{solicitudes.filter(estado='FINALIZADA').count()/ max(solicitudes.count(), 1) * 100:.1f}%"],
         ]
-
         sol_stats_table = Table(sol_stats_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
         sol_stats_table.setStyle(TableStyle([
             ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
@@ -530,47 +568,53 @@ class PDFReportGenerator:
             ('LEFTPADDING',   (0, 0), (-1, -1), 5),
             ('RIGHTPADDING',  (0, 0), (-1, -1), 5),
         ]))
-
         elements.append(sol_stats_table)
         elements.append(Spacer(1, 0.3 * inch))
 
         elements.append(Paragraph("Últimas 10 Solicitudes", self.styles['SectionHeader']))
         elements.append(Spacer(1, 0.1 * inch))
 
-        sol_data = [['NIT Empresa', 'Empresa', 'Programa', 'Estado', 'F. Recepción', 'F. Atención', 'F. Respuesta']]
+        # 8 columnas: incluye F. Inicio Form. y F. Fin Form.
+        sol_data = [[
+            'NIT Empresa', 'Empresa', 'Programa', 'Estado',
+            'F. Recepción', 'F. Inicio Form.', 'F. Respuesta', 'F. Fin Form.',
+        ]]
         for sol in solicitudes[:10]:
             nit_empresa = (
-                sol.empresa.nit
-                if hasattr(sol.empresa, 'nit') and sol.empresa.nit
+                sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit
                 else 'Sin NIT'
             )
             sol_data.append([
-                Paragraph(nit_empresa,                                                         self.styles['TableCell']),
-                Paragraph(sol.empresa.nombre,                                                  self.styles['TableCell']),
-                Paragraph(sol.programa.nombre,                                                 self.styles['TableCell']),
-                Paragraph(sol.get_estado_display(),                                            self.styles['TableCell']),
-                Paragraph(sol.fecha_recepcion.strftime('%d/%m/%Y') if sol.fecha_recepcion else '—', self.styles['TableCell']),
-                Paragraph(sol.fecha_atencion.strftime('%d/%m/%Y')  if sol.fecha_atencion  else '—', self.styles['TableCell']),
-                Paragraph(sol.fecha_respuesta.strftime('%d/%m/%Y') if sol.fecha_respuesta else '—', self.styles['TableCell']),
+                Paragraph(nit_empresa,                          self.styles['TableCell']),
+                Paragraph(sol.empresa.nombre,                   self.styles['TableCell']),
+                Paragraph(sol.programa.nombre,                  self.styles['TableCell']),
+                Paragraph(sol.get_estado_display(),             self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_recepcion),      self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_atencion),       self.styles['TableCell']),  # inicio form.
+                Paragraph(_fmt_fecha(sol.fecha_respuesta),      self.styles['TableCell']),
+                Paragraph(_fmt_fecha(sol.fecha_fin_formacion),  self.styles['TableCell']),  # fin form.
             ])
 
-        sol_table = Table(sol_data, colWidths=[0.9*inch, 1.5*inch, 1.5*inch, 0.85*inch, 0.85*inch, 0.85*inch, 0.85*inch])
+        sol_table = Table(
+            sol_data,
+            colWidths=[0.85*inch, 1.35*inch, 1.35*inch, 0.80*inch,
+                       0.80*inch, 0.80*inch, 0.80*inch, 0.80*inch]
+        )
         sol_table.setStyle(TableStyle([
             ('BACKGROUND',    (0, 0), (-1,  0), colors.HexColor('#2e7d32')),
             ('TEXTCOLOR',     (0, 0), (-1,  0), colors.whitesmoke),
             ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME',      (0, 0), (-1,  0), 'Helvetica-Bold'),
-            ('FONTSIZE',      (0, 0), (-1,  0), 9),
-            ('FONTSIZE',      (0, 1), (-1, -1), 8),
+            ('FONTSIZE',      (0, 0), (-1,  0), 8),
+            ('FONTSIZE',      (0, 1), (-1, -1), 7),
             ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
-            ('TOPPADDING',    (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING',   (0, 0), (-1, -1), 4),
-            ('RIGHTPADDING',  (0, 0), (-1, -1), 4),
+            ('TOPPADDING',    (0, 0), (-1, -1), 5),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+            ('LEFTPADDING',   (0, 0), (-1, -1), 3),
+            ('RIGHTPADDING',  (0, 0), (-1, -1), 3),
         ]))
-
         elements.append(sol_table)
         elements.append(PageBreak())
 
@@ -578,8 +622,7 @@ class PDFReportGenerator:
         elements.append(Paragraph("2. DIRECTORIO DE EMPRESAS", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
         elements.append(Paragraph(
-            f"Total de empresas registradas: <b>{empresas.count()}</b>",
-            self.styles['Normal']
+            f"Total de empresas registradas: <b>{empresas.count()}</b>", self.styles['Normal']
         ))
         elements.append(Spacer(1, 0.2 * inch))
 
@@ -587,12 +630,12 @@ class PDFReportGenerator:
         for emp in empresas[:15]:
             nit_empresa = emp.nit if hasattr(emp, 'nit') and emp.nit else 'Sin NIT'
             emp_data.append([
-                Paragraph(nit_empresa,                           self.styles['TableCell']),
-                Paragraph(emp.nombre or 'Sin nombre',           self.styles['TableCell']),
-                Paragraph(emp.contacto or 'Sin contacto',       self.styles['TableCell']),
-                Paragraph(emp.telefono or 'N/A',                self.styles['TableCell']),
-                Paragraph(emp.municipio or 'No especificado',   self.styles['TableCell']),
-                Paragraph(str(emp.solicitud_set.count()),        self.styles['TableCell']),
+                Paragraph(nit_empresa,                         self.styles['TableCell']),
+                Paragraph(emp.nombre or 'Sin nombre',         self.styles['TableCell']),
+                Paragraph(emp.contacto or 'Sin contacto',     self.styles['TableCell']),
+                Paragraph(emp.telefono or 'N/A',              self.styles['TableCell']),
+                Paragraph(emp.municipio or 'No especificado', self.styles['TableCell']),
+                Paragraph(str(emp.solicitud_set.count()),      self.styles['TableCell']),
             ])
 
         emp_table = Table(emp_data, colWidths=[1.1*inch, 1.8*inch, 1.2*inch, 0.9*inch, 1*inch, 0.9*inch])
@@ -611,7 +654,6 @@ class PDFReportGenerator:
             ('GRID',          (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
         ]))
-
         elements.append(emp_table)
         elements.append(PageBreak())
 
@@ -645,7 +687,6 @@ class PDFReportGenerator:
             ('LEFTPADDING',   (0, 0), (-1, -1), 5),
             ('RIGHTPADDING',  (0, 0), (-1, -1), 5),
         ]))
-
         elements.append(area_table)
         elements.append(Spacer(1, 0.3 * inch))
 
@@ -655,7 +696,7 @@ class PDFReportGenerator:
         prog_data = [['Código', 'Programa', 'Área', 'Duración', 'Solicitudes']]
         for prog in programas.annotate(num_sol=DjCount('solicitud')).order_by('-num_sol')[:15]:
             prog_data.append([
-                Paragraph(prog.codigo or 'N/A',                                          self.styles['TableCell']),
+                Paragraph(prog.codigo or 'N/A',                                         self.styles['TableCell']),
                 Paragraph(prog.nombre,                                                   self.styles['TableCell']),
                 Paragraph(prog.area.nombre,                                              self.styles['TableCell']),
                 Paragraph(f"{prog.duracion_horas}h" if prog.duracion_horas else 'N/A',  self.styles['TableCell']),
@@ -678,11 +719,10 @@ class PDFReportGenerator:
             ('LEFTPADDING',   (0, 0), (-1, -1), 5),
             ('RIGHTPADDING',  (0, 0), (-1, -1), 5),
         ]))
-
         elements.append(prog_table)
         elements.append(PageBreak())
 
-        # ── Sección 4: Instructores — AHORA CON DISPONIBILIDAD ───────────────
+        # ── Sección 4: Instructores ──────────────────────────────────────────
         elements.append(Paragraph("4. INSTRUCTORES", self.styles['CustomSubtitle']))
         elements.append(Spacer(1, 0.2 * inch))
         elements.append(Paragraph(
@@ -692,13 +732,9 @@ class PDFReportGenerator:
         ))
         elements.append(Spacer(1, 0.2 * inch))
 
-        # Contadores de disponibilidad para el resumen
-        activos_qs = instructores.filter(activo=True)
-        disponibles_count = sum(
-            1 for inst in activos_qs
-            if not get_disponibilidad_instructor(inst)['ocupado']
-        )
-        ocupados_count = activos_qs.count() - disponibles_count
+        activos_qs        = instructores.filter(activo=True)
+        disponibles_count = sum(1 for inst in activos_qs if not get_disponibilidad_instructor(inst)['ocupado'])
+        ocupados_count    = activos_qs.count() - disponibles_count
 
         elements.append(Paragraph(
             f"Disponibles hoy: <b>{disponibles_count}</b> &nbsp;|&nbsp; "
@@ -710,11 +746,11 @@ class PDFReportGenerator:
         inst_data = [['Instructor', 'Correo', 'Teléfono', 'Especialidades', 'Solicitudes', 'Disponibilidad']]
         for inst in instructores.filter(activo=True)[:20]:
             inst_data.append([
-                Paragraph(inst.nombre,                                   self.styles['TableCell']),
-                Paragraph(inst.correo,                                   self.styles['TableCell']),
-                Paragraph(inst.telefono if inst.telefono else 'N/A',     self.styles['TableCell']),
-                Paragraph(str(inst.especialidad.count()),                self.styles['TableCell']),
-                Paragraph(str(inst.solicitud_set.count()),               self.styles['TableCell']),
+                Paragraph(inst.nombre,                               self.styles['TableCell']),
+                Paragraph(inst.correo,                               self.styles['TableCell']),
+                Paragraph(inst.telefono if inst.telefono else 'N/A', self.styles['TableCell']),
+                Paragraph(str(inst.especialidad.count()),            self.styles['TableCell']),
+                Paragraph(str(inst.solicitud_set.count()),           self.styles['TableCell']),
                 self._disponibilidad_paragraph(inst),
             ])
 
@@ -734,7 +770,6 @@ class PDFReportGenerator:
             ('LEFTPADDING',   (0, 0), (-1, -1), 5),
             ('RIGHTPADDING',  (0, 0), (-1, -1), 5),
         ]))
-
         elements.append(inst_table)
         elements.append(Spacer(1, 0.5 * inch))
         elements.append(Paragraph("<i>--- Fin del Reporte Consolidado ---</i>", self.styles['Normal']))
@@ -751,24 +786,20 @@ class PDFReportGenerator:
 class ExcelReportGenerator:
     """Generador de reportes Excel con formato SENA"""
 
-    # Rellenos para disponibilidad
-    FILL_DISPONIBLE = PatternFill(start_color="C8E6C9", end_color="C8E6C9", fill_type="solid")  # verde claro
-    FILL_OCUPADO    = PatternFill(start_color="FFCDD2", end_color="FFCDD2", fill_type="solid")  # rojo claro
-    FONT_DISPONIBLE = Font(bold=True, color="1b5e20", size=10)  # verde oscuro
-    FONT_OCUPADO    = Font(bold=True, color="b71c1c", size=10)  # rojo oscuro
+    FILL_DISPONIBLE = PatternFill(start_color="C8E6C9", end_color="C8E6C9", fill_type="solid")
+    FILL_OCUPADO    = PatternFill(start_color="FFCDD2", end_color="FFCDD2", fill_type="solid")
+    FONT_DISPONIBLE = Font(bold=True, color="1b5e20", size=10)
+    FONT_OCUPADO    = Font(bold=True, color="b71c1c", size=10)
 
     def __init__(self):
         self.header_fill = PatternFill(start_color="2e7d32", end_color="2e7d32", fill_type="solid")
         self.header_font = Font(bold=True, color="FFFFFF", size=12)
         self.border = Border(
-            left=Side(style='thin'),
-            right=Side(style='thin'),
-            top=Side(style='thin'),
-            bottom=Side(style='thin')
+            left=Side(style='thin'), right=Side(style='thin'),
+            top=Side(style='thin'),  bottom=Side(style='thin')
         )
 
     def _apply_disponibilidad_cell(self, cell, instructor):
-        """Escribe y da formato a una celda de disponibilidad."""
         info = get_disponibilidad_instructor(instructor)
         cell.value     = info['etiqueta']
         cell.fill      = self.FILL_OCUPADO    if info['ocupado'] else self.FILL_DISPONIBLE
@@ -802,7 +833,12 @@ class ExcelReportGenerator:
     # -------------------------------------------------------------------------
 
     def generate_solicitudes_report(self, solicitudes, filtros=None):
-        """Genera reporte de solicitudes en Excel con F. Atención, F. Respuesta y Disponibilidad"""
+        """
+        12 columnas (A–L):
+        NIT | Empresa | Programa | Área | Estado |
+        F. Recepción | F. Inicio Form. | F. Respuesta | F. Fin Form. |
+        Instructor | Disponibilidad | Observaciones
+        """
         wb = Workbook()
         ws = wb.active
         ws.title = "Solicitudes"
@@ -810,16 +846,16 @@ class ExcelReportGenerator:
         ws['A1'] = 'REPORTE DE SOLICITUDES DE FORMACIÓN'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
         ws['A1'].alignment = Alignment(horizontal='center')
-        ws.merge_cells('A1:K1')
+        ws.merge_cells('A1:L1')
 
         ws['A2'] = f'Generado: {timezone.now().strftime("%d/%m/%Y %H:%M")}'
         ws['A2'].font = Font(italic=True, size=10)
-        ws.merge_cells('A2:K2')
+        ws.merge_cells('A2:L2')
 
         if filtros:
             ws['A3'] = f'Filtros aplicados: {filtros}'
             ws['A3'].font = Font(italic=True, size=10, color="558b2f")
-            ws.merge_cells('A3:K3')
+            ws.merge_cells('A3:L3')
 
         ws['A4'] = 'RESUMEN ESTADÍSTICO'
         ws['A4'].font = Font(bold=True, size=12)
@@ -831,7 +867,6 @@ class ExcelReportGenerator:
              'Respondidas', solicitudes.filter(estado='RESPONDIDA').count()],
             ['Finalizadas', solicitudes.filter(estado='FINALIZADA').count(), '', ''],
         ]
-
         for row_idx, row_data in enumerate(stats_data, start=5):
             for col_idx, value in enumerate(row_data, start=1):
                 cell = ws.cell(row=row_idx, column=col_idx, value=value)
@@ -841,13 +876,12 @@ class ExcelReportGenerator:
                     cell.fill = PatternFill(start_color="E8F5E9", end_color="E8F5E9", fill_type="solid")
                     cell.font = Font(bold=True)
 
-        # ── Encabezados — ahora 11 columnas ──────────────────────────────────
+        # Cabeceras — 12 columnas
         headers = [
             'NIT Empresa', 'Empresa', 'Programa', 'Área', 'Estado',
-            'F. Recepción', 'F. Atención', 'F. Respuesta',
-            'Instructor', 'Disponibilidad', 'Observaciones'
+            'F. Recepción', 'F. Inicio Form.', 'F. Respuesta', 'F. Fin Form.',
+            'Instructor', 'Disponibilidad', 'Observaciones',
         ]
-
         for col_idx, header in enumerate(headers, start=1):
             cell = ws.cell(row=8, column=col_idx, value=header)
             cell.fill = self.header_fill
@@ -855,40 +889,39 @@ class ExcelReportGenerator:
             cell.alignment = Alignment(horizontal='center', vertical='center')
             cell.border = self.border
 
-        # ── Datos ─────────────────────────────────────────────────────────────
         current_row = 9
         for sol in solicitudes:
             nit_empresa = (
-                sol.empresa.nit
-                if hasattr(sol.empresa, 'nit') and sol.empresa.nit
+                sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit
                 else 'Sin NIT'
             )
             datos = [
-                nit_empresa,
-                sol.empresa.nombre,
-                sol.programa.nombre,
-                sol.programa.area.nombre,
-                sol.get_estado_display(),
-                sol.fecha_recepcion.strftime('%d/%m/%Y %H:%M') if sol.fecha_recepcion else '—',
-                sol.fecha_atencion.strftime('%d/%m/%Y %H:%M')  if sol.fecha_atencion  else '—',
-                sol.fecha_respuesta.strftime('%d/%m/%Y %H:%M') if sol.fecha_respuesta else '—',
-                sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',
-                # columna 10: disponibilidad — se aplica después
-                None,
-                sol.observaciones[:100] if sol.observaciones else 'N/A',
+                nit_empresa,                                       # col 1
+                sol.empresa.nombre,                                # col 2
+                sol.programa.nombre,                               # col 3
+                sol.programa.area.nombre,                         # col 4
+                sol.get_estado_display(),                         # col 5
+                _fmt_fecha_hora(sol.fecha_recepcion),             # col 6
+                _fmt_fecha(sol.fecha_atencion),                   # col 7  ← inicio formación
+                _fmt_fecha_hora(sol.fecha_respuesta),             # col 8
+                _fmt_fecha(sol.fecha_fin_formacion),              # col 9  ← fin formación
+                sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',  # col 10
+                None,                                              # col 11 disponibilidad (manual)
+                sol.observaciones[:100] if sol.observaciones else 'N/A',  # col 12
             ]
-
             for col_idx, value in enumerate(datos, start=1):
                 cell = ws.cell(row=current_row, column=col_idx, value=value)
                 cell.border = self.border
                 cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 
-            # Celda de disponibilidad (columna 10)
-            disp_cell = ws.cell(row=current_row, column=10)
+            # col 11 — disponibilidad
+            disp_cell = ws.cell(row=current_row, column=11)
             if sol.instructor_asignado:
                 self._apply_disponibilidad_cell(disp_cell, sol.instructor_asignado)
             else:
-                disp_cell.value = '—'
+                disp_cell.value  = '—'
+                disp_cell.border = self.border
+                disp_cell.alignment = Alignment(horizontal='center', vertical='center')
 
             current_row += 1
 
@@ -911,7 +944,6 @@ class ExcelReportGenerator:
         ws['A1'] = 'DIRECTORIO DE EMPRESAS'
         ws['A1'].font = Font(bold=True, size=16, color="2e7d32")
         ws.merge_cells('A1:H1')
-
         ws['A2'] = f'Total de empresas: {empresas.count()}'
         ws['A2'].font = Font(bold=True, size=11)
 
@@ -991,7 +1023,7 @@ class ExcelReportGenerator:
         return buffer
 
     # -------------------------------------------------------------------------
-    # INSTRUCTORES — EXCEL  (con columna Disponibilidad)
+    # INSTRUCTORES — EXCEL
     # -------------------------------------------------------------------------
 
     def generate_instructores_report(self, instructores):
@@ -1010,7 +1042,6 @@ class ExcelReportGenerator:
         ws['A2'].font = Font(bold=True, size=11)
         ws.merge_cells('A2:H2')
 
-        # ── Resumen de disponibilidad ─────────────────────────────────────────
         activos_qs      = instructores.filter(activo=True)
         disponibles_hoy = sum(1 for i in activos_qs if not get_disponibilidad_instructor(i)['ocupado'])
         ocupados_hoy    = activos_qs.count() - disponibles_hoy
@@ -1019,7 +1050,6 @@ class ExcelReportGenerator:
         ws['A3'].font = Font(italic=True, size=10, color="558b2f")
         ws.merge_cells('A3:H3')
 
-        # ── Encabezados — 8 columnas con Disponibilidad ──────────────────────
         headers = ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Especialidades', 'Solicitudes Asignadas', 'Disponibilidad']
         for col_idx, header in enumerate(headers, start=1):
             cell = ws.cell(row=5, column=col_idx, value=header)
@@ -1036,19 +1066,15 @@ class ExcelReportGenerator:
                 'Activo' if inst.activo else 'Inactivo',
                 inst.especialidad.count(),
                 inst.solicitud_set.count(),
-                # columna 8: disponibilidad — se aplica después
                 None,
             ]
-
             for col_idx, value in enumerate(datos, start=1):
                 cell = ws.cell(row=current_row, column=col_idx, value=value)
                 cell.border = self.border
                 cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 
-            # Celda de disponibilidad (columna 8)
             disp_cell = ws.cell(row=current_row, column=8)
             self._apply_disponibilidad_cell(disp_cell, inst)
-
             current_row += 1
 
         ws.column_dimensions['A'].width = 8
@@ -1058,7 +1084,7 @@ class ExcelReportGenerator:
         ws.column_dimensions['E'].width = 12
         ws.column_dimensions['F'].width = 18
         ws.column_dimensions['G'].width = 22
-        ws.column_dimensions['H'].width = 16   # Disponibilidad
+        ws.column_dimensions['H'].width = 16
 
         buffer = io.BytesIO()
         wb.save(buffer)
@@ -1066,11 +1092,10 @@ class ExcelReportGenerator:
         return buffer
 
     # -------------------------------------------------------------------------
-    # CONSOLIDADO — EXCEL  (hoja Instructores con disponibilidad)
+    # CONSOLIDADO — EXCEL
     # -------------------------------------------------------------------------
 
     def generate_consolidated_report(self, solicitudes, empresas, programas, instructores):
-        """Genera reporte consolidado en Excel con múltiples hojas"""
         wb = Workbook()
 
         # ── Hoja 1: Resumen ejecutivo ────────────────────────────────────────
@@ -1081,11 +1106,9 @@ class ExcelReportGenerator:
         ws_resumen['A1'].font = Font(bold=True, size=18, color="2e7d32")
         ws_resumen.merge_cells('A1:D1')
         ws_resumen['A1'].alignment = Alignment(horizontal='center')
-
         ws_resumen['A2'] = f'Generado: {timezone.now().strftime("%d/%m/%Y %H:%M")}'
         ws_resumen['A2'].font = Font(italic=True)
         ws_resumen.merge_cells('A2:D2')
-
         ws_resumen['A4'] = 'ESTADÍSTICAS GENERALES'
         ws_resumen['A4'].font = Font(bold=True, size=14, color="2e7d32")
 
@@ -1104,7 +1127,6 @@ class ExcelReportGenerator:
              instructores.filter(activo=True).count(),
              f"{instructores.filter(activo=True).count() / max(instructores.count(), 1) * 100:.1f}%"],
         ]
-
         for idx, row in enumerate(stats, start=6):
             for col_idx, value in enumerate(row, start=1):
                 cell = ws_resumen.cell(row=idx, column=col_idx, value=value)
@@ -1119,13 +1141,12 @@ class ExcelReportGenerator:
         ws_resumen.column_dimensions['C'].width = 20
         ws_resumen.column_dimensions['D'].width = 15
 
-        # ── Hoja 2: Solicitudes ──────────────────────────────────────────────
+        # ── Hoja 2: Solicitudes — 12 columnas (A–L) ──────────────────────────
         ws_sol = wb.create_sheet("Solicitudes")
 
         ws_sol['A1'] = 'SOLICITUDES DE FORMACIÓN'
         ws_sol['A1'].font = Font(bold=True, size=16, color="2e7d32")
-        ws_sol.merge_cells('A1:K1')
-
+        ws_sol.merge_cells('A1:L1')
         ws_sol['A3'] = 'DISTRIBUCIÓN POR ESTADO'
         ws_sol['A3'].font = Font(bold=True, size=12)
 
@@ -1140,7 +1161,6 @@ class ExcelReportGenerator:
             ['Finalizadas', solicitudes.filter(estado='FINALIZADA').count(),
              f"{solicitudes.filter(estado='FINALIZADA').count() / max(solicitudes.count(), 1) * 100:.1f}%"],
         ]
-
         for idx, row in enumerate(estados, start=4):
             for col_idx, value in enumerate(row, start=1):
                 cell = ws_sol.cell(row=idx, column=col_idx, value=value)
@@ -1153,11 +1173,10 @@ class ExcelReportGenerator:
         ws_sol['A10'] = 'LISTADO COMPLETO'
         ws_sol['A10'].font = Font(bold=True, size=12)
 
-        # ── 11 columnas con Disponibilidad ────────────────────────────────────
         headers = [
             'NIT Empresa', 'Empresa', 'Programa', 'Área', 'Estado',
-            'F. Recepción', 'F. Atención', 'F. Respuesta',
-            'Instructor', 'Disponibilidad', 'Observaciones'
+            'F. Recepción', 'F. Inicio Form.', 'F. Respuesta', 'F. Fin Form.',
+            'Instructor', 'Disponibilidad', 'Observaciones',
         ]
         ws_sol.append([])
         ws_sol.append(headers)
@@ -1171,39 +1190,38 @@ class ExcelReportGenerator:
 
         for sol in solicitudes:
             nit_empresa = (
-                sol.empresa.nit
-                if hasattr(sol.empresa, 'nit') and sol.empresa.nit
+                sol.empresa.nit if hasattr(sol.empresa, 'nit') and sol.empresa.nit
                 else 'Sin NIT'
             )
             current_row = ws_sol.max_row + 1
             row_data = [
-                nit_empresa,
-                sol.empresa.nombre,
-                sol.programa.nombre,
-                sol.programa.area.nombre,
-                sol.get_estado_display(),
-                sol.fecha_recepcion.strftime('%d/%m/%Y %H:%M') if sol.fecha_recepcion else '—',
-                sol.fecha_atencion.strftime('%d/%m/%Y %H:%M')  if sol.fecha_atencion  else '—',
-                sol.fecha_respuesta.strftime('%d/%m/%Y %H:%M') if sol.fecha_respuesta else '—',
-                sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',
-                None,   # disponibilidad — se aplica después
-                sol.observaciones[:100] if sol.observaciones else '',
+                nit_empresa,                                       # 1
+                sol.empresa.nombre,                                # 2
+                sol.programa.nombre,                               # 3
+                sol.programa.area.nombre,                         # 4
+                sol.get_estado_display(),                         # 5
+                _fmt_fecha_hora(sol.fecha_recepcion),             # 6
+                _fmt_fecha(sol.fecha_atencion),                   # 7  ← inicio formación
+                _fmt_fecha_hora(sol.fecha_respuesta),             # 8
+                _fmt_fecha(sol.fecha_fin_formacion),              # 9  ← fin formación
+                sol.instructor_asignado.nombre if sol.instructor_asignado else 'Sin asignar',  # 10
+                None,                                              # 11 disponibilidad (manual)
+                sol.observaciones[:100] if sol.observaciones else '',  # 12
             ]
             ws_sol.append(row_data)
 
-            # Celda de disponibilidad (columna 10)
-            disp_cell = ws_sol.cell(row=current_row, column=10)
+            disp_cell = ws_sol.cell(row=current_row, column=11)
             if sol.instructor_asignado:
                 self._apply_disponibilidad_cell(disp_cell, sol.instructor_asignado)
             else:
-                disp_cell.value = '—'
+                disp_cell.value  = '—'
                 disp_cell.border = self.border
                 disp_cell.alignment = Alignment(horizontal='center', vertical='center')
 
         data_start = header_row + 1
-        for row in ws_sol.iter_rows(min_row=data_start, max_row=ws_sol.max_row, max_col=11):
+        for row in ws_sol.iter_rows(min_row=data_start, max_row=ws_sol.max_row, max_col=12):
             for cell in row:
-                if cell.column != 10:   # la columna 10 ya tiene formato propio
+                if cell.column != 11:
                     cell.border = self.border
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 
@@ -1219,7 +1237,6 @@ class ExcelReportGenerator:
         emp_headers = ['NIT', 'Nombre', 'Contacto', 'Teléfono', 'Correo', 'Municipio', 'Dirección', 'N° Trabajadores', 'Solicitudes']
         ws_emp.append([])
         ws_emp.append(emp_headers)
-
         for cell in ws_emp[3]:
             cell.fill = self.header_fill
             cell.font = self.header_font
@@ -1253,7 +1270,6 @@ class ExcelReportGenerator:
         prog_headers = ['ID', 'Código', 'Nombre', 'Área', 'Duración (h)', 'Estado', 'Solicitudes']
         ws_prog.append([])
         ws_prog.append(prog_headers)
-
         for cell in ws_prog[3]:
             cell.fill = self.header_fill
             cell.font = self.header_font
@@ -1276,14 +1292,13 @@ class ExcelReportGenerator:
 
         self.adjust_column_width(ws_prog)
 
-        # ── Hoja 5: Instructores — CON DISPONIBILIDAD ────────────────────────
+        # ── Hoja 5: Instructores ─────────────────────────────────────────────
         ws_inst = wb.create_sheet("Instructores")
 
         ws_inst['A1'] = 'DIRECTORIO DE INSTRUCTORES'
         ws_inst['A1'].font = Font(bold=True, size=16, color="2e7d32")
         ws_inst.merge_cells('A1:H1')
 
-        # Resumen de disponibilidad en la hoja
         activos_qs      = instructores.filter(activo=True)
         disponibles_hoy = sum(1 for i in activos_qs if not get_disponibilidad_instructor(i)['ocupado'])
         ocupados_hoy    = activos_qs.count() - disponibles_hoy
@@ -1298,7 +1313,6 @@ class ExcelReportGenerator:
         inst_headers = ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Especialidades', 'Solicitudes Asignadas', 'Disponibilidad']
         ws_inst.append([])
         ws_inst.append(inst_headers)
-
         for cell in ws_inst[4]:
             cell.fill = self.header_fill
             cell.font = self.header_font
@@ -1313,16 +1327,14 @@ class ExcelReportGenerator:
                 'Activo' if inst.activo else 'Inactivo',
                 inst.especialidad.count(),
                 inst.solicitud_set.count(),
-                None,   # disponibilidad — se aplica después
+                None,
             ])
-
-            # Celda de disponibilidad (columna 8)
             disp_cell = ws_inst.cell(row=current_row, column=8)
             self._apply_disponibilidad_cell(disp_cell, inst)
 
         for row in ws_inst.iter_rows(min_row=4, max_row=ws_inst.max_row, max_col=8):
             for cell in row:
-                if cell.column != 8:   # columna 8 ya tiene formato propio
+                if cell.column != 8:
                     cell.border = self.border
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 

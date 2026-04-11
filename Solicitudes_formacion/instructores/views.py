@@ -16,7 +16,6 @@ def listar_instructores(request):
     activo = request.GET.get('activo', '')
     disponibilidad_filter = request.GET.get('disponibilidad', '')
 
-    # Consulta base
     instructores = Instructor.objects.prefetch_related('especialidad').annotate(
         total_solicitudes=Count('solicitud')
     )
@@ -25,7 +24,8 @@ def listar_instructores(request):
         instructores = instructores.filter(
             Q(nombre__icontains=search) |
             Q(correo__icontains=search) |
-            Q(telefono__icontains=search)
+            Q(telefono__icontains=search) |
+            Q(cedula__icontains=search)
         )
 
     if especialidad_id:
@@ -42,7 +42,6 @@ def listar_instructores(request):
 
     instructores_con_disponibilidad = []
     for instructor in instructores:
-        # Solicitudes con fecha_atencion registrada (formación en curso o futura)
         solicitudes_programadas = instructor.solicitud_set.filter(
             fecha_atencion__isnull=False,
         ).exclude(estado='FINALIZADA')
@@ -52,14 +51,13 @@ def listar_instructores(request):
 
         for sol in solicitudes_programadas.select_related('empresa', 'programa'):
             fecha_inicio = sol.fecha_atencion.date()
-            fecha_fin    = sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+            # ── Campo correcto: fecha_fin_formacion ──
+            fecha_fin = sol.fecha_fin_formacion if sol.fecha_fin_formacion else None
 
-            # Está ocupado hoy si: inicio <= hoy y (sin fin aún O fin >= hoy)
             if fecha_inicio <= hoy and (fecha_fin is None or fecha_fin >= hoy):
                 ocupado_hoy = True
                 formaciones_activas.append(sol)
 
-        # Próxima formación futura (para mostrar en la tarjeta cuando está libre)
         proxima = None
         if not ocupado_hoy:
             proxima = instructor.solicitud_set.filter(
@@ -68,13 +66,12 @@ def listar_instructores(request):
             ).exclude(estado='FINALIZADA').order_by('fecha_atencion').first()
 
         instructores_con_disponibilidad.append({
-            'instructor':         instructor,
-            'ocupado':            ocupado_hoy,
+            'instructor':          instructor,
+            'ocupado':             ocupado_hoy,
             'formaciones_activas': formaciones_activas,
-            'proxima':            proxima,
+            'proxima':             proxima,
         })
 
-    # Filtro por disponibilidad (después de calcular)
     if disponibilidad_filter == 'libre':
         instructores_con_disponibilidad = [d for d in instructores_con_disponibilidad if not d['ocupado']]
     elif disponibilidad_filter == 'ocupado':
@@ -116,18 +113,14 @@ def detalle_instructor(request, instructor_id):
         id=instructor_id
     )
 
-    # Obtener todas las solicitudes asignadas a este instructor
     solicitudes = instructor.solicitud_set.select_related(
         'empresa',
         'programa__area'
     ).order_by('-fecha_recepcion')
 
-    # Separar por estado
-    solicitudes_activas    = solicitudes.exclude(estado='FINALIZADA')
+    solicitudes_activas     = solicitudes.exclude(estado='FINALIZADA')
     solicitudes_finalizadas = solicitudes.filter(estado='FINALIZADA')
 
-    # ── Programaciones: solicitudes que tienen fecha_atencion (fecha de inicio)
-    # Ordenadas por fecha_atencion para mostrar como agenda cronológica
     from django.utils import timezone
     hoy = timezone.now().date()
 
@@ -135,14 +128,14 @@ def detalle_instructor(request, instructor_id):
         fecha_atencion__isnull=False
     ).order_by('fecha_atencion')
 
-    # Separar en activas (en curso hoy), futuras y pasadas
     programaciones_activas  = []
     programaciones_futuras  = []
     programaciones_pasadas  = []
 
     for sol in programaciones:
         fecha_inicio = sol.fecha_atencion.date() if sol.fecha_atencion else None
-        fecha_fin    = sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+        # ── Campo correcto: fecha_fin_formacion ──
+        fecha_fin = sol.fecha_fin_formacion if sol.fecha_fin_formacion else None
 
         if not fecha_inicio:
             continue
@@ -155,279 +148,291 @@ def detalle_instructor(request, instructor_id):
             else:
                 programaciones_pasadas.append(sol)
         else:
-            # Sin fecha fin: si la fecha de inicio ya pasó y no está finalizada → activa
+            # Sin fecha fin: si el inicio ya pasó → en curso
             if fecha_inicio <= hoy:
                 programaciones_activas.append(sol)
             else:
                 programaciones_futuras.append(sol)
 
-    # Especialidades del instructor
     especialidades = instructor.especialidad.all()
 
     context = {
-        'instructor':             instructor,
-        'especialidades':         especialidades,
-        'solicitudes_activas':    solicitudes_activas,
+        'instructor':              instructor,
+        'especialidades':          especialidades,
+        'solicitudes_activas':     solicitudes_activas,
         'solicitudes_finalizadas': solicitudes_finalizadas,
-        'total_solicitudes':      solicitudes.count(),
-        # Programaciones
-        'programaciones_activas': programaciones_activas,
-        'programaciones_futuras': programaciones_futuras,
-        'programaciones_pasadas': programaciones_pasadas,
-        'hoy':                    hoy,
+        'total_solicitudes':       solicitudes.count(),
+        'programaciones_activas':  programaciones_activas,
+        'programaciones_futuras':  programaciones_futuras,
+        'programaciones_pasadas':  programaciones_pasadas,
+        'hoy':                     hoy,
     }
     return render(request, 'instructores/detalle_instructor.html', context)
 
+
 @puede_editar_requerido
 def crear_instructor(request):
-    """Vista para crear un nuevo instructor"""
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
+        cedula = request.POST.get('cedula')
         telefono = request.POST.get('telefono')
         correo = request.POST.get('correo')
         activo = request.POST.get('activo') == 'on'
         especialidades_ids = request.POST.getlist('especialidades')
-        
-        #Validaciones
-        if not all([nombre, telefono, correo]):
-            messages.error(request, '⚠️ El nombre, telefono y correo son obligatorios')
-            
-            programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
+
+        if not all([nombre, cedula, telefono, correo]):
+            messages.error(request, '⚠️ El nombre, cédula, teléfono y correo son obligatorios')
+            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
-                'programas': programas,
-                'nombre': nombre,
-                'telefono': telefono,
-                'correo': correo,
+                'programas': programas, 'nombre': nombre,
+                'cedula': cedula, 'telefono': telefono, 'correo': correo,
             })
-        #validar que tenga al menos una especialidad
+
         if not especialidades_ids:
-            messages.error(request,'⚠️ Debe seleccionar al menos una especialidad')
-            programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
+            messages.error(request, '⚠️ Debe seleccionar al menos una especialidad')
+            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
-                'programas': programas,
-                'nombre': nombre,
-                'telefono': telefono,
-                'correo': correo,
+                'programas': programas, 'nombre': nombre,
+                'cedula': cedula, 'telefono': telefono, 'correo': correo,
             })
-        #Verificar si ya existe un instructor con ese correo
+
         if Instructor.objects.filter(correo__iexact=correo).exists():
-            messages.error(request,f' ❌ Ya existe un instructor con el correo "{correo}"')
-            programas = programas = Programa.objects.filter(activo=True).order_by('area__nombre', 'nombre')
+            messages.error(request, f'❌ Ya existe un instructor con el correo "{correo}"')
+            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
             return render(request, 'instructores/crear_instructor.html', {
-                'programas': programas,
-                'nombre': nombre,
-                'telefono': telefono,
-                'correo': correo,
+                'programas': programas, 'nombre': nombre,
+                'cedula': cedula, 'telefono': telefono, 'correo': correo,
             })
-        
+
+        if Instructor.objects.filter(cedula=cedula).exists():
+            messages.error(request, f'❌ Ya existe un instructor con la cédula "{cedula}"')
+            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+            return render(request, 'instructores/crear_instructor.html', {
+                'programas': programas, 'nombre': nombre,
+                'cedula': cedula, 'telefono': telefono, 'correo': correo,
+            })
+
         try:
-            #Crear el instructor
             instructor = Instructor.objects.create(
-                nombre=nombre,
-                telefono=telefono,
-                correo=correo,
-                activo=activo
+                nombre=nombre, cedula=cedula,
+                telefono=telefono, correo=correo, activo=activo
             )
-            
-            #Asignar especialidades (relación ManyToMany)
             instructor.especialidad.set(especialidades_ids)
-            
-            messages.success(request, f'Instructor "{instructor.nombre}" creado exitosamente! Ya esta disponible en el  sistema.')
+            messages.success(request, f'✅ Instructor "{instructor.nombre}" creado exitosamente!')
             return redirect('instructores:listar_instructores')
         except Exception as e:
-            messages.error(request,f' ❌ Error al  crear el instructor: {str(e)}')
-            
-        #GET request
-    programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-    return render(request, 'instructores/crear_instructor.html',{'programas': programas})
+            messages.error(request, f'❌ Error al crear el instructor: {str(e)}')
 
-@puede_editar_requerido 
+    programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+    return render(request, 'instructores/crear_instructor.html', {'programas': programas})
+
+
+@puede_editar_requerido
 def editar_instructor(request, instructor_id):
-    """Vista para editar un instructor existente"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
-    
+
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
+        cedula = request.POST.get('cedula')
         telefono = request.POST.get('telefono')
         correo = request.POST.get('correo')
         activo = request.POST.get('activo') == 'on'
         especialidades_ids = request.POST.getlist('especialidades')
-        
-        # Validaciones
-        if not all([nombre, telefono, correo]):
-            messages.error(request, '⚠️ El nombre, teléfono y correo son obligatorios')
+
+        if not all([nombre, cedula, telefono, correo]):
+            messages.error(request, '⚠️ El nombre, cédula, teléfono y correo son obligatorios')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-            especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
-                'instructor': instructor,
-                'programas': programas,
-                'especialidades_instructor': list(especialidades_instructor),
+                'instructor': instructor, 'programas': programas,
+                'especialidades_instructor': list(instructor.especialidad.values_list('id', flat=True)),
             })
-        
-        # Validar que tenga al menos una especialidad
+
         if not especialidades_ids:
-            messages.error(request, ' ⚠️ Debe seleccionar al menos una especialidad')
+            messages.error(request, '⚠️ Debe seleccionar al menos una especialidad')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-            especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
-                'instructor': instructor,
-                'programas': programas,
-                'especialidades_instructor': list(especialidades_instructor),
+                'instructor': instructor, 'programas': programas,
+                'especialidades_instructor': list(instructor.especialidad.values_list('id', flat=True)),
             })
-        
-        # Verificar si ya existe otro instructor con ese correo
+
         if Instructor.objects.filter(correo__iexact=correo).exclude(id=instructor_id).exists():
             messages.error(request, f'❌ Ya existe otro instructor con el correo "{correo}"')
             programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-            especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
             return render(request, 'instructores/editar_instructor.html', {
-                'instructor': instructor,
-                'programas': programas,
-                'especialidades_instructor': list(especialidades_instructor),
+                'instructor': instructor, 'programas': programas,
+                'especialidades_instructor': list(instructor.especialidad.values_list('id', flat=True)),
             })
-        
+
+        if Instructor.objects.filter(cedula=cedula).exclude(id=instructor_id).exists():
+            messages.error(request, f'❌ Ya existe otro instructor con la cédula "{cedula}"')
+            programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
+            return render(request, 'instructores/editar_instructor.html', {
+                'instructor': instructor, 'programas': programas,
+                'especialidades_instructor': list(instructor.especialidad.values_list('id', flat=True)),
+            })
+
         try:
-            # Actualizar el instructor
             instructor.nombre = nombre
+            instructor.cedula = cedula
             instructor.telefono = telefono
             instructor.correo = correo
             instructor.activo = activo
             instructor.save()
-            
-            # Actualizar especialidades
             instructor.especialidad.set(especialidades_ids)
-            
             messages.success(request, f'✅ Instructor "{instructor.nombre}" actualizado exitosamente')
             return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
         except Exception as e:
-            messages.error(request, f'❌ Error al actualizar el instructor: {str(e)} actualizado exitosamente')
-        
-    # GET request
+            messages.error(request, f'❌ Error al actualizar el instructor: {str(e)}')
+
     programas = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
     especialidades_instructor = instructor.especialidad.values_list('id', flat=True)
-    
-    context = {
+    return render(request, 'instructores/editar_instructor.html', {
         'instructor': instructor,
         'programas': programas,
         'especialidades_instructor': list(especialidades_instructor),
-    }
-    return render(request, 'instructores/editar_instructor.html', context)
+    })
+
 
 @puede_editar_requerido
 def desactivar_instructor(request, instructor_id):
     """Vista para desactivar un instructor"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
-    
-    # Contar solicitudes activas asignadas
     solicitudes_activas = instructor.solicitud_set.exclude(estado='FINALIZADA').count()
-    
+
     if request.method == 'POST':
-        # Verificar si tiene solicitudes activas
         if solicitudes_activas > 0:
             reasignar = request.POST.get('reasignar')
             if reasignar == 'on':
-                # Desasignar instructor de solicitudes activas
                 instructor.solicitud_set.exclude(estado='FINALIZADA').update(instructor_asignado=None)
-                
-                messages.warning(
-                    request,
-                    f'{solicitudes_activas} solicitud(es) activa(s) fueron desasignadas del instructor'
-                )
+                messages.warning(request, f'{solicitudes_activas} solicitud(es) activa(s) fueron desasignadas del instructor')
             else:
-                # Si no marca la opción, no puede desactivar
-                messages.error(
-                    request,
-                    'Debes confirmar la desasignación de las solicitudes activas para poder desactivar al instructor'
-                )
-                context = {
-                    'instructor': instructor,
-                    'solicitudes_activas': solicitudes_activas,
-                }
-                return render(request, 'instructores/desactivar_instructor.html', context)
-        
-        # Desactivar el instructor
+                messages.error(request, 'Debes confirmar la desasignación de las solicitudes activas')
+                return render(request, 'instructores/desactivar_instructor.html', {
+                    'instructor': instructor, 'solicitudes_activas': solicitudes_activas,
+                })
+
         instructor.activo = False
         instructor.save()
-        
         messages.success(request, f'Instructor "{instructor.nombre}" desactivado exitosamente')
         return redirect('instructores:listar_instructores')
-    
-    # GET request
-    context = {
-        'instructor': instructor,
-        'solicitudes_activas': solicitudes_activas,
-    }
-    return render(request, 'instructores/desactivar_instructor.html', context)
+
+    return render(request, 'instructores/desactivar_instructor.html', {
+        'instructor': instructor, 'solicitudes_activas': solicitudes_activas,
+    })
+
+
 @puede_editar_requerido
 def eliminar_instructor(request, instructor_id):
-    """Vista para eliminar permanentemente el  instructor"""  
+    """Vista para eliminar permanentemente el instructor"""
     instructor = get_object_or_404(Instructor, id=instructor_id)
-    #Contar solicitudes relacionadas
     total_solicitudes = instructor.solicitud_set.count()
-    
+
     if request.method == 'POST':
-        #Verificar si  tiene solicitudes asociadas
         if total_solicitudes > 0:
-            #Verificar que hacer con las solicitudes
             accion_solicitudes = request.POST.get('accion_solicitudes')
             if accion_solicitudes == 'desasignar':
-                #Desasignar instructor de las solicitudes
                 nombre_instructor = instructor.nombre
-                solicitudes_desasignadas = total_solicitudes
-                
                 instructor.solicitud_set.update(instructor_asignado=None)
                 instructor.delete()
-                
-                messages.success(
-                    request,
-                    f'✅ Instructor "{nombre_instructor}" eliminado permanentemente y {solicitudes_desasignadas} solicitud(es) fueron desasignadas'
-                )
+                messages.success(request, f'✅ Instructor "{nombre_instructor}" eliminado y {total_solicitudes} solicitud(es) desasignadas')
             elif accion_solicitudes == 'cancelar':
-                #Cancelar la eliminacion
-                messages.warning(
-                    request,
-                    f'⚠️ Eliminacion cancelada. El instructor "{instructor.nombre}" no  se elimino'
-                )
+                messages.warning(request, f'⚠️ Eliminación cancelada.')
                 return redirect('instructores:detalle_instructor', instructor_id=instructor.id)
             else:
-                #No se selecciono ninguna opcion
-                messages.error(
-                    request,
-                    '❌ Debes seleccionar que hacer con las solicitudes asociadas'
-                )
+                messages.error(request, '❌ Debes seleccionar qué hacer con las solicitudes asociadas')
                 return render(request, 'instructores/eliminar_instructor.html', {
-                    'instructor': instructor,
-                    'total_solicitudes': total_solicitudes
+                    'instructor': instructor, 'total_solicitudes': total_solicitudes
                 })
         else:
-            #No tiene solicitudes, eliminar directamente
             nombre_instructor = instructor.nombre
             instructor.delete()
-            messages.success(
-                request,
-                f'✅ Instructor "{nombre_instructor}" eliminado exitosamente'
-            )
-        
-        return redirect('instructores:listar_instructores')
-    
-    context={
-        'instructor': instructor,
-        'total_solicitudes': total_solicitudes,
-    }
-    return render(request, 'instructores/eliminar_instructor.html', context)
+            messages.success(request, f'✅ Instructor "{nombre_instructor}" eliminado exitosamente')
 
-                
-        
-            
-            
-                
-                
-            
-        
-            
-            
-            
-        
-        
-        
-        
+        return redirect('instructores:listar_instructores')
+
+    return render(request, 'instructores/eliminar_instructor.html', {
+        'instructor': instructor, 'total_solicitudes': total_solicitudes,
+    })
+
+COLORES_CALENDARIO = [
+    '#2e7d32', '#1565c0', '#6a1b9a', '#c62828',
+    '#ef6c00', '#00838f', '#4527a0', '#558b2f',
+    '#ad1457', '#0277bd',
+]
+
+@puede_ver_requerido
+def calendario_instructores(request):
+    import json
+    from datetime import timedelta
+    from django.utils import timezone
+    from solicitudes.models import Solicitud
+
+    hoy = timezone.now().date()
+    instructores_activos = Instructor.objects.filter(activo=True).order_by('nombre')
+
+    eventos = []
+    leyenda = []
+
+    for idx, instructor in enumerate(instructores_activos):
+        color = COLORES_CALENDARIO[idx % len(COLORES_CALENDARIO)]
+
+        solicitudes = instructor.solicitud_set.filter(
+            fecha_atencion__isnull=False,
+        ).exclude(estado='FINALIZADA').select_related('empresa', 'programa')
+
+        for sol in solicitudes:
+            fecha_inicio = sol.fecha_atencion.date()
+            fecha_fin = None
+            if sol.fecha_fin_formacion:
+                fecha_fin = (sol.fecha_fin_formacion + timedelta(days=1)).isoformat()
+
+            eventos.append({
+                'id':    sol.id,
+                'title': instructor.nombre,
+                'start': fecha_inicio.isoformat(),
+                'end':   fecha_fin,
+                'color': color,
+                'extendedProps': {
+                    'instructor_id': instructor.id,
+                    'instructor':    instructor.nombre,
+                    'empresa':       sol.empresa.nombre,
+                    'programa':      sol.programa.nombre,
+                    'estado':        sol.get_estado_display(),
+                    'solicitud_id':  sol.id,
+                    'fecha_inicio':  fecha_inicio.isoformat(),
+                    'fecha_fin':     sol.fecha_fin_formacion.isoformat() if sol.fecha_fin_formacion else None,
+                },
+            })
+
+        leyenda.append({
+            'id':     instructor.id,
+            'nombre': instructor.nombre,
+            'color':  color,
+            'total':  solicitudes.count(),
+        })
+
+    ocupados_hoy = 0
+    for instructor in instructores_activos:
+        for sol in instructor.solicitud_set.filter(
+            fecha_atencion__isnull=False
+        ).exclude(estado='FINALIZADA'):
+            inicio = sol.fecha_atencion.date()
+            fin    = sol.fecha_fin_formacion
+            if inicio <= hoy and (fin is None or fin >= hoy):
+                ocupados_hoy += 1
+                break
+
+    context = {
+        'eventos_json':         json.dumps(eventos, ensure_ascii=False),
+        'leyenda_instructores':  leyenda,
+        'total_instructores':   instructores_activos.count(),
+        'ocupados_hoy':         ocupados_hoy,
+        'total_formaciones':    Solicitud.objects.filter(
+                                    fecha_atencion__isnull=False
+                                ).exclude(estado='FINALIZADA').count(),
+        'sin_fecha_fin':        Solicitud.objects.filter(
+                                    fecha_atencion__isnull=False,
+                                    fecha_fin_formacion__isnull=True,
+                                ).exclude(estado='FINALIZADA').count(),
+    }
+    return render(request, 'instructores/calendario_instructores.html', context)

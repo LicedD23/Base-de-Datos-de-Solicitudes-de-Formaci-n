@@ -226,6 +226,71 @@
         .info-item .value a         { color: #1976d2; transition: color 0.3s ease; }
         .info-item .value a:hover   { color: #0d47a1; text-decoration: underline; }
 
+        /* ── Caja especial rango de formación ── */
+        .info-item.inicio-formacion {
+            border-left-color: #2e7d32;
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f1);
+        }
+        .info-item.inicio-formacion label { color: #2e7d32; }
+        .info-item.inicio-formacion .value { color: #1b5e20; }
+
+        .info-item.fin-formacion {
+            border-left-color: #e53935;
+            background: linear-gradient(135deg, #fff5f5, #fff);
+        }
+        .info-item.fin-formacion label { color: #c62828; }
+        .info-item.fin-formacion .value { color: #b71c1c; }
+
+        /* Banner rango unificado */
+        .formacion-rango-banner {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, #e8f5e9, #f9fbe7);
+            border: 2px solid #a5d6a7;
+            border-radius: 12px;
+            padding: 18px 22px;
+            flex-wrap: wrap;
+        }
+        .formacion-rango-banner .banner-icon { font-size: 1.6em; }
+        .formacion-rango-banner .banner-label {
+            font-weight: 700;
+            color: #1b5e20;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+        .formacion-rango-banner .banner-dates {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .formacion-rango-banner .date-chip {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .formacion-rango-banner .date-chip.inicio {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+        .formacion-rango-banner .date-chip.fin {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+        .formacion-rango-banner .date-arrow {
+            color: #81c784;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .formacion-rango-banner .date-chip.sin-dato {
+            background: #f5f5f5;
+            color: #999;
+            font-style: italic;
+        }
+
         .section {
             background: white;
             padding: 30px;
@@ -506,6 +571,7 @@
             .documents-grid    { grid-template-columns: 1fr; }
             .documents-header  { flex-direction: column; align-items: flex-start; gap: 10px; }
             .action-buttons    { flex-direction: column; }
+            .formacion-rango-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
             footer             { font-size: 0.85rem; padding: 15px; }
         }
     </style>
@@ -580,6 +646,9 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════
+         INFORMACIÓN GENERAL
+    ═══════════════════════════════════════════════ -->
     <div class="info-card">
         <h2>📋 Información General</h2>
         <div class="info-grid">
@@ -619,24 +688,43 @@
                 <label>Fecha de Recepción</label>
                 <div class="value">{{ solicitud.fecha_recepcion|date:"d/m/Y H:i" }}</div>
             </div>
-            {% if solicitud.fecha_atencion %}
-            <div class="info-item">
-                <label>Fecha de Atención</label>
-                <div class="value">{{ solicitud.fecha_atencion|date:"d/m/Y H:i" }}</div>
-            </div>
-            {% endif %}
+
             {% if solicitud.fecha_respuesta %}
             <div class="info-item">
                 <label>Fecha de Respuesta</label>
                 <div class="value">{{ solicitud.fecha_respuesta|date:"d/m/Y H:i" }}</div>
             </div>
             {% endif %}
+
             {% if solicitud.fecha_finalizacion %}
             <div class="info-item">
                 <label>Finalización</label>
                 <div class="value">{{ solicitud.fecha_finalizacion|date:"d/m/Y H:i" }}</div>
             </div>
             {% endif %}
+
+            <!-- ── RANGO DE FORMACIÓN (inicio → fin) ── -->
+            {% if solicitud.fecha_atencion or solicitud.fecha_fin_formacion %}
+            <div class="formacion-rango-banner">
+                <span class="banner-icon">🗓️</span>
+                <span class="banner-label">Período de Formación:</span>
+                <div class="banner-dates">
+                    {% if solicitud.fecha_atencion %}
+                        <span class="date-chip inicio">🟢 Inicio: {{ solicitud.fecha_atencion|date:"d/m/Y" }}</span>
+                    {% else %}
+                        <span class="date-chip sin-dato">Sin fecha de inicio</span>
+                    {% endif %}
+                    <span class="date-arrow">→</span>
+                    {% if solicitud.fecha_fin_formacion %}
+                        <span class="date-chip fin">🔴 Fin: {{ solicitud.fecha_fin_formacion|date:"d/m/Y" }}</span>
+                    {% else %}
+                        <span class="date-chip sin-dato">Sin fecha de fin definida</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <!-- ── FIN RANGO ── -->
+
         </div>
     </div>
 
@@ -720,14 +808,10 @@
     </div>
     {% endif %}
 
-    <!-- =====================================================
-         HISTORIAL DE ESTADOS
-         Orden correcto: RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
-    ====================================================== -->
+    <!-- HISTORIAL DE ESTADOS -->
     <div class="section">
         <h2>🕒 Historial de Estados</h2>
 
-        <!-- Banner siguiente acción dentro de la sección timeline -->
         {% if not solicitud.esta_finalizada %}
         <div style="background:#e8f5e9; border-left:4px solid #2e7d32; padding:14px 18px;
                     border-radius:8px; margin-bottom:25px; display:flex; align-items:center; gap:12px;">
@@ -761,7 +845,7 @@
                 </div>
             </div>
 
-            <!-- Paso 2: ATENDIDA (instructor asignado) -->
+            <!-- Paso 2: ATENDIDA -->
             <div class="timeline-item {% if not solicitud.fecha_atencion %}inactive{% endif %}">
                 <div class="timeline-content">
                     <div class="timeline-title">👨‍🏫 Instructor Asignado / Atendida</div>
@@ -771,6 +855,11 @@
                             {% if solicitud.instructor_asignado %}
                                 — {{ solicitud.instructor_asignado.nombre }}
                             {% endif %}
+                            {% if solicitud.fecha_fin_formacion %}
+                                <br><span style="color:#2e7d32; font-size:0.9em;">
+                                    🗓️ Formación: {{ solicitud.fecha_atencion|date:"d/m/Y" }} → {{ solicitud.fecha_fin_formacion|date:"d/m/Y" }}
+                                </span>
+                            {% endif %}
                         {% else %}
                             Pendiente — asignar instructor
                         {% endif %}
@@ -778,7 +867,7 @@
                 </div>
             </div>
 
-            <!-- Paso 3: RESPONDIDA (correo enviado a empresa) -->
+            <!-- Paso 3: RESPONDIDA -->
             <div class="timeline-item {% if not solicitud.fecha_respuesta %}inactive{% endif %}">
                 <div class="timeline-content">
                     <div class="timeline-title">📧 Respuesta Enviada a la Empresa</div>
@@ -808,27 +897,22 @@
         </div>
     </div>
 
-    <!-- =====================================================
-         ACCIONES CONTEXTUALES SEGÚN ESTADO
-    ====================================================== -->
+    <!-- ACCIONES CONTEXTUALES -->
     <div class="section">
         <h2>⚡ Acciones</h2>
         <div class="action-buttons">
 
             {% if solicitud.estado == 'RECIBIDA' %}
-                <!-- Paso 1: el usuario debe ir a editar para asignar instructor -->
                 <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-primary">
                     👨‍🏫 Asignar Instructor
                 </a>
 
             {% elif solicitud.estado == 'ATENDIDA' %}
-                <!-- Paso 2: única puerta hacia RESPONDIDA -->
                 <a href="{% url 'solicitudes:enviar_respuesta' solicitud.id %}" class="btn btn-primary">
                     📧 Enviar Respuesta a Empresa
                 </a>
 
             {% elif solicitud.estado == 'RESPONDIDA' %}
-                <!-- Paso 3: finalizar desde editar cambiando el estado -->
                 <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-primary">
                     🎓 Finalizar Formación
                 </a>
@@ -837,10 +921,6 @@
             <a href="{% url 'solicitudes:editar_solicitud' solicitud.id %}" class="btn btn-secondary">
                 ✏️ Editar Solicitud
             </a>
-
-            {% if solicitud.puede_enviar_respuesta %}
-                <!-- Enlace rápido a enviar respuesta también en botón secundario si está ATENDIDA -->
-            {% endif %}
 
             {% if not solicitud.esta_finalizada %}
             <a href="{% url 'solicitudes:eliminar_solicitud' solicitud.id %}" class="btn btn-danger">

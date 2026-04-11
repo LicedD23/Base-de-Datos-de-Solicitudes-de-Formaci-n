@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 from .models import Solicitud
 from django.http import JsonResponse
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
 from programas.models import Programa
 from empresas.models import Empresa
 from instructores.models import Instructor
@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.db import IntegrityError, transaction
 from core.management.decorators import puede_ver_requerido, puede_editar_requerido, admin_requerido
-
+from django.db.models import Prefetch
 
 # ---------------------------------------------------------------------------
 # LISTAR SOLICITUDES
@@ -195,6 +195,62 @@ def detalle_solicitud(request, solicitud_id):
 
 
 # ---------------------------------------------------------------------------
+# HELPER: calcular disponibilidad de instructores
+# ---------------------------------------------------------------------------
+
+def _calcular_disponibilidad_instructores(instructores, solicitud_actual=None):
+    """
+    Recibe un queryset de Instructor y devuelve una lista de dicts.
+    Usa fecha_fin_formacion como fecha real de fin de la formación.
+    """
+    hoy = timezone.now().date()
+    resultado = []
+
+    for instructor in instructores:
+        qs = instructor.solicitud_set.filter(
+            fecha_atencion__isnull=False,
+        ).exclude(estado='FINALIZADA')
+
+        if solicitud_actual:
+            qs = qs.exclude(pk=solicitud_actual.pk)
+
+        ocupado_hoy = False
+        formaciones_activas = []
+
+        for sol in qs.select_related('empresa', 'programa'):
+            fecha_inicio = sol.fecha_atencion.date()
+            if sol.fecha_fin_formacion:
+                fecha_fin = sol.fecha_fin_formacion
+            elif sol.fecha_finalizacion:
+                fecha_fin = sol.fecha_finalizacion.date()
+            else:
+                fecha_fin = None
+
+            if fecha_inicio <= hoy and (fecha_fin is None or fecha_fin >= hoy):
+                ocupado_hoy = True
+                formaciones_activas.append(sol)
+
+        proxima = None
+        if not ocupado_hoy:
+            proxima_qs = instructor.solicitud_set.filter(
+                fecha_atencion__isnull=False,
+                fecha_atencion__date__gt=hoy,
+            ).exclude(estado='FINALIZADA')
+            if solicitud_actual:
+                proxima_qs = proxima_qs.exclude(pk=solicitud_actual.pk)
+            proxima = proxima_qs.order_by('fecha_atencion').first()
+
+        resultado.append({
+            'instructor':          instructor,
+            'ocupado':             ocupado_hoy,
+            'formaciones_activas': formaciones_activas,
+            'proxima':             proxima,
+        })
+
+    return resultado
+
+
+# ---------------------------------------------------------------------------
 # EDITAR SOLICITUD
 # ---------------------------------------------------------------------------
 
@@ -219,6 +275,29 @@ def editar_solicitud(request, solicitud_id):
             nuevos_documentos_pdf   = request.FILES.getlist('documentos_pdf')
             eliminar_pdf            = request.POST.get('eliminar_pdf')
             documentos_a_eliminar   = request.POST.getlist('eliminar_documentos')
+
+            # ── Fechas de programación ingresadas manualmente por el usuario ──
+            fecha_inicio_formacion = None
+            fecha_inicio_str = request.POST.get('fecha_inicio_formacion')
+            if fecha_inicio_str:
+                try:
+                    fecha_inicio_formacion = date.fromisoformat(fecha_inicio_str)
+                except ValueError:
+                    messages.warning(request, '⚠️ Formato de fecha de inicio de formación inválido, se omitirá')
+
+            fecha_fin_formacion = None
+            fecha_fin_formacion_str = request.POST.get('fecha_fin_formacion')
+            if fecha_fin_formacion_str:
+                try:
+                    fecha_fin_formacion = date.fromisoformat(fecha_fin_formacion_str)
+                except ValueError:
+                    messages.warning(request, '⚠️ Formato de fecha fin de formación inválido, se omitirá')
+
+            # Validar que fecha fin no sea anterior a fecha inicio
+            if fecha_inicio_formacion and fecha_fin_formacion:
+                if fecha_fin_formacion < fecha_inicio_formacion:
+                    messages.error(request, '❌ La fecha de fin de formación no puede ser anterior a la fecha de inicio')
+                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
             if not estado and not es_migracion:
                 messages.error(request, '❌ El estado es obligatorio')
@@ -394,15 +473,16 @@ def editar_solicitud(request, solicitud_id):
                         solicitud.instructor_asignado = instructor
 
                         if not es_migracion:
+                            # Asignar instructor cambia estado a ATENDIDA
+                            # pero NO se registra fecha_atencion automáticamente,
+                            # el usuario la ingresa manualmente en el campo de programación
                             if solicitud.estado == 'RECIBIDA':
                                 solicitud.estado = 'ATENDIDA'
-                                if not solicitud.fecha_atencion:
-                                    solicitud.fecha_atencion = timezone.now()
                                 messages.success(
                                     request,
                                     f'✅ Instructor "{instructor.nombre}" asignado. '
                                     f'Estado cambiado a ATENDIDA. '
-                                    f'Siguiente paso: enviar respuesta a la empresa.'
+                                    f'Recuerda registrar la fecha de inicio y fin de la formación.'
                                 )
                             else:
                                 messages.success(request, f'✅ Instructor "{instructor.nombre}" asignado')
@@ -415,6 +495,32 @@ def editar_solicitud(request, solicitud_id):
                     solicitud.instructor_asignado = None
                     if instructor_anterior:
                         messages.info(request, f'ℹ️ Instructor "{instructor_anterior.nombre}" removido')
+
+                # ── Guardar fechas de programación ingresadas por el usuario ──
+                if fecha_inicio_formacion is not None:
+                    from datetime import datetime as dt
+                    solicitud.fecha_atencion = timezone.make_aware(
+                        dt.combine(fecha_inicio_formacion, dt.min.time())
+                    )
+
+                solicitud.fecha_fin_formacion = fecha_fin_formacion
+
+                # ── Auto-finalizar si la fecha fin ya se cumplió ──────────
+                hoy = timezone.now().date()
+                if (
+                    not es_migracion
+                    and solicitud.fecha_fin_formacion
+                    and solicitud.fecha_fin_formacion <= hoy
+                    and solicitud.estado in ('ATENDIDA', 'RESPONDIDA')
+                ):
+                    solicitud.estado = 'FINALIZADA'
+                    if not solicitud.fecha_finalizacion:
+                        solicitud.fecha_finalizacion = timezone.now()
+                    messages.success(
+                        request,
+                        '🎓 La fecha fin de formación ya se cumplió. '
+                        'La solicitud fue finalizada automáticamente.'
+                    )
 
                 from .models import DocumentoSolicitud
                 import os
@@ -458,8 +564,6 @@ def editar_solicitud(request, solicitud_id):
 
                 if not es_migracion:
                     now = timezone.now()
-                    if estado == 'ATENDIDA' and not solicitud.fecha_atencion:
-                        solicitud.fecha_atencion = now
                     if estado == 'RESPONDIDA' and not solicitud.fecha_respuesta:
                         solicitud.fecha_respuesta = now
                     if estado == 'FINALIZADA' and not solicitud.fecha_finalizacion:
@@ -484,21 +588,37 @@ def editar_solicitud(request, solicitud_id):
             traceback.print_exc()
             return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-    instructores               = Instructor.objects.filter(activo=True).order_by('nombre')
-    instructores_especializados = instructores.filter(especialidad=solicitud.programa)
-    programas                  = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
+    # ── GET ──────────────────────────────────────────────────────────────────
+    instructores_qs = Instructor.objects.filter(activo=True).order_by('nombre')
+
+    disponibilidad = _calcular_disponibilidad_instructores(
+        instructores_qs, solicitud_actual=solicitud
+    )
+
+    instructores_especializados_ids = set(
+        instructores_qs.filter(especialidad=solicitud.programa).values_list('id', flat=True)
+    )
+
+    instructores_especializados_info = [
+        d for d in disponibilidad if d['instructor'].id in instructores_especializados_ids
+    ]
+    instructores_todos_info = disponibilidad
+
+    programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
 
     from .models import DocumentoSolicitud
     documentos_actuales = DocumentoSolicitud.objects.filter(solicitud=solicitud).order_by('-fecha_subida')
 
     context = {
-        'solicitud':                  solicitud,
-        'instructores':               instructores,
-        'instructores_especializados': instructores_especializados,
-        'programas':                  programas,
-        'ESTADO_CHOICES':             Solicitud.ESTADO_CHOICES,
-        'documentos_actuales':        documentos_actuales,
-        'ahora':                      timezone.now(),
+        'solicitud':                       solicitud,
+        'instructores_info':               instructores_todos_info,
+        'instructores_especializados_info': instructores_especializados_info,
+        'instructores':                    instructores_qs,
+        'instructores_especializados':     instructores_qs.filter(especialidad=solicitud.programa),
+        'programas':                       programas,
+        'ESTADO_CHOICES':                  Solicitud.ESTADO_CHOICES,
+        'documentos_actuales':             documentos_actuales,
+        'ahora':                           timezone.now(),
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
 
@@ -515,7 +635,7 @@ def enviar_respuesta(request, solicitud_id):
         ),
         id=solicitud_id,
     )
-
+ 
     if request.method == 'POST':
         try:
             if solicitud.estado == 'RECIBIDA':
@@ -526,7 +646,7 @@ def enviar_respuesta(request, solicitud_id):
                     'Flujo obligatorio: Recibida → Atendida → Respondida → Finalizada.'
                 )
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
+ 
             if solicitud.estado == 'ATENDIDA' and not solicitud.instructor_asignado:
                 messages.error(
                     request,
@@ -534,69 +654,87 @@ def enviar_respuesta(request, solicitud_id):
                     'Asigna un instructor antes de enviar la respuesta.'
                 )
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
+ 
             asunto  = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
             mensaje = request.POST.get('mensaje')
-
+ 
             if not mensaje:
                 messages.error(request, '❌ El mensaje es obligatorio')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
+ 
             correo_destino = solicitud.correo_remitente or solicitud.empresa.correo
-
+ 
             if not correo_destino:
                 messages.error(request, '❌ No hay correo de destino disponible')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
+ 
             if '@ejemplo.com' in correo_destino.lower():
                 messages.error(request, '❌ No se puede enviar correo a una dirección de ejemplo')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
-            from django.core.mail import send_mail
+ 
+            from django.core.mail import EmailMessage
             from django.conf import settings
-
-            send_mail(
+ 
+            # ── Construir lista de CC ────────────────────────────────────────
+            cc_list = []
+            if solicitud.instructor_asignado and solicitud.instructor_asignado.correo:
+                cc_list.append(solicitud.instructor_asignado.correo)
+ 
+            # ── Enviar usando EmailMessage para soportar CC ──────────────────
+            email = EmailMessage(
                 subject=asunto,
-                message=mensaje,
+                body=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[correo_destino],
-                fail_silently=False,
+                to=[correo_destino],
+                cc=cc_list,           # ← copia al instructor
             )
-
+            email.send(fail_silently=False)
+ 
             if solicitud.estado == 'ATENDIDA':
                 solicitud.estado          = 'RESPONDIDA'
                 solicitud.fecha_respuesta = timezone.now()
                 solicitud.save()
+ 
+                cc_msg = f' (CC: {", ".join(cc_list)})' if cc_list else ''
                 messages.success(
                     request,
-                    f'✅ Correo enviado a {correo_destino}. '
+                    f'✅ Correo enviado a {correo_destino}{cc_msg}. '
                     f'Estado actualizado a RESPONDIDA. '
                     f'Siguiente paso: finalizar la formación cuando concluya.'
                 )
             else:
-                messages.success(request, f'✅ Correo reenviado a {correo_destino}')
-
+                cc_msg = f' (CC: {", ".join(cc_list)})' if cc_list else ''
+                messages.success(request, f'✅ Correo reenviado a {correo_destino}{cc_msg}')
+ 
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
-
+ 
         except Exception as e:
             messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
             return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
-
+ 
+    # ── GET ──────────────────────────────────────────────────────────────────
     MESES = {
         1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril',
         5: 'mayo', 6: 'junio', 7: 'julio', 8: 'agosto',
         9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre',
     }
-
+ 
     fecha_inicio_texto = ''
     if solicitud.fecha_atencion:
         f = solicitud.fecha_atencion
         fecha_inicio_texto = f"{f.day} de {MESES[f.month]} de {f.year}"
-
+ 
+    # ── NUEVO: fecha fin de formación formateada ─────────────────────────────
+    fecha_fin_texto = ''
+    if solicitud.fecha_fin_formacion:
+        ff = solicitud.fecha_fin_formacion  # es un date, no datetime
+        fecha_fin_texto = f"{ff.day} de {MESES[ff.month]} de {ff.year}"
+ 
     context = {
         'solicitud':          solicitud,
         'destinatario_email': solicitud.correo_remitente or solicitud.empresa.correo,
         'fecha_inicio_texto': fecha_inicio_texto,
+        'fecha_fin_texto':    fecha_fin_texto,   # ← NUEVO
     }
     return render(request, 'solicitudes/enviar_respuesta.html', context)
 
@@ -611,7 +749,6 @@ def procesar_correos_ajax(request):
     if request.method == 'POST':
         import io
         import sys
-        import json
 
         captured_output = io.StringIO()
         old_stdout = sys.stdout
@@ -674,11 +811,11 @@ def procesar_correos_ajax(request):
 
             solicitudes_data = [
                 {
-                    'id':      s.id,
-                    'empresa': s.empresa.nombre,
+                    'id':       s.id,
+                    'empresa':  s.empresa.nombre,
                     'programa': s.programa.nombre,
-                    'estado':  s.get_estado_display(),
-                    'fecha':   s.fecha_recepcion.strftime('%d/%m/%Y %H:%M'),
+                    'estado':   s.get_estado_display(),
+                    'fecha':    s.fecha_recepcion.strftime('%d/%m/%Y %H:%M'),
                 }
                 for s in solicitudes_creadas
             ]
@@ -776,6 +913,9 @@ def crear_solicitud(request):
             correo_remitente  = request.POST.get('correo_remitente')
             numero_aprendices = request.POST.get('numero_aprendices')
             observaciones     = request.POST.get('observaciones', '')
+            razon_cupo        = request.POST.get('razon_cupo', '')
+            if razon_cupo:
+                observaciones = (observaciones + '\n[Razón cupo reducido]: ' + razon_cupo).strip()
             documentos_pdf    = request.FILES.getlist('documentos_pdf')
 
             if not empresa_id:
@@ -971,20 +1111,16 @@ def crear_solicitud(request):
     instructores = Instructor.objects.filter(activo=True).order_by('nombre')
 
     context = {
-        'empresas':    empresas,
-        'programas':   programas,
+        'empresas':     empresas,
+        'programas':    programas,
         'instructores': instructores,
-        'ahora':       timezone.now(),
+        'ahora':        timezone.now(),
     }
     return render(request, 'solicitudes/crear_solicitud.html', context)
 
 
 # ---------------------------------------------------------------------------
 # GUÍA PARA EMPRESAS
-# Página con instrucciones para que las empresas sepan cómo redactar
-# correctamente sus solicitudes de formación por correo.
-# Es pública — no requiere login — para que el coordinador pueda
-# compartir el enlace directamente con cualquier empresa.
 # ---------------------------------------------------------------------------
 
 def guia_solicitud(request):
@@ -992,5 +1128,26 @@ def guia_solicitud(request):
     return render(request, 'solicitudes/guia_solicitud_formacion.html', {
         'from_solicitud_id': from_solicitud,
     })
+
 def catalogo_programas(request):
-    return render(request, 'solicitudes/catalogo_programas.html')
+    from area_formacion.models import Area
+    
+    areas = Area.objects.filter(
+        activo=True,
+        programas__activo=True
+    ).prefetch_related(
+        Prefetch(
+            'programas',
+            queryset=Programa.objects.filter(activo=True).order_by('nombre'),
+            to_attr='programas_activos'
+        )
+    ).distinct().order_by('nombre')
+    
+    total_programas = Programa.objects.filter(activo=True).count()
+    
+    context = {
+        'areas': areas,
+        'total_programas': total_programas,
+        'total_areas': areas.count(),
+    }
+    return render(request, 'solicitudes/catalogo_programas.html', context)

@@ -366,8 +366,50 @@
         .info-item strong { color: #333; min-width: 100px; }
         .info-icon { font-size: 1.1em; min-width: 20px; }
 
+        /* ── Rango de formación ── */
+        .formacion-rango-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f1);
+            border: 2px solid #a5d6a7;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 0.88em;
+            color: #1b5e20;
+            flex-wrap: wrap;
+        }
+        .formacion-rango-pill .rango-label {
+            font-weight: 700;
+            color: #2e7d32;
+            white-space: nowrap;
+        }
+        .formacion-rango-pill .rango-sep {
+            color: #81c784;
+            font-size: 1em;
+        }
+        .formacion-rango-pill .rango-inicio {
+            background: #c8e6c9;
+            color: #1b5e20;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .formacion-rango-pill .rango-fin {
+            background: #ffcdd2;
+            color: #b71c1c;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .formacion-rango-pill .rango-sin-fin {
+            color: #999;
+            font-style: italic;
+        }
+
         .documents-badge {
-            display: inline-plex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
@@ -753,7 +795,27 @@
                         <strong>Recepción:</strong>
                         <span>{{ solicitud.fecha_recepcion|date:"d/m/Y" }}</span>
                     </div>
-                    <div class="info-item">
+
+                    <!-- ── INICIO Y FIN DE FORMACIÓN ── -->
+                    {% if solicitud.fecha_atencion or solicitud.fecha_fin_formacion %}
+                    <div class="formacion-rango-pill">
+                        <span class="rango-label">🗓️ Formación:</span>
+                        {% if solicitud.fecha_atencion %}
+                            <span class="rango-inicio">🟢 {{ solicitud.fecha_atencion|date:"d/m/Y" }}</span>
+                        {% else %}
+                            <span class="rango-sin-fin">Sin inicio</span>
+                        {% endif %}
+                        <span class="rango-sep">→</span>
+                        {% if solicitud.fecha_fin_formacion %}
+                            <span class="rango-fin">🔴 {{ solicitud.fecha_fin_formacion|date:"d/m/Y" }}</span>
+                        {% else %}
+                            <span class="rango-sin-fin">Sin fecha fin</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <!-- ── FIN RANGO ── -->
+
+                    <div class="info-item" style="margin-top:8px;">
                         <span class="info-icon">📄</span>
                         <strong>Documentos:</strong>
                         {% if solicitud.documentos.count > 1 %}

@@ -6,26 +6,11 @@
     <title>{{instructor.nombre}} - Detalle Instructor SENA</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); min-height: 100vh; padding: 20px; }
         a { text-decoration: none; }
         .container { max-width: 1400px; margin: 0 auto; }
 
-        /* ── Header ── */
-        .header {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(46,125,50,0.3);
-        }
+        .header { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(46,125,50,0.3); }
         .header-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
         .header-info h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 700; }
         .header-info p  { font-size: 1.1em; opacity: 0.95; }
@@ -33,178 +18,116 @@
         .status-active   { background: #c8e6c9; color: #1b5e20; }
         .status-inactive { background: #ffcdd2; color: #c62828; }
 
-        /* ── Breadcrumb ── */
-        .breadcrumb {
-            background: white; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px; font-size: 0.95em;
-        }
+        .breadcrumb { background: white; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px; font-size: 0.95em; }
         .breadcrumb a { color: #2e7d32; }
         .breadcrumb a:hover { color: #1b5e20; text-decoration: underline; }
         .breadcrumb span { color: #999; }
 
-        /* ── Mensajes ── */
         .messages-container { margin-bottom: 25px; }
         .alert { padding: 18px 25px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; font-size: 1em; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideInDown 0.4s ease-out; }
-        @keyframes slideInDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .alert-success { background: linear-gradient(135deg,#2e7d32,#43a047); color: white; border: 2px solid #1b5e20; }
-        .alert-error   { background: linear-gradient(135deg,#c62828,#e53935); color: white; border: 2px solid #b71c1c; }
-        .alert-warning { background: linear-gradient(135deg,#ef6c00,#f57c00); color: white; border: 2px solid #e65100; }
-        .alert-icon    { font-size: 1.5em; flex-shrink: 0; }
-        .alert-content { flex: 1; line-height: 1.5; }
-        .alert-close { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; transition: all 0.3s ease; flex-shrink: 0; }
-        .alert-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+        @keyframes slideInDown { from{transform:translateY(-20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+        .alert-success { background: linear-gradient(135deg,#2e7d32,#43a047); color:white; border:2px solid #1b5e20; }
+        .alert-error   { background: linear-gradient(135deg,#c62828,#e53935); color:white; border:2px solid #b71c1c; }
+        .alert-warning { background: linear-gradient(135deg,#ef6c00,#f57c00); color:white; border:2px solid #e65100; }
+        .alert-icon    { font-size:1.5em; flex-shrink:0; }
+        .alert-content { flex:1; line-height:1.5; }
+        .alert-close { background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.3); color:white; width:28px; height:28px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2em; transition:all 0.3s ease; flex-shrink:0; }
+        .alert-close:hover { background:rgba(255,255,255,0.4); transform:scale(1.1); }
 
-        /* ── Stats ── */
-        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); border-left: 4px solid #2e7d32; transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.12); }
-        .stat-card h3     { color: #666; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .stat-card .number { color: #2e7d32; font-size: 2em; font-weight: 700; }
+        .stats-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:15px; margin-bottom:30px; }
+        .stat-card { background:white; padding:20px; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.08); border-left:4px solid #2e7d32; transition:all 0.3s ease; }
+        .stat-card:hover { transform:translateY(-3px); box-shadow:0 5px 15px rgba(0,0,0,0.12); }
+        .stat-card h3     { color:#666; font-size:0.8em; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+        .stat-card .number { color:#2e7d32; font-size:2em; font-weight:700; }
 
-        /* ── Info card ── */
-        .info-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
-        .info-card h2 { color: #2e7d32; font-size: 1.5em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 20px; margin-top: 20px; }
-        .info-item { padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 3px solid #2e7d32; }
-        .info-item label  { display: block; font-size: 0.85em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-        .info-item .value { font-size: 1.1em; color: #333; font-weight: 600; }
-        .specialties-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
-        .specialties-title { font-weight: 600; color: #333; margin-bottom: 15px; }
-        .specialty-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-        .specialty-tag { background: #c8e6c9; color: #1b5e20; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
+        .info-card { background:white; padding:30px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:30px; }
+        .info-card h2 { color:#2e7d32; font-size:1.5em; margin-bottom:15px; display:flex; align-items:center; gap:10px; }
+        .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; margin-top:20px; }
+        .info-item { padding:15px; background:#f9f9f9; border-radius:8px; border-left:3px solid #2e7d32; }
+        .info-item label  { display:block; font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+        .info-item .value { font-size:1.1em; color:#333; font-weight:600; }
+        .info-item.cedula-highlight { border-left-color: #1565c0; background: #e8f0fe; }
+        .info-item.cedula-highlight label { color: #1565c0; }
+        .info-item.cedula-highlight .value { color: #1565c0; font-size: 1.2em; }
+        .specialties-section { margin-top:20px; padding-top:20px; border-top:1px solid #e0e0e0; }
+        .specialties-title { font-weight:600; color:#333; margin-bottom:15px; }
+        .specialty-tags { display:flex; flex-wrap:wrap; gap:8px; }
+        .specialty-tag { background:#c8e6c9; color:#1b5e20; padding:8px 16px; border-radius:20px; font-size:0.9em; font-weight:500; }
 
-        /* ══════════════════════════════════════════════
-           PROGRAMACIONES
-        ══════════════════════════════════════════════ */
-        .programacion-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
+        .programacion-section { background:white; padding:30px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:30px; }
+        .programacion-section h2 { color:#2e7d32; font-size:1.5em; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
 
-        .programacion-section h2 {
-            color: #2e7d32;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .prog-grupo { margin-bottom:28px; }
+        .prog-grupo:last-child { margin-bottom:0; }
+        .prog-grupo-titulo { font-size:0.82em; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; padding-bottom:6px; border-bottom:2px solid; display:flex; align-items:center; gap:8px; }
+        .prog-grupo-titulo.activa { color:#2e7d32; border-color:#a5d6a7; }
+        .prog-grupo-titulo.futura { color:#1565c0; border-color:#90caf9; }
+        .prog-grupo-titulo.pasada { color:#78909c; border-color:#cfd8dc; }
 
-        .prog-grupo { margin-bottom: 28px; }
-        .prog-grupo:last-child { margin-bottom: 0; }
+        .prog-card { display:grid; grid-template-columns:44px 1fr auto; gap:14px; align-items:center; padding:16px 18px; border-radius:10px; margin-bottom:10px; border:1px solid; transition:transform 0.2s ease, box-shadow 0.2s ease; }
+        .prog-card:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.09); }
+        .prog-card:last-child { margin-bottom:0; }
+        .prog-card.activa { background:#f1fdf3; border-color:#a5d6a7; }
+        .prog-card.futura { background:#e8f0fe; border-color:#90caf9; }
+        .prog-card.pasada { background:#f4f6f8; border-color:#cfd8dc; }
 
-        .prog-grupo-titulo {
-            font-size: 0.82em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .prog-estado-icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2em; flex-shrink:0; }
+        .prog-estado-icon.activa { background:#c8e6c9; }
+        .prog-estado-icon.futura { background:#bbdefb; }
+        .prog-estado-icon.pasada { background:#eceff1; }
 
-        .prog-grupo-titulo.activa  { color: #2e7d32; border-color: #a5d6a7; }
-        .prog-grupo-titulo.futura  { color: #1565c0; border-color: #90caf9; }
-        .prog-grupo-titulo.pasada  { color: #78909c; border-color: #cfd8dc; }
+        .prog-empresa  { font-weight:700; color:#1a1f2e; font-size:1.05em; margin-bottom:3px; }
+        .prog-programa { font-size:0.88em; color:#607d8b; margin-bottom:8px; }
 
-        .prog-card {
-            display: grid;
-            grid-template-columns: 44px 1fr auto;
-            gap: 14px;
-            align-items: center;
-            padding: 16px 18px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+        .prog-fechas { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .prog-chip-inicio { background:#c8e6c9; color:#1b5e20; padding:3px 10px; border-radius:12px; font-size:0.83em; font-weight:700; white-space:nowrap; }
+        .prog-chip-fin    { background:#ffcdd2; color:#b71c1c; padding:3px 10px; border-radius:12px; font-size:0.83em; font-weight:700; white-space:nowrap; }
+        .prog-chip-sin-fin { color:#ef6c00; font-style:italic; font-size:0.83em; }
+        .prog-flecha { color:#bdbdbd; }
 
-        .prog-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
-        .prog-card:last-child { margin-bottom: 0; }
-        .prog-card.activa { background: #f1fdf3; border-color: #a5d6a7; }
-        .prog-card.futura { background: #e8f0fe; border-color: #90caf9; }
-        .prog-card.pasada { background: #f4f6f8; border-color: #cfd8dc; }
+        .prog-badge { text-align:center; flex-shrink:0; min-width:60px; }
+        .prog-duracion       { font-size:0.95em; font-weight:700; line-height:1.3; }
+        .prog-duracion-label { font-size:0.70em; color:#90a4ae; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+        .prog-duracion.activa { color:#2e7d32; }
+        .prog-duracion.futura { color:#1565c0; }
+        .prog-duracion.pasada { color:#78909c; }
 
-        .prog-estado-icon {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            flex-shrink: 0;
-        }
+        .prog-empty { text-align:center; padding:30px; color:#90a4ae; font-size:0.95em; background:#f9f9f9; border-radius:10px; }
 
-        .prog-estado-icon.activa { background: #c8e6c9; }
-        .prog-estado-icon.futura { background: #bbdefb; }
-        .prog-estado-icon.pasada { background: #eceff1; }
+        .solicitudes-section { background:white; padding:30px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:30px; }
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .section-header h2 { color:#2e7d32; font-size:1.5em; display:flex; align-items:center; gap:10px; }
 
-        .prog-empresa  { font-weight: 700; color: #1a1f2e; font-size: 1.05em; margin-bottom: 3px; }
-        .prog-programa { font-size: 0.88em; color: #607d8b; margin-bottom: 6px; }
+        .solicitudes-table { width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:10px; }
+        .solicitudes-table thead { background:linear-gradient(135deg,#2e7d32,#1b5e20); }
+        .solicitudes-table th { color:white; padding:15px; text-align:left; font-weight:600; font-size:0.85em; text-transform:uppercase; letter-spacing:0.5px; }
+        .solicitudes-table th:first-child { border-top-left-radius:10px; }
+        .solicitudes-table th:last-child  { border-top-right-radius:10px; }
+        .solicitudes-table td { padding:15px; border-bottom:1px solid #e0e0e0; color:#555; background:white; }
+        .solicitudes-table tbody tr:hover { background:#f5f5f5; }
+        .solicitudes-table tbody tr:last-child td { border-bottom:none; }
 
-        .prog-fechas {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.84em;
-            color: #455a64;
-            font-family: 'Courier New', monospace;
-            flex-wrap: wrap;
-        }
+        .estado-badge { padding:6px 14px; border-radius:15px; font-size:0.75em; font-weight:700; text-transform:uppercase; display:inline-block; letter-spacing:0.5px; }
+        .estado-recibida   { background:#e3f2fd; color:#1565c0; }
+        .estado-atendida   { background:#fff9c4; color:#f57f17; }
+        .estado-respondida { background:#f3e5f5; color:#7b1fa2; }
+        .estado-finalizada { background:#c8e6c9; color:#1b5e20; }
 
-        .prog-fechas .flecha  { color: #bbb; }
-        .prog-fechas .sin-fin { color: #ef6c00; font-style: italic; font-family: 'Segoe UI', sans-serif; }
+        .solicitud-link { color:#2e7d32; font-weight:600; }
+        .solicitud-link:hover { color:#1b5e20; text-decoration:underline; }
 
-        .prog-badge { text-align: center; flex-shrink: 0; min-width: 60px; }
-        .prog-duracion       { font-size: 0.95em; font-weight: 700; line-height: 1.3; }
-        .prog-duracion-label { font-size: 0.70em; color: #90a4ae; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-        .prog-duracion.activa { color: #2e7d32; }
-        .prog-duracion.futura { color: #1565c0; }
-        .prog-duracion.pasada { color: #78909c; }
+        .empty-state { text-align:center; padding:60px 20px; color:#999; }
+        .empty-state-icon { font-size:4em; margin-bottom:15px; opacity:0.3; }
 
-        .prog-empty { text-align: center; padding: 30px; color: #90a4ae; font-size: 0.95em; background: #f9f9f9; border-radius: 10px; }
+        footer { background:linear-gradient(135deg,#1b5e20,#2e7d32); color:white; text-align:center; padding:20px; border-radius:16px; margin-top:30px; box-shadow:0 -4px 20px rgba(27,94,32,0.2); }
+        footer p { font-weight:500; letter-spacing:0.5px; }
 
-        /* ── Solicitudes ── */
-        .solicitudes-section { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .section-header h2 { color: #2e7d32; font-size: 1.5em; display: flex; align-items: center; gap: 10px; }
-
-        .solicitudes-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 10px; }
-        .solicitudes-table thead { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
-        .solicitudes-table th { color: white; padding: 15px; text-align: left; font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; }
-        .solicitudes-table th:first-child { border-top-left-radius: 10px; }
-        .solicitudes-table th:last-child  { border-top-right-radius: 10px; }
-        .solicitudes-table td { padding: 15px; border-bottom: 1px solid #e0e0e0; color: #555; background: white; }
-        .solicitudes-table tbody tr:hover { background: #f5f5f5; }
-        .solicitudes-table tbody tr:last-child td { border-bottom: none; }
-
-        .estado-badge { padding: 6px 14px; border-radius: 15px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; display: inline-block; letter-spacing: 0.5px; }
-        .estado-recibida   { background: #e3f2fd; color: #1565c0; }
-        .estado-atendida   { background: #fff9c4; color: #f57f17; }
-        .estado-respondida { background: #f3e5f5; color: #7b1fa2; }
-        .estado-finalizada { background: #c8e6c9; color: #1b5e20; }
-
-        .solicitud-link { color: #2e7d32; font-weight: 600; }
-        .solicitud-link:hover { color: #1b5e20; text-decoration: underline; }
-
-        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-        .empty-state-icon { font-size: 4em; margin-bottom: 15px; opacity: 0.3; }
-
-        footer { background: linear-gradient(135deg,#1b5e20,#2e7d32); color: white; text-align: center; padding: 20px; border-radius: 16px; margin-top: 30px; box-shadow: 0 -4px 20px rgba(27,94,32,0.2); }
-        footer p { font-weight: 500; letter-spacing: 0.5px; }
-
-        @media (max-width: 768px) {
-            .header-content { flex-direction: column; }
-            .header-info h1 { font-size: 1.8em; }
-            .stats-bar { grid-template-columns: repeat(2,1fr); }
-            .prog-card { grid-template-columns: 44px 1fr; }
-            .prog-badge { display: none; }
+        @media (max-width:768px) {
+            .header-content { flex-direction:column; }
+            .header-info h1 { font-size:1.8em; }
+            .stats-bar { grid-template-columns:repeat(2,1fr); }
+            .prog-card { grid-template-columns:44px 1fr; }
+            .prog-badge { display:none; }
         }
     </style>
 </head>
@@ -243,50 +166,29 @@
     </div>
     {% endif %}
 
-    <!-- Stats -->
     <div class="stats-bar">
-        <div class="stat-card">
-            <h3>Total Solicitudes</h3>
-            <div class="number">{{total_solicitudes}}</div>
-        </div>
-        <div class="stat-card">
-            <h3>Activas</h3>
-            <div class="number">{{solicitudes_activas.count}}</div>
-        </div>
-        <div class="stat-card">
-            <h3>Finalizadas</h3>
-            <div class="number">{{solicitudes_finalizadas.count}}</div>
-        </div>
-        <div class="stat-card">
-            <h3>Especialidades</h3>
-            <div class="number">{{especialidades.count}}</div>
-        </div>
-        <div class="stat-card" style="border-left-color: #43a047;">
+        <div class="stat-card"><h3>Total Solicitudes</h3><div class="number">{{total_solicitudes}}</div></div>
+        <div class="stat-card"><h3>Activas</h3><div class="number">{{solicitudes_activas.count}}</div></div>
+        <div class="stat-card"><h3>Finalizadas</h3><div class="number">{{solicitudes_finalizadas.count}}</div></div>
+        <div class="stat-card"><h3>Especialidades</h3><div class="number">{{especialidades.count}}</div></div>
+        <div class="stat-card" style="border-left-color:#43a047;">
             <h3>En curso hoy</h3>
             <div class="number" style="color:#43a047;">{{ programaciones_activas|length }}</div>
         </div>
     </div>
 
-    <!-- Contacto y especialidades -->
     <div class="info-card">
         <h2>📋 Información de Contacto</h2>
         <div class="info-grid">
-            <div class="info-item">
-                <label>Nombre Completo</label>
-                <div class="value">{{instructor.nombre}}</div>
+            <!-- ── CÉDULA destacada ── -->
+            <div class="info-item cedula-highlight">
+                <label>🪪 Cédula</label>
+                <div class="value">{{ instructor.cedula|default:"Sin registrar" }}</div>
             </div>
-            <div class="info-item">
-                <label>Correo Electrónico</label>
-                <div class="value">{{instructor.correo}}</div>
-            </div>
-            <div class="info-item">
-                <label>Teléfono</label>
-                <div class="value">{{instructor.telefono}}</div>
-            </div>
-            <div class="info-item">
-                <label>Estado</label>
-                <div class="value">{% if instructor.activo %}✅ Activo{% else %}❌ Inactivo{% endif %}</div>
-            </div>
+            <div class="info-item"><label>Nombre Completo</label><div class="value">{{instructor.nombre}}</div></div>
+            <div class="info-item"><label>Correo Electrónico</label><div class="value">{{instructor.correo}}</div></div>
+            <div class="info-item"><label>Teléfono</label><div class="value">{{instructor.telefono}}</div></div>
+            <div class="info-item"><label>Estado</label><div class="value">{% if instructor.activo %}✅ Activo{% else %}❌ Inactivo{% endif %}</div></div>
         </div>
         <div class="specialties-section">
             <div class="specialties-title">🎓 Especialidades</div>
@@ -300,24 +202,17 @@
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         PROGRAMACIÓN DE FORMACIONES
-    ══════════════════════════════════════════ -->
     <div class="programacion-section">
         <h2>📅 Programación de Formaciones</h2>
 
         {% if not programaciones_activas and not programaciones_futuras and not programaciones_pasadas %}
-            <div class="prog-empty">
-                📭 No hay formaciones con fecha de inicio registrada para este instructor.
-            </div>
+            <div class="prog-empty">📭 No hay formaciones con fecha de inicio registrada para este instructor.</div>
 
         {% else %}
 
             {% if programaciones_activas %}
             <div class="prog-grupo">
-                <div class="prog-grupo-titulo activa">
-                    🟢 En curso hoy &nbsp;({{ programaciones_activas|length }})
-                </div>
+                <div class="prog-grupo-titulo activa">🟢 En curso hoy &nbsp;({{ programaciones_activas|length }})</div>
                 {% for sol in programaciones_activas %}
                 <div class="prog-card activa">
                     <div class="prog-estado-icon activa">🟢</div>
@@ -325,12 +220,12 @@
                         <div class="prog-empresa">{{ sol.empresa.nombre }}</div>
                         <div class="prog-programa">{{ sol.programa.nombre }}</div>
                         <div class="prog-fechas">
-                            {{ sol.fecha_atencion|date:"d/m/Y" }}
-                            <span class="flecha">→</span>
-                            {% if sol.fecha_finalizacion %}
-                                {{ sol.fecha_finalizacion|date:"d/m/Y" }}
+                            <span class="prog-chip-inicio">🟢 {{ sol.fecha_atencion|date:"d/m/Y" }}</span>
+                            <span class="prog-flecha">→</span>
+                            {% if sol.fecha_fin_formacion %}
+                                <span class="prog-chip-fin">🔴 {{ sol.fecha_fin_formacion|date:"d/m/Y" }}</span>
                             {% else %}
-                                <span class="sin-fin">sin fecha de fin aún</span>
+                                <span class="prog-chip-sin-fin">sin fecha de fin</span>
                             {% endif %}
                         </div>
                     </div>
@@ -345,9 +240,7 @@
 
             {% if programaciones_futuras %}
             <div class="prog-grupo">
-                <div class="prog-grupo-titulo futura">
-                    🔵 Próximas &nbsp;({{ programaciones_futuras|length }})
-                </div>
+                <div class="prog-grupo-titulo futura">🔵 Próximas &nbsp;({{ programaciones_futuras|length }})</div>
                 {% for sol in programaciones_futuras %}
                 <div class="prog-card futura">
                     <div class="prog-estado-icon futura">🔵</div>
@@ -355,12 +248,12 @@
                         <div class="prog-empresa">{{ sol.empresa.nombre }}</div>
                         <div class="prog-programa">{{ sol.programa.nombre }}</div>
                         <div class="prog-fechas">
-                            {{ sol.fecha_atencion|date:"d/m/Y" }}
-                            <span class="flecha">→</span>
-                            {% if sol.fecha_finalizacion %}
-                                {{ sol.fecha_finalizacion|date:"d/m/Y" }}
+                            <span class="prog-chip-inicio">🟢 {{ sol.fecha_atencion|date:"d/m/Y" }}</span>
+                            <span class="prog-flecha">→</span>
+                            {% if sol.fecha_fin_formacion %}
+                                <span class="prog-chip-fin">🔴 {{ sol.fecha_fin_formacion|date:"d/m/Y" }}</span>
                             {% else %}
-                                <span class="sin-fin">sin fecha de fin</span>
+                                <span class="prog-chip-sin-fin">sin fecha de fin</span>
                             {% endif %}
                         </div>
                     </div>
@@ -375,9 +268,7 @@
 
             {% if programaciones_pasadas %}
             <div class="prog-grupo">
-                <div class="prog-grupo-titulo pasada">
-                    ⚪ Historial &nbsp;({{ programaciones_pasadas|length }})
-                </div>
+                <div class="prog-grupo-titulo pasada">⚪ Historial &nbsp;({{ programaciones_pasadas|length }})</div>
                 {% for sol in programaciones_pasadas %}
                 <div class="prog-card pasada">
                     <div class="prog-estado-icon pasada">⚪</div>
@@ -385,9 +276,13 @@
                         <div class="prog-empresa">{{ sol.empresa.nombre }}</div>
                         <div class="prog-programa">{{ sol.programa.nombre }}</div>
                         <div class="prog-fechas">
-                            {{ sol.fecha_atencion|date:"d/m/Y" }}
-                            <span class="flecha">→</span>
-                            {{ sol.fecha_finalizacion|date:"d/m/Y" }}
+                            <span class="prog-chip-inicio">🟢 {{ sol.fecha_atencion|date:"d/m/Y" }}</span>
+                            <span class="prog-flecha">→</span>
+                            {% if sol.fecha_fin_formacion %}
+                                <span class="prog-chip-fin">🔴 {{ sol.fecha_fin_formacion|date:"d/m/Y" }}</span>
+                            {% else %}
+                                <span class="prog-chip-sin-fin">sin fecha de fin</span>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="prog-badge">
@@ -402,19 +297,12 @@
         {% endif %}
     </div>
 
-    <!-- Solicitudes activas -->
     {% if solicitudes_activas %}
     <div class="solicitudes-section">
-        <div class="section-header">
-            <h2>📋 Solicitudes Activas ({{solicitudes_activas.count}})</h2>
-        </div>
+        <div class="section-header"><h2>📋 Solicitudes Activas ({{solicitudes_activas.count}})</h2></div>
         <div style="overflow-x:auto;">
             <table class="solicitudes-table">
-                <thead>
-                    <tr>
-                        <th>Empresa</th><th>Programa</th><th>Área</th><th>Recepción</th><th>Estado</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Empresa</th><th>Programa</th><th>Área</th><th>Recepción</th><th>Estado</th></tr></thead>
                 <tbody>
                     {% for sol in solicitudes_activas %}
                     <tr>
@@ -431,19 +319,12 @@
     </div>
     {% endif %}
 
-    <!-- Solicitudes finalizadas -->
     {% if solicitudes_finalizadas %}
     <div class="solicitudes-section">
-        <div class="section-header">
-            <h2>✅ Solicitudes Finalizadas ({{solicitudes_finalizadas.count}})</h2>
-        </div>
+        <div class="section-header"><h2>✅ Solicitudes Finalizadas ({{solicitudes_finalizadas.count}})</h2></div>
         <div style="overflow-x:auto;">
             <table class="solicitudes-table">
-                <thead>
-                    <tr>
-                        <th>Empresa</th><th>Programa</th><th>Área</th><th>Recepción</th><th>Estado</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Empresa</th><th>Programa</th><th>Área</th><th>Recepción</th><th>Estado</th></tr></thead>
                 <tbody>
                     {% for sol in solicitudes_finalizadas %}
                     <tr>
@@ -473,9 +354,7 @@
 
 </div>
 
-<footer>
-    <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
-</footer>
+<footer><p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p></footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -486,14 +365,8 @@
             }, 8000);
         });
     });
-
     const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideOutUp {
-            from { transform: translateY(0); opacity: 1; }
-            to   { transform: translateY(-20px); opacity: 0; }
-        }
-    `;
+    style.textContent = `@keyframes slideOutUp{from{transform:translateY(0);opacity:1;}to{transform:translateY(-20px);opacity:0;}}`;
     document.head.appendChild(style);
 </script>
 
