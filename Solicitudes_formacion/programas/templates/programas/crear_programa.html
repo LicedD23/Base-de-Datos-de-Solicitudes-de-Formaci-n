@@ -91,14 +91,8 @@
         }
 
         @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
         }
 
         .alert::before {
@@ -116,9 +110,7 @@
             border: 2px solid #1b5e20;
         }
 
-        .alert-success::before {
-            background: #fff;
-        }
+        .alert-success::before { background: #fff; }
 
         .alert-success .alert-icon {
             font-size: 1.8em;
@@ -126,8 +118,8 @@
         }
 
         @keyframes scaleIn {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
+            0%   { transform: scale(0); }
+            50%  { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
 
@@ -144,8 +136,8 @@
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+            25%      { transform: translateX(-10px); }
+            75%      { transform: translateX(10px); }
         }
 
         .alert-warning {
@@ -154,23 +146,14 @@
             border: 2px solid #e65100;
         }
 
-        .alert-warning::before {
-            background: #fff;
-        }
+        .alert-warning::before { background: #fff; }
 
-        .alert-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-
-        .alert-content {
-            flex: 1;
-            line-height: 1.5;
-        }
+        .alert-icon    { font-size: 1.5em; flex-shrink: 0; }
+        .alert-content { flex: 1; line-height: 1.5; }
 
         .alert-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
             color: white;
             width: 28px;
             height: 28px;
@@ -186,7 +169,7 @@
         }
 
         .alert-close:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255,255,255,0.4);
             transform: scale(1.1);
         }
 
@@ -194,13 +177,11 @@
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-top: 4px solid #2e7d32;
         }
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+        .form-group { margin-bottom: 25px; }
 
         .form-group label {
             display: block;
@@ -234,14 +215,20 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
 
         /* Estado de error en campo */
         .form-group input.input-error,
         .form-group select.input-error {
             border-color: #c62828;
-            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            box-shadow: 0 0 0 3px rgba(198,40,40,0.1);
+        }
+
+        /* Estado de error en campo de horas */
+        .form-group input#duracion_horas.input-error {
+            border-color: #c62828;
+            box-shadow: 0 0 0 3px rgba(198,40,40,0.1);
         }
 
         .form-group textarea {
@@ -276,6 +263,40 @@
             margin-top: 5px;
         }
 
+        /* Nota de rango de horas */
+        .hours-range-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 0.82em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        /* Mensaje de error inline para horas */
+        .hours-error-msg {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            border-radius: 5px;
+            padding: 6px 10px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .hours-error-msg.visible {
+            display: inline-flex;
+        }
+
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -287,9 +308,7 @@
             transition: all 0.3s ease;
         }
 
-        .checkbox-group:hover {
-            background: #e8f5e9;
-        }
+        .checkbox-group:hover { background: #e8f5e9; }
 
         .checkbox-group input[type="checkbox"] {
             width: 20px;
@@ -331,12 +350,12 @@
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             flex: 1;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+            box-shadow: 0 6px 20px rgba(46,125,50,0.4);
         }
 
         .btn-secondary {
@@ -372,13 +391,9 @@
             gap: 15px;
         }
 
-        .info-banner-icon {
-            font-size: 1.5em;
-        }
+        .info-banner-icon { font-size: 1.5em; }
 
-        .info-banner-content {
-            flex: 1;
-        }
+        .info-banner-content { flex: 1; }
 
         .info-banner-content strong {
             display: block;
@@ -406,7 +421,7 @@
             padding: 20px;
             border-radius: 16px;
             margin-top: 30px;
-            box-shadow: 0 -4px 20px rgba(27, 94, 32, 0.2);
+            box-shadow: 0 -4px 20px rgba(27,94,32,0.2);
         }
 
         footer p {
@@ -415,30 +430,12 @@
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .form-card {
-                padding: 25px;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            footer {
-                font-size: 0.85rem;
-                padding: 15px;
-            }
+            .header h1   { font-size: 1.8em; }
+            .form-card   { padding: 25px; }
+            .form-actions { flex-direction: column; }
+            .btn         { width: 100%; }
+            .form-row    { grid-template-columns: 1fr; }
+            footer       { font-size: 0.85rem; padding: 15px; }
         }
     </style>
 </head>
@@ -470,17 +467,12 @@
             {% for message in messages %}
                 <div class="alert {% if 'error' in message.tags %}alert-error{% elif 'warning' in message.tags %}alert-warning{% else %}alert-success{% endif %}" role="alert">
                     <div class="alert-icon">
-                        {% if 'error' in message.tags %}
-                            ❌
-                        {% elif 'warning' in message.tags %}
-                            ⚠️
-                        {% else %}
-                            ✅
+                        {% if 'error' in message.tags %}❌
+                        {% elif 'warning' in message.tags %}⚠️
+                        {% else %}✅
                         {% endif %}
                     </div>
-                    <div class="alert-content">
-                        {{ message }}
-                    </div>
+                    <div class="alert-content">{{ message }}</div>
                     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
                 </div>
             {% endfor %}
@@ -521,7 +513,6 @@
                     </div>
 
                     <div class="form-group">
-                        <!-- ACTUALIZADO: código obligatorio y solo numérico -->
                         <label for="codigo" class="required">Código del Programa</label>
                         <input
                             type="text"
@@ -556,10 +547,15 @@
                             type="number"
                             id="duracion_horas"
                             name="duracion_horas"
-                            placeholder="40"
-                            min="1"
-                            max="1000"
+                            placeholder="Ejemplo: 40"
+                            min="40"
+                            max="480"
+                            oninput="validarHoras(this)"
                         >
+                        <small class="hours-range-note">⏱️ Rango permitido: 40 – 480 horas</small>
+                        <span class="hours-error-msg" id="horasErrorMsg">
+                            ❌ <span id="horasErrorTexto"></span>
+                        </span>
                         <small>Duración total del programa en horas académicas</small>
                     </div>
 
@@ -578,13 +574,13 @@
                     </div>
                 </div>
 
-                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ff9800;">
-                    <strong style="color: #ef6c00; display: block; margin-bottom: 8px;">📝 Antes de guardar, verifica:</strong>
-                    <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                <div style="background:#fff3e0;padding:15px;border-radius:8px;margin-top:20px;border-left:4px solid #ff9800;">
+                    <strong style="color:#ef6c00;display:block;margin-bottom:8px;">📝 Antes de guardar, verifica:</strong>
+                    <ul style="margin-left:20px;color:#666;line-height:1.8;">
                         <li>El nombre del programa es claro y descriptivo</li>
                         <li>Has seleccionado el área correcta</li>
                         <li>El código es numérico y único en el catálogo</li>
-                        <li>La duración en horas es correcta (si aplica)</li>
+                        <li>La duración en horas es correcta y está entre 40 y 480 (si aplica)</li>
                         <li>El programa no existe previamente en el catálogo</li>
                     </ul>
                 </div>
@@ -593,7 +589,7 @@
                     <a href="{% url 'programas:listar_programas' %}" class="btn btn-secondary">
                         ✕ Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="btnCrear">
                         💾 Crear Programa
                     </button>
                 </div>
@@ -602,47 +598,82 @@
     </div>
     <br>
 
-    <!-- FOOTER -->
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
 
     <script>
-        // ✅ Función que elimina cualquier carácter que no sea número en tiempo real
+        // ── Solo números para el campo código ────────────────────────
         function soloNumeros(input) {
-            // Eliminar cualquier carácter que no sea dígito
             input.value = input.value.replace(/[^0-9]/g, '');
         }
 
-        // ✅ Validación adicional al pegar contenido (Ctrl+V)
         document.getElementById('codigo').addEventListener('paste', function(e) {
             e.preventDefault();
             const texto = (e.clipboardData || window.clipboardData).getData('text');
-            const soloNums = texto.replace(/[^0-9]/g, '');
-            this.value = soloNums;
+            this.value = texto.replace(/[^0-9]/g, '');
         });
 
-        // ✅ Bloquear teclas de letras directamente en el campo código
         document.getElementById('codigo').addEventListener('keydown', function(e) {
-            // Permitir: backspace, delete, tab, escape, enter, flechas, home, end
-            const teclasPerm = [
-                'Backspace','Delete','Tab','Escape','Enter',
-                'ArrowLeft','ArrowRight','ArrowUp','ArrowDown',
-                'Home','End'
-            ];
+            const teclasPerm = ['Backspace','Delete','Tab','Escape','Enter',
+                                'ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
             if (teclasPerm.includes(e.key)) return;
-            // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
             if ((e.ctrlKey || e.metaKey) && ['a','c','v','x'].includes(e.key.toLowerCase())) return;
-            // Bloquear si no es un dígito
-            if (!/^[0-9]$/.test(e.key)) {
-                e.preventDefault();
+            if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+        });
+
+        // ── Validación en tiempo real de horas (40–480) ──────────────
+        function validarHoras(input) {
+            const errorMsg   = document.getElementById('horasErrorMsg');
+            const errorTexto = document.getElementById('horasErrorTexto');
+            const btnCrear   = document.getElementById('btnCrear');
+            const val        = input.value.trim();
+
+            // Si está vacío, es opcional: limpiar error
+            if (val === '') {
+                input.classList.remove('input-error');
+                errorMsg.classList.remove('visible');
+                btnCrear.disabled = false;
+                return;
+            }
+
+            const num = parseInt(val, 10);
+
+            if (isNaN(num) || num < 40) {
+                input.classList.add('input-error');
+                errorTexto.textContent = 'La duración mínima es 40 horas.';
+                errorMsg.classList.add('visible');
+                btnCrear.disabled = true;
+            } else if (num > 480) {
+                input.classList.add('input-error');
+                errorTexto.textContent = 'La duración máxima es 480 horas.';
+                errorMsg.classList.add('visible');
+                btnCrear.disabled = true;
+            } else {
+                input.classList.remove('input-error');
+                errorMsg.classList.remove('visible');
+                btnCrear.disabled = false;
+            }
+        }
+
+        // ── Validación al enviar el formulario ───────────────────────
+        document.getElementById('formCrearPrograma').addEventListener('submit', function(e) {
+            const horasInput = document.getElementById('duracion_horas');
+            const val        = horasInput.value.trim();
+
+            if (val !== '') {
+                const num = parseInt(val, 10);
+                if (isNaN(num) || num < 40 || num > 480) {
+                    e.preventDefault();
+                    validarHoras(horasInput);
+                    horasInput.focus();
+                }
             }
         });
 
-        // Auto-cerrar mensajes después de 8 segundos
+        // ── Auto-cerrar mensajes después de 8 s ─────────────────────
         document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
+            document.querySelectorAll('.alert').forEach(alert => {
                 setTimeout(() => {
                     alert.style.animation = 'slideOutUp 0.4s ease-out';
                     setTimeout(() => alert.remove(), 400);
@@ -650,11 +681,10 @@
             });
         });
 
-        // Animación de salida
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideOutUp {
-                from { transform: translateY(0); opacity: 1; }
+                from { transform: translateY(0);     opacity: 1; }
                 to   { transform: translateY(-20px); opacity: 0; }
             }
         `;

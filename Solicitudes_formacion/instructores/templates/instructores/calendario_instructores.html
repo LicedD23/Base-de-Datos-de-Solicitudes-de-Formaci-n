@@ -467,7 +467,7 @@
             document.getElementById('tooltipFin').textContent    = p.fecha_fin ? fmtFecha(p.fecha_fin) : 'Sin fecha de fin';
 
             const link = document.getElementById('tooltipLink');
-            link.href = `/solicitudes/${p.solicitud_id}/detalle/`;
+            link.href = `/solicitudes/${p.solicitud_id}/`;
 
             document.getElementById('tooltipOverlay').classList.add('open');
         }

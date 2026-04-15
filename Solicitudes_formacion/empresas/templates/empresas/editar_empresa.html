@@ -172,6 +172,14 @@
             transform: translateY(-1px);
         }
 
+        /* Estado de error en el campo */
+        .form-group input.input-error {
+            border-color: #c62828 !important;
+            box-shadow: 0 0 0 3px rgba(198,40,40,0.1) !important;
+            background: #fff !important;
+            transform: none !important;
+        }
+
         .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 
         .form-group small {
@@ -182,6 +190,40 @@
             font-style: italic;
             padding-left: 5px;
         }
+
+        /* Hint con contador */
+        .field-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .field-hint .counter {
+            margin-left: auto;
+            font-weight: 600;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .field-hint .counter.warn  { color: #ef6c00; background: #fff3e0; }
+        .field-hint .counter.error { color: #c62828; background: #ffebee; }
+
+        /* Mensaje de error de campo */
+        .field-error-msg {
+            display: none;
+            color: #c62828;
+            font-size: 0.85em;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .field-error-msg.visible { display: block; }
 
         /* Nota informativa (azul) */
         .info-note {
@@ -393,7 +435,7 @@
             ⚠️ Todos los campos marcados con asterisco (*) son obligatorios
         </div>
 
-        <form method="POST" action="{% url 'empresas:editar_empresa' empresa.id %}">
+        <form method="POST" action="{% url 'empresas:editar_empresa' empresa.id %}" id="formEditarEmpresa">
             {% csrf_token %}
 
             <!-- Información Básica -->
@@ -410,13 +452,21 @@
                 </div>
 
                 <div class="form-grid">
+                    <!-- NIT con validación numérica y máximo 10 dígitos -->
                     <div class="form-group">
                         <label for="nit" class="required">NIT</label>
                         <input type="text" id="nit" name="nit"
                                value="{{ empresa.nit }}"
-                               placeholder="900123456 o 900123456-7"
-                               maxlength="20" required>
-                        <small>NIT sin puntos (mínimo 9 dígitos)</small>
+                               placeholder="Ejemplo: 9001234567"
+                               maxlength="10" required
+                               pattern="[0-9]{9,10}" title="Solo números, entre 9 y 10 dígitos"
+                               inputmode="numeric"
+                               oninput="soloNumeros(this, 10)">
+                        <div class="field-hint">
+                            <span>🔢 Solo números, entre 9 y 10 dígitos</span>
+                            <span class="counter" id="counterNit">0/10</span>
+                        </div>
+                        <div class="field-error-msg" id="errorNit">❌ Solo se permiten números (entre 9 y 10 dígitos)</div>
                     </div>
 
                     <div class="form-group">
@@ -454,13 +504,20 @@
                         <small>Dirección de correo electrónico</small>
                     </div>
 
+                    <!-- TELÉFONO con validación numérica y máximo 13 dígitos -->
                     <div class="form-group">
                         <label for="telefono" class="required">Teléfono</label>
                         <input type="tel" id="telefono" name="telefono"
                                value="{{ empresa.telefono }}"
-                               placeholder="3001234567"
-                               maxlength="20" required>
-                        <small>Número de contacto</small>
+                               placeholder="3001234567" required maxlength="13"
+                               pattern="[0-9]{1,13}" title="Solo números, máximo 13 dígitos"
+                               inputmode="numeric"
+                               oninput="soloNumeros(this, 13)">
+                        <div class="field-hint">
+                            <span>🔢 Solo números, máximo 13 dígitos</span>
+                            <span class="counter" id="counterTelefono">0/13</span>
+                        </div>
+                        <div class="field-error-msg" id="errorTelefono">❌ Solo se permiten números (máximo 13 dígitos)</div>
                     </div>
                 </div>
             </div>
@@ -530,6 +587,7 @@
 </footer>
 
 <script>
+    // ── Auto-cerrar alertas ───────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.alert').forEach(function (alert) {
             setTimeout(function () {
@@ -537,6 +595,10 @@
                 setTimeout(function () { alert.remove(); }, 400);
             }, 8000);
         });
+
+        // Inicializar contadores con los valores existentes de la empresa
+        actualizarContador(document.getElementById('nit'),      'counterNit');
+        actualizarContador(document.getElementById('telefono'), 'counterTelefono');
     });
 
     const style = document.createElement('style');
@@ -547,6 +609,107 @@
         }
     `;
     document.head.appendChild(style);
+
+    // ── Función principal: solo números + máximo dígitos ─────────────────
+    function soloNumeros(input, max) {
+        // Eliminar todo lo que no sea dígito
+        const valorLimpio = input.value.replace(/[^0-9]/g, '');
+
+        // Recortar si supera el máximo
+        input.value = valorLimpio.slice(0, max);
+
+        // Determinar el campo
+        const esNit     = input.id === 'nit';
+        const counterId = esNit ? 'counterNit'   : 'counterTelefono';
+        const errorId   = esNit ? 'errorNit'     : 'errorTelefono';
+
+        actualizarContador(input, counterId);
+
+        // Mostrar/ocultar error si el usuario escribió algo no numérico
+        const errorEl = document.getElementById(errorId);
+        if (/[^0-9]/.test(valorLimpio)) {
+            input.classList.add('input-error');
+            errorEl.classList.add('visible');
+        } else {
+            input.classList.remove('input-error');
+            errorEl.classList.remove('visible');
+        }
+    }
+
+    // ── Actualizar contador de dígitos ───────────────────────────────────
+    function actualizarContador(input, counterId) {
+        const counter = document.getElementById(counterId);
+        if (!counter) return;
+
+        const len = input.value.length;
+        const max = parseInt(input.maxLength) || 13;
+
+        counter.textContent = `${len}/${max}`;
+        counter.className = 'counter';
+
+        if (len >= max)            counter.classList.add('error');
+        else if (len >= max * 0.8) counter.classList.add('warn');
+    }
+
+    // ── Prevenir pegar texto no numérico ─────────────────────────────────
+    ['nit', 'telefono'].forEach(id => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const texto       = (e.clipboardData || window.clipboardData).getData('text');
+            const maxLen      = parseInt(this.maxLength) || 13;
+            const soloDigitos = texto.replace(/[^0-9]/g, '').slice(0, maxLen);
+            this.value        = soloDigitos;
+            soloNumeros(this, maxLen);
+        });
+
+        input.addEventListener('keydown', function(e) {
+            // Permitir: backspace, delete, tab, escape, enter, flechas, home, end
+            const teclasSistema = [
+                'Backspace','Delete','Tab','Escape','Enter',
+                'ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'
+            ];
+            if (teclasSistema.includes(e.key)) return;
+
+            // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            if ((e.ctrlKey || e.metaKey) && ['a','c','v','x'].includes(e.key.toLowerCase())) return;
+
+            // Bloquear cualquier tecla que no sea dígito
+            if (!/[0-9]/.test(e.key)) e.preventDefault();
+        });
+    });
+
+    // ── Validación al enviar el formulario ───────────────────────────────
+    document.getElementById('formEditarEmpresa').addEventListener('submit', function(e) {
+        let valido = true;
+
+        const nit      = document.getElementById('nit');
+        const telefono = document.getElementById('telefono');
+
+        // Validar NIT: entre 9 y 10 dígitos
+        if (!/^[0-9]{9,10}$/.test(nit.value)) {
+            nit.classList.add('input-error');
+            document.getElementById('errorNit').classList.add('visible');
+            document.getElementById('errorNit').textContent = '❌ El NIT debe tener entre 9 y 10 dígitos numéricos';
+            valido = false;
+        }
+
+        // Validar teléfono
+        if (!/^[0-9]{1,13}$/.test(telefono.value)) {
+            telefono.classList.add('input-error');
+            document.getElementById('errorTelefono').classList.add('visible');
+            valido = false;
+        }
+
+        if (!valido) {
+            e.preventDefault();
+            // Hacer scroll al primer campo con error
+            const primerError = document.querySelector('.input-error');
+            if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
 </script>
 {% include 'core/accessibility.html' %}
 </body>

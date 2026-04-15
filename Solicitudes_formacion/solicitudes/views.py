@@ -1,209 +1,172 @@
-from django.shortcuts import render, redirect, get_object_or_404
+"""
+Vistas del módulo de solicitudes
+Sistema de Gestión de Solicitudes SENA
+"""
+
+import io
+import os
+import re
+import sys
+import traceback
+from datetime import timedelta, date, datetime
+
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
-from .email_handler import EmailSolicitudHandler
-from django.db.models import Q, Count
-from .models import Solicitud
+from django.contrib.auth.decorators import login_required
+from django.db import transaction, IntegrityError
+from django.db.models import Q, Count, Prefetch
 from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from datetime import timedelta, date
-from programas.models import Programa
+from django.views.decorators.http import require_http_methods
+
 from empresas.models import Empresa
 from instructores.models import Instructor
-import re
-from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_http_methods
-from django.db import transaction
-from django.db import IntegrityError, transaction
-from core.management.decorators import puede_ver_requerido, puede_editar_requerido, admin_requerido
-from django.db.models import Prefetch
+from instructores.views import verificar_solapamiento_instructor
+from programas.models import Programa
+from area_formacion.models import Area
 
-# ---------------------------------------------------------------------------
-# LISTAR SOLICITUDES
-# ---------------------------------------------------------------------------
+from .email_handler import EmailSolicitudHandler
+from .models import Solicitud, DocumentoSolicitud
+from core.management.decorators import (
+    puede_ver_requerido, puede_editar_requerido, admin_requerido
+)
 
-@puede_ver_requerido
-def listar_solicitudes(request):
-    """Vista para listar todas las solicitudes de formacion."""
-    search       = request.GET.get('search', '')
-    estado       = request.GET.get('estado', '')
-    programa_id  = request.GET.get('programa', '')
-    empresa_id   = request.GET.get('empresa', '')
-    periodo_filter = request.GET.get('periodo', '')
 
-    solicitudes = Solicitud.objects.select_related(
+# =============================================================================
+# CONSTANTES
+# =============================================================================
+
+# Nombres de los meses en español para formatear fechas en correos
+MESES = {
+    1: 'enero',    2: 'febrero',  3: 'marzo',    4: 'abril',
+    5: 'mayo',     6: 'junio',    7: 'julio',     8: 'agosto',
+    9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre',
+}
+
+# Límites para documentos PDF adjuntos
+MAX_DOCUMENTOS  = 5
+MAX_PDF_SIZE_MB = 10 * 1024 * 1024  # 10 MB en bytes
+
+
+# =============================================================================
+# HELPERS INTERNOS
+# =============================================================================
+
+def _get_queryset_solicitudes_base():
+    """
+    Retorna el queryset base de solicitudes con todos los select_related necesarios.
+    Centralizado para no repetirlo en cada vista.
+    """
+    return Solicitud.objects.select_related(
         'empresa',
         'programa',
         'programa__area',
         'instructor_asignado',
-    ).all()
+    )
 
-    if search:
-        solicitudes = solicitudes.filter(
-            Q(empresa__nombre__icontains=search) |
-            Q(programa__nombre__icontains=search) |
-            Q(instructor_asignado__nombre__icontains=search)
+
+def _parsear_fecha(fecha_str, fmt='%Y-%m-%dT%H:%M'):
+    """
+    Convierte un string de fecha al formato dado en un datetime aware.
+    Retorna el datetime o None si el string está vacío.
+    Lanza ValueError si el formato no es válido.
+    """
+    if not fecha_str:
+        return None
+    return timezone.make_aware(datetime.strptime(fecha_str, fmt))
+
+
+def _validar_documentos_pdf(documentos, documentos_actuales=0, documentos_a_eliminar=0):
+    """
+    Valida una lista de archivos PDF subidos por el usuario.
+    Verifica extensión, tamaño y que el total no supere MAX_DOCUMENTOS.
+
+    Retorna (es_valido: bool, mensaje_error: str | None).
+    """
+    total = documentos_actuales - documentos_a_eliminar + len(documentos)
+
+    if total > MAX_DOCUMENTOS:
+        return False, (
+            f'❌ Máximo {MAX_DOCUMENTOS} documentos permitidos. '
+            f'Total resultante: {total}'
         )
 
-    if estado:
-        solicitudes = solicitudes.filter(estado=estado)
-    if programa_id:
-        solicitudes = solicitudes.filter(programa_id=programa_id)
-    if empresa_id:
-        solicitudes = solicitudes.filter(empresa_id=empresa_id)
+    for doc in documentos:
+        if not doc.name.lower().endswith('.pdf'):
+            return False, f'❌ {doc.name} no es un archivo PDF'
+        if doc.size > MAX_PDF_SIZE_MB:
+            return False, f'❌ {doc.name} supera 10MB'
 
-    if periodo_filter:
-        hoy = timezone.now().date()
-        if periodo_filter == 'hoy':
-            solicitudes = solicitudes.filter(fecha_recepcion=hoy)
-        elif periodo_filter == 'semana':
-            solicitudes = solicitudes.filter(fecha_recepcion__gte=hoy - timedelta(days=7))
-        elif periodo_filter == 'mes':
-            solicitudes = solicitudes.filter(fecha_recepcion__gte=hoy - timedelta(days=30))
-        elif periodo_filter == 'trimestre':
-            solicitudes = solicitudes.filter(fecha_recepcion__gte=hoy - timedelta(days=90))
-
-    solicitudes = solicitudes.order_by('-fecha_recepcion')
-
-    programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
-    empresas  = Empresa.objects.all().order_by('nombre')
-
-    total_solicitudes        = solicitudes.count()
-    solicitudes_recibidas    = solicitudes.filter(estado='RECIBIDA').count()
-    solicitudes_atendidas    = solicitudes.filter(estado='ATENDIDA').count()
-    solicitudes_respondidas  = solicitudes.filter(estado='RESPONDIDA').count()
-    solicitudes_finalizadas  = solicitudes.filter(estado='FINALIZADA').count()
-
-    context = {
-        'solicitudes':              solicitudes,
-        'programas':                programas,
-        'empresas':                 empresas,
-        'search':                   search,
-        'estado_filter':            estado,
-        'programa_filter':          programa_id,
-        'empresa_filter':           empresa_id,
-        'periodo_filter':           periodo_filter,
-        'total_solicitudes':        total_solicitudes,
-        'solicitudes_recibidas':    solicitudes_recibidas,
-        'solicitudes_atendidas':    solicitudes_atendidas,
-        'solicitudes_respondidas':  solicitudes_respondidas,
-        'solicitudes_finalizadas':  solicitudes_finalizadas,
-        'stats_por_estado': {
-            'RECIBIDA':   solicitudes_recibidas,
-            'ATENDIDA':   solicitudes_atendidas,
-            'RESPONDIDA': solicitudes_respondidas,
-            'FINALIZADA': solicitudes_finalizadas,
-        },
-        'ESTADOS_CHOICES': Solicitud.ESTADO_CHOICES,
-    }
-    return render(request, 'solicitudes/listar_solicitudes.html', context)
+    return True, None
 
 
-# ---------------------------------------------------------------------------
-# PANEL DE CORREOS
-# ---------------------------------------------------------------------------
+def _validar_fechas_migracion(fecha_recepcion, fecha_atencion,
+                               fecha_respuesta, fecha_finalizacion):
+    """
+    Valida que las fechas de migración cumplan el flujo correcto:
+        recepcion ≤ atencion ≤ respuesta ≤ finalizacion
+    y que ninguna sea futura.
 
-@puede_ver_requerido
-def panel_correos(request):
-    """Panel de administracion de correos."""
-    if request.method == 'POST':
-        action = request.POST.get('action')
+    Retorna (es_valido: bool, mensaje_error: str | None).
+    """
+    ahora = timezone.now()
 
-        if action == 'procesar':
-            try:
-                handler = EmailSolicitudHandler()
-                solicitudes_creadas = handler.procesar_correos()
+    validaciones = [
+        (fecha_recepcion    and fecha_recepcion    > ahora,
+         '❌ La fecha de recepción no puede ser futura'),
+        (fecha_atencion     and fecha_atencion     > ahora,
+         '❌ La fecha de atención no puede ser futura'),
+        (fecha_atencion     and fecha_atencion     < fecha_recepcion,
+         '❌ La fecha de atención no puede ser anterior a la recepción'),
+        (fecha_respuesta    and fecha_respuesta    > ahora,
+         '❌ La fecha de respuesta no puede ser futura'),
+        (fecha_respuesta    and fecha_respuesta    < (fecha_atencion or fecha_recepcion),
+         '❌ La fecha de respuesta no puede ser anterior a la atención'),
+        (fecha_finalizacion and fecha_finalizacion > ahora,
+         '❌ La fecha de finalización no puede ser futura'),
+        (fecha_finalizacion and fecha_finalizacion < (
+            fecha_respuesta or fecha_atencion or fecha_recepcion
+        ), '❌ La fecha de finalización debe ser la más reciente'),
+    ]
 
-                if solicitudes_creadas:
-                    messages.success(
-                        request,
-                        f'✅ {len(solicitudes_creadas)} correo(s) procesados exitosamente. '
-                        f'Se crearon {len(solicitudes_creadas)} solicitud(es).'
-                    )
-                else:
-                    messages.warning(request, '⚠️ No se encontraron correos nuevos para procesar.')
-            except Exception as e:
-                messages.error(request, f'❌ Error procesando correos: {str(e)}')
+    for condicion, mensaje in validaciones:
+        if condicion:
+            return False, mensaje
 
-        return redirect('solicitudes:panel_correos')
-
-    hoy        = timezone.now().date()
-    hace_7_dias = hoy - timedelta(days=7)
-
-    context = {
-        'solicitudes_hoy': Solicitud.objects.filter(fecha_recepcion__date=hoy).count(),
-        'solicitudes_semana': Solicitud.objects.filter(fecha_recepcion__date__gte=hace_7_dias).count(),
-        'ultimas_solicitudes': Solicitud.objects.select_related(
-            'empresa', 'programa'
-        ).order_by('-fecha_recepcion')[:10],
-    }
-    return render(request, 'solicitudes/panel_correos.html', context)
+    return True, None
 
 
-# ---------------------------------------------------------------------------
-# PROBAR CONEXIÓN EMAIL
-# ---------------------------------------------------------------------------
+def _deducir_estado_migracion(fecha_atencion, fecha_respuesta, fecha_finalizacion):
+    """
+    Deduce el estado de la solicitud según las fechas ingresadas en modo migración.
+    Sigue el flujo: RECIBIDA → ATENDIDA → RESPONDIDA → FINALIZADA
+    """
+    if fecha_finalizacion:
+        return 'FINALIZADA'
+    if fecha_respuesta:
+        return 'RESPONDIDA'
+    if fecha_atencion:
+        return 'ATENDIDA'
+    return 'RECIBIDA'
 
-@puede_editar_requerido
-def probar_conexion_email(request):
-    """Prueba la conexion al servidor de correo."""
-    try:
-        handler = EmailSolicitudHandler()
-        mail    = handler.conectar_email()
-
-        if mail:
-            mail.select('INBOX')
-            mail.logout()
-            return JsonResponse({
-                'success': True,
-                'message': (
-                    f'✅ Conexión exitosa al servidor de correo\n'
-                    f'Usuario: {handler.email_account}\n'
-                    f'Servidor: {handler.imap_server}:{handler.imap_port}'
-                ),
-            })
-        return JsonResponse({
-            'success': False,
-            'message': '❌ No se pudo conectar al servidor de correo.\n'
-                       'Verifica EMAIL_HOST_USER y EMAIL_HOST_PASSWORD en settings.py',
-        })
-    except Exception as e:
-        import traceback
-        return JsonResponse({
-            'success': False,
-            'message': f'❌ Error: {str(e)}\n\n{traceback.format_exc()}',
-        })
-
-
-# ---------------------------------------------------------------------------
-# DETALLE DE SOLICITUD
-# ---------------------------------------------------------------------------
-
-@puede_ver_requerido
-def detalle_solicitud(request, solicitud_id):
-    """Vista para el detalle de una solicitud."""
-    solicitud = get_object_or_404(
-        Solicitud.objects.select_related(
-            'empresa',
-            'programa',
-            'programa__area',
-            'instructor_asignado',
-        ),
-        id=solicitud_id,
-    )
-    return render(request, 'solicitudes/detalle_solicitud.html', {'solicitud': solicitud})
-
-
-# ---------------------------------------------------------------------------
-# HELPER: calcular disponibilidad de instructores
-# ---------------------------------------------------------------------------
 
 def _calcular_disponibilidad_instructores(instructores, solicitud_actual=None):
     """
-    Recibe un queryset de Instructor y devuelve una lista de dicts.
-    Usa fecha_fin_formacion como fecha real de fin de la formación.
+    Recibe un queryset de Instructor y devuelve una lista de dicts con
+    información de disponibilidad de cada uno para hoy.
+
+    Cada dict contiene:
+        instructor          → objeto Instructor
+        ocupado             → True si tiene formación activa hoy
+        formaciones_activas → lista de solicitudes activas hoy
+        proxima             → próxima solicitud futura (si no está ocupado)
+        formaciones_json    → JSON serializable con todas las formaciones programadas
+                              (para la validación de solapamiento en el frontend)
+
+    El parámetro solicitud_actual excluye esa solicitud del cálculo,
+    útil al editar para no contar la propia solicitud como ocupación.
     """
-    hoy = timezone.now().date()
+    hoy       = timezone.now().date()
     resultado = []
 
     for instructor in instructores:
@@ -214,21 +177,28 @@ def _calcular_disponibilidad_instructores(instructores, solicitud_actual=None):
         if solicitud_actual:
             qs = qs.exclude(pk=solicitud_actual.pk)
 
-        ocupado_hoy = False
+        ocupado_hoy         = False
         formaciones_activas = []
+        formaciones_json    = []  # Para serialización al frontend
 
         for sol in qs.select_related('empresa', 'programa'):
             fecha_inicio = sol.fecha_atencion.date()
-            if sol.fecha_fin_formacion:
-                fecha_fin = sol.fecha_fin_formacion
-            elif sol.fecha_finalizacion:
-                fecha_fin = sol.fecha_finalizacion.date()
-            else:
-                fecha_fin = None
+            fecha_fin    = sol.fecha_fin_formacion or (
+                sol.fecha_finalizacion.date() if sol.fecha_finalizacion else None
+            )
 
             if fecha_inicio <= hoy and (fecha_fin is None or fecha_fin >= hoy):
                 ocupado_hoy = True
                 formaciones_activas.append(sol)
+
+            # Agregar al JSON para validación de solapamiento en frontend
+            formaciones_json.append({
+                'solicitud_id': sol.id,
+                'empresa':      sol.empresa.nombre,
+                'programa':     sol.programa.nombre,
+                'fecha_inicio': fecha_inicio.isoformat(),
+                'fecha_fin':    fecha_fin.isoformat() if fecha_fin else None,
+            })
 
         proxima = None
         if not ocupado_hoy:
@@ -236,8 +206,10 @@ def _calcular_disponibilidad_instructores(instructores, solicitud_actual=None):
                 fecha_atencion__isnull=False,
                 fecha_atencion__date__gt=hoy,
             ).exclude(estado='FINALIZADA')
+
             if solicitud_actual:
                 proxima_qs = proxima_qs.exclude(pk=solicitud_actual.pk)
+
             proxima = proxima_qs.order_by('fecha_atencion').first()
 
         resultado.append({
@@ -245,22 +217,203 @@ def _calcular_disponibilidad_instructores(instructores, solicitud_actual=None):
             'ocupado':             ocupado_hoy,
             'formaciones_activas': formaciones_activas,
             'proxima':             proxima,
+            'formaciones_json':    formaciones_json,
         })
 
     return resultado
 
 
-# ---------------------------------------------------------------------------
-# EDITAR SOLICITUD
-# ---------------------------------------------------------------------------
+def _guardar_documentos(solicitud, documentos_pdf):
+    """
+    Guarda una lista de archivos PDF como DocumentoSolicitud asociados a la solicitud.
+    El primer documento también se asigna como documento_pdf principal.
+    """
+    for doc in documentos_pdf:
+        DocumentoSolicitud.objects.create(
+            solicitud=solicitud,
+            archivo=doc,
+            nombre_archivo=doc.name,
+        )
+    if documentos_pdf:
+        solicitud.documento_pdf = documentos_pdf[0]
+        solicitud.save(update_fields=['documento_pdf'])
+
+
+def _eliminar_documentos(solicitud, ids_a_eliminar):
+    """
+    Elimina los DocumentoSolicitud con los IDs dados, incluyendo el archivo físico.
+    Retorna el número de documentos eliminados.
+    """
+    eliminados = 0
+    for doc_id in ids_a_eliminar:
+        try:
+            documento = DocumentoSolicitud.objects.get(id=doc_id, solicitud=solicitud)
+            if documento.archivo and os.path.exists(documento.archivo.path):
+                os.remove(documento.archivo.path)
+            documento.delete()
+            eliminados += 1
+        except DocumentoSolicitud.DoesNotExist:
+            pass
+        except Exception as e:
+            print(f"⚠️ Error al eliminar documento {doc_id}: {e}")
+    return eliminados
+
+
+# =============================================================================
+# VISTAS
+# =============================================================================
+
+@puede_ver_requerido
+def listar_solicitudes(request):
+    """Vista para listar todas las solicitudes con filtros."""
+    search          = request.GET.get('search', '')
+    estado          = request.GET.get('estado', '')
+    programa_id     = request.GET.get('programa', '')
+    empresa_id      = request.GET.get('empresa', '')
+    periodo_filter  = request.GET.get('periodo', '')
+
+    solicitudes = _get_queryset_solicitudes_base().all()
+
+    # ── Filtros de búsqueda ───────────────────────────────────────────────────
+    if search:
+        solicitudes = solicitudes.filter(
+            Q(empresa__nombre__icontains=search)          |
+            Q(programa__nombre__icontains=search)         |
+            Q(instructor_asignado__nombre__icontains=search)
+        )
+
+    if estado:
+        solicitudes = solicitudes.filter(estado=estado)
+    if programa_id:
+        solicitudes = solicitudes.filter(programa_id=programa_id)
+    if empresa_id:
+        solicitudes = solicitudes.filter(empresa_id=empresa_id)
+
+    # ── Filtro de periodo ─────────────────────────────────────────────────────
+    if periodo_filter:
+        hoy = timezone.now().date()
+        periodos = {
+            'hoy':       lambda qs: qs.filter(fecha_recepcion=hoy),
+            'semana':    lambda qs: qs.filter(fecha_recepcion__gte=hoy - timedelta(days=7)),
+            'mes':       lambda qs: qs.filter(fecha_recepcion__gte=hoy - timedelta(days=30)),
+            'trimestre': lambda qs: qs.filter(fecha_recepcion__gte=hoy - timedelta(days=90)),
+        }
+        if periodo_filter in periodos:
+            solicitudes = periodos[periodo_filter](solicitudes)
+
+    solicitudes = solicitudes.order_by('-fecha_recepcion')
+
+    # ── Estadísticas ──────────────────────────────────────────────────────────
+    stats = {
+        'RECIBIDA':   solicitudes.filter(estado='RECIBIDA').count(),
+        'ATENDIDA':   solicitudes.filter(estado='ATENDIDA').count(),
+        'RESPONDIDA': solicitudes.filter(estado='RESPONDIDA').count(),
+        'FINALIZADA': solicitudes.filter(estado='FINALIZADA').count(),
+    }
+
+    context = {
+        'solicitudes':             solicitudes,
+        'programas':               Programa.objects.filter(activo=True).select_related('area').order_by('nombre'),
+        'empresas':                Empresa.objects.all().order_by('nombre'),
+        'search':                  search,
+        'estado_filter':           estado,
+        'programa_filter':         programa_id,
+        'empresa_filter':          empresa_id,
+        'periodo_filter':          periodo_filter,
+        'total_solicitudes':       solicitudes.count(),
+        'solicitudes_recibidas':   stats['RECIBIDA'],
+        'solicitudes_atendidas':   stats['ATENDIDA'],
+        'solicitudes_respondidas': stats['RESPONDIDA'],
+        'solicitudes_finalizadas': stats['FINALIZADA'],
+        'stats_por_estado':        stats,
+        'ESTADOS_CHOICES':         Solicitud.ESTADO_CHOICES,
+    }
+    return render(request, 'solicitudes/listar_solicitudes.html', context)
+
+
+@puede_ver_requerido
+def panel_correos(request):
+    """Panel de administración de correos entrantes."""
+    if request.method == 'POST':
+        if request.POST.get('action') == 'procesar':
+            try:
+                handler             = EmailSolicitudHandler()
+                solicitudes_creadas = handler.procesar_correos()
+
+                if solicitudes_creadas:
+                    messages.success(
+                        request,
+                        f'✅ {len(solicitudes_creadas)} correo(s) procesados. '
+                        f'Se crearon {len(solicitudes_creadas)} solicitud(es).'
+                    )
+                else:
+                    messages.warning(request, '⚠️ No se encontraron correos nuevos.')
+            except Exception as e:
+                messages.error(request, f'❌ Error procesando correos: {str(e)}')
+
+        return redirect('solicitudes:panel_correos')
+
+    hoy         = timezone.now().date()
+    hace_7_dias = hoy - timedelta(days=7)
+
+    context = {
+        'solicitudes_hoy':    Solicitud.objects.filter(fecha_recepcion__date=hoy).count(),
+        'solicitudes_semana': Solicitud.objects.filter(fecha_recepcion__date__gte=hace_7_dias).count(),
+        'ultimas_solicitudes': Solicitud.objects.select_related(
+            'empresa', 'programa'
+        ).order_by('-fecha_recepcion')[:10],
+    }
+    return render(request, 'solicitudes/panel_correos.html', context)
+
+
+@puede_editar_requerido
+def probar_conexion_email(request):
+    """Prueba la conexión al servidor IMAP y retorna el resultado como JSON."""
+    try:
+        handler = EmailSolicitudHandler()
+        mail    = handler.conectar_email()
+
+        if mail:
+            mail.select('INBOX')
+            mail.logout()
+            return JsonResponse({
+                'success': True,
+                'message': (
+                    f'✅ Conexión exitosa\n'
+                    f'Usuario: {handler.email_account}\n'
+                    f'Servidor: {handler.imap_server}:{handler.imap_port}'
+                ),
+            })
+
+        return JsonResponse({
+            'success': False,
+            'message': '❌ No se pudo conectar. Verifica EMAIL_HOST_USER y EMAIL_HOST_PASSWORD.',
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'❌ Error: {str(e)}\n\n{traceback.format_exc()}',
+        })
+
+
+@puede_ver_requerido
+def detalle_solicitud(request, solicitud_id):
+    """Vista de solo lectura para ver el detalle completo de una solicitud."""
+    solicitud = get_object_or_404(_get_queryset_solicitudes_base(), id=solicitud_id)
+    return render(request, 'solicitudes/detalle_solicitud.html', {'solicitud': solicitud})
+
 
 @puede_editar_requerido
 def editar_solicitud(request, solicitud_id):
-    """Vista para editar una solicitud existente CON MODO MIGRACIÓN."""
+    """
+    Vista para editar una solicitud existente.
+    Soporta dos modos:
+        - Normal:    solo permite avanzar en el flujo (RECIBIDA→ATENDIDA→RESPONDIDA→FINALIZADA)
+        - Migración: permite ingresar fechas históricas para datos importados
+    """
     solicitud = get_object_or_404(
-        Solicitud.objects.select_related(
-            'empresa', 'programa', 'programa__area', 'instructor_asignado',
-        ).prefetch_related('documentos'),
+        _get_queryset_solicitudes_base().prefetch_related('documentos'),
         id=solicitud_id,
     )
 
@@ -268,131 +421,80 @@ def editar_solicitud(request, solicitud_id):
         try:
             es_migracion = request.POST.get('es_migracion') == 'true'
 
-            estado             = request.POST.get('estado')
-            instructor_id      = request.POST.get('instructor_asignado')
-            observaciones      = request.POST.get('observaciones', '')
-            numero_aprendices  = request.POST.get('numero_aprendices')
-            nuevos_documentos_pdf   = request.FILES.getlist('documentos_pdf')
-            eliminar_pdf            = request.POST.get('eliminar_pdf')
-            documentos_a_eliminar   = request.POST.getlist('eliminar_documentos')
+            # ── Leer campos básicos del formulario ────────────────────────────
+            estado            = request.POST.get('estado')
+            instructor_id     = request.POST.get('instructor_asignado')
+            observaciones     = request.POST.get('observaciones', '')
+            numero_aprendices = request.POST.get('numero_aprendices')
+            nuevos_pdfs       = request.FILES.getlist('documentos_pdf')
+            eliminar_pdf      = request.POST.get('eliminar_pdf')
+            ids_a_eliminar    = request.POST.getlist('eliminar_documentos')
 
-            # ── Fechas de programación ingresadas manualmente por el usuario ──
-            fecha_inicio_formacion = None
-            fecha_inicio_str = request.POST.get('fecha_inicio_formacion')
-            if fecha_inicio_str:
-                try:
-                    fecha_inicio_formacion = date.fromisoformat(fecha_inicio_str)
-                except ValueError:
-                    messages.warning(request, '⚠️ Formato de fecha de inicio de formación inválido, se omitirá')
+            # ── Fechas de programación (inicio y fin de formación) ─────────
+            try:
+                fecha_inicio_formacion = _parsear_fecha(
+                    request.POST.get('fecha_inicio_formacion'), '%Y-%m-%d'
+                )
+            except ValueError:
+                messages.warning(request, '⚠️ Fecha de inicio de formación inválida, se omitirá')
+                fecha_inicio_formacion = None
 
-            fecha_fin_formacion = None
-            fecha_fin_formacion_str = request.POST.get('fecha_fin_formacion')
-            if fecha_fin_formacion_str:
-                try:
-                    fecha_fin_formacion = date.fromisoformat(fecha_fin_formacion_str)
-                except ValueError:
-                    messages.warning(request, '⚠️ Formato de fecha fin de formación inválido, se omitirá')
+            try:
+                fecha_fin_formacion = _parsear_fecha(
+                    request.POST.get('fecha_fin_formacion'), '%Y-%m-%d'
+                )
+            except ValueError:
+                messages.warning(request, '⚠️ Fecha fin de formación inválida, se omitirá')
+                fecha_fin_formacion = None
 
-            # Validar que fecha fin no sea anterior a fecha inicio
+            # Validar que fin no sea anterior a inicio
             if fecha_inicio_formacion and fecha_fin_formacion:
                 if fecha_fin_formacion < fecha_inicio_formacion:
-                    messages.error(request, '❌ La fecha de fin de formación no puede ser anterior a la fecha de inicio')
+                    messages.error(request, '❌ La fecha fin no puede ser anterior a la fecha de inicio')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
             if not estado and not es_migracion:
                 messages.error(request, '❌ El estado es obligatorio')
                 return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-            from datetime import datetime
-
+            # ── Validaciones específicas de cada modo ─────────────────────────
             if es_migracion:
-                fecha_recepcion_str = request.POST.get('fecha_recepcion')
-                if not fecha_recepcion_str:
-                    messages.error(request, '❌ En modo migración, la fecha de recepción es obligatoria')
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-
+                # En modo migración se leen y validan todas las fechas históricas
                 try:
-                    fecha_recepcion = timezone.make_aware(
-                        datetime.strptime(fecha_recepcion_str, '%Y-%m-%dT%H:%M')
-                    )
-                    if fecha_recepcion > timezone.now():
-                        messages.error(request, '❌ La fecha de recepción no puede ser futura')
+                    fecha_recepcion = _parsear_fecha(request.POST.get('fecha_recepcion'))
+                    if not fecha_recepcion:
+                        messages.error(request, '❌ La fecha de recepción es obligatoria en modo migración')
                         return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
                 except ValueError:
                     messages.error(request, '❌ Formato de fecha de recepción inválido')
                     return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-                fecha_atencion = None
-                fecha_atencion_str = request.POST.get('fecha_atencion')
-                if fecha_atencion_str:
-                    try:
-                        fecha_atencion = timezone.make_aware(
-                            datetime.strptime(fecha_atencion_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_atencion > timezone.now():
-                            messages.error(request, '❌ La fecha de atención no puede ser futura')
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                        if fecha_atencion < fecha_recepcion:
-                            messages.error(request, '❌ La fecha de atención no puede ser anterior a la recepción')
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de atención inválido, se omitirá')
+                try:
+                    fecha_atencion     = _parsear_fecha(request.POST.get('fecha_atencion'))
+                    fecha_respuesta    = _parsear_fecha(request.POST.get('fecha_respuesta'))
+                    fecha_finalizacion = _parsear_fecha(request.POST.get('fecha_finalizacion'))
+                except ValueError as e:
+                    messages.warning(request, f'⚠️ Fecha inválida omitida: {e}')
+                    fecha_atencion = fecha_respuesta = fecha_finalizacion = None
 
-                fecha_respuesta = None
-                fecha_respuesta_str = request.POST.get('fecha_respuesta')
-                if fecha_respuesta_str:
-                    try:
-                        fecha_respuesta = timezone.make_aware(
-                            datetime.strptime(fecha_respuesta_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_respuesta > timezone.now():
-                            messages.error(request, '❌ La fecha de respuesta no puede ser futura')
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                        fecha_minima_respuesta = fecha_atencion if fecha_atencion else fecha_recepcion
-                        if fecha_respuesta < fecha_minima_respuesta:
-                            messages.error(
-                                request,
-                                '❌ La fecha de respuesta no puede ser anterior a la atención'
-                                ' (flujo: Recibida → Atendida → Respondida)'
-                            )
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de respuesta inválido, se omitirá')
+                es_valido, error = _validar_fechas_migracion(
+                    fecha_recepcion, fecha_atencion, fecha_respuesta, fecha_finalizacion
+                )
+                if not es_valido:
+                    messages.error(request, error)
+                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-                fecha_finalizacion = None
-                fecha_finalizacion_str = request.POST.get('fecha_finalizacion')
-                if fecha_finalizacion_str:
-                    try:
-                        fecha_finalizacion = timezone.make_aware(
-                            datetime.strptime(fecha_finalizacion_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_finalizacion > timezone.now():
-                            messages.error(request, '❌ La fecha de finalización no puede ser futura')
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                        fecha_minima_fin = fecha_respuesta if fecha_respuesta else (
-                            fecha_atencion if fecha_atencion else fecha_recepcion
-                        )
-                        if fecha_finalizacion < fecha_minima_fin:
-                            messages.error(request, '❌ La fecha de finalización debe ser la más reciente')
-                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de finalización inválido, se omitirá')
-
-                if fecha_finalizacion:
-                    estado = 'FINALIZADA'
-                elif fecha_respuesta:
-                    estado = 'RESPONDIDA'
-                elif fecha_atencion:
-                    estado = 'ATENDIDA'
-                else:
-                    estado = 'RECIBIDA'
+                # El estado se deduce automáticamente de las fechas ingresadas
+                estado = _deducir_estado_migracion(fecha_atencion, fecha_respuesta, fecha_finalizacion)
 
             else:
+                # En modo normal se conservan las fechas actuales de la solicitud
                 fecha_recepcion    = solicitud.fecha_recepcion
                 fecha_atencion     = solicitud.fecha_atencion
                 fecha_respuesta    = solicitud.fecha_respuesta
                 fecha_finalizacion = solicitud.fecha_finalizacion
 
+                # Validar que el cambio de estado siga el flujo correcto
                 if estado != solicitud.estado:
                     if not solicitud.puede_cambiar_a_estado(estado):
                         labels = dict(Solicitud.ESTADO_CHOICES)
@@ -400,55 +502,79 @@ def editar_solicitud(request, solicitud_id):
                             request,
                             f'❌ No puedes cambiar de "{solicitud.get_estado_display()}" '
                             f'a "{labels.get(estado, estado)}". '
-                            f'Flujo correcto: Recibida → Atendida → Respondida → Finalizada'
+                            f'Flujo: Recibida → Atendida → Respondida → Finalizada'
                         )
                         return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-                if estado == 'ATENDIDA' and not instructor_id and not solicitud.instructor_asignado:
-                    messages.error(
-                        request,
-                        '❌ Debes asignar un instructor para marcar la solicitud como ATENDIDA'
-                    )
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+                # Validaciones de negocio según el estado destino
+                validaciones_estado = [
+                    (estado == 'ATENDIDA' and not instructor_id and not solicitud.instructor_asignado,
+                     '❌ Debes asignar un instructor para marcar la solicitud como ATENDIDA'),
+                    (estado == 'RESPONDIDA' and not solicitud.fecha_atencion,
+                     '❌ La solicitud debe estar ATENDIDA antes de marcarla como RESPONDIDA'),
+                    (estado == 'FINALIZADA' and not solicitud.fecha_respuesta,
+                     '❌ La solicitud debe estar RESPONDIDA antes de finalizarla'),
+                ]
+                for condicion, mensaje in validaciones_estado:
+                    if condicion:
+                        messages.error(request, mensaje)
+                        return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-                if estado == 'RESPONDIDA' and not solicitud.fecha_atencion:
-                    messages.error(
-                        request,
-                        '❌ La solicitud debe estar ATENDIDA antes de marcarla como RESPONDIDA. '
-                        'Asigna un instructor primero.'
-                    )
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-
-                if estado == 'FINALIZADA' and not solicitud.fecha_respuesta:
-                    messages.error(
-                        request,
-                        '❌ La solicitud debe estar RESPONDIDA (empresa notificada por correo) '
-                        'antes de finalizarla.'
-                    )
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-
-            documentos_actuales         = solicitud.documentos.count()
-            documentos_a_eliminar_count = len(documentos_a_eliminar)
-            nuevos_documentos_count     = len(nuevos_documentos_pdf)
-            total_documentos = documentos_actuales - documentos_a_eliminar_count + nuevos_documentos_count
-
-            if total_documentos > 5:
-                messages.error(
-                    request,
-                    f'❌ Máximo 5 documentos permitidos. '
-                    f'Tienes {documentos_actuales}, intentas agregar {nuevos_documentos_count} '
-                    f'y eliminar {documentos_a_eliminar_count}. Total resultante: {total_documentos}'
+            # ── Validar solapamiento de fechas del instructor ─────────────────
+            # Solo aplica en modo normal (no migración) cuando hay instructor
+            # asignado y fechas de formación definidas.
+            if not es_migracion and instructor_id:
+                # Calcular fechas efectivas de la nueva asignación
+                nueva_fecha_inicio = (
+                    fecha_inicio_formacion.date()
+                    if fecha_inicio_formacion and hasattr(fecha_inicio_formacion, 'date')
+                    else fecha_inicio_formacion
                 )
+                nueva_fecha_fin = (
+                    fecha_fin_formacion.date()
+                    if fecha_fin_formacion and hasattr(fecha_fin_formacion, 'date')
+                    else fecha_fin_formacion
+                )
+
+                # Usar fecha de atención existente si no se ingresó una nueva
+                if not nueva_fecha_inicio and solicitud.fecha_atencion:
+                    nueva_fecha_inicio = solicitud.fecha_atencion.date()
+
+                if nueva_fecha_inicio:
+                    try:
+                        instructor_candidato = Instructor.objects.get(id=instructor_id, activo=True)
+                        hay_conflicto, conflictos = verificar_solapamiento_instructor(
+                            instructor=instructor_candidato,
+                            fecha_inicio=nueva_fecha_inicio,
+                            fecha_fin=nueva_fecha_fin,
+                            excluir_solicitud_id=solicitud.id,
+                        )
+                        if hay_conflicto:
+                            detalle = ' | '.join(
+                                f"{c['empresa']} ({c['fecha_inicio']} – {c['fecha_fin']})"
+                                for c in conflictos
+                            )
+                            messages.error(
+                                request,
+                                f'❌ El instructor "{instructor_candidato.nombre}" ya tiene '
+                                f'formaciones programadas que se solapan con las fechas indicadas: '
+                                f'{detalle}. Elige otro instructor o ajusta las fechas.'
+                            )
+                            return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
+                    except Instructor.DoesNotExist:
+                        pass  # Se maneja más adelante
+
+            # ── Validar documentos PDF ────────────────────────────────────────
+            es_valido, error = _validar_documentos_pdf(
+                nuevos_pdfs,
+                documentos_actuales=solicitud.documentos.count(),
+                documentos_a_eliminar=len(ids_a_eliminar),
+            )
+            if not es_valido:
+                messages.error(request, error)
                 return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-            for doc in nuevos_documentos_pdf:
-                if not doc.name.lower().endswith('.pdf'):
-                    messages.error(request, f'❌ {doc.name} no es un archivo PDF')
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-                if doc.size > 10 * 1024 * 1024:
-                    messages.error(request, f'❌ {doc.name} supera 10MB')
-                    return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
-
+            # ── Guardar cambios en una transacción atómica ────────────────────
             with transaction.atomic():
                 solicitud.estado        = estado
                 solicitud.observaciones = observaciones
@@ -463,32 +589,23 @@ def editar_solicitud(request, solicitud_id):
                     try:
                         solicitud.numero_aprendices = int(numero_aprendices)
                     except ValueError:
-                        messages.warning(request, '⚠️ Número de aprendices no válido, se mantiene el valor anterior')
+                        messages.warning(request, '⚠️ Número de aprendices inválido, se mantiene el valor anterior')
 
+                # ── Asignar o remover instructor ──────────────────────────────
                 instructor_anterior = solicitud.instructor_asignado
-
                 if instructor_id:
                     try:
                         instructor = Instructor.objects.get(id=instructor_id, activo=True)
                         solicitud.instructor_asignado = instructor
-
-                        if not es_migracion:
-                            # Asignar instructor cambia estado a ATENDIDA
-                            # pero NO se registra fecha_atencion automáticamente,
-                            # el usuario la ingresa manualmente en el campo de programación
-                            if solicitud.estado == 'RECIBIDA':
-                                solicitud.estado = 'ATENDIDA'
-                                messages.success(
-                                    request,
-                                    f'✅ Instructor "{instructor.nombre}" asignado. '
-                                    f'Estado cambiado a ATENDIDA. '
-                                    f'Recuerda registrar la fecha de inicio y fin de la formación.'
-                                )
-                            else:
-                                messages.success(request, f'✅ Instructor "{instructor.nombre}" asignado')
+                        if not es_migracion and solicitud.estado == 'RECIBIDA':
+                            solicitud.estado = 'ATENDIDA'
+                            messages.success(
+                                request,
+                                f'✅ Instructor "{instructor.nombre}" asignado. '
+                                f'Estado cambiado a ATENDIDA.'
+                            )
                         else:
                             messages.success(request, f'✅ Instructor "{instructor.nombre}" asignado')
-
                     except Instructor.DoesNotExist:
                         messages.warning(request, '⚠️ Instructor no encontrado')
                 else:
@@ -496,16 +613,20 @@ def editar_solicitud(request, solicitud_id):
                     if instructor_anterior:
                         messages.info(request, f'ℹ️ Instructor "{instructor_anterior.nombre}" removido')
 
-                # ── Guardar fechas de programación ingresadas por el usuario ──
+                # ── Aplicar fechas de programación ────────────────────────────
                 if fecha_inicio_formacion is not None:
-                    from datetime import datetime as dt
                     solicitud.fecha_atencion = timezone.make_aware(
-                        dt.combine(fecha_inicio_formacion, dt.min.time())
+                        datetime.combine(fecha_inicio_formacion.date()
+                        if hasattr(fecha_inicio_formacion, 'date') else fecha_inicio_formacion,
+                        datetime.min.time())
                     )
+                solicitud.fecha_fin_formacion = (
+                    fecha_fin_formacion.date()
+                    if fecha_fin_formacion and hasattr(fecha_fin_formacion, 'date')
+                    else fecha_fin_formacion
+                )
 
-                solicitud.fecha_fin_formacion = fecha_fin_formacion
-
-                # ── Auto-finalizar si la fecha fin ya se cumplió ──────────
+                # ── Auto-finalizar si la fecha fin ya se cumplió ──────────────
                 hoy = timezone.now().date()
                 if (
                     not es_migracion
@@ -516,52 +637,27 @@ def editar_solicitud(request, solicitud_id):
                     solicitud.estado = 'FINALIZADA'
                     if not solicitud.fecha_finalizacion:
                         solicitud.fecha_finalizacion = timezone.now()
-                    messages.success(
-                        request,
-                        '🎓 La fecha fin de formación ya se cumplió. '
-                        'La solicitud fue finalizada automáticamente.'
-                    )
+                    messages.success(request, '🎓 Solicitud finalizada automáticamente por fecha de formación cumplida.')
 
-                from .models import DocumentoSolicitud
-                import os
+                # ── Gestionar documentos ──────────────────────────────────────
+                if ids_a_eliminar:
+                    eliminados = _eliminar_documentos(solicitud, ids_a_eliminar)
+                    messages.success(request, f'✅ {eliminados} documento(s) eliminado(s)')
 
-                if documentos_a_eliminar:
-                    for doc_id in documentos_a_eliminar:
-                        try:
-                            documento = DocumentoSolicitud.objects.get(id=doc_id, solicitud=solicitud)
-                            if documento.archivo and os.path.exists(documento.archivo.path):
-                                os.remove(documento.archivo.path)
-                            documento.delete()
-                        except DocumentoSolicitud.DoesNotExist:
-                            pass
-                        except Exception as e:
-                            print(f"⚠️ Error al eliminar documento {doc_id}: {str(e)}")
+                if nuevos_pdfs:
+                    _guardar_documentos(solicitud, nuevos_pdfs)
+                    messages.success(request, f'✅ {len(nuevos_pdfs)} documento(s) agregado(s)')
 
-                    messages.success(request, f'✅ {len(documentos_a_eliminar)} documento(s) eliminado(s)')
+                if eliminar_pdf == 'on' and solicitud.documento_pdf:
+                    try:
+                        if os.path.exists(solicitud.documento_pdf.path):
+                            os.remove(solicitud.documento_pdf.path)
+                    except Exception:
+                        pass
+                    solicitud.documento_pdf = None
+                    messages.info(request, 'ℹ️ Documento PDF principal eliminado')
 
-                if nuevos_documentos_pdf:
-                    for doc in nuevos_documentos_pdf:
-                        DocumentoSolicitud.objects.create(
-                            solicitud=solicitud,
-                            archivo=doc,
-                            nombre_archivo=doc.name,
-                        )
-                    messages.success(request, f'✅ {len(nuevos_documentos_pdf)} documento(s) agregado(s)')
-
-                    primer_documento = solicitud.documentos.first()
-                    if primer_documento:
-                        solicitud.documento_pdf = primer_documento.archivo
-
-                if eliminar_pdf == 'on':
-                    if solicitud.documento_pdf:
-                        try:
-                            if os.path.exists(solicitud.documento_pdf.path):
-                                os.remove(solicitud.documento_pdf.path)
-                        except Exception:
-                            pass
-                        solicitud.documento_pdf = None
-                        messages.info(request, 'ℹ️ Documento PDF principal eliminado')
-
+                # ── Registrar fechas de cambio de estado automáticamente ──────
                 if not es_migracion:
                     now = timezone.now()
                     if estado == 'RESPONDIDA' and not solicitud.fecha_respuesta:
@@ -571,245 +667,175 @@ def editar_solicitud(request, solicitud_id):
 
                 solicitud.save()
 
-            if es_migracion:
-                messages.success(
-                    request,
-                    f'✅ Solicitud #{solicitud.id} actualizada en modo migración '
-                    f'con estado: {solicitud.get_estado_display()}'
-                )
-            else:
-                messages.success(request, f'✅ Solicitud #{solicitud.id} actualizada exitosamente')
-
+            msg = (
+                f'✅ Solicitud #{solicitud.id} actualizada en modo migración '
+                f'con estado: {solicitud.get_estado_display()}'
+                if es_migracion
+                else f'✅ Solicitud #{solicitud.id} actualizada exitosamente'
+            )
+            messages.success(request, msg)
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
 
         except Exception as e:
             messages.error(request, f'❌ Error al actualizar la solicitud: {str(e)}')
-            import traceback
             traceback.print_exc()
             return redirect('solicitudes:editar_solicitud', solicitud_id=solicitud_id)
 
-    # ── GET ──────────────────────────────────────────────────────────────────
-    instructores_qs = Instructor.objects.filter(activo=True).order_by('nombre')
-
-    disponibilidad = _calcular_disponibilidad_instructores(
-        instructores_qs, solicitud_actual=solicitud
-    )
-
-    instructores_especializados_ids = set(
+    # ── GET ───────────────────────────────────────────────────────────────────
+    instructores_qs   = Instructor.objects.filter(activo=True).order_by('nombre')
+    disponibilidad    = _calcular_disponibilidad_instructores(instructores_qs, solicitud_actual=solicitud)
+    especializados_ids = set(
         instructores_qs.filter(especialidad=solicitud.programa).values_list('id', flat=True)
     )
 
-    instructores_especializados_info = [
-        d for d in disponibilidad if d['instructor'].id in instructores_especializados_ids
-    ]
-    instructores_todos_info = disponibilidad
-
-    programas = Programa.objects.filter(activo=True).select_related('area').order_by('nombre')
-
-    from .models import DocumentoSolicitud
-    documentos_actuales = DocumentoSolicitud.objects.filter(solicitud=solicitud).order_by('-fecha_subida')
-
     context = {
-        'solicitud':                       solicitud,
-        'instructores_info':               instructores_todos_info,
-        'instructores_especializados_info': instructores_especializados_info,
-        'instructores':                    instructores_qs,
-        'instructores_especializados':     instructores_qs.filter(especialidad=solicitud.programa),
-        'programas':                       programas,
-        'ESTADO_CHOICES':                  Solicitud.ESTADO_CHOICES,
-        'documentos_actuales':             documentos_actuales,
-        'ahora':                           timezone.now(),
+        'solicitud':                        solicitud,
+        'instructores_info':                disponibilidad,
+        'instructores_especializados_info': [d for d in disponibilidad if d['instructor'].id in especializados_ids],
+        'instructores':                     instructores_qs,
+        'instructores_especializados':      instructores_qs.filter(especialidad=solicitud.programa),
+        'programas':                        Programa.objects.filter(activo=True).select_related('area').order_by('nombre'),
+        'ESTADO_CHOICES':                   Solicitud.ESTADO_CHOICES,
+        'documentos_actuales':              DocumentoSolicitud.objects.filter(solicitud=solicitud).order_by('-fecha_subida'),
+        'ahora':                            timezone.now(),
     }
     return render(request, 'solicitudes/editar_solicitud.html', context)
 
 
-# ---------------------------------------------------------------------------
-# ENVIAR RESPUESTA
-# ---------------------------------------------------------------------------
-
 @puede_editar_requerido
 def enviar_respuesta(request, solicitud_id):
-    solicitud = get_object_or_404(
-        Solicitud.objects.select_related(
-            'empresa', 'programa', 'programa__area', 'instructor_asignado',
-        ),
-        id=solicitud_id,
-    )
- 
+    """
+    Vista para enviar correo de respuesta a la empresa.
+    Cambia el estado de ATENDIDA a RESPONDIDA al enviar.
+    """
+    solicitud = get_object_or_404(_get_queryset_solicitudes_base(), id=solicitud_id)
+
     if request.method == 'POST':
         try:
-            if solicitud.estado == 'RECIBIDA':
-                messages.error(
-                    request,
-                    '❌ No puedes enviar la respuesta: la solicitud está en estado RECIBIDA. '
-                    'Debes asignar un instructor primero para que pase a ATENDIDA. '
-                    'Flujo obligatorio: Recibida → Atendida → Respondida → Finalizada.'
-                )
-                return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
-            if solicitud.estado == 'ATENDIDA' and not solicitud.instructor_asignado:
-                messages.error(
-                    request,
-                    '❌ La solicitud está en estado ATENDIDA pero no tiene instructor asignado. '
-                    'Asigna un instructor antes de enviar la respuesta.'
-                )
-                return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
-            asunto  = f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}"
+            # ── Validaciones de negocio antes de enviar ───────────────────────
+            validaciones = [
+                (solicitud.estado == 'RECIBIDA',
+                 '❌ Debes asignar un instructor primero (flujo: Recibida → Atendida → Respondida).'),
+                (solicitud.estado == 'ATENDIDA' and not solicitud.instructor_asignado,
+                 '❌ La solicitud está ATENDIDA pero sin instructor. Asigna uno antes de responder.'),
+            ]
+            for condicion, mensaje in validaciones:
+                if condicion:
+                    messages.error(request, mensaje)
+                    return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
+
             mensaje = request.POST.get('mensaje')
- 
             if not mensaje:
                 messages.error(request, '❌ El mensaje es obligatorio')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
+
             correo_destino = solicitud.correo_remitente or solicitud.empresa.correo
- 
             if not correo_destino:
                 messages.error(request, '❌ No hay correo de destino disponible')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
+
             if '@ejemplo.com' in correo_destino.lower():
-                messages.error(request, '❌ No se puede enviar correo a una dirección de ejemplo')
+                messages.error(request, '❌ No se puede enviar a una dirección de ejemplo')
                 return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
+
             from django.core.mail import EmailMessage
             from django.conf import settings
- 
-            # ── Construir lista de CC ────────────────────────────────────────
+
+            # Copiar al instructor si tiene correo registrado
             cc_list = []
             if solicitud.instructor_asignado and solicitud.instructor_asignado.correo:
                 cc_list.append(solicitud.instructor_asignado.correo)
- 
-            # ── Enviar usando EmailMessage para soportar CC ──────────────────
-            email = EmailMessage(
-                subject=asunto,
+
+            EmailMessage(
+                subject=f"Respuesta a Solicitud #{solicitud.id} - {solicitud.programa.nombre}",
                 body=mensaje,
                 from_email=settings.EMAIL_HOST_USER,
                 to=[correo_destino],
-                cc=cc_list,           # ← copia al instructor
-            )
-            email.send(fail_silently=False)
- 
+                cc=cc_list,
+            ).send(fail_silently=False)
+
             if solicitud.estado == 'ATENDIDA':
                 solicitud.estado          = 'RESPONDIDA'
                 solicitud.fecha_respuesta = timezone.now()
                 solicitud.save()
- 
-                cc_msg = f' (CC: {", ".join(cc_list)})' if cc_list else ''
-                messages.success(
-                    request,
-                    f'✅ Correo enviado a {correo_destino}{cc_msg}. '
-                    f'Estado actualizado a RESPONDIDA. '
-                    f'Siguiente paso: finalizar la formación cuando concluya.'
-                )
-            else:
-                cc_msg = f' (CC: {", ".join(cc_list)})' if cc_list else ''
-                messages.success(request, f'✅ Correo reenviado a {correo_destino}{cc_msg}')
- 
+
+            cc_msg = f' (CC: {", ".join(cc_list)})' if cc_list else ''
+            messages.success(request, f'✅ Correo enviado a {correo_destino}{cc_msg}.')
             return redirect('solicitudes:detalle_solicitud', solicitud_id=solicitud.id)
- 
+
         except Exception as e:
             messages.error(request, f'❌ Error al enviar el correo: {str(e)}')
             return redirect('solicitudes:enviar_respuesta', solicitud_id=solicitud_id)
- 
-    # ── GET ──────────────────────────────────────────────────────────────────
-    MESES = {
-        1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril',
-        5: 'mayo', 6: 'junio', 7: 'julio', 8: 'agosto',
-        9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre',
-    }
- 
-    fecha_inicio_texto = ''
-    if solicitud.fecha_atencion:
-        f = solicitud.fecha_atencion
-        fecha_inicio_texto = f"{f.day} de {MESES[f.month]} de {f.year}"
- 
-    # ── NUEVO: fecha fin de formación formateada ─────────────────────────────
-    fecha_fin_texto = ''
-    if solicitud.fecha_fin_formacion:
-        ff = solicitud.fecha_fin_formacion  # es un date, no datetime
-        fecha_fin_texto = f"{ff.day} de {MESES[ff.month]} de {ff.year}"
- 
+
+    # ── GET ───────────────────────────────────────────────────────────────────
+    def _fmt_fecha_texto(fecha):
+        """Formatea una fecha como '15 de marzo de 2025' para el cuerpo del correo."""
+        if not fecha:
+            return ''
+        return f"{fecha.day} de {MESES[fecha.month]} de {fecha.year}"
+
     context = {
         'solicitud':          solicitud,
         'destinatario_email': solicitud.correo_remitente or solicitud.empresa.correo,
-        'fecha_inicio_texto': fecha_inicio_texto,
-        'fecha_fin_texto':    fecha_fin_texto,   # ← NUEVO
+        'fecha_inicio_texto': _fmt_fecha_texto(solicitud.fecha_atencion),
+        'fecha_fin_texto':    _fmt_fecha_texto(solicitud.fecha_fin_formacion),
     }
     return render(request, 'solicitudes/enviar_respuesta.html', context)
 
 
-# ---------------------------------------------------------------------------
-# PROCESAR CORREOS AJAX
-# ---------------------------------------------------------------------------
-
 @puede_editar_requerido
 def procesar_correos_ajax(request):
-    """Procesa correos y retorna logs en tiempo real."""
-    if request.method == 'POST':
-        import io
-        import sys
+    """
+    Procesa correos y retorna logs en tiempo real para mostrar en el panel.
+    Captura el stdout del handler para construir la respuesta JSON con logs.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
 
-        captured_output = io.StringIO()
-        old_stdout = sys.stdout
-        sys.stdout = captured_output
+    captured = io.StringIO()
+    old_stdout = sys.stdout
+    sys.stdout = captured
 
-        try:
-            handler = EmailSolicitudHandler()
-            solicitudes_creadas = handler.procesar_correos()
+    try:
+        handler             = EmailSolicitudHandler()
+        solicitudes_creadas = handler.procesar_correos()
+        sys.stdout          = old_stdout
+        output              = captured.getvalue()
 
-            sys.stdout = old_stdout
-            output = captured_output.getvalue()
+        # ── Clasificar cada línea del output para colorearla en el frontend ──
+        logs = []
+        for linea in output.split('\n'):
+            if not linea.strip():
+                continue
 
-            logs = []
-            for line in output.split('\n'):
-                if not line.strip():
-                    continue
+            tipo = 'info'
+            if '=' * 50 in linea or '-' * 50 in linea:
+                tipo = 'separator'
+            elif any(k in linea for k in ('INICIANDO', 'PROCESANDO', 'CORREO', 'RESUMEN')):
+                tipo = 'section'
+            elif 'Conectado exitosamente' in linea or 'Solicitud creada' in linea:
+                tipo = 'success'
+            elif 'ERROR' in linea or 'Error' in linea:
+                tipo = 'error'
+            elif 'No encontrado' in linea or 'no encontrado' in linea.lower():
+                tipo = 'warning'
 
-                log_entry = {'message': line.strip()}
+            entrada = {'message': linea.strip(), 'type': tipo}
 
-                if '=' * 50 in line or '-' * 50 in line:
-                    log_entry['type'] = 'separator'
-                elif 'INICIANDO' in line or 'PROCESANDO' in line or 'CORREO' in line:
-                    log_entry['type'] = 'section'
-                elif 'Conectado exitosamente' in line:
-                    log_entry['type'] = 'success'
-                elif 'Correos no leídos encontrados' in line:
-                    log_entry['type'] = 'info'
-                    match = re.search(r'(\d+)', line)
-                    if match:
-                        log_entry['count'] = int(match.group(1))
-                elif 'Empresa:' in line or 'nombre' in line.lower():
-                    log_entry['type'] = 'empresa'
-                elif 'Contacto:' in line:
-                    log_entry['type'] = 'info'
-                elif 'Email:' in line or 'correo' in line.lower():
-                    log_entry['type'] = 'info'
-                elif 'Programa:' in line:
-                    log_entry['type'] = 'programa'
-                elif 'Solicitud creada' in line or '#' in line:
-                    log_entry['type'] = 'success'
-                    match = re.search(r'#(\d+)', line)
-                    if match:
-                        log_entry['solicitud_id'] = int(match.group(1))
-                elif 'Respuesta enviada' in line:
-                    log_entry['type'] = 'success'
-                elif 'ERROR' in line or 'Error' in line:
-                    log_entry['type'] = 'error'
-                elif 'No encontrado' in line or 'no encontrado' in line.lower():
-                    log_entry['type'] = 'warning'
-                elif 'Buscando' in line or 'Encontrado' in line:
-                    log_entry['type'] = 'info'
-                elif 'Creando' in line:
-                    log_entry['type'] = 'info'
-                elif 'RESUMEN' in line:
-                    log_entry['type'] = 'section'
-                else:
-                    log_entry['type'] = 'info'
+            match_sol = re.search(r'#(\d+)', linea)
+            if match_sol and tipo == 'success':
+                entrada['solicitud_id'] = int(match_sol.group(1))
 
-                logs.append(log_entry)
+            match_count = re.search(r'(\d+)', linea)
+            if 'Correos no leídos' in linea and match_count:
+                entrada['count'] = int(match_count.group(1))
 
-            solicitudes_data = [
+            logs.append(entrada)
+
+        return JsonResponse({
+            'success':           True,
+            'solicitudes_count': len(solicitudes_creadas),
+            'solicitudes': [
                 {
                     'id':       s.id,
                     'empresa':  s.empresa.nombre,
@@ -818,106 +844,88 @@ def procesar_correos_ajax(request):
                     'fecha':    s.fecha_recepcion.strftime('%d/%m/%Y %H:%M'),
                 }
                 for s in solicitudes_creadas
-            ]
+            ],
+            'logs':       logs,
+            'raw_output': output,
+        })
 
-            return JsonResponse({
-                'success':           True,
-                'solicitudes_count': len(solicitudes_creadas),
-                'solicitudes':       solicitudes_data,
-                'logs':              logs,
-                'raw_output':        output,
-            })
+    except Exception as e:
+        sys.stdout = old_stdout
+        return JsonResponse({
+            'success':   False,
+            'error':     str(e),
+            'traceback': traceback.format_exc(),
+            'logs': [
+                {'type': 'error', 'message': f'❌ ERROR: {str(e)}'},
+                {'type': 'error', 'message': traceback.format_exc()},
+            ],
+        }, status=500)
 
-        except Exception as e:
-            sys.stdout = old_stdout
-            import traceback
-            error_trace = traceback.format_exc()
-            return JsonResponse({
-                'success':   False,
-                'error':     str(e),
-                'traceback': error_trace,
-                'logs': [
-                    {'type': 'error', 'message': f'❌ ERROR: {str(e)}'},
-                    {'type': 'error', 'message': error_trace},
-                ],
-            }, status=500)
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
-
-
-# ---------------------------------------------------------------------------
-# ELIMINAR SOLICITUD
-# ---------------------------------------------------------------------------
 
 @puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def eliminar_solicitud(request, solicitud_id):
-    """Vista para eliminar permanentemente una solicitud."""
-    solicitud = get_object_or_404(
-        Solicitud.objects.select_related(
-            'empresa', 'programa', 'programa__area', 'instructor_asignado',
-        ),
-        id=solicitud_id,
-    )
+    """Vista para eliminar permanentemente una solicitud y su PDF asociado."""
+    solicitud = get_object_or_404(_get_queryset_solicitudes_base(), id=solicitud_id)
+    template  = 'solicitudes/eliminar_solicitud.html'
+    ctx       = {'solicitud': solicitud}
 
     if request.method == 'POST':
-        empresa_nombre   = solicitud.empresa.nombre
-        programa_nombre  = solicitud.programa.nombre
-        solicitud_id_str = solicitud.id
-
+        # Las solicitudes finalizadas requieren confirmación explícita
         if solicitud.estado == 'FINALIZADA':
             if request.POST.get('confirmar_finalizada') != 'confirmar':
                 messages.warning(request, '⚠️ Debes confirmar la eliminación de una solicitud finalizada')
-                return render(request, 'solicitudes/eliminar_solicitud.html', {'solicitud': solicitud})
+                return render(request, template, ctx)
+
+        empresa_nombre  = solicitud.empresa.nombre
+        programa_nombre = solicitud.programa.nombre
+        sol_id          = solicitud.id
 
         try:
             with transaction.atomic():
                 if solicitud.documento_pdf:
-                    import os
                     try:
                         if os.path.isfile(solicitud.documento_pdf.path):
                             os.remove(solicitud.documento_pdf.path)
                     except Exception as e:
-                        print(f"⚠️ Error al eliminar el PDF: {str(e)}")
-
+                        print(f"⚠️ Error al eliminar PDF: {e}")
                 solicitud.delete()
 
             messages.success(
                 request,
-                f'✅ Solicitud #{solicitud_id_str} de "{empresa_nombre}" '
-                f'para el programa "{programa_nombre}" eliminada exitosamente'
+                f'✅ Solicitud #{sol_id} de "{empresa_nombre}" '
+                f'para "{programa_nombre}" eliminada exitosamente'
             )
             return redirect('solicitudes:listar_solicitudes')
 
         except Exception as e:
-            messages.error(request, f'❌ Error al eliminar la solicitud: {str(e)}')
-            return render(request, 'solicitudes/eliminar_solicitud.html', {'solicitud': solicitud})
+            messages.error(request, f'❌ Error al eliminar: {str(e)}')
+            return render(request, template, ctx)
 
-    return render(request, 'solicitudes/eliminar_solicitud.html', {'solicitud': solicitud})
+    return render(request, template, ctx)
 
-
-# ---------------------------------------------------------------------------
-# CREAR SOLICITUD
-# ---------------------------------------------------------------------------
 
 @puede_editar_requerido
 def crear_solicitud(request):
-    """Vista para crear una nueva solicitud manualmente CON MODO MIGRACIÓN."""
-
+    """
+    Vista para crear una nueva solicitud manualmente.
+    Soporta modo migración igual que editar_solicitud.
+    """
     if request.method == 'POST':
         try:
-            es_migracion = request.POST.get('es_migracion') == 'true'
-
+            es_migracion      = request.POST.get('es_migracion') == 'true'
             empresa_id        = request.POST.get('empresa')
             programa_id       = request.POST.get('programa')
             correo_remitente  = request.POST.get('correo_remitente')
             numero_aprendices = request.POST.get('numero_aprendices')
             observaciones     = request.POST.get('observaciones', '')
             razon_cupo        = request.POST.get('razon_cupo', '')
-            if razon_cupo:
-                observaciones = (observaciones + '\n[Razón cupo reducido]: ' + razon_cupo).strip()
             documentos_pdf    = request.FILES.getlist('documentos_pdf')
 
+            if razon_cupo:
+                observaciones = f"{observaciones}\n[Razón cupo reducido]: {razon_cupo}".strip()
+
+            # ── Validar empresa y programa ────────────────────────────────────
             if not empresa_id:
                 messages.error(request, '❌ Debes seleccionar una empresa')
                 return redirect('solicitudes:crear_solicitud')
@@ -935,92 +943,36 @@ def crear_solicitud(request):
             try:
                 programa = Programa.objects.get(id=programa_id, activo=True)
             except Programa.DoesNotExist:
-                messages.error(request, '❌ El programa seleccionado no existe o no está activo')
+                messages.error(request, '❌ El programa no existe o no está activo')
                 return redirect('solicitudes:crear_solicitud')
 
-            from datetime import datetime
-
+            # ── Fechas e instructor según el modo ─────────────────────────────
             if es_migracion:
-                fecha_recepcion_str = request.POST.get('fecha_recepcion')
-                if not fecha_recepcion_str:
-                    messages.error(request, '❌ En modo migración, la fecha de recepción es obligatoria')
-                    return redirect('solicitudes:crear_solicitud')
-
                 try:
-                    fecha_recepcion = timezone.make_aware(
-                        datetime.strptime(fecha_recepcion_str, '%Y-%m-%dT%H:%M')
-                    )
-                    if fecha_recepcion > timezone.now():
-                        messages.error(request, '❌ La fecha de recepción no puede ser futura')
+                    fecha_recepcion = _parsear_fecha(request.POST.get('fecha_recepcion'))
+                    if not fecha_recepcion:
+                        messages.error(request, '❌ La fecha de recepción es obligatoria en modo migración')
                         return redirect('solicitudes:crear_solicitud')
                 except ValueError:
                     messages.error(request, '❌ Formato de fecha de recepción inválido')
                     return redirect('solicitudes:crear_solicitud')
 
-                fecha_atencion = None
-                fecha_atencion_str = request.POST.get('fecha_atencion')
-                if fecha_atencion_str:
-                    try:
-                        fecha_atencion = timezone.make_aware(
-                            datetime.strptime(fecha_atencion_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_atencion > timezone.now():
-                            messages.error(request, '❌ La fecha de atención no puede ser futura')
-                            return redirect('solicitudes:crear_solicitud')
-                        if fecha_atencion < fecha_recepcion:
-                            messages.error(request, '❌ La fecha de atención no puede ser anterior a la recepción')
-                            return redirect('solicitudes:crear_solicitud')
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de atención inválido, se omitirá')
+                try:
+                    fecha_atencion     = _parsear_fecha(request.POST.get('fecha_atencion'))
+                    fecha_respuesta    = _parsear_fecha(request.POST.get('fecha_respuesta'))
+                    fecha_finalizacion = _parsear_fecha(request.POST.get('fecha_finalizacion'))
+                except ValueError as e:
+                    messages.warning(request, f'⚠️ Fecha inválida omitida: {e}')
+                    fecha_atencion = fecha_respuesta = fecha_finalizacion = None
 
-                fecha_respuesta = None
-                fecha_respuesta_str = request.POST.get('fecha_respuesta')
-                if fecha_respuesta_str:
-                    try:
-                        fecha_respuesta = timezone.make_aware(
-                            datetime.strptime(fecha_respuesta_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_respuesta > timezone.now():
-                            messages.error(request, '❌ La fecha de respuesta no puede ser futura')
-                            return redirect('solicitudes:crear_solicitud')
-                        fecha_minima_respuesta = fecha_atencion if fecha_atencion else fecha_recepcion
-                        if fecha_respuesta < fecha_minima_respuesta:
-                            messages.error(
-                                request,
-                                '❌ La fecha de respuesta no puede ser anterior a la atención '
-                                '(flujo: Recibida → Atendida → Respondida)'
-                            )
-                            return redirect('solicitudes:crear_solicitud')
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de respuesta inválido, se omitirá')
+                es_valido, error = _validar_fechas_migracion(
+                    fecha_recepcion, fecha_atencion, fecha_respuesta, fecha_finalizacion
+                )
+                if not es_valido:
+                    messages.error(request, error)
+                    return redirect('solicitudes:crear_solicitud')
 
-                fecha_finalizacion = None
-                fecha_finalizacion_str = request.POST.get('fecha_finalizacion')
-                if fecha_finalizacion_str:
-                    try:
-                        fecha_finalizacion = timezone.make_aware(
-                            datetime.strptime(fecha_finalizacion_str, '%Y-%m-%dT%H:%M')
-                        )
-                        if fecha_finalizacion > timezone.now():
-                            messages.error(request, '❌ La fecha de finalización no puede ser futura')
-                            return redirect('solicitudes:crear_solicitud')
-                        fecha_minima_fin = fecha_respuesta if fecha_respuesta else (
-                            fecha_atencion if fecha_atencion else fecha_recepcion
-                        )
-                        if fecha_finalizacion < fecha_minima_fin:
-                            messages.error(request, '❌ La fecha de finalización debe ser la más reciente')
-                            return redirect('solicitudes:crear_solicitud')
-                    except ValueError:
-                        messages.warning(request, '⚠️ Formato de fecha de finalización inválido, se omitirá')
-
-                if fecha_finalizacion:
-                    estado = 'FINALIZADA'
-                elif fecha_respuesta:
-                    estado = 'RESPONDIDA'
-                elif fecha_atencion:
-                    estado = 'ATENDIDA'
-                else:
-                    estado = 'RECIBIDA'
+                estado = _deducir_estado_migracion(fecha_atencion, fecha_respuesta, fecha_finalizacion)
 
                 instructor = None
                 instructor_id = request.POST.get('instructor_asignado')
@@ -1031,6 +983,7 @@ def crear_solicitud(request):
                         messages.warning(request, '⚠️ Instructor no encontrado, se creará sin instructor')
 
             else:
+                # Modo normal: fecha actual, estado inicial, sin instructor
                 fecha_recepcion    = timezone.now()
                 fecha_atencion     = None
                 fecha_respuesta    = None
@@ -1038,22 +991,16 @@ def crear_solicitud(request):
                 estado             = 'RECIBIDA'
                 instructor         = None
 
-            if len(documentos_pdf) > 5:
-                messages.error(request, '❌ Máximo 5 documentos PDF permitidos')
+            # ── Validar documentos PDF ────────────────────────────────────────
+            es_valido, error = _validar_documentos_pdf(documentos_pdf)
+            if not es_valido:
+                messages.error(request, error)
                 return redirect('solicitudes:crear_solicitud')
 
-            for doc in documentos_pdf:
-                if not doc.name.lower().endswith('.pdf'):
-                    messages.error(request, f'❌ {doc.name} no es un archivo PDF')
-                    return redirect('solicitudes:crear_solicitud')
-                if doc.size > 10 * 1024 * 1024:
-                    messages.error(request, f'❌ {doc.name} supera 10MB')
-                    return redirect('solicitudes:crear_solicitud')
-
+            # ── Crear solicitud en una transacción atómica ────────────────────
             with transaction.atomic():
-                nueva_solicitud = Solicitud(
-                    empresa=empresa,
-                    programa=programa,
+                nueva = Solicitud(
+                    empresa=empresa, programa=programa,
                     correo_remitente=correo_remitente or None,
                     observaciones=observaciones,
                     estado=estado,
@@ -1065,89 +1012,71 @@ def crear_solicitud(request):
 
                 if numero_aprendices:
                     try:
-                        nueva_solicitud.numero_aprendices = int(numero_aprendices)
+                        nueva.numero_aprendices = int(numero_aprendices)
                     except ValueError:
-                        nueva_solicitud.numero_aprendices = 0
+                        nueva.numero_aprendices = 0
 
                 if es_migracion and instructor:
-                    nueva_solicitud.instructor_asignado = instructor
+                    nueva.instructor_asignado = instructor
 
                 if documentos_pdf:
-                    nueva_solicitud.documento_pdf = documentos_pdf[0]
+                    nueva.documento_pdf = documentos_pdf[0]
 
-                nueva_solicitud.save()
+                nueva.save()
+                _guardar_documentos(nueva, documentos_pdf)
 
-                from .models import DocumentoSolicitud
-                for doc in documentos_pdf:
-                    DocumentoSolicitud.objects.create(
-                        solicitud=nueva_solicitud,
-                        archivo=doc,
-                        nombre_archivo=doc.name,
-                    )
-
+            # ── Construir mensaje de éxito ────────────────────────────────────
             if es_migracion:
-                msg = f'✅ Solicitud #{nueva_solicitud.id} migrada exitosamente'
-                if estado != 'RECIBIDA':
-                    msg += f' con estado: {nueva_solicitud.get_estado_display()}'
+                msg = f'✅ Solicitud #{nueva.id} migrada con estado: {nueva.get_estado_display()}'
                 if instructor:
                     msg += ' e instructor asignado'
             else:
-                msg = f'✅ Solicitud #{nueva_solicitud.id} creada exitosamente para {empresa.nombre}'
+                msg = f'✅ Solicitud #{nueva.id} creada para {empresa.nombre}'
 
             if documentos_pdf:
                 msg += f' con {len(documentos_pdf)} documento(s)'
 
             messages.success(request, msg)
-            return redirect('solicitudes:detalle_solicitud', solicitud_id=nueva_solicitud.id)
+            return redirect('solicitudes:detalle_solicitud', solicitud_id=nueva.id)
 
         except Exception as e:
             messages.error(request, f'❌ Error al crear la solicitud: {str(e)}')
-            import traceback
             traceback.print_exc()
             return redirect('solicitudes:crear_solicitud')
 
-    empresas     = Empresa.objects.all().order_by('nombre')
-    programas    = Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre')
-    instructores = Instructor.objects.filter(activo=True).order_by('nombre')
-
+    # ── GET ───────────────────────────────────────────────────────────────────
     context = {
-        'empresas':     empresas,
-        'programas':    programas,
-        'instructores': instructores,
+        'empresas':     Empresa.objects.all().order_by('nombre'),
+        'programas':    Programa.objects.filter(activo=True).select_related('area').order_by('area__nombre', 'nombre'),
+        'instructores': Instructor.objects.filter(activo=True).order_by('nombre'),
         'ahora':        timezone.now(),
     }
     return render(request, 'solicitudes/crear_solicitud.html', context)
 
 
-# ---------------------------------------------------------------------------
-# GUÍA PARA EMPRESAS
-# ---------------------------------------------------------------------------
-
 def guia_solicitud(request):
-    from_solicitud = request.GET.get('from')
+    """Guía pública para que empresas sepan cómo enviar solicitudes."""
     return render(request, 'solicitudes/guia_solicitud_formacion.html', {
-        'from_solicitud_id': from_solicitud,
+        'from_solicitud_id': request.GET.get('from'),
     })
 
+
 def catalogo_programas(request):
-    from area_formacion.models import Area
-    
+    """Catálogo público de programas de formación agrupados por área."""
     areas = Area.objects.filter(
         activo=True,
-        programas__activo=True
+        programas__activo=True,
     ).prefetch_related(
         Prefetch(
             'programas',
             queryset=Programa.objects.filter(activo=True).order_by('nombre'),
-            to_attr='programas_activos'
+            to_attr='programas_activos',
         )
     ).distinct().order_by('nombre')
-    
-    total_programas = Programa.objects.filter(activo=True).count()
-    
+
     context = {
-        'areas': areas,
-        'total_programas': total_programas,
-        'total_areas': areas.count(),
+        'areas':            areas,
+        'total_programas':  Programa.objects.filter(activo=True).count(),
+        'total_areas':      areas.count(),
     }
     return render(request, 'solicitudes/catalogo_programas.html', context)

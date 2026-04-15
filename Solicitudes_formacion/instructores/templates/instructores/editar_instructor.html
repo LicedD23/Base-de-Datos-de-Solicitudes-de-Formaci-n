@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -79,6 +80,27 @@
         .form-group input[type="tel"]:focus {
             outline: none; border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
+        /* Estado de error en el campo */
+        .form-group input.input-error {
+            border-color: #c62828 !important;
+            box-shadow: 0 0 0 3px rgba(198,40,40,0.1) !important;
+        }
+        .field-hint {
+            display: flex; align-items: center; gap: 6px;
+            margin-top: 6px; font-size: 0.85em; color: #666;
+        }
+        .field-hint .counter {
+            margin-left: auto; font-weight: 600;
+            color: #2e7d32; background: #e8f5e9;
+            padding: 2px 8px; border-radius: 10px; font-size: 0.9em;
+        }
+        .field-hint .counter.warn  { color: #ef6c00; background: #fff3e0; }
+        .field-hint .counter.error { color: #c62828; background: #ffebee; }
+        .field-error-msg {
+            display: none; color: #c62828; font-size: 0.85em;
+            margin-top: 5px; font-weight: 500;
+        }
+        .field-error-msg.visible { display: block; }
         .form-group small { display: block; color: #666; margin-top: 5px; font-size: 0.9em; }
         .checkbox-group {
             display: flex; align-items: center; gap: 10px; padding: 15px;
@@ -226,7 +248,7 @@
                 ⚠️ Los campos marcados con asterisco (*) son obligatorios
             </div>
 
-            <form method="POST" action="{% url 'instructores:editar_instructor' instructor.id %}">
+            <form method="POST" action="{% url 'instructores:editar_instructor' instructor.id %}" id="formEditarInstructor">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -236,12 +258,19 @@
                     <small>Nombre completo del instructor (máximo 200 caracteres)</small>
                 </div>
 
+                <!-- CÉDULA con validación de solo números y máximo 13 dígitos -->
                 <div class="form-group">
                     <label for="cedula" class="required">Cédula</label>
                     <input type="text" id="cedula" name="cedula" value="{{ instructor.cedula }}"
-                        placeholder="Ejemplo: 1234567890" required maxlength="20"
-                        pattern="[0-9]+" title="Solo números">
-                    <small>Número de cédula del instructor (solo dígitos)</small>
+                        placeholder="Ejemplo: 1234567890" required maxlength="13"
+                        pattern="[0-9]{1,13}" title="Solo números, máximo 13 dígitos"
+                        inputmode="numeric"
+                        oninput="soloNumeros(this, 13)">
+                    <div class="field-hint">
+                        <span>🔢 Solo números, máximo 13 dígitos</span>
+                        <span class="counter" id="counterCedula">0/13</span>
+                    </div>
+                    <div class="field-error-msg" id="errorCedula">❌ Solo se permiten números (máximo 13 dígitos)</div>
                 </div>
 
                 <div class="form-group">
@@ -251,11 +280,19 @@
                     <small>Correo institucional o de contacto</small>
                 </div>
 
+                <!-- TELÉFONO con validación de solo números y máximo 13 dígitos -->
                 <div class="form-group">
                     <label for="telefono" class="required">Teléfono</label>
                     <input type="tel" id="telefono" name="telefono" value="{{ instructor.telefono }}"
-                        placeholder="3001234567" required maxlength="20">
-                    <small>Número de contacto directo</small>
+                        placeholder="3001234567" required maxlength="13"
+                        pattern="[0-9]{1,13}" title="Solo números, máximo 13 dígitos"
+                        inputmode="numeric"
+                        oninput="soloNumeros(this, 13)">
+                    <div class="field-hint">
+                        <span>🔢 Solo números, máximo 13 dígitos</span>
+                        <span class="counter" id="counterTelefono">0/13</span>
+                    </div>
+                    <div class="field-error-msg" id="errorTelefono">❌ Solo se permiten números (máximo 13 dígitos)</div>
                 </div>
 
                 <div class="specialties-section">
@@ -306,18 +343,23 @@
                     <a href="{% url 'instructores:detalle_instructor' instructor.id %}" class="btn btn-secondary">
                         ✕ Cancelar
                     </a>
-                    <button type="submit" class="btn btn-warning">
+                    <button type="submit" class="btn btn-warning" id="btnGuardar">
                         💾 Guardar Cambios
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
     <footer>
         <p>© 2025 Servicio Nacional de Aprendizaje (SENA)</p>
     </footer>
+
+    {% include 'core/accessibility.html' %}
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // ── Auto-cerrar alertas ───────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
                 setTimeout(() => {
@@ -325,11 +367,119 @@
                     setTimeout(() => alert.remove(), 400);
                 }, 8000);
             });
+
+            // Inicializar contadores con los valores actuales del instructor
+            actualizarContador(document.getElementById('cedula'),   'counterCedula');
+            actualizarContador(document.getElementById('telefono'), 'counterTelefono');
         });
+
         const style = document.createElement('style');
         style.textContent = `@keyframes slideOutUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-20px); opacity: 0; } }`;
         document.head.appendChild(style);
+
+        // ── Función principal: solo números + máximo dígitos ─────────────────
+        function soloNumeros(input, max) {
+            // Eliminar todo lo que no sea dígito
+            const valorLimpio = input.value.replace(/[^0-9]/g, '');
+
+            // Recortar si supera el máximo
+            input.value = valorLimpio.slice(0, max);
+
+            const esCedula  = input.id === 'cedula';
+            const counterId = esCedula ? 'counterCedula'  : 'counterTelefono';
+            const errorId   = esCedula ? 'errorCedula'    : 'errorTelefono';
+
+            actualizarContador(input, counterId);
+
+            // Mostrar/ocultar mensaje de error
+            const errorEl = document.getElementById(errorId);
+            if (/[^0-9]/.test(input.value) || input.value !== valorLimpio.slice(0, max)) {
+                input.classList.add('input-error');
+                errorEl.classList.add('visible');
+            } else {
+                input.classList.remove('input-error');
+                errorEl.classList.remove('visible');
+            }
+        }
+
+        // ── Actualizar contador de dígitos ───────────────────────────────────
+        function actualizarContador(input, counterId) {
+            const counter = document.getElementById(counterId);
+            if (!counter) return;
+
+            const len = input.value.length;
+            const max = parseInt(input.maxLength) || 13;
+
+            counter.textContent = `${len}/${max}`;
+            counter.className   = 'counter';
+
+            if (len >= max) {
+                counter.classList.add('error');
+            } else if (len >= Math.floor(max * 0.8)) {
+                counter.classList.add('warn');
+            }
+        }
+
+        // ── Prevenir pegar texto no numérico ─────────────────────────────────
+        ['cedula', 'telefono'].forEach(id => {
+            const input = document.getElementById(id);
+            if (!input) return;
+
+            input.addEventListener('paste', function (e) {
+                e.preventDefault();
+                const texto       = (e.clipboardData || window.clipboardData).getData('text');
+                const soloDigitos = texto.replace(/[^0-9]/g, '').slice(0, 13);
+                this.value        = soloDigitos;
+                soloNumeros(this, 13);
+            });
+
+            input.addEventListener('keydown', function (e) {
+                // Teclas de sistema permitidas
+                const teclasSistema = [
+                    'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                    'Home', 'End'
+                ];
+                if (teclasSistema.includes(e.key)) return;
+
+                // Atajos de teclado permitidos (Ctrl/Cmd + A/C/V/X)
+                if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return;
+
+                // Bloquear cualquier tecla que no sea dígito
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // ── Validación final al enviar el formulario ─────────────────────────
+        document.getElementById('formEditarInstructor').addEventListener('submit', function (e) {
+            let valido = true;
+
+            const cedula   = document.getElementById('cedula');
+            const telefono = document.getElementById('telefono');
+
+            // Validar cédula
+            if (!/^[0-9]{1,13}$/.test(cedula.value)) {
+                cedula.classList.add('input-error');
+                document.getElementById('errorCedula').classList.add('visible');
+                valido = false;
+            }
+
+            // Validar teléfono
+            if (!/^[0-9]{1,13}$/.test(telefono.value)) {
+                telefono.classList.add('input-error');
+                document.getElementById('errorTelefono').classList.add('visible');
+                valido = false;
+            }
+
+            if (!valido) {
+                e.preventDefault();
+                // Scroll al primer campo con error
+                const primerError = document.querySelector('.input-error');
+                if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
     </script>
-    {% include 'core/accessibility.html' %}
 </body>
 </html>

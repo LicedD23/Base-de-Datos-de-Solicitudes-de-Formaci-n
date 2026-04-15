@@ -40,7 +40,6 @@
         .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #999; }
 
-        /* Mensajes */
         .messages-container { margin-bottom: 25px; }
         .alert {
             padding: 18px 25px;
@@ -101,7 +100,6 @@
         .migration-info ul { margin-left: 20px; color: #666; }
         .migration-info li { margin-bottom: 8px; }
 
-        /* Sección fechas migración */
         .dates-section {
             display: none;
             background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
@@ -131,7 +129,6 @@
         .flujo-step { background: #e8f5e9; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; white-space: nowrap; }
         .flujo-arrow { color: #2e7d32; font-size: 1.1em; }
 
-        /* Secciones */
         .section {
             background: white; padding: 30px; border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px;
@@ -177,7 +174,7 @@
         .badge-finalizada { background: #c8e6c9; color: #1b5e20; }
         .required-mark { color: #c62828; font-weight: bold; }
 
-        /* ══ VALIDACIÓN DE CUPO — igual que crear_solicitud ══ */
+        /* ══ VALIDACIÓN DE CUPO ══ */
         .aviso-bloqueo {
             display: none;
             margin-top: 10px;
@@ -237,7 +234,6 @@
         .razon-btn:hover { background: #ffa000; color: white; transform: translateY(-1px); }
         .razon-btn.selected { background: #e65100; border-color: #e65100; color: white; }
 
-        /* Nota de razón guardada (cuando hay razon_cupo en observaciones existentes) */
         .razon-guardada-nota {
             display: none;
             margin-top: 8px;
@@ -256,7 +252,7 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Caja de programación de formación ──────────────────────────── */
+        /* Caja de programación de formación */
         .formacion-rango-box {
             background: linear-gradient(135deg, #e8f5e9, #f1f8f1);
             border: 2px solid #2e7d32;
@@ -290,7 +286,6 @@
             font-style: italic; line-height: 1.4;
         }
 
-        /* Rango actual guardado */
         .rango-actual {
             display: flex; align-items: center; gap: 10px;
             background: white; border: 2px dashed #a5d6a7;
@@ -299,7 +294,6 @@
         }
         .rango-actual strong { color: #2e7d32; }
 
-        /* Aviso auto-finalización */
         .auto-fin-warning {
             background: linear-gradient(135deg, #fff8e1, #fff3cd);
             border: 2px solid #ff9800; border-radius: 8px;
@@ -308,7 +302,38 @@
         }
         .auto-fin-warning.visible { display: block; }
 
-        /* ── Selector de instructor ─────────────────────────────────────── */
+        /* ══ AVISO SOLAPAMIENTO INSTRUCTOR ══ */
+        .aviso-solapamiento {
+            display: none;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #ffebee, #fce4ec);
+            border: 2px solid #c62828;
+            border-radius: 10px;
+            padding: 16px 18px;
+            animation: fadeIn 0.3s ease;
+        }
+        .aviso-solapamiento.active { display: block; }
+        .aviso-solapamiento-titulo {
+            display: flex; align-items: center; gap: 8px;
+            color: #b71c1c; font-weight: 700; font-size: 1em; margin-bottom: 10px;
+        }
+        .aviso-solapamiento-titulo span { font-size: 1.3em; }
+        .conflicto-item {
+            background: white; border-left: 4px solid #c62828;
+            border-radius: 0 8px 8px 0; padding: 10px 14px; margin-bottom: 8px;
+            font-size: 0.9em; color: #333;
+        }
+        .conflicto-item:last-child { margin-bottom: 0; }
+        .conflicto-item strong { color: #b71c1c; }
+        .conflicto-empresa { font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+        .conflicto-fechas  { font-size: 0.85em; color: #666; }
+        .aviso-solapamiento-footer {
+            margin-top: 10px; font-size: 0.85em;
+            color: #c62828; font-weight: 600;
+            padding-top: 10px; border-top: 1px solid #ffcdd2;
+        }
+
+        /* Selector de instructor */
         .instructor-select-wrapper { position: relative; }
         .instructor-select-wrapper select {
             width: 100%; padding: 12px 14px;
@@ -326,15 +351,18 @@
         .instructor-preview.libre        { border-color: #2e7d32; background: #f1f8f1; }
         .instructor-preview.ocupado      { border-color: #e53935; background: #fff5f5; }
         .instructor-preview.sin-seleccion{ border-color: #e0e0e0; background: #fafafa; }
+        .instructor-preview.conflicto    { border-color: #c62828; background: #fff0f0; }
         .preview-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
         .preview-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
         .preview-dot.libre   { background: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.2); }
         .preview-dot.ocupado { background: #e53935; box-shadow: 0 0 0 3px rgba(229,57,53,0.2); }
         .preview-dot.neutro  { background: #bdbdbd; }
+        .preview-dot.conflicto { background: #c62828; box-shadow: 0 0 0 3px rgba(198,40,40,0.25); }
         .preview-nombre { font-weight: 600; font-size: 1em; color: #333; flex: 1; }
         .preview-estado-label { font-size: 0.82em; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
         .libre   .preview-estado-label { background: #c8e6c9; color: #1b5e20; }
         .ocupado .preview-estado-label { background: #ffcdd2; color: #b71c1c; }
+        .conflicto .preview-estado-label { background: #ffcdd2; color: #b71c1c; }
         .preview-detalle { padding: 0 16px 12px; font-size: 0.87em; color: #666; line-height: 1.5; }
         .preview-formacion-item {
             background: white; border-left: 3px solid #e53935;
@@ -435,6 +463,121 @@
         .btn-secondary { background: white; color: #2e7d32; border: 2px solid #2e7d32; }
         .btn-secondary:hover { background: #2e7d32; color: white; }
 
+        /* ═══════════════════════════════════════════════════════════
+           MODALES
+           ═══════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.50);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .sena-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 520px;
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.88) translateY(-20px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);     opacity: 1; }
+        }
+
+        .sena-modal-header {
+            padding: 26px 32px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: white;
+        }
+        .sena-modal-header.green  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        .sena-modal-header.orange { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+        .sena-modal-header.red    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); }
+
+        .sena-modal-header-icon { font-size: 2em; flex-shrink: 0; }
+        .sena-modal-header h3   { font-size: 1.2em; font-weight: 700; margin: 0; }
+
+        .sena-modal-body { padding: 24px 32px; }
+        .sena-modal-body p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.97em;
+            margin: 0;
+        }
+
+        .sena-modal-footer {
+            padding: 16px 32px 26px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .modal-btn-orange {
+            background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(239,108,0,0.35);
+        }
+        .modal-btn-orange:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,108,0,0.4); }
+        .modal-btn-red {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(198,40,40,0.35);
+        }
+        .modal-btn-red:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(198,40,40,0.4); }
+        .modal-btn-green {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+        }
+        .modal-btn-green:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+        .modal-btn-gray {
+            background: #e0e0e0;
+            color: #555;
+        }
+        .modal-btn-gray:hover { background: #bdbdbd; }
+
+        /* ── Modal solapamiento (más ancho) ── */
+        .sena-modal.wide { max-width: 600px; }
+        .sena-modal-body .conflicto-modal-item {
+            background: #fff5f5;
+            border: 1px solid #ffcdd2;
+            border-left: 4px solid #c62828;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            font-size: 0.93em;
+        }
+        .conflicto-modal-empresa { font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+        .conflicto-modal-programa { color: #555; font-size: 0.9em; margin-bottom: 4px; }
+        .conflicto-modal-fechas {
+            display: inline-block;
+            background: #ffebee;
+            color: #c62828;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
         footer {
             background: linear-gradient(135deg, #1b5e20, #2e7d32);
             color: white; text-align: center; padding: 20px;
@@ -451,10 +594,50 @@
             .formacion-rango-grid { grid-template-columns: 1fr; }
             .razones-grid         { flex-direction: column; }
             .razon-btn            { border-radius: 8px; text-align: left; }
+            .sena-modal           { width: 95%; }
+            .sena-modal-header, .sena-modal-body, .sena-modal-footer { padding-left: 20px; padding-right: 20px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ══ MODAL: ALERTA GENÉRICA ══════════════════════════════════════ -->
+    <div class="modal-overlay" id="overlayAlerta">
+        <div class="sena-modal">
+            <div class="sena-modal-header" id="alertaHeader">
+                <span class="sena-modal-header-icon" id="alertaIcono">⚠️</span>
+                <h3 id="alertaTitulo">Aviso</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p id="alertaMensaje"></p>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn" id="alertaBtn" onclick="cerrarAlerta()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ MODAL: CONFLICTO DE SOLAPAMIENTO ══════════════════════════ -->
+    <div class="modal-overlay" id="overlayConflicto">
+        <div class="sena-modal wide">
+            <div class="sena-modal-header red">
+                <span class="sena-modal-header-icon">🚫</span>
+                <h3>Conflicto de fechas detectado</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p id="conflictoIntro" style="margin-bottom: 4px;"></p>
+                <div id="conflictoLista"></div>
+                <p style="margin-top:14px; font-size:0.9em; color:#c62828; font-weight:600;">
+                    ⚠️ No puedes asignar este instructor en ese rango de fechas. Elige otro instructor o cambia las fechas de formación.
+                </p>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn modal-btn-gray" onclick="cerrarConflicto()">Cancelar</button>
+                <button class="modal-btn modal-btn-red" onclick="forzarAsignacion()">Asignar de todas formas</button>
+            </div>
+        </div>
+    </div>
+
 <div class="container">
 
     <div class="header">
@@ -512,8 +695,9 @@
 
     <form method="POST" enctype="multipart/form-data" id="edit-form">
         {% csrf_token %}
-        <input type="hidden" name="es_migracion"    id="es_migracion"    value="false">
-        <input type="hidden" name="razon_cupo"       id="razon_cupo_input" value="">
+        <input type="hidden" name="es_migracion"       id="es_migracion"       value="false">
+        <input type="hidden" name="razon_cupo"          id="razon_cupo_input"    value="">
+        <input type="hidden" name="forzar_solapamiento" id="forzar_solapamiento" value="false">
 
         <!-- Fechas modo migración -->
         <div class="dates-section" id="dates-section">
@@ -581,11 +765,9 @@
                 <div class="form-group">
                     <label>Área de Formación</label>
                     <input type="text" id="area_formacion_display" value="{{ solicitud.programa.area.nombre }}" disabled>
-                    <!-- Campo oculto con el área real para las validaciones JS -->
                     <input type="hidden" id="area_programa_actual" value="{{ solicitud.programa.area.nombre|lower }}">
                 </div>
 
-                <!-- ══ TRABAJADORES A CAPACITAR con validaciones de cupo ══ -->
                 <div class="form-group">
                     <label for="numero_aprendices">Trabajadores a Capacitar <span class="required-mark">*</span></label>
                     <input
@@ -599,13 +781,11 @@
                         required>
                     <small>Cantidad estimada de personas a capacitar</small>
 
-                    <!-- BLOQUEO DURO: CAMPESENA con menos de 15 -->
                     <div class="aviso-bloqueo" id="aviso-campesena">
                         <p>🚫 El área <strong>CAMPESENA</strong> requiere mínimo <strong>15 aprendices</strong>.
                            Corrige la cantidad para poder continuar.</p>
                     </div>
 
-                    <!-- FLEXIBLE: otras áreas con menos de 20 → botones de razón -->
                     <div class="aviso-flex" id="aviso-otras">
                         <div class="aviso-flex-titulo" id="aviso-otras-titulo"></div>
                         <div class="aviso-flex-subtitulo">Selecciona el motivo para continuar:</div>
@@ -617,7 +797,6 @@
                             <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Solicitud de prueba / diagnóstico')">📋 Solicitud de prueba</button>
                             <button type="button" class="razon-btn" onclick="seleccionarRazon(this, 'Empresa en inicio de operaciones')">🚀 Empresa nueva</button>
                         </div>
-                        <!-- Nota cuando ya había una razón guardada -->
                         <div class="razon-guardada-nota" id="razon-guardada-nota"></div>
                     </div>
                 </div>
@@ -640,7 +819,7 @@
             </div>
         </div>
 
-        <!-- ── Instructor + Programación de formación ─────────────────────── -->
+        <!-- Instructor + Programación -->
         <div class="section">
             <h2>👨‍🏫 Asignación de Instructor</h2>
 
@@ -689,6 +868,18 @@
                             <div class="preview-detalle" id="preview-detalle" style="display:none"></div>
                         </div>
 
+                        <!-- Aviso de solapamiento de fechas (inline bajo el select) -->
+                        <div class="aviso-solapamiento" id="aviso-solapamiento">
+                            <div class="aviso-solapamiento-titulo">
+                                <span>🚫</span>
+                                <span id="aviso-solapamiento-titulo-texto">El instructor ya tiene formaciones en esas fechas</span>
+                            </div>
+                            <div id="aviso-solapamiento-conflictos"></div>
+                            <div class="aviso-solapamiento-footer">
+                                ⛔ Las fechas se solapan con formaciones ya programadas para este instructor.
+                            </div>
+                        </div>
+
                         <div class="disponibilidad-leyenda">
                             <div class="leyenda-item"><span class="leyenda-dot libre"></span><span>Disponible hoy</span></div>
                             <div class="leyenda-item"><span class="leyenda-dot ocupado"></span><span>Ocupado hoy</span></div>
@@ -698,7 +889,6 @@
                 </div>
             </div>
 
-            <!-- ── Programación de fechas de la formación ─────────────────── -->
             <div class="formacion-rango-box">
                 <div class="formacion-rango-title">📅 Programación de la Formación</div>
                 <p class="formacion-rango-subtitle">
@@ -730,7 +920,6 @@
                     </div>
                 </div>
 
-                <!-- Rango actual guardado -->
                 {% if solicitud.fecha_atencion or solicitud.fecha_fin_formacion %}
                 <div class="rango-actual">
                     <span>📌 Rango guardado actualmente:</span>
@@ -742,7 +931,6 @@
                 </div>
                 {% endif %}
 
-                <!-- Aviso auto-finalización -->
                 <div class="auto-fin-warning" id="auto-fin-warning">
                     ⚡ La fecha de fin que ingresaste es <strong>hoy o ya pasó</strong>.
                     Al guardar, la solicitud se <strong>finalizará automáticamente</strong>.
@@ -816,9 +1004,10 @@
 </footer>
 {% include 'core/accessibility.html' %}
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     DATOS DE DISPONIBILIDAD DE INSTRUCTORES (desde Django)
-════════════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════
+     DATOS DE DISPONIBILIDAD E HISTORIAL DE FORMACIONES
+     (incluye todas las formaciones para validación de solapamiento)
+     ══════════════════════════════════════════════════════════ -->
 <script>
 const DISPONIBILIDAD = {};
 {% for info in instructores_info %}
@@ -826,20 +1015,207 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
     ocupado: {{ info.ocupado|yesno:'true,false' }},
     nombre: "{{ info.instructor.nombre|escapejs }}",
     formaciones: [{% for f in info.formaciones_activas %}{"empresa":"{{ f.empresa.nombre|escapejs }}","programa":"{{ f.programa.nombre|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}],
-    proxima: {% if info.proxima %}{"empresa":"{{ info.proxima.empresa.nombre|escapejs }}","fecha":"{{ info.proxima.fecha_atencion|date:'d/m/Y' }}"}{% else %}null{% endif %}
+    proxima: {% if info.proxima %}{"empresa":"{{ info.proxima.empresa.nombre|escapejs }}","fecha":"{{ info.proxima.fecha_atencion|date:'d/m/Y' }}"}{% else %}null{% endif %},
+    /* Historial completo de formaciones para validación de solapamiento */
+    historial: {{ info.formaciones_json|safe }}
 };
 {% endfor %}
 </script>
 
 <script>
-    // ════════════════════════════════════════════════════════
-    // CONFIGURACIÓN DE CUPOS (igual que crear_solicitud)
-    // ════════════════════════════════════════════════════════
-    var AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
-    var CUPO_MIN_CAMPESENA = 15;   // DURO — no se puede guardar con menos
-    var CUPO_MIN_OTROS     = 20;   // FLEXIBLE — requiere elegir una razón
+    /* ═══════════════════════════════════════════════════════════════
+       MODAL GENÉRICO
+       ═══════════════════════════════════════════════════════════════ */
+    function mostrarAlerta(tipo, titulo, mensaje) {
+        var config = {
+            error:   { clase: 'red',    icono: '❌', btnCls: 'modal-btn-red'    },
+            warning: { clase: 'orange',  icono: '⚠️', btnCls: 'modal-btn-orange' },
+            info:    { clase: 'green',   icono: 'ℹ️', btnCls: 'modal-btn-green'  }
+        };
+        var c = config[tipo] || config.info;
 
-    // Obtenemos el área desde el campo oculto que Django renderizó
+        document.getElementById('alertaHeader').className = 'sena-modal-header ' + c.clase;
+        document.getElementById('alertaIcono').textContent  = c.icono;
+        document.getElementById('alertaTitulo').textContent = titulo;
+        document.getElementById('alertaMensaje').textContent = mensaje;
+        document.getElementById('alertaBtn').className = 'modal-btn ' + c.btnCls;
+        document.getElementById('overlayAlerta').classList.add('open');
+    }
+
+    function cerrarAlerta() {
+        document.getElementById('overlayAlerta').classList.remove('open');
+    }
+
+    document.getElementById('overlayAlerta').addEventListener('click', function(e) {
+        if (e.target === this) cerrarAlerta();
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       MODAL CONFLICTO DE SOLAPAMIENTO
+       ═══════════════════════════════════════════════════════════════ */
+    var _pendingSubmit = false;
+
+    function mostrarConflicto(nombreInstructor, conflictos) {
+        document.getElementById('conflictoIntro').textContent =
+            '⚠️ "' + nombreInstructor + '" tiene formaciones programadas que se solapan con las fechas indicadas:';
+
+        var html = '';
+        conflictos.forEach(function(c) {
+            html += '<div class="conflicto-modal-item">' +
+                '<div class="conflicto-modal-empresa">🏢 ' + c.empresa + '</div>' +
+                '<div class="conflicto-modal-programa">📚 ' + c.programa + '</div>' +
+                '<span class="conflicto-modal-fechas">📅 ' + c.fecha_inicio + ' → ' + c.fecha_fin + '</span>' +
+                '</div>';
+        });
+        document.getElementById('conflictoLista').innerHTML = html;
+        document.getElementById('overlayConflicto').classList.add('open');
+    }
+
+    function cerrarConflicto() {
+        document.getElementById('overlayConflicto').classList.remove('open');
+        _pendingSubmit = false;
+    }
+
+    function forzarAsignacion() {
+        /* El usuario acepta conscientemente el solapamiento */
+        document.getElementById('forzar_solapamiento').value = 'true';
+        document.getElementById('overlayConflicto').classList.remove('open');
+        _pendingSubmit = true;
+        document.getElementById('edit-form').requestSubmit();
+    }
+
+    document.getElementById('overlayConflicto').addEventListener('click', function(e) {
+        if (e.target === this) cerrarConflicto();
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       VALIDACIÓN DE SOLAPAMIENTO DE FECHAS
+       ═══════════════════════════════════════════════════════════════ */
+
+    /**
+     * Convierte un string 'YYYY-MM-DD' en un timestamp (ms) para comparar.
+     * Devuelve null si el string está vacío.
+     */
+    function parseFecha(str) {
+        if (!str) return null;
+        var parts = str.split('-');
+        return new Date(
+            parseInt(parts[0]),
+            parseInt(parts[1]) - 1,
+            parseInt(parts[2])
+        ).getTime();
+    }
+
+    /**
+     * Verifica si el rango [nuevaInicio, nuevaFin] se solapa con alguna
+     * formación del historial del instructor seleccionado.
+     *
+     * Solapamiento: nuevaInicio <= existenteFin  AND  nuevaFin >= existenteInicio
+     * Si alguno de los extremos es null (sin fecha fin) se trata como "abierto".
+     *
+     * Devuelve array de conflictos (vacío = sin conflictos).
+     */
+    function detectarSolapamientos(instructorId, nuevaInicio, nuevaFin) {
+        if (!instructorId || !nuevaInicio) return [];
+        var info = DISPONIBILIDAD[parseInt(instructorId)];
+        if (!info || !info.historial) return [];
+
+        var conflictos = [];
+        var tNuevaInicio = parseFecha(nuevaInicio);
+        var tNuevaFin    = nuevaFin ? parseFecha(nuevaFin) : null;
+
+        info.historial.forEach(function(f) {
+            var tExistenteInicio = parseFecha(f.fecha_inicio);
+            var tExistenteFin    = f.fecha_fin ? parseFecha(f.fecha_fin) : null;
+
+            // Extremo efectivo de la nueva asignación (si no hay fin, se usa el inicio)
+            var tNuevaFinEfectiva = tNuevaFin !== null ? tNuevaFin : tNuevaInicio;
+
+            // Solapamiento:
+            // nueva termina DESPUÉS de que existente empieza
+            // Y nueva empieza ANTES de que existente termina (o existente no tiene fin)
+            var nuevaLlegaHastaExistente = tNuevaFinEfectiva >= tExistenteInicio;
+            var nuevaEmpiezaAntesDeQueExistenteFinalice =
+                tExistenteFin === null || tNuevaInicio <= tExistenteFin;
+
+            if (nuevaLlegaHastaExistente && nuevaEmpiezaAntesDeQueExistenteFinalice) {
+                conflictos.push({
+                    empresa:      f.empresa,
+                    programa:     f.programa,
+                    fecha_inicio: f.fecha_inicio.split('-').reverse().join('/'),
+                    fecha_fin:    f.fecha_fin ? f.fecha_fin.split('-').reverse().join('/') : 'Sin fecha fin',
+                    solicitud_id: f.solicitud_id,
+                });
+            }
+        });
+
+        return conflictos;
+    }
+
+    /**
+     * Actualiza el aviso de solapamiento inline (bajo el selector de instructor).
+     */
+    function actualizarAvisoSolapamiento() {
+        var instructorId  = document.getElementById('instructor_asignado').value;
+        var fechaInicio   = document.getElementById('fecha_inicio_formacion').value;
+        var fechaFin      = document.getElementById('fecha_fin_formacion').value;
+        var avisoBox      = document.getElementById('aviso-solapamiento');
+        var conflictosDiv = document.getElementById('aviso-solapamiento-conflictos');
+        var tituloTexto   = document.getElementById('aviso-solapamiento-titulo-texto');
+        var previewBox    = document.getElementById('instructor-preview');
+
+        // No evaluar en modo migración
+        var esMigracion = document.getElementById('es_migracion').value === 'true';
+        if (esMigracion || !instructorId || !fechaInicio) {
+            avisoBox.classList.remove('active');
+            if (previewBox.classList.contains('conflicto')) {
+                // Restaurar al estado de disponibilidad normal
+                actualizarPreviewInstructor();
+            }
+            return;
+        }
+
+        var conflictos = detectarSolapamientos(instructorId, fechaInicio, fechaFin || null);
+
+        if (conflictos.length === 0) {
+            avisoBox.classList.remove('active');
+            // Quitar estado conflicto del preview si estaba
+            if (previewBox.classList.contains('conflicto')) {
+                actualizarPreviewInstructor();
+            }
+            return;
+        }
+
+        // Hay conflictos → mostrar aviso inline
+        var info = DISPONIBILIDAD[parseInt(instructorId)];
+        tituloTexto.textContent =
+            '"' + (info ? info.nombre : 'Este instructor') + '" ya tiene ' +
+            conflictos.length + ' formación(es) en esas fechas';
+
+        var html = '';
+        conflictos.forEach(function(c) {
+            html += '<div class="conflicto-item">' +
+                '<div class="conflicto-empresa">🏢 <strong>' + c.empresa + '</strong></div>' +
+                '<div class="conflicto-fechas">📅 ' + c.fecha_inicio + ' → ' + c.fecha_fin + ' | 📚 ' + c.programa + '</div>' +
+                '</div>';
+        });
+        conflictosDiv.innerHTML = html;
+        avisoBox.classList.add('active');
+
+        // Marcar el preview como conflicto
+        previewBox.className = 'instructor-preview conflicto';
+        document.getElementById('preview-dot').className = 'preview-dot conflicto';
+        document.getElementById('preview-estado-label').textContent = '🚫 CONFLICTO DE FECHAS';
+        document.getElementById('preview-estado-label').style.display = 'inline-block';
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONFIGURACIÓN DE CUPOS
+       ═══════════════════════════════════════════════════════════════ */
+    var AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
+    var CUPO_MIN_CAMPESENA = 15;
+    var CUPO_MIN_OTROS     = 20;
+
     var areaProgramaSeleccionada = document.getElementById('area_programa_actual').value.trim();
     var razonSeleccionada        = '';
 
@@ -847,7 +1223,6 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         return AREAS_CAMPESENA.some(function(n) { return area.includes(n); });
     }
 
-    // ── Detectar si ya existe una razón guardada en observaciones ──
     (function detectarRazonGuardada() {
         var obs = document.getElementById('observaciones').value;
         var match = obs.match(/\[Razón cupo reducido\]:\s*(.+)/);
@@ -860,7 +1235,6 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
             nota.textContent = '✅ Razón guardada anteriormente: "' + razonGuardada + '"';
             nota.classList.add('active');
 
-            // Marcar visualmente el botón correspondiente si existe
             document.querySelectorAll('.razon-btn').forEach(function(btn) {
                 var textoBtn = btn.textContent.trim().replace(/^[^\s]+\s/, '');
                 if (razonGuardada.includes(textoBtn) || textoBtn.includes(razonGuardada)) {
@@ -870,7 +1244,6 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         }
     })();
 
-    // ── Validar cupo al cargar y al cambiar la cantidad ──
     document.getElementById('numero_aprendices').addEventListener('input', function () {
         razonSeleccionada = '';
         limpiarBotonesRazon();
@@ -887,7 +1260,6 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         var avisoTitulo    = document.getElementById('aviso-otras-titulo');
         var area           = areaProgramaSeleccionada;
 
-        // Resetear
         avisoCampesena.classList.remove('active');
         avisoOtras.classList.remove('active');
         numInput.style.borderColor = '#e0e0e0';
@@ -895,13 +1267,11 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         if (!area || cantidad === 0) return;
 
         if (esCampesena(area)) {
-            // CAMPESENA: bloqueo duro si menos de 15
             if (cantidad < CUPO_MIN_CAMPESENA) {
                 avisoCampesena.classList.add('active');
                 numInput.style.borderColor = '#c62828';
             }
         } else {
-            // OTRAS ÁREAS: advertencia + botones de razón si menos de 20
             if (cantidad < CUPO_MIN_OTROS) {
                 avisoTitulo.textContent =
                     '⚠️ El mínimo recomendado para esta área es ' + CUPO_MIN_OTROS +
@@ -926,55 +1296,85 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         });
     }
 
-    // ════════════════════════════════════════════════════════
-    // VALIDACIÓN AL ENVIAR
-    // ════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       VALIDACIÓN AL ENVIAR
+       ═══════════════════════════════════════════════════════════════ */
     document.getElementById('edit-form').addEventListener('submit', function(e) {
+        // Si el usuario ya confirmó el solapamiento, dejar pasar
+        if (_pendingSubmit) {
+            _pendingSubmit = false;
+            return;
+        }
+
         var submitBtn = document.getElementById('submitBtn');
         var numInput  = document.getElementById('numero_aprendices');
         var cantidad  = parseInt(numInput.value) || 0;
         var area      = areaProgramaSeleccionada;
 
+        /* ── Validación de cupo CAMPESENA (bloqueo total) ── */
         if (area && cantidad > 0) {
-
-            // Bloqueo duro CAMPESENA
             if (esCampesena(area) && cantidad < CUPO_MIN_CAMPESENA) {
                 e.preventDefault();
-                alert('🚫 El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
-                      ' aprendices. Corrige la cantidad antes de continuar.');
+                mostrarAlerta(
+                    'error',
+                    'Cupo insuficiente — CAMPESENA',
+                    'El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
+                    ' aprendices. Corrige la cantidad antes de continuar.'
+                );
                 numInput.focus();
                 return;
             }
 
-            // Flexible: otras áreas sin razón elegida
             if (!esCampesena(area) && cantidad < CUPO_MIN_OTROS && !razonSeleccionada) {
                 e.preventDefault();
-                alert('⚠️ Debes seleccionar el motivo por el que hay menos de ' +
-                      CUPO_MIN_OTROS + ' aprendices.');
+                mostrarAlerta(
+                    'warning',
+                    'Motivo requerido',
+                    'Debes seleccionar el motivo por el que hay menos de ' +
+                    CUPO_MIN_OTROS + ' aprendices antes de continuar.'
+                );
                 document.getElementById('aviso-otras').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
         }
 
-        // Si hay razón de cupo, agregarla a observaciones si no está ya
+        /* ── Validación de solapamiento de fechas ── */
+        var esMigracion = document.getElementById('es_migracion').value === 'true';
+        var forzar      = document.getElementById('forzar_solapamiento').value === 'true';
+
+        if (!esMigracion && !forzar) {
+            var instructorId = document.getElementById('instructor_asignado').value;
+            var fechaInicio  = document.getElementById('fecha_inicio_formacion').value;
+            var fechaFin     = document.getElementById('fecha_fin_formacion').value;
+
+            if (instructorId && fechaInicio) {
+                var conflictos = detectarSolapamientos(instructorId, fechaInicio, fechaFin || null);
+                if (conflictos.length > 0) {
+                    e.preventDefault();
+                    var info = DISPONIBILIDAD[parseInt(instructorId)];
+                    mostrarConflicto(info ? info.nombre : 'El instructor', conflictos);
+                    return;
+                }
+            }
+        }
+
+        /* ── Inyectar razón de cupo en observaciones ── */
         if (razonSeleccionada) {
             var obsField = document.getElementById('observaciones');
             var obsActual = obsField.value;
-            // Limpiar razón anterior si existe y reemplazar
             obsActual = obsActual.replace(/\n?\[Razón cupo reducido\]:.*/g, '').trim();
             obsField.value = obsActual
                 ? obsActual + '\n[Razón cupo reducido]: ' + razonSeleccionada
                 : '[Razón cupo reducido]: ' + razonSeleccionada;
         }
 
-        // Todo OK → deshabilitar botón para evitar doble envío
         submitBtn.disabled  = true;
         submitBtn.innerHTML = '⏳ Guardando...';
     });
 
-    // ════════════════════════════════════════════════════════
-    // AUTO-CERRAR MENSAJES
-    // ════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       AUTO-CERRAR MENSAJES DJANGO
+       ═══════════════════════════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.alert').forEach(function (a) {
             setTimeout(function () {
@@ -984,9 +1384,9 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         });
         actualizarPreviewInstructor();
         verificarFechaFin();
-        // Validar cupo al cargar (por si el valor ya está en el campo)
         validarCupo();
-        // Mostrar razón guardada si la cantidad actual ya está por debajo del mínimo
+        actualizarAvisoSolapamiento(); // Evaluar al cargar si ya hay instructor y fechas
+
         var cantidadActual = parseInt(document.getElementById('numero_aprendices').value) || 0;
         if (cantidadActual > 0 && cantidadActual < CUPO_MIN_OTROS) {
             var obs = document.getElementById('observaciones').value;
@@ -1006,9 +1406,9 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         '<style>@keyframes slideOutUp{from{transform:translateY(0);opacity:1}to{transform:translateY(-20px);opacity:0}}</style>'
     );
 
-    // ════════════════════════════════════════════════════════
-    // TOGGLE MODO MIGRACIÓN
-    // ════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       TOGGLE MODO MIGRACIÓN
+       ═══════════════════════════════════════════════════════════════ */
     var migrationToggle  = document.getElementById('migration-mode-toggle');
     var datesSection     = document.getElementById('dates-section');
     var estadoSection    = document.getElementById('estado-section');
@@ -1019,16 +1419,19 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
             datesSection.classList.add('active');
             estadoSection.style.display = 'none';
             esMigracionInput.value = 'true';
+            // Ocultar aviso de solapamiento en modo migración
+            document.getElementById('aviso-solapamiento').classList.remove('active');
         } else {
             datesSection.classList.remove('active');
             estadoSection.style.display = 'block';
             esMigracionInput.value = 'false';
+            actualizarAvisoSolapamiento();
         }
     });
 
-    // ════════════════════════════════════════════════════════
-    // PANEL DE DISPONIBILIDAD DE INSTRUCTOR
-    // ════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       PANEL DE DISPONIBILIDAD DE INSTRUCTOR
+       ═══════════════════════════════════════════════════════════════ */
     var selectInstructor = document.getElementById('instructor_asignado');
     var previewBox       = document.getElementById('instructor-preview');
     var previewDot       = document.getElementById('preview-dot');
@@ -1044,6 +1447,7 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
             previewNombre.textContent = 'Selecciona un instructor para ver su disponibilidad';
             previewEstado.style.display = 'none';
             previewDetalle.style.display = 'none';
+            document.getElementById('aviso-solapamiento').classList.remove('active');
             return;
         }
         var info = DISPONIBILIDAD[parseInt(val)];
@@ -1076,13 +1480,26 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
             previewDetalle.innerHTML = html;
             previewDetalle.style.display = 'block';
         }
+
+        // Después de actualizar el preview, verificar solapamiento
+        actualizarAvisoSolapamiento();
     }
 
     selectInstructor.addEventListener('change', actualizarPreviewInstructor);
 
-    // ════════════════════════════════════════════════════════
-    // AVISO AUTO-FINALIZACIÓN
-    // ════════════════════════════════════════════════════════
+    // Re-evaluar solapamiento cuando cambian las fechas
+    document.getElementById('fecha_inicio_formacion').addEventListener('change', function() {
+        verificarFechaFin();
+        actualizarAvisoSolapamiento();
+    });
+    document.getElementById('fecha_fin_formacion').addEventListener('change', function() {
+        verificarFechaFin();
+        actualizarAvisoSolapamiento();
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       AVISO AUTO-FINALIZACIÓN
+       ═══════════════════════════════════════════════════════════════ */
     var inputFechaFin  = document.getElementById('fecha_fin_formacion');
     var warningAutoFin = document.getElementById('auto-fin-warning');
 
@@ -1098,11 +1515,9 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         }
     }
 
-    inputFechaFin.addEventListener('change', verificarFechaFin);
-
-    // ════════════════════════════════════════════════════════
-    // PREVIEW ARCHIVOS PDF
-    // ════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       PREVIEW ARCHIVOS PDF
+       ═══════════════════════════════════════════════════════════════ */
     document.getElementById('documentos_pdf').addEventListener('change', function (e) {
         var preview  = document.getElementById('files-preview');
         var files    = Array.from(e.target.files);
@@ -1112,21 +1527,39 @@ DISPONIBILIDAD[{{ info.instructor.id }}] = {
         var maxNuevos = 5 - documentosActuales;
 
         if (files.length > maxNuevos) {
-            alert('❌ Solo puedes agregar ' + maxNuevos + ' documento(s) más.');
-            e.target.value = ''; preview.innerHTML = ''; return;
+            mostrarAlerta(
+                'error',
+                'Límite de documentos',
+                'Solo puedes agregar ' + maxNuevos + ' documento(s) más. Ya tienes ' + documentosActuales + ' adjunto(s).'
+            );
+            e.target.value = '';
+            preview.innerHTML = '';
+            return;
         }
 
         var valid = true;
-        files.forEach(function(file) {
+        var errorMsg = '';
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
             if (!file.name.toLowerCase().endsWith('.pdf')) {
-                alert('❌ ' + file.name + ' no es un PDF'); valid = false;
+                errorMsg = '"' + file.name + '" no es un archivo PDF. Solo se permiten archivos .pdf.';
+                valid = false;
+                break;
             }
             if (file.size > 10 * 1024 * 1024) {
-                alert('❌ ' + file.name + ' supera 10MB'); valid = false;
+                errorMsg = '"' + file.name + '" supera el límite de 10MB permitido por archivo.';
+                valid = false;
+                break;
             }
-        });
+        }
 
-        if (!valid) { e.target.value = ''; preview.innerHTML = ''; return; }
+        if (!valid) {
+            mostrarAlerta('error', 'Archivo no válido', errorMsg);
+            e.target.value = '';
+            preview.innerHTML = '';
+            return;
+        }
 
         preview.innerHTML = files.map(function(file) {
             return '<div class="preview-item">' +

@@ -1,127 +1,102 @@
 from django.shortcuts import render, redirect
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import user_passes_test
-from django.core.cache import cache
 from django.utils import timezone
-from django.contrib.auth import authenticate, login, update_session_auth_hash
-from django.contrib.auth import logout
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, update_session_auth_hash, logout
+from django.contrib.auth.models import User, Group
 from django.contrib import messages
-from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-
-# ✅ IMPORTACIONES PARA EL EMAIL
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-# imports directos de modelos (están en apps separadas)
-from area_formacion.models import Area
 from programas.models import Programa
 from empresas.models import Empresa
 from instructores.models import Instructor
 from solicitudes.models import Solicitud
 from core.management.decorators import admin_requerido
 
-# Intentamos importar EstadoSolicitud si existe (TextChoices). Si no, lo manejamos abajo.
 try:
     from solicitudes.models import EstadoSolicitud
 except Exception:
     EstadoSolicitud = None
 
 
+# ─────────────────────────────────────────────
+# Roles válidos para registro de usuarios
+# ─────────────────────────────────────────────
+ROLES_VALIDOS = ['Administrador', 'Asistente', 'Coordinador']
+
+
+# ─────────────────────────────────────────────
+# Vistas
+# ─────────────────────────────────────────────
+
 @login_required
 def dashboard(request):
     """Dashboard adaptado según el rol del usuario"""
-    
     user = request.user
-    
-    # ========================================
-    # DETECTAR ROL DEL USUARIO
-    # ========================================
+
     es_administrador = user.is_superuser or user.groups.filter(name='Administrador').exists()
-    es_asistente = user.groups.filter(name='Asistente').exists()
-    es_coordinador = user.groups.filter(name='Coordinador').exists()
-    
-    # ========================================
-    # MÉTRICAS SEGÚN ROL
-    # ========================================
-    
-    # Métricas base (TODOS)
-    total_solicitudes = Solicitud.objects.count()
-    total_empresas = Empresa.objects.count()
-    total_programas = Programa.objects.count()
+    es_asistente     = user.groups.filter(name='Asistente').exists()
+    es_coordinador   = user.groups.filter(name='Coordinador').exists()
+
+    # Métricas base (todos los roles)
+    total_solicitudes  = Solicitud.objects.count()
+    total_empresas     = Empresa.objects.count()
+    total_programas    = Programa.objects.count()
     total_instructores = Instructor.objects.filter(activo=True).count()
-    
-    # Variables adicionales
-    solicitudes_pendientes = None
+
+    solicitudes_pendientes  = None
     solicitudes_finalizadas = None
-    ultimas_solicitudes_qs = []
-    
-    # --- ADMINISTRADOR Y ASISTENTE: Ven TODO ---
+    ultimas_solicitudes_qs  = []
+
     if es_administrador or es_asistente:
-        solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
+        solicitudes_pendientes  = Solicitud.objects.filter(estado='RECIBIDA').count()
         solicitudes_finalizadas = Solicitud.objects.filter(estado='FINALIZADA').count()
-        
-        # Últimas 15 solicitudes
-        ultimas_solicitudes_qs = Solicitud.objects.select_related(
+        ultimas_solicitudes_qs  = Solicitud.objects.select_related(
             'empresa', 'programa', 'instructor_asignado'
         ).order_by('-fecha_recepcion')[:15]
-    
-    # --- COORDINADOR: Solo lectura básica ---
+
     elif es_coordinador:
         solicitudes_pendientes = Solicitud.objects.filter(estado='RECIBIDA').count()
-        
-        # Solo 10 solicitudes
         ultimas_solicitudes_qs = Solicitud.objects.select_related(
             'empresa', 'programa', 'instructor_asignado'
         ).order_by('-fecha_recepcion')[:10]
 
-    # ========================================
-    # ✅ FIX NIT: Limpiar valores 'None' en Python
-    # antes de enviar al template
-    # ========================================
+    # Limpiar NITs con valor 'None' como string antes de enviar al template
     ultimas_solicitudes = []
     for s in ultimas_solicitudes_qs:
-        # Si el NIT es el string 'None' o None, lo dejamos en None
-        # para que el template lo maneje con {% if %}
         if s.empresa.nit and str(s.empresa.nit).strip().lower() == 'none':
             s.empresa.nit = None
         ultimas_solicitudes.append(s)
 
-    # ========================================
-    # CONSTRUIR MÉTRICAS PARA EL TEMPLATE
-    # ========================================
-    
+    # Métricas base siempre presentes
     metrics = [
-        (total_solicitudes, 'Total Solicitudes', 'bi-file-text-fill', 'primary'),
-        (total_empresas, 'Empresas Registradas', 'bi-building-fill', 'info'),
-        (total_programas, 'Programas Activos', 'bi-book-fill', 'warning'),
+        (total_solicitudes,  'Total Solicitudes',    'bi-file-text-fill',    'primary'),
+        (total_empresas,     'Empresas Registradas', 'bi-building-fill',     'info'),
+        (total_programas,    'Programas Activos',    'bi-book-fill',         'warning'),
         (total_instructores, 'Instructores Activos', 'bi-person-badge-fill', 'secondary'),
     ]
-    
-    if solicitudes_pendientes is not None:
-        metrics.append((solicitudes_pendientes, 'Pendientes', 'bi-clock-history', 'danger'))
-    
-    if solicitudes_finalizadas is not None:
-        metrics.append((solicitudes_finalizadas, 'Finalizadas', 'bi-check-circle-fill', 'success'))
-    
-    # ========================================
-    # CONTEXTO
-    # ========================================
-    
+
+    # Métricas adicionales según rol
+    metricas_opcionales = [
+        (solicitudes_pendientes,  'Pendientes',  'bi-clock-history',      'danger'),
+        (solicitudes_finalizadas, 'Finalizadas', 'bi-check-circle-fill',  'success'),
+    ]
+    for valor, label, icono, color in metricas_opcionales:
+        if valor is not None:
+            metrics.append((valor, label, icono, color))
+
     context = {
-        'metrics': metrics,
+        'metrics':             metrics,
         'ultimas_solicitudes': ultimas_solicitudes,
-        'es_administrador': es_administrador,
-        'es_coordinador': es_coordinador,
-        'es_asistente': es_asistente,
-        'now': timezone.now(),
+        'es_administrador':    es_administrador,
+        'es_coordinador':      es_coordinador,
+        'es_asistente':        es_asistente,
+        'now':                 timezone.now(),
     }
-    
     return render(request, 'core/dashboard.html', context)
 
 
@@ -129,109 +104,93 @@ def home(request):
     """Página de inicio pública."""
     return render(request, 'core/home.html')
 
+
 def login_view(request):
-    """Vista para iniciar sesion"""
-    # Si el usuario ya está autenticado, redirigir al dashboard
+    """Vista para iniciar sesión"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
-    
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
-        
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            nombre = user.get_full_name() or user.username
-            messages.success(request, f'¡Bienvenido {nombre}!')
-            
-            # Redirigir a la página solicitada o al dashboard
-            next_url = request.GET.get('next', 'core:dashboard')
-            return redirect(next_url)
-        else:
-            messages.error(request, 'Usuario o contraseña incorrectos')
-    
+
+    if request.method != 'POST':
+        return render(request, 'core/login.html')
+
+    username = request.POST.get('username', '').strip()
+    password = request.POST.get('password', '')
+    user     = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        login(request, user)
+        nombre  = user.get_full_name() or user.username
+        messages.success(request, f'¡Bienvenido {nombre}!')
+        next_url = request.GET.get('next', 'core:dashboard')
+        return redirect(next_url)
+
+    messages.error(request, 'Usuario o contraseña incorrectos')
     return render(request, 'core/login.html')
 
-from django.contrib.auth.models import Group
 
 @admin_requerido
 def register_user_view(request):
     """Vista para crear usuarios con diferentes roles (Administrador, Asistente, Coordinador)"""
-    
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-        password2 = request.POST.get('password2', '')
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        rol = request.POST.get('rol', '')
-        
-        # Validaciones
-        if not all([username, email, password, password2, rol]):
-            messages.error(request, 'Todos los campos son obligatorios')
+    if request.method != 'POST':
+        return render(request, 'core/register_user.html')
+
+    username   = request.POST.get('username',   '').strip()
+    email      = request.POST.get('email',      '').strip()
+    password   = request.POST.get('password',   '')
+    password2  = request.POST.get('password2',  '')
+    first_name = request.POST.get('first_name', '').strip()
+    last_name  = request.POST.get('last_name',  '').strip()
+    rol        = request.POST.get('rol',        '')
+
+    # Validaciones en orden: (condición de error, mensaje)
+    validaciones = [
+        (not all([username, email, password, password2, rol]),
+         'Todos los campos son obligatorios'),
+        (password != password2,
+         'Las contraseñas no coinciden'),
+        (len(password) < 8,
+         'La contraseña debe tener al menos 8 caracteres'),
+        (rol not in ROLES_VALIDOS,
+         'Rol inválido'),
+        (User.objects.filter(username=username).exists(),
+         f'El nombre de usuario "{username}" ya existe'),
+        (User.objects.filter(email=email).exists(),
+         f'El correo "{email}" ya está registrado'),
+    ]
+    for condicion, mensaje in validaciones:
+        if condicion:
+            messages.error(request, mensaje)
             return render(request, 'core/register_user.html')
-        
-        if password != password2:
-            messages.error(request, 'Las contraseñas no coinciden')
-            return render(request, 'core/register_user.html')
-        
-        if len(password) < 8:
-            messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
-            return render(request, 'core/register_user.html')
-        
-        if rol not in ['Administrador', 'Asistente', 'Coordinador']:
-            messages.error(request, 'Rol inválido')
-            return render(request, 'core/register_user.html')
-        
-        if User.objects.filter(username=username).exists():
-            messages.error(request, f'El nombre de usuario "{username}" ya existe')
-            return render(request, 'core/register_user.html')
-        
-        if User.objects.filter(email=email).exists():
-            messages.error(request, f'El correo "{email}" ya está registrado')
-            return render(request, 'core/register_user.html')
-        
+
+    try:
+        user = User.objects.create_user(
+            username=username, email=email, password=password,
+            first_name=first_name, last_name=last_name
+        )
+        user.is_staff      = (rol == 'Administrador')
+        user.is_superuser  = False
+        user.save()
+
         try:
-            # Crear usuario
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name
-            )
-            
-            # Configurar según rol
-            if rol == 'Administrador':
-                user.is_staff = True
-            else:
-                user.is_staff = False
-            
-            user.is_superuser = False
+            grupo = Group.objects.get(name=rol)
+            user.groups.add(grupo)
             user.save()
-            
-            # Asignar grupo
-            try:
-                grupo = Group.objects.get(name=rol)
-                user.groups.add(grupo)
-                user.save()
-            except Group.DoesNotExist:
-                user.delete()
-                messages.error(request, f'El rol "{rol}" no existe. Ejecuta "python manage.py crear_roles"')
-                return render(request, 'core/register_user.html')
-            
-            messages.success(request, f'✅ Usuario "{username}" creado con rol "{rol}"')
-            return redirect('core:dashboard')
-        
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
+        except Group.DoesNotExist:
+            user.delete()
+            messages.error(
+                request,
+                f'El rol "{rol}" no existe. Ejecuta "python manage.py crear_roles"'
+            )
             return render(request, 'core/register_user.html')
-    
-    return render(request, 'core/register_user.html')
-        
+
+        messages.success(request, f'✅ Usuario "{username}" creado con rol "{rol}"')
+        return redirect('core:dashboard')
+
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        return render(request, 'core/register_user.html')
+
+
 def logout_view(request):
     """Vista para cerrar sesión"""
     nombre = request.user.get_full_name() or request.user.username
@@ -239,164 +198,142 @@ def logout_view(request):
     messages.success(request, f'Hasta pronto {nombre}! Has cerrado sesión exitosamente')
     return redirect('core:home')
 
+
 @login_required
 def profile_view(request):
     """Vista para ver el perfil del usuario"""
-    context = {
-        'user': request.user
-    }
+    context = {'user': request.user}
+
     if request.user.is_staff:
-        # Métricas del sistema para el administrador
-        context['total_solicitudes'] = Solicitud.objects.count()
-        context['total_empresas'] = Empresa.objects.count()
-        context['total_programas'] = Programa.objects.count()
-        context['total_instructores'] = Instructor.objects.filter(activo=True).count()
-    
+        context.update({
+            'total_solicitudes':  Solicitud.objects.count(),
+            'total_empresas':     Empresa.objects.count(),
+            'total_programas':    Programa.objects.count(),
+            'total_instructores': Instructor.objects.filter(activo=True).count(),
+        })
+
     return render(request, 'core/profile.html', context)
+
 
 @login_required
 def profile_edit(request):
     """Vista para editar el perfil del usuario"""
-    
-    if request.method == 'POST':
-        user = request.user
-        
-        # Obtener datos del formulario
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        email = request.POST.get('email', '').strip()
-        
-        # Validaciones
-        if not email:
-            messages.error(request, 'El correo electrónico es obligatorio')
+    if request.method != 'POST':
+        return render(request, 'core/profile_edit.html')
+
+    user       = request.user
+    first_name = request.POST.get('first_name', '').strip()
+    last_name  = request.POST.get('last_name',  '').strip()
+    email      = request.POST.get('email',      '').strip()
+
+    # Validaciones en orden
+    validaciones = [
+        (not email,
+         'El correo electrónico es obligatorio'),
+        (User.objects.filter(email=email).exclude(id=user.id).exists(),
+         'Este correo electrónico ya está en uso'),
+    ]
+    for condicion, mensaje in validaciones:
+        if condicion:
+            messages.error(request, mensaje)
             return render(request, 'core/profile_edit.html')
-    
-        if User.objects.filter(email=email).exclude(id=user.id).exists():
-            messages.error(request, 'Este correo electrónico ya está en uso')
-            return render(request, 'core/profile_edit.html')
-        
-        try:
-            # Actualizar datos del usuario
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
-            user.save()
-            
-            messages.success(request, '¡Perfil actualizado exitosamente!')
-            return redirect('core:profile')
-        except Exception as e:
-            messages.error(request, f'Error al actualizar el perfil: {str(e)}')
-            return render(request, 'core/profile_edit.html')
-    return render(request, 'core/profile_edit.html')
+
+    try:
+        user.first_name = first_name
+        user.last_name  = last_name
+        user.email      = email
+        user.save()
+        messages.success(request, '¡Perfil actualizado exitosamente!')
+        return redirect('core:profile')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar el perfil: {str(e)}')
+        return render(request, 'core/profile_edit.html')
+
 
 @login_required
 def change_password(request):
     """Vista para cambiar la contraseña del usuario"""
-    
-    if request.method == 'POST':
-        user = request.user
-        current_password = request.POST.get('current_password', '')
-        new_password = request.POST.get('new_password', '')
-        confirm_password = request.POST.get('confirm_password', '')
-        
-        # Validaciones
-        if not all([current_password, new_password, confirm_password]):
-            messages.error(request, 'Todos los campos son obligatorios')
+    if request.method != 'POST':
+        return render(request, 'core/change_password.html')
+
+    user             = request.user
+    current_password = request.POST.get('current_password', '')
+    new_password     = request.POST.get('new_password',     '')
+    confirm_password = request.POST.get('confirm_password', '')
+
+    # Validaciones en orden
+    validaciones = [
+        (not all([current_password, new_password, confirm_password]),
+         'Todos los campos son obligatorios'),
+        (not user.check_password(current_password),
+         'La contraseña actual es incorrecta'),
+        (new_password != confirm_password,
+         'Las contraseñas nuevas no coinciden'),
+        (len(new_password) < 8,
+         'La contraseña debe tener al menos 8 caracteres'),
+    ]
+    for condicion, mensaje in validaciones:
+        if condicion:
+            messages.error(request, mensaje)
             return render(request, 'core/change_password.html')
-        
-        # Verificar contraseña actual
-        if not user.check_password(current_password):
-            messages.error(request, 'La contraseña actual es incorrecta')
-            return render(request, 'core/change_password.html')
-        
-        # Verificar que las contraseñas coincidan
-        if new_password != confirm_password:
-            messages.error(request, 'Las contraseñas nuevas no coinciden')
-            return render(request, 'core/change_password.html')
-        
-        # Verificar longitud mínima
-        if len(new_password) < 8:
-            messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
-            return render(request, 'core/change_password.html')
-        
-        try:
-            # Cambiar contraseña
-            user.set_password(new_password)
-            user.save()
-            
-            # Mantener la sesión activa después de cambiar la contraseña
-            update_session_auth_hash(request, user)
-            
-            messages.success(request, '¡Contraseña cambiada exitosamente!')
-            return redirect('core:profile')
-        except Exception as e:
-            messages.error(request, f'Error al cambiar la contraseña: {str(e)}')
-            return render(request, 'core/change_password.html')
-    
-    return render(request, 'core/change_password.html')
+
+    try:
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, '¡Contraseña cambiada exitosamente!')
+        return redirect('core:profile')
+    except Exception as e:
+        messages.error(request, f'Error al cambiar la contraseña: {str(e)}')
+        return render(request, 'core/change_password.html')
+
 
 def accessibility(request):
+    """Vista del panel de accesibilidad"""
     return render(request, 'core/accessibility.html')
 
 
-# ============================================
-# ✅ CLASE PARA ENVIAR HTML EN EMAILS
-# ============================================
-class CustomPasswordResetView(PasswordResetView):
-    """
-    Vista personalizada para enviar correos HTML en el restablecimiento de contraseña.
-    """
-    
-    def form_valid(self, form):
-        """
-        Sobrescribe form_valid para personalizar el envío del email.
-        """
-        opts = {
-            'use_https': self.request.is_secure(),
-            'token_generator': self.token_generator,
-            'from_email': self.from_email,
-            'email_template_name': self.email_template_name,
-            'subject_template_name': self.subject_template_name,
-            'request': self.request,
-            'html_email_template_name': self.html_email_template_name,
-            'extra_email_context': self.extra_email_context,
-        }
-        
-        # Obtener usuarios asociados al email
-        email = form.cleaned_data["email"]
-        for user in form.get_users(email):
-            # Construir el contexto del email
-            context = {
-                'email': user.email,
-                'domain': self.request.get_host(),
-                'site_name': self.request.get_host(),
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'user': user,
-                'token': self.token_generator.make_token(user),
-                'protocol': 'https' if self.request.is_secure() else 'http',
-            }
-            
-            # Renderizar asunto
-            subject = render_to_string(self.subject_template_name, context)
-            subject = ''.join(subject.splitlines())
-            
-            # Renderizar HTML
-            html_content = render_to_string(self.email_template_name, context)
-            
-            # Crear y enviar el email
-            email_message = EmailMultiAlternatives(
-                subject=subject,
-                body='Habilita HTML para ver este mensaje.',
-                from_email=opts['from_email'],
-                to=[user.email]
-            )
-            email_message.attach_alternative(html_content, "text/html")
-            email_message.send(fail_silently=False)
-        
-        # Redirigir manualmente sin llamar a super() para evitar envío duplicado
-        return HttpResponseRedirect(self.success_url)
-    
 @login_required
 def manual_usuario(request):
     """Vista para mostrar el manual de usuario"""
     return render(request, 'core/manual_usuario.html')
+
+
+# ─────────────────────────────────────────────
+# Clase para enviar HTML en emails de recuperación
+# ─────────────────────────────────────────────
+
+class CustomPasswordResetView(PasswordResetView):
+    """
+    Vista personalizada para enviar correos HTML en el restablecimiento de contraseña.
+    Evita el envío duplicado sobrescribiendo form_valid.
+    """
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+
+        for user in form.get_users(email):
+            context = {
+                'email':     user.email,
+                'domain':    self.request.get_host(),
+                'site_name': self.request.get_host(),
+                'uid':       urlsafe_base64_encode(force_bytes(user.pk)),
+                'user':      user,
+                'token':     self.token_generator.make_token(user),
+                'protocol':  'https' if self.request.is_secure() else 'http',
+            }
+
+            subject      = ''.join(render_to_string(self.subject_template_name, context).splitlines())
+            html_content = render_to_string(self.email_template_name, context)
+
+            email_message = EmailMultiAlternatives(
+                subject=subject,
+                body='Habilita HTML para ver este mensaje.',
+                from_email=self.from_email,
+                to=[user.email]
+            )
+            email_message.attach_alternative(html_content, 'text/html')
+            email_message.send(fail_silently=False)
+
+        # Redirige manualmente para evitar envío duplicado del padre
+        return HttpResponseRedirect(self.success_url)

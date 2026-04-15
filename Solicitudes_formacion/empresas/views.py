@@ -1,75 +1,104 @@
-from datetime import timezone, datetime, timedelta
+from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Empresa
 from django.db.models import Q, Count
-from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.utils import timezone as django_timezone
 from core.management.decorators import puede_ver_requerido, puede_editar_requerido
 
+
+# ─────────────────────────────────────────────
+# Rangos de fecha disponibles para filtros
+# ─────────────────────────────────────────────
+
 def obtener_rango_fechas(rango_fecha):
-    hoy = django_timezone.now()
+    """Retorna (inicio, fin) según el rango solicitado."""
+    hoy    = django_timezone.now()
     inicio = None
-    fin = hoy
+    fin    = hoy
 
     if rango_fecha == 'hoy':
         inicio = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+
     elif rango_fecha == 'ayer':
-        ayer = hoy - timedelta(days=1)
-        inicio = ayer.replace(hour=0, minute=0, second=0, microsecond=0)
-        fin = ayer.replace(hour=23, minute=59, second=59, microsecond=999999)
+        ayer   = hoy - timedelta(days=1)
+        inicio = ayer.replace(hour=0,  minute=0,  second=0,  microsecond=0)
+        fin    = ayer.replace(hour=23, minute=59, second=59, microsecond=999999)
+
     elif rango_fecha == 'esta_semana':
-        inicio = hoy - timedelta(days=hoy.weekday())
-        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+        inicio = (hoy - timedelta(days=hoy.weekday())).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
     elif rango_fecha == 'semana_pasada':
-        inicio = hoy - timedelta(days=hoy.weekday() + 7)
-        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
-        fin = inicio + timedelta(days=6)
-        fin = fin.replace(hour=23, minute=59, second=59, microsecond=999999)
+        inicio = (hoy - timedelta(days=hoy.weekday() + 7)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        fin = (inicio + timedelta(days=6)).replace(
+            hour=23, minute=59, second=59, microsecond=999999
+        )
+
     elif rango_fecha == 'este_mes':
         inicio = hoy.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
     elif rango_fecha == 'mes_pasado':
-        primer_dia_este_mes = hoy.replace(day=1)
-        ultimo_dia_mes_pasado = primer_dia_este_mes - timedelta(days=1)
-        inicio = ultimo_dia_mes_pasado.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        fin = ultimo_dia_mes_pasado.replace(hour=23, minute=59, second=59, microsecond=999999)
+        ultimo_dia_mes_pasado = hoy.replace(day=1) - timedelta(days=1)
+        inicio = ultimo_dia_mes_pasado.replace(day=1, hour=0,  minute=0,  second=0,  microsecond=0)
+        fin    = ultimo_dia_mes_pasado.replace(       hour=23, minute=59, second=59, microsecond=999999)
+
     elif rango_fecha == 'ultimos_7_dias':
-        inicio = hoy - timedelta(days=7)
-        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+        inicio = (hoy - timedelta(days=7)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
     elif rango_fecha == 'ultimos_30_dias':
-        inicio = hoy - timedelta(days=30)
-        inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+        inicio = (hoy - timedelta(days=30)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
     elif rango_fecha == 'este_año':
         inicio = hoy.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
 
     return inicio, fin
 
 
+# ─────────────────────────────────────────────
+# Vistas
+# ─────────────────────────────────────────────
+
 @puede_ver_requerido
 def listar_empresas(request):
-    search = request.GET.get('search', '')
-    municipio = request.GET.get('municipio', '')
+    """Vista para listar todas las empresas con filtros."""
+    search           = request.GET.get('search', '')
+    municipio        = request.GET.get('municipio', '')
     min_trabajadores = request.GET.get('min_trabajadores', '')
-    rango_fecha = request.GET.get('rango_fecha', '')
+    rango_fecha      = request.GET.get('rango_fecha', '')
 
     empresas = Empresa.objects.annotate(total_solicitudes=Count('solicitud'))
 
+    # Filtro de búsqueda general
     if search:
         empresas = empresas.filter(
-            Q(nombre__icontains=search) |
-            Q(nit__icontains=search) |
-            Q(contacto__icontains=search) |
+            Q(nombre__icontains=search)  |
+            Q(nit__icontains=search)     |
+            Q(contacto__icontains=search)|
             Q(correo__icontains=search)
         )
+
+    # Filtro por municipio
     if municipio:
         empresas = empresas.filter(municipio__icontains=municipio)
+
+    # Filtro por número mínimo de trabajadores
     if min_trabajadores:
         try:
             empresas = empresas.filter(numero_trabajadores__gte=int(min_trabajadores))
         except ValueError:
             pass
+
+    # Filtro por rango de fecha
     if rango_fecha:
         fecha_inicio, fecha_fin = obtener_rango_fechas(rango_fecha)
         if fecha_inicio:
@@ -83,18 +112,15 @@ def listar_empresas(request):
         municipio__isnull=True
     ).exclude(municipio='').values_list('municipio', flat=True).distinct().order_by('municipio')
 
-    total_empresas = empresas.count()
-    total_solicitudes = sum(e.total_solicitudes for e in empresas)
-
     context = {
-        'empresas': empresas,
-        'municipios': municipios,
-        'search': search,
-        'municipio_filter': municipio,
+        'empresas':               empresas,
+        'municipios':             municipios,
+        'search':                 search,
+        'municipio_filter':       municipio,
         'min_trabajadores_filter': min_trabajadores,
-        'rango_fecha': rango_fecha,
-        'total_empresas': total_empresas,
-        'total_solicitudes': total_solicitudes,
+        'rango_fecha':            rango_fecha,
+        'total_empresas':         empresas.count(),
+        'total_solicitudes':      sum(e.total_solicitudes for e in empresas),
     }
     return render(request, 'empresas/listar_empresas.html', context)
 
@@ -103,16 +129,16 @@ def _validar_empresa(post, empresa_id=None):
     """
     Valida los campos del formulario de empresa (crear y editar).
     Retorna (datos_limpios, lista_de_errores).
-    empresa_id se pasa solo al editar para excluir la empresa actual en
-    las validaciones de unicidad.
+    empresa_id se pasa solo al editar para excluir la empresa actual
+    en las validaciones de unicidad.
     """
-    nombre              = post.get('nombre', '').strip()
-    nit                 = post.get('nit', '').strip()
-    contacto            = post.get('contacto', '').strip()
-    correo              = post.get('correo', '').strip()
-    telefono            = post.get('telefono', '').strip()
-    municipio           = post.get('municipio', '').strip()
-    direccion           = post.get('direccion', '').strip()
+    nombre              = post.get('nombre',              '').strip()
+    nit                 = post.get('nit',                 '').strip()
+    contacto            = post.get('contacto',            '').strip()
+    correo              = post.get('correo',              '').strip()
+    telefono            = post.get('telefono',            '').strip()
+    municipio           = post.get('municipio',           '').strip()
+    direccion           = post.get('direccion',           '').strip()
     numero_trabajadores = post.get('numero_trabajadores', '').strip()
 
     errores = []
@@ -129,15 +155,15 @@ def _validar_empresa(post, empresa_id=None):
         if qs_nombre.exists():
             errores.append(f'❌ Ya existe una empresa con el nombre "{nombre}"')
 
-    # ── NIT (obligatorio) ────────────────────────────────────────────────────
+    # ── NIT ─────────────────────────────────────────────────────────────────
     if not nit:
         errores.append('⚠️ El NIT de la empresa es obligatorio')
     else:
         nit_limpio = nit.replace(' ', '').replace('-', '')
         if not nit_limpio.isdigit():
             errores.append('❌ El NIT solo debe contener números')
-        elif len(nit_limpio) < 9:
-            errores.append('❌ El NIT debe tener al menos 9 dígitos')
+        elif len(nit_limpio) < 9 or len(nit_limpio) > 10:
+            errores.append('❌ El NIT debe tener entre 9 y 10 dígitos')
         else:
             qs_nit = Empresa.objects.filter(nit=nit_limpio)
             if empresa_id:
@@ -147,43 +173,43 @@ def _validar_empresa(post, empresa_id=None):
             else:
                 nit = nit_limpio
 
-    # ── Contacto (obligatorio) ───────────────────────────────────────────────
+    # ── Contacto ─────────────────────────────────────────────────────────────
     if not contacto:
         errores.append('⚠️ La persona de contacto es obligatoria')
     elif len(contacto) < 3:
         errores.append('⚠️ El nombre de contacto debe tener al menos 3 caracteres')
 
-    # ── Correo (obligatorio) ─────────────────────────────────────────────────
+    # ── Correo ───────────────────────────────────────────────────────────────
     if not correo:
         errores.append('⚠️ El correo electrónico es obligatorio')
     elif '@' not in correo or '.' not in correo:
         errores.append('❌ El correo electrónico no es válido')
 
-    # ── Teléfono (obligatorio) ───────────────────────────────────────────────
+    # ── Teléfono ─────────────────────────────────────────────────────────────
     if not telefono:
         errores.append('⚠️ El teléfono es obligatorio')
     else:
         tel_limpio = telefono.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
         if not tel_limpio.isdigit():
             errores.append('❌ El teléfono solo debe contener números')
-        elif len(tel_limpio) < 7:
-            errores.append('❌ El teléfono debe tener al menos 7 dígitos')
+        elif len(tel_limpio) < 7 or len(tel_limpio) > 13:
+            errores.append('❌ El teléfono debe tener entre 7 y 13 dígitos')
         else:
             telefono = tel_limpio
 
-    # ── Municipio (obligatorio) ──────────────────────────────────────────────
+    # ── Municipio ────────────────────────────────────────────────────────────
     if not municipio:
         errores.append('⚠️ El municipio es obligatorio')
     elif len(municipio) < 3:
         errores.append('⚠️ El municipio debe tener al menos 3 caracteres')
 
-    # ── Dirección (obligatoria) ──────────────────────────────────────────────
+    # ── Dirección ────────────────────────────────────────────────────────────
     if not direccion:
         errores.append('⚠️ La dirección es obligatoria')
     elif len(direccion) < 5:
         errores.append('⚠️ La dirección debe tener al menos 5 caracteres')
 
-    # ── Número de trabajadores (obligatorio, mínimo 20) ──────────────────────
+    # ── Número de trabajadores ────────────────────────────────────────────────
     num_trabajadores_int = None
     if not numero_trabajadores:
         errores.append('⚠️ El número de trabajadores es obligatorio')
@@ -196,108 +222,107 @@ def _validar_empresa(post, empresa_id=None):
             errores.append('❌ El número de trabajadores debe ser un número válido')
 
     datos = {
-        'nombre':              nombre,
-        'nit':                 nit,
-        'contacto':            contacto,
-        'correo':              correo,
-        'telefono':            telefono,
-        'municipio':           municipio,
-        'direccion':           direccion,
-        'numero_trabajadores': numero_trabajadores,
+        'nombre':                 nombre,
+        'nit':                    nit,
+        'contacto':               contacto,
+        'correo':                 correo,
+        'telefono':               telefono,
+        'municipio':              municipio,
+        'direccion':              direccion,
+        'numero_trabajadores':    numero_trabajadores,
         'numero_trabajadores_int': num_trabajadores_int,
     }
     return datos, errores
 
 
+def _contexto_formulario(datos):
+    """Retorna el contexto con los datos del formulario para repintar en caso de error."""
+    return {
+        'nombre':              datos['nombre'],
+        'nit':                 datos['nit'],
+        'contacto':            datos['contacto'],
+        'correo':              datos['correo'],
+        'telefono':            datos['telefono'],
+        'municipio':           datos['municipio'],
+        'direccion':           datos['direccion'],
+        'numero_trabajadores': datos['numero_trabajadores'],
+    }
+
+
 @puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def crear_empresa(request):
-    if request.method == 'POST':
-        datos, errores = _validar_empresa(request.POST)
+    """Vista para crear una nueva empresa."""
+    if request.method != 'POST':
+        return render(request, 'empresas/crear_empresa.html')
 
-        if errores:
-            for error in errores:
-                messages.error(request, error)
-            return render(request, 'empresas/crear_empresa.html', {
-                'nombre':              datos['nombre'],
-                'nit':                 datos['nit'],
-                'contacto':            datos['contacto'],
-                'correo':              datos['correo'],
-                'telefono':            datos['telefono'],
-                'municipio':           datos['municipio'],
-                'direccion':           datos['direccion'],
-                'numero_trabajadores': datos['numero_trabajadores'],
-            })
+    datos, errores = _validar_empresa(request.POST)
 
-        try:
-            with transaction.atomic():
-                empresa = Empresa.objects.create(
-                    nombre=datos['nombre'],
-                    nit=datos['nit'],
-                    contacto=datos['contacto'],
-                    correo=datos['correo'],
-                    telefono=datos['telefono'],
-                    municipio=datos['municipio'],
-                    direccion=datos['direccion'],
-                    numero_trabajadores=datos['numero_trabajadores_int'] or 0,
-                )
-            messages.success(request, f'✅ ¡Empresa "{empresa.nombre}" creada exitosamente!')
-            return redirect('empresas:listar_empresas')
+    if errores:
+        for error in errores:
+            messages.error(request, error)
+        return render(request, 'empresas/crear_empresa.html', _contexto_formulario(datos))
 
-        except Exception as e:
-            messages.error(request, f'❌ Error al crear la empresa: {str(e)}')
-            return render(request, 'empresas/crear_empresa.html', {
-                'nombre':              datos['nombre'],
-                'nit':                 datos['nit'],
-                'contacto':            datos['contacto'],
-                'correo':              datos['correo'],
-                'telefono':            datos['telefono'],
-                'municipio':           datos['municipio'],
-                'direccion':           datos['direccion'],
-                'numero_trabajadores': datos['numero_trabajadores'],
-            })
+    try:
+        with transaction.atomic():
+            empresa = Empresa.objects.create(
+                nombre              = datos['nombre'],
+                nit                 = datos['nit'],
+                contacto            = datos['contacto'],
+                correo              = datos['correo'],
+                telefono            = datos['telefono'],
+                municipio           = datos['municipio'],
+                direccion           = datos['direccion'],
+                numero_trabajadores = datos['numero_trabajadores_int'] or 0,
+            )
+        messages.success(request, f'✅ ¡Empresa "{empresa.nombre}" creada exitosamente!')
+        return redirect('empresas:listar_empresas')
 
-    return render(request, 'empresas/crear_empresa.html')
+    except Exception as e:
+        messages.error(request, f'❌ Error al crear la empresa: {str(e)}')
+        return render(request, 'empresas/crear_empresa.html', _contexto_formulario(datos))
 
 
 @puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def editar_empresa(request, empresa_id):
+    """Vista para editar una empresa existente."""
     empresa = get_object_or_404(Empresa, id=empresa_id)
 
-    if request.method == 'POST':
-        datos, errores = _validar_empresa(request.POST, empresa_id=empresa_id)
-        activo = request.POST.get('activo') == 'on'
+    if request.method != 'POST':
+        return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
 
-        if errores:
-            for error in errores:
-                messages.error(request, error)
-            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+    datos, errores = _validar_empresa(request.POST, empresa_id=empresa_id)
+    activo         = request.POST.get('activo') == 'on'
 
-        try:
-            with transaction.atomic():
-                empresa.nombre              = datos['nombre']
-                empresa.nit                 = datos['nit']
-                empresa.contacto            = datos['contacto']
-                empresa.correo              = datos['correo']
-                empresa.telefono            = datos['telefono']
-                empresa.municipio           = datos['municipio']
-                empresa.direccion           = datos['direccion']
-                empresa.numero_trabajadores = datos['numero_trabajadores_int'] or 0
-                empresa.activo              = activo
-                empresa.save()
-            messages.success(request, f'✅ ¡Empresa "{empresa.nombre}" actualizada exitosamente!')
-            return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
+    if errores:
+        for error in errores:
+            messages.error(request, error)
+        return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
 
-        except Exception as e:
-            messages.error(request, f'❌ Error al actualizar la empresa: {str(e)}')
-            return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+    try:
+        with transaction.atomic():
+            empresa.nombre              = datos['nombre']
+            empresa.nit                 = datos['nit']
+            empresa.contacto            = datos['contacto']
+            empresa.correo              = datos['correo']
+            empresa.telefono            = datos['telefono']
+            empresa.municipio           = datos['municipio']
+            empresa.direccion           = datos['direccion']
+            empresa.numero_trabajadores = datos['numero_trabajadores_int'] or 0
+            empresa.activo              = activo
+            empresa.save()
+        messages.success(request, f'✅ ¡Empresa "{empresa.nombre}" actualizada exitosamente!')
+        return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
 
-    return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
+    except Exception as e:
+        messages.error(request, f'❌ Error al actualizar la empresa: {str(e)}')
+        return render(request, 'empresas/editar_empresa.html', {'empresa': empresa})
 
 
 @puede_ver_requerido
 def detalle_empresa(request, empresa_id):
+    """Vista para el detalle de una empresa."""
     empresa = get_object_or_404(
         Empresa.objects.annotate(total_solicitudes=Count('solicitud')),
         id=empresa_id
@@ -307,10 +332,10 @@ def detalle_empresa(request, empresa_id):
     ).order_by('-fecha_recepcion')
 
     context = {
-        'empresa': empresa,
-        'solicitudes_activas':    solicitudes.exclude(estado='FINALIZADA'),
+        'empresa':                 empresa,
+        'solicitudes_activas':     solicitudes.exclude(estado='FINALIZADA'),
         'solicitudes_finalizadas': solicitudes.filter(estado='FINALIZADA'),
-        'total_solicitudes':      solicitudes.count(),
+        'total_solicitudes':       solicitudes.count(),
     }
     return render(request, 'empresas/detalle_empresa.html', context)
 
@@ -318,6 +343,7 @@ def detalle_empresa(request, empresa_id):
 @puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def desactivar_empresa(request, empresa_id):
+    """Vista para desactivar una empresa."""
     empresa = get_object_or_404(Empresa, id=empresa_id)
 
     if request.method == 'POST':
@@ -333,7 +359,7 @@ def desactivar_empresa(request, empresa_id):
         return redirect('empresas:listar_empresas')
 
     context = {
-        'empresa': empresa,
+        'empresa':            empresa,
         'tiene_dependencias': empresa.solicitud_set.exclude(estado='FINALIZADA').exists(),
     }
     return render(request, 'empresas/desactivar_empresa.html', context)
@@ -342,39 +368,42 @@ def desactivar_empresa(request, empresa_id):
 @puede_editar_requerido
 @require_http_methods(["GET", "POST"])
 def eliminar_empresa(request, empresa_id):
-    empresa = get_object_or_404(Empresa, id=empresa_id)
+    """Vista para eliminar permanentemente una empresa."""
+    empresa           = get_object_or_404(Empresa, id=empresa_id)
     total_solicitudes = empresa.solicitud_set.count()
 
-    if request.method == 'POST':
-        if total_solicitudes > 0:
-            accion_solicitudes = request.POST.get('accion_solicitudes')
+    if request.method != 'POST':
+        return render(request, 'empresas/eliminar_empresa.html', {
+            'empresa': empresa, 'total_solicitudes': total_solicitudes
+        })
 
-            if accion_solicitudes == 'eliminar':
-                nombre_empresa = empresa.nombre
-                with transaction.atomic():
-                    empresa.solicitud_set.all().delete()
-                    empresa.delete()
-                messages.success(
-                    request,
-                    f'✅ Empresa "{nombre_empresa}" y sus {total_solicitudes} solicitud(es) eliminadas permanentemente'
-                )
-            elif accion_solicitudes == 'cancelar':
-                messages.warning(request, '⚠️ Eliminación cancelada.')
-                return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
-            else:
-                messages.error(request, '❌ Debes seleccionar qué hacer con las solicitudes asociadas')
-                return render(request, 'empresas/eliminar_empresa.html', {
-                    'empresa': empresa, 'total_solicitudes': total_solicitudes
-                })
-        else:
-            nombre_empresa = empresa.nombre
+    if total_solicitudes > 0:
+        accion = request.POST.get('accion_solicitudes')
+
+        if accion == 'cancelar':
+            messages.warning(request, '⚠️ Eliminación cancelada.')
+            return redirect('empresas:detalle_empresa', empresa_id=empresa.id)
+
+        if accion == 'eliminar':
+            nombre = empresa.nombre
             with transaction.atomic():
+                empresa.solicitud_set.all().delete()
                 empresa.delete()
-            messages.success(request, f'✅ Empresa "{nombre_empresa}" eliminada exitosamente')
+            messages.success(
+                request,
+                f'✅ Empresa "{nombre}" y sus {total_solicitudes} solicitud(es) eliminadas permanentemente'
+            )
+            return redirect('empresas:listar_empresas')
 
-        return redirect('empresas:listar_empresas')
+        # Ninguna acción válida seleccionada
+        messages.error(request, '❌ Debes seleccionar qué hacer con las solicitudes asociadas')
+        return render(request, 'empresas/eliminar_empresa.html', {
+            'empresa': empresa, 'total_solicitudes': total_solicitudes
+        })
 
-    return render(request, 'empresas/eliminar_empresa.html', {
-        'empresa': empresa,
-        'total_solicitudes': total_solicitudes,
-    })
+    # Sin solicitudes: eliminar directamente
+    nombre = empresa.nombre
+    with transaction.atomic():
+        empresa.delete()
+    messages.success(request, f'✅ Empresa "{nombre}" eliminada exitosamente')
+    return redirect('empresas:listar_empresas')

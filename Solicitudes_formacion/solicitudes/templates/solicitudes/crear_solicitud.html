@@ -435,6 +435,93 @@
             flex: 1;
         }
 
+        /* ═══════════════════════════════════════════════════════════
+           MODALES — mismos estilos que panel de backups
+           ═══════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.50);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .sena-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.88) translateY(-20px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);     opacity: 1; }
+        }
+
+        .sena-modal-header {
+            padding: 26px 32px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: white;
+        }
+        .sena-modal-header.green  { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        .sena-modal-header.orange { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+        .sena-modal-header.red    { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); }
+
+        .sena-modal-header-icon { font-size: 2em; flex-shrink: 0; }
+        .sena-modal-header h3   { font-size: 1.2em; font-weight: 700; margin: 0; }
+
+        .sena-modal-body { padding: 24px 32px; }
+        .sena-modal-body p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.97em;
+            margin: 0;
+        }
+
+        .sena-modal-footer {
+            padding: 16px 32px 26px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.97em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .modal-btn-orange {
+            background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(239,108,0,0.35);
+        }
+        .modal-btn-orange:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,108,0,0.4); }
+        .modal-btn-red {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(198,40,40,0.35);
+        }
+        .modal-btn-red:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(198,40,40,0.4); }
+        .modal-btn-green {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+        }
+        .modal-btn-green:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+
         footer {
             background: linear-gradient(135deg, #1b5e20, #2e7d32);
             color: white;
@@ -456,10 +543,29 @@
             .migration-mode-toggle { flex-direction: column; gap: 15px; text-align: center; }
             .razones-grid { flex-direction: column; }
             .razon-btn { border-radius: 8px; text-align: left; }
+            .sena-modal { width: 95%; }
+            .sena-modal-header, .sena-modal-body, .sena-modal-footer { padding-left: 20px; padding-right: 20px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ══ MODAL: ALERTA GENÉRICA ══════════════════════════════════════ -->
+    <div class="modal-overlay" id="overlayAlerta">
+        <div class="sena-modal">
+            <div class="sena-modal-header" id="alertaHeader">
+                <span class="sena-modal-header-icon" id="alertaIcono">⚠️</span>
+                <h3 id="alertaTitulo">Aviso</h3>
+            </div>
+            <div class="sena-modal-body">
+                <p id="alertaMensaje"></p>
+            </div>
+            <div class="sena-modal-footer">
+                <button class="modal-btn" id="alertaBtn" onclick="cerrarAlerta()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
 
         <div class="header">
@@ -505,7 +611,6 @@
 
             <form method="POST" enctype="multipart/form-data" id="solicitudForm">
                 {% csrf_token %}
-                <!-- Campos ocultos de control -->
                 <input type="hidden" id="esMigracion"      name="es_migracion" value="false">
                 <input type="hidden" id="razon_cupo_input" name="razon_cupo"   value="">
 
@@ -557,7 +662,6 @@
 
                 <div class="form-row">
 
-                    <!-- Correo OBLIGATORIO -->
                     <div class="form-group">
                         <label for="correo_remitente" class="required">Correo del Remitente</label>
                         <input
@@ -570,7 +674,6 @@
                         <small>Email desde donde se envió la solicitud</small>
                     </div>
 
-                    <!-- Trabajadores OBLIGATORIO -->
                     <div class="form-group">
                         <label for="numero_aprendices" class="required">Trabajadores a Capacitar</label>
                         <input
@@ -583,13 +686,11 @@
                             required>
                         <small>Cantidad estimada de personas a capacitar</small>
 
-                        <!-- BLOQUEO DURO: CAMPESENA con menos de 15 -->
                         <div class="aviso-bloqueo" id="aviso-campesena">
                             <p>🚫 El área <strong>CAMPESENA</strong> requiere mínimo <strong>15 aprendices</strong>.
                                Corrige la cantidad para poder continuar.</p>
                         </div>
 
-                        <!-- FLEXIBLE: otras áreas con menos de 20 → botones de razón -->
                         <div class="aviso-flex" id="aviso-otras">
                             <div class="aviso-flex-titulo" id="aviso-otras-titulo"></div>
                             <div class="aviso-flex-subtitulo">Selecciona el motivo para continuar:</div>
@@ -706,22 +807,47 @@
     </footer>
 
     <script>
-        // ════════════════════════════════════════════════════════
-        // CONFIGURACIÓN DE CUPOS
-        // Ajusta AREAS_CAMPESENA con el nombre exacto de tu BD
-        // ════════════════════════════════════════════════════════
-        const AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
-        const CUPO_MIN_CAMPESENA = 15;   // DURO — no se puede enviar con menos
-        const CUPO_MIN_OTROS     = 20;   // FLEXIBLE — requiere elegir una razón
+        /* ═══════════════════════════════════════════════════════════════
+           MODAL GENÉRICO
+           ═══════════════════════════════════════════════════════════════ */
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            var config = {
+                error:   { clase: 'red',    icono: '❌', btnCls: 'modal-btn-red'    },
+                warning: { clase: 'orange',  icono: '⚠️', btnCls: 'modal-btn-orange' },
+                info:    { clase: 'green',   icono: 'ℹ️', btnCls: 'modal-btn-green'  }
+            };
+            var c = config[tipo] || config.info;
 
-        let areaProgramaSeleccionada = '';
-        let razonSeleccionada        = '';
+            document.getElementById('alertaHeader').className = 'sena-modal-header ' + c.clase;
+            document.getElementById('alertaIcono').textContent  = c.icono;
+            document.getElementById('alertaTitulo').textContent = titulo;
+            document.getElementById('alertaMensaje').textContent = mensaje;
+            document.getElementById('alertaBtn').className = 'modal-btn ' + c.btnCls;
+            document.getElementById('overlayAlerta').classList.add('open');
+        }
+
+        function cerrarAlerta() {
+            document.getElementById('overlayAlerta').classList.remove('open');
+        }
+
+        document.getElementById('overlayAlerta').addEventListener('click', function(e) {
+            if (e.target === this) cerrarAlerta();
+        });
+
+        /* ═══════════════════════════════════════════════════════════════
+           CONFIGURACIÓN DE CUPOS
+           ═══════════════════════════════════════════════════════════════ */
+        var AREAS_CAMPESENA    = ['campesena', 'campesinado', 'campesina'];
+        var CUPO_MIN_CAMPESENA = 15;
+        var CUPO_MIN_OTROS     = 20;
+
+        var areaProgramaSeleccionada = '';
+        var razonSeleccionada        = '';
 
         function esCampesena(area) {
             return AREAS_CAMPESENA.some(function(n) { return area.includes(n); });
         }
 
-        // Al cambiar el programa, guardar su área
         document.getElementById('programa').addEventListener('change', function () {
             var opt = this.options[this.selectedIndex];
             var grp = opt.closest('optgroup');
@@ -732,7 +858,6 @@
             validarCupo();
         });
 
-        // Al cambiar la cantidad de aprendices
         document.getElementById('numero_aprendices').addEventListener('input', function () {
             razonSeleccionada = '';
             limpiarBotonesRazon();
@@ -748,7 +873,6 @@
             var avisoTitulo    = document.getElementById('aviso-otras-titulo');
             var area           = areaProgramaSeleccionada;
 
-            // Resetear
             avisoCampesena.classList.remove('active');
             avisoOtras.classList.remove('active');
             numInput.style.borderColor = '#e0e0e0';
@@ -756,13 +880,11 @@
             if (!area || cantidad === 0) return;
 
             if (esCampesena(area)) {
-                // ── CAMPESENA: bloqueo duro si viene con menos de 15 ──
                 if (cantidad < CUPO_MIN_CAMPESENA) {
                     avisoCampesena.classList.add('active');
                     numInput.style.borderColor = '#c62828';
                 }
             } else {
-                // ── OTRAS ÁREAS: advertencia + botones de razón si viene con menos de 20 ──
                 if (cantidad < CUPO_MIN_OTROS) {
                     avisoTitulo.textContent =
                         '⚠️ El mínimo recomendado para esta área es ' + CUPO_MIN_OTROS +
@@ -773,7 +895,6 @@
             }
         }
 
-        // El usuario hace clic en un botón de razón
         function seleccionarRazon(btn, razon) {
             limpiarBotonesRazon();
             btn.classList.add('selected');
@@ -787,9 +908,9 @@
             });
         }
 
-        // ════════════════════════════════════════════════════════
-        // VALIDACIÓN AL ENVIAR
-        // ════════════════════════════════════════════════════════
+        /* ═══════════════════════════════════════════════════════════════
+           VALIDACIÓN AL ENVIAR
+           ═══════════════════════════════════════════════════════════════ */
         document.getElementById('solicitudForm').addEventListener('submit', function (e) {
             var submitBtn = document.getElementById('submitBtn');
             var numInput  = document.getElementById('numero_aprendices');
@@ -798,26 +919,31 @@
 
             if (area && cantidad > 0) {
 
-                // Bloqueo duro CAMPESENA
                 if (esCampesena(area) && cantidad < CUPO_MIN_CAMPESENA) {
                     e.preventDefault();
-                    alert('🚫 El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
-                          ' aprendices. Corrige la cantidad antes de continuar.');
+                    mostrarAlerta(
+                        'error',
+                        'Cupo insuficiente — CAMPESENA',
+                        'El área CAMPESENA requiere mínimo ' + CUPO_MIN_CAMPESENA +
+                        ' aprendices. Corrige la cantidad antes de continuar.'
+                    );
                     numInput.focus();
                     return;
                 }
 
-                // Flexible: otras áreas sin razón elegida
                 if (!esCampesena(area) && cantidad < CUPO_MIN_OTROS && !razonSeleccionada) {
                     e.preventDefault();
-                    alert('⚠️ Debes seleccionar el motivo por el que hay menos de ' +
-                          CUPO_MIN_OTROS + ' aprendices.');
+                    mostrarAlerta(
+                        'warning',
+                        'Motivo requerido',
+                        'Debes seleccionar el motivo por el que hay menos de ' +
+                        CUPO_MIN_OTROS + ' aprendices antes de continuar.'
+                    );
                     document.getElementById('aviso-otras').scrollIntoView({ behavior: 'smooth' });
                     return;
                 }
             }
 
-            // Todo OK → deshabilitar botón para evitar doble envío
             submitBtn.disabled  = true;
             submitBtn.innerHTML = '⏳ Guardando...';
 
@@ -828,9 +954,9 @@
             }
         });
 
-        // ════════════════════════════════════════════════════════
-        // MODO MIGRACIÓN
-        // ════════════════════════════════════════════════════════
+        /* ═══════════════════════════════════════════════════════════════
+           MODO MIGRACIÓN
+           ═══════════════════════════════════════════════════════════════ */
         function toggleMigrationMode() {
             var toggle   = document.getElementById('migrationToggle');
             var section  = document.getElementById('migrationSection');
@@ -853,18 +979,22 @@
             }
         }
 
-        // ════════════════════════════════════════════════════════
-        // MANEJO DE MÚLTIPLES ARCHIVOS
-        // ════════════════════════════════════════════════════════
+        /* ═══════════════════════════════════════════════════════════════
+           MANEJO DE MÚLTIPLES ARCHIVOS
+           ═══════════════════════════════════════════════════════════════ */
         var selectedFiles = [];
         var MAX_FILES     = 5;
-        var MAX_SIZE      = 10 * 1024 * 1024; // 10 MB
+        var MAX_SIZE      = 10 * 1024 * 1024;
 
         function handleMultipleFiles(event) {
             var newFiles = Array.from(event.target.files);
 
             if (selectedFiles.length + newFiles.length > MAX_FILES) {
-                alert('⚠️ Solo puedes subir máximo ' + MAX_FILES + ' archivos');
+                mostrarAlerta(
+                    'warning',
+                    'Límite de archivos alcanzado',
+                    'Solo puedes subir máximo ' + MAX_FILES + ' archivos en total.'
+                );
                 event.target.value = '';
                 return;
             }
@@ -872,12 +1002,20 @@
             for (var i = 0; i < newFiles.length; i++) {
                 var file = newFiles[i];
                 if (!file.name.toLowerCase().endsWith('.pdf')) {
-                    alert('❌ ' + file.name + ' no es un archivo PDF');
+                    mostrarAlerta(
+                        'error',
+                        'Formato no válido',
+                        '"' + file.name + '" no es un archivo PDF. Solo se permiten archivos .pdf.'
+                    );
                     event.target.value = '';
                     return;
                 }
                 if (file.size > MAX_SIZE) {
-                    alert('❌ ' + file.name + ' supera 10MB');
+                    mostrarAlerta(
+                        'error',
+                        'Archivo demasiado grande',
+                        '"' + file.name + '" supera el límite de 10MB permitido por archivo.'
+                    );
                     event.target.value = '';
                     return;
                 }
@@ -935,7 +1073,6 @@
             }
         }
 
-        // Auto-cerrar alertas Django después de 8 segundos
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.alert').forEach(function(a) {
                 setTimeout(function() { a.remove(); }, 8000);
